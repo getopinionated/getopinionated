@@ -33,3 +33,6 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Specific to this project
+getopinionated.sqlite3 # create your own db and super user using "./manage.py syncd"
