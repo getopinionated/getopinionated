@@ -7,7 +7,7 @@ admin.autodiscover()
 import proposal.urls
 
 urlpatterns = patterns('',
-    url(r'^proposal/', include(proposal.urls)),
+    url(r'^proposal/', include(proposal.urls, namespace="proposal")),
     # Examples:
     # url(r'^$', 'getopinionated.views.home', name='home'),
     # url(r'^getopinionated/', include('getopinionated.foo.urls')),

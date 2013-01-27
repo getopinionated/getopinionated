@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Get Opinionated in Detail</title>
+</head>
+<body>
+<h1>{{ proposal.title }}</h1>
+<p>{{ proposal.proposal }}</p>
+<p>{{ proposal.motivation }}</p>
+<ul>
+{% for comment in proposal.comment_set.all %}
+    <li>{{ comment.comment }}</li>
+{% endfor %}
+</ul></body>
+</html>
