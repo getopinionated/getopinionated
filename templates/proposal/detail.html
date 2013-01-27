@@ -10,7 +10,7 @@
 <ul>
 {% for comment in proposal.comment_set.all %}
     <li>
-    <form action="{% url 'proposal:vote' comment.id %}" method="post">
+    <form action="{% url proposal:vote comment.id %}" method="post">
     	{% csrf_token %}
 	    <input type="submit" name="upvote" value="+1" />
 	    <input type="submit" name="upvote" value="-1" />
