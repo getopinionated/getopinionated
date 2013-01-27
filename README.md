@@ -7,3 +7,4 @@ Django specifics:
 -----------------
 
 This project is currently being developed on django. We are using the latest official release, being django 1.4.3. You can get it from https://www.djangoproject.com/download/.
+
