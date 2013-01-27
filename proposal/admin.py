@@ -6,9 +6,9 @@ class CommentInline(admin.TabularInline):
     extra = 0
 
 class ProposalAdmin(admin.ModelAdmin):
-    list_display = ('title','create_date', 'was_published_recently')
+    list_display = ('title', 'create_date', 'was_published_recently')
     fieldsets = [
-                (None, {'fields': ['title','proposal']}),
+                (None, {'fields': ['title', 'proposal']}),
                 ('Dates:', {'fields': ['create_date'], 'classes': ['collapse']}),
             ]
     inlines = [CommentInline]
