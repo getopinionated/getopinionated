@@ -148,6 +148,14 @@ li {
 	border: 0px;
 }
 
+/** MESSAGES **/
+ul.messages {
+	list-style-type: none;
+	margin-left: 15px;
+	margin-top: 5px;
+	font-weight: bold;
+}
+
 /** CONTENT **/
 #content h1, h2, h3, h4, h5, h6 {
 	color: #0A67A2;
