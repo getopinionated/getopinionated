@@ -9,7 +9,17 @@
 <p>{{ proposal.motivation }}</p>
 <ul>
 {% for comment in proposal.comment_set.all %}
-    <li>{{ comment.comment }}</li>
+    <li>
+    <form action="{% url 'proposal:vote' comment.id %}" method="post">
+    	{% csrf_token %}
+	    <input type="submit" name="upvote" value="+1" />
+	    <input type="submit" name="upvote" value="-1" />
+	</form>
+	<strong>{{ comment.upvote }}</strong>
+    {{ comment.comment }}</li>
 {% endfor %}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
 </ul></body>
 </html>

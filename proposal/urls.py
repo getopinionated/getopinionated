@@ -6,5 +6,6 @@ urlpatterns = patterns('',
     url(r'^specifics/(?P<prop_id>\d+)/$', views.detail, name='detail'),
     url(r'^(?P<prop_id>\d+)/results/$', views.results, name='results'),
     url(r'^(?P<prop_id>\d+)/comment/$', views.comment, name='comment'),
+    url(r'^(?P<comment_id>\d+)/vote/$', views.vote, name='vote'),
     
 )
