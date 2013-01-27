@@ -1,1 +1,12 @@
-This page 404'ed
+{% extends "base.html" %}
+{% block title %}{{ block.super }} - Pagina niet gevonden {% endblock %}
+{% block content %}
+<div class="side_header">
+  <h1>404</h1>
+</div>
+<div class="side_content">
+  <div class="content">
+    De gevraagde pagina kon niet gevonden worden.
+  </div>
+</div>
+{% endblock %}

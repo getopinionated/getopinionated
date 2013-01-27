@@ -1,0 +1,216 @@
+/* GENERAL TAGS */
+* {
+	margin: 0;
+	padding: 0;
+}
+/* render html5 elements as block */
+div, article {
+	display: block;
+}
+body {
+	line-height: 1;
+	background: #0A67A2;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #333;
+	font-size: 14px;
+	line-height: 18px;
+}
+td, th {
+    vertical-align: top;
+}
+td li {
+    margin-left: 10px;
+    color: red;
+    font-weight: bold;
+    list-style-type: none;
+}
+form td {
+    font-style: italic;
+    font-size: .9em;
+    padding-left: 10px;
+}
+
+/* layout */
+#wrapper {
+	width: 940px;
+	margin: 0 auto;
+	margin-top: 20px;
+	margin-bottom: 50px;
+	border: 3px solid #888;
+	background: #fff;
+	/* curved border radius */
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+#nav {
+	width: 940px;
+	height: 50px;
+	margin: 0 auto;
+	background: #D5EBF9;
+	margin-top: -5px;
+}
+#main {
+	width: 940px;
+	margin: 0 auto;
+	padding: 30px 0 50px 0;
+	overflow: hidden;
+}
+#content {
+	float: left;
+	padding: 0 30px;
+}
+#footer {
+	width: 940px;
+	margin: 0 auto;
+	clear: both;
+}
+
+/* basics */
+h1,h2,h3,h4,h5,h6 {
+	font-weight: bold;
+	clear: both;
+}
+a:link, a:visited {
+	color: #0A67A2;
+	font-weight: bold;
+	text-decoration: none;
+}
+a:hover, a:active {
+	text-decoration: underline!important;
+}
+p {
+	margin-bottom: 18px;
+}
+li {
+	padding-left: 5px;
+}
+
+/* nav */
+#nav .menu {
+	font-size: 13px;
+	font-weight: bold;
+}
+#nav .menu ul {
+	margin: 0;
+	padding: 17px 0 0 20px;
+	list-style: none;
+	line-height: normal;
+}
+#nav .menu li {
+	display: block;
+	float: left;
+}
+#nav .menu a {
+	display: block;
+	float: left;
+	margin-right: 5px;
+	padding: 0px 15px;
+	text-decoration: none;
+	color: #000;
+}
+#nav .menu a:hover {
+	text-decoration: underline;
+}
+
+#nav .right {
+    float: right;
+    display: block;
+    color: gray;
+    font-style: italic;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+/** HEADER */
+#header {
+	padding: 10px 0 0 10px;
+	height: 115px;
+}
+#header>h1 {
+	float: left;
+	clear: none;
+	margin: 30px 0 18px 20px;
+	width: auto;
+	font-size: 40px;
+	line-height: 36px;
+}
+#header>h1 a:link, a:visited {
+	color: #0A67A2;
+	font-weight: bold;
+	text-decoration: none;
+}
+#header>h1 a:hover{
+	text-decoration: underline;
+}
+#header img {
+	float: left;
+	clear: none;
+	border: 0px;
+}
+
+/** CONTENT **/
+#content h1, h2, h3, h4, h5, h6 {
+	color: #0A67A2;
+	margin: 0 0 20px 0;
+	line-height: 1.5em;
+}
+
+/* FOOTER */
+#footer-area {
+	background: #D5EBF9;
+	color: #000;
+	font-size: 90%;
+	padding: 18px 0;
+	overflow: hidden;
+	text-align: center;
+	/* curved border radius */
+	-moz-border-radius-bottomright: 8px;
+	-moz-border-radius-bottomleft: 8px;
+	-webkit-border-bottom-left-radius: 8px;
+	-webkit-border-bottom-right-radius: 8px;
+}
+
+#footer a:link, #footer a:visited {
+	text-decoration: none;
+}
+
+#footer a:hover { 
+	text-decoration: underline;
+}
+
+#footer p {
+	margin: 5px 0;
+	color: #000;
+}
+
+/* DATA TABLE */
+table.data {
+    border: 1px solid;
+}
+table.data td, table.data th {
+    padding: 4px 10px;
+}
+table.data td {
+    background-color: #f3f6f9;
+}
+table.data th {
+    background-color: #cfe4f2;
+    text-align: left;
+}
+
+/* CUSTOM CLASSES */
+div.help {
+	border: 1px solid #DDD;
+	padding: 10px;
+}
+div.help p{
+	margin: 0;
+}
+div.help ul {
+	margin-left: 40px;
+	margin-top: 5px;
+}
+
+/* Based on http://freehtml5templates.com creation */
+
+

@@ -1,20 +1,18 @@
-from django.conf.urls import patterns, include, url
+#!/usr/bin/env python
+# author: Jens Nyman (nymanjens.nj@gmail.com)
 
-# Uncomment the next two lines to enable the admin:
+from django.conf.urls.defaults import *
 from django.contrib import admin
+import settings
+from home.views import index
+
 admin.autodiscover()
 
-import proposal.urls
-
 urlpatterns = patterns('',
-    url(r'^proposal/', include(proposal.urls, namespace="proposal")),
-    # Examples:
-    # url(r'^$', 'getopinionated.views.home', name='home'),
-    # url(r'^getopinionated/', include('getopinionated.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
-    url(r'^admin/', include(admin.site.urls)),
+	(r'^admin/', include(admin.site.urls)),
+	# (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+    url(r'^$', index, name="home-index"),
+    (r'^accounts/', include('accounts.urls')),
+	(r'^home/', include('home.urls')),
 )
+

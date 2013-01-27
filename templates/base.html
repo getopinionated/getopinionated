@@ -1,0 +1,59 @@
+{% load i18n %}
+{% load encrypt_email %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Online Exam Server</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{STATIC_URL}}css/style.css" type="text/css" charset="utf-8" />
+    {% block extrastyle %}{% endblock %}
+    
+    <!-- MetaData -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <!-- Template specific -->    
+    {% block extrahead %} {% endblock %}
+</head>
+
+<body>
+<div id="wrapper"><!-- #wrapper -->
+    <div id="header">
+        <a href="{% url home-index %}"><img src="{{STATIC_URL}}images/logo.png" alt="" /></a>
+        <h1><a href="{% url home-index %}">GetOpinionated</a></h1>
+    </div>
+    
+    <div id="nav"><!-- top nav -->
+        <div class="menu">
+            <ul>
+                {% if not user.is_authenticated %}
+                    <li><a href="{% url user-login %}">Login</a></li>
+                    <li><a href="{% url user-register %}">Register</a></li>
+                {% endif %}
+                {% block menu %} {% endblock %}
+                {% if user.is_authenticated %}
+                    <li><a href="{% url profile-update %}">Profile</a></li>
+                    <li><a href="{% url user-logout %}">Logout</a></li>
+                    <li class="right">(logged in as {{user.username}})</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div><!-- end of top nav -->
+    
+    <div id="main"><!-- #main content  -->
+        <div id="content"><!-- #content -->
+             {% block content %}{% endblock %}
+        </div><!-- end of #content -->
+    </div><!-- end of #main content -->
+    
+    <div id="footer">
+        <div id="footer-area">
+            <p>&copy; 2013 getopinionated team</p>
+        </div>
+    </div>
+</div><!-- #wrapper -->
+
+</body>
+</html>
+

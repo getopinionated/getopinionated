@@ -1,35 +1,20 @@
+#!/usr/bin/env python
 # Django settings for getopinionated project.
-import siteroot
+import sys, os
+from os.path import dirname
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
-
-ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
-)
-
-MANAGERS = ADMINS
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': siteroot.abspath('getopinionated.sqlite3'),  # Or path to database file if using sqlite3.
-        'USER': '',  # Not used with sqlite3.
-        'PASSWORD': '',  # Not used with sqlite3.
-        'HOST': '',  # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',  # Set to empty string for default. Not used with sqlite3.
-    }
-}
+SITE_ROOT = dirname(dirname(os.path.realpath(__file__)))
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
-# In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'CET'
+# although not all choices may be avilable on all operating systems.
+# If running in a Windows environment this must be set to the same as your
+# system time zone.
+TIME_ZONE = 'Europe/Brussels'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-US'
 
 SITE_ID = 1
 
@@ -57,7 +42,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = ""
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -65,9 +50,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(SITE_ROOT, 'static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -78,8 +61,6 @@ STATICFILES_FINDERS = (
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = '*@qw*cm^yhu*dr^0a0p2@td((ec23f^@+(pfa%a@0=#cgu4jot'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -96,6 +77,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'common.middleware.SSLRedirect',
+    'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
 )
 
 ROOT_URLCONF = 'getopinionated.urls'
@@ -107,7 +91,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    siteroot.abspath('templates'),
+	os.path.join(SITE_ROOT, 'templates')
 )
 
 INSTALLED_APPS = (
@@ -117,11 +101,27 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'proposal',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'django.contrib.redirects',
+    'django.contrib.flatpages',
+    'common',
+    'accounts',
+    'home',
+	#'proposal',
+)
+
+### SSL settings (common.middleware.SSLRedirect) ###
+# Forced SSL
+SSL_URLS = (
+    r'^/admin/',
+    r'^/accounts/',
+	r'.*',
+)
+# May be SSL & not SSL
+MIXED_URLS = (
 )
 
 # A sample logging configuration. The only tangible logging
@@ -152,3 +152,31 @@ LOGGING = {
         },
     }
 	}
+
+# Couple Django's user object to custom member
+AUTH_PROFILE_MODULE = 'accounts.UserProfile'
+
+# Import local settings
+try:
+    from local_settings import *
+except ImportError:
+    try:
+        from mod_python import apache
+        apache.log_error("You need to copy local_settings.py.example to local_settings.py and edit settings")
+    except ImportError:
+        import sys
+        sys.stderr.write("You need to copy local_settings.py.example to local_settings.py and edit settings")
+TEMPLATE_DEBUG = DEBUG
+MANAGERS = ADMINS
+
+# favour django-mailer but fall back to django.core.mail
+if "mailer" in INSTALLED_APPS:
+    from mailer import send_mail
+else:
+    from django.core.mail import send_mail
+
+MAILER_LOCKFILE = os.path.join(SITE_ROOT, 'send_mail.lock')
+MAILER_PAUSE_SEND = False
+
+
+
