@@ -14,7 +14,7 @@ class Proposal(models.Model):
         return "%s: %s" % (self.title, self.motivation)
     
     def was_published_recently(self):
-        return self.create_date >= timezone.now() - datetime.timedelta(days=1)
+        return timezone.now() > self.create_date >= timezone.now() - datetime.timedelta(days=1)
 
     was_published_recently.admin_order_field = 'create_date'
     was_published_recently.boolean = True
