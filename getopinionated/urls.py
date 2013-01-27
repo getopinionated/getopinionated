@@ -4,7 +4,10 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
+import proposal.urls
+
 urlpatterns = patterns('',
+    url(r'^proposal/', include(proposal.urls)),
     # Examples:
     # url(r'^$', 'getopinionated.views.home', name='home'),
     # url(r'^getopinionated/', include('getopinionated.foo.urls')),
