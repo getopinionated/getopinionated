@@ -382,8 +382,8 @@
         "model": "auth.user",
         "fields": {
             "username": "jnyman",
-            "first_name": "Jens",
-            "last_name": "Nyman",
+            "first_name": "Jns",
+            "last_name": "N",
             "is_active": true,
             "is_superuser": true,
             "is_staff": true,
@@ -391,7 +391,7 @@
             "groups": [],
             "user_permissions": [],
             "password": "sha1$46949$88d4863560db97d0ea0bcff6f1170ffd61b01856",
-            "email": "nymanjens.nj@gmail.com",
+            "email": "test@gmail.com",
             "date_joined": "2011-08-05T19:42:36Z"
         }
     },
