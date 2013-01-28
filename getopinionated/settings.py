@@ -110,7 +110,7 @@ INSTALLED_APPS = (
     'common',
     'accounts',
     'home',
-	#'proposal',
+	'proposing',
 )
 
 ### SSL settings (common.middleware.SSLRedirect) ###

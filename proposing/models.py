@@ -1,31 +1,48 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 import datetime
 
-# Create your models here.
+class VotablePost(models.Model):
+    """ super-model for all votable models """
+    # meta-data
+    creator = models.ForeignKey(User, related_name="created_proposals")
+    create_date = models.DateTimeField(auto_now=True)
 
-class Proposal(models.Model):
+    @property
+    def num_upvotes(self):
+        return self.up_down_votes.filter(is_up=True).count()
+
+    @property
+    def num_downvotes(self):
+        return self.up_down_votes.filter(is_up=False).count()
+
+    @property
+    def votescore(self):
+        return self.num_updownvotes - self.num_downvotes
+
+class UpDownVote(models.Model):
+    user = models.ForeignKey(User, related_name="up_down_votes")
+    post = models.ForeignKey(VotablePost, related_name="up_down_votes")
+    date = models.DateTimeField(auto_now=True)
+    is_up = models.BooleanField("True if this is an upvote")
+
+class Proposal(VotablePost):
     title = models.CharField(max_length=255)
     motivation = models.TextField()
-    proposal = models.TextField()
-    create_date = models.DateTimeField('Date entered')
+    diff_textual = models.TextField()
 
     def __unicode__(self):
-        return "%s: %s" % (self.title, self.motivation)
+        return "Proposal: {}".format(self.title)
     
-    def was_published_recently(self):
-        return timezone.now() > self.create_date >= timezone.now() - datetime.timedelta(days=1)
+    @property
+    def diff_with_context(self):
+        return self.diff_textual
 
-    was_published_recently.admin_order_field = 'create_date'
-    was_published_recently.boolean = True
-    was_published_recently.short_description = "Hot off the press"
-
-class Comment(models.Model):
+class Comment(VotablePost):
+    # essentials
     proposal = models.ForeignKey(Proposal)
-    comment = models.TextField()
-    create_date = models.DateTimeField('Date entered')
-    upvote = models.IntegerField()
+    motivation = models.TextField()
 
     def __unicode__(self):
-        return self.comment
-
+        return "Comment on {}".format(self.proposal)

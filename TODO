@@ -1,3 +1,4 @@
+- fix CommentInline in proposing/admin.py
 - messages boveneaan het scherm na register, profileupdate, ..
 - profile in admin
 - i18n

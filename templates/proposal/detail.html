@@ -1,25 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Get Opinionated in Detail</title>
-</head>
-<body>
-<h1>{{ proposal.title }}</h1>
-<p>{{ proposal.proposal }}</p>
-<p>{{ proposal.motivation }}</p>
-<ul>
-{% for comment in proposal.comment_set.all %}
-    <li>
-    <form action="{% url proposal:vote comment.id %}" method="post">
-    	{% csrf_token %}
-	    <input type="submit" name="upvote" value="+1" />
-	    <input type="submit" name="upvote" value="-1" />
-	</form>
-	<strong>{{ comment.upvote }}</strong>
-    {{ comment.comment }}</li>
-{% endfor %}
+{% extends "base.html" %}
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% block content %}
 
-</ul></body>
-</html>
+    <p>{{ proposal.proposal }}</p>
+    <p>{{ proposal.motivation }}</p>
+    <ul>
+    {% for comment in proposal.comment_set.all %}
+        <li>
+        <form action="{% url proposals-vote comment.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" name="upvote" value="+1" />
+            <input type="submit" name="upvote" value="-1" />
+        </form>
+        <strong>{{ comment.upvote }}</strong>
+        {{ comment.comment }}</li>
+    {% endfor %}
+
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+{% endblock %}
+
