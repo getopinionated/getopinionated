@@ -39,17 +39,17 @@
         "pk": 3,
         "model": "auth.user",
         "fields": {
-            "username": "piserbyt",
-            "first_name": "Pieter",
-            "last_name": "Iserbyt",
+            "username": "sandbender",
+            "first_name": "Sand",
+            "last_name": "Bender",
             "is_active": true,
             "is_superuser": true,
             "is_staff": true,
             "last_login": "2011-08-28T08:26:08Z",
             "groups": [],
             "user_permissions": [],
-            "password": "sha1$46949$88d4863560db97d0ea0bcff6f1170ffd61b01856",
-            "email": "pieter.iserbyt@gmail.com",
+            "password": "pbkdf2_sha256$10000$y5xsKf2cFmCG$bfGBmJ+4pSBJrJaYpdWe7TG5MPreIfpr2lVIzvCY9tM=",
+            "email": "sandb.bender@gmail.com",
             "date_joined": "2011-08-28T08:26:08Z"
         }
     },
