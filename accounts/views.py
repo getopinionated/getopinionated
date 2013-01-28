@@ -3,6 +3,7 @@
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.shortcuts import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from common.shortcuts import render_to_response
@@ -33,6 +34,7 @@ def userregister(request):
             new_user = authenticate(username=request.POST['username'],
                                     password=request.POST['password1'])
             login(request, new_user)
+            messages.success(request, 'Registration complete')
             return HttpResponseRedirect(reverse('profile-update'))
     else:
         form = ProfileCreationForm()
@@ -48,6 +50,7 @@ def profileupdate(request):
         form = ProfileUpdateForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Profile details updated')
             return HttpResponseRedirect(reverse('profile-update'))
     else:
         form = ProfileUpdateForm(instance=request.user)

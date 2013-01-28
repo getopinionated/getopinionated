@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% if latest_proposal_list %}
+        <ul>
+        {% for proposal in latest_proposal_list %}
+            <li><a href="{% url proposals-detail proposal.id %}">{{ proposal.title }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No proposals are available.</p>
+    {% endif %}
+
+{% endblock %}

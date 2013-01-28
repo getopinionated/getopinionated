@@ -13,6 +13,7 @@ urlpatterns = patterns('',
 	# (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     url(r'^$', index, name="home-index"),
     (r'^accounts/', include('accounts.urls')),
-	(r'^home/', include('home.urls')),
+    (r'^home/', include('home.urls')),
+	(r'^proposals/', include('proposing.urls')),
 )
 

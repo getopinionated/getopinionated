@@ -27,6 +27,7 @@
     <div id="nav"><!-- top nav -->
         <div class="menu">
             <ul>
+                <li><a href="{% url proposals-index %}">Proposals</a></li>
                 {% if not user.is_authenticated %}
                     <li><a href="{% url user-login %}">Login</a></li>
                     <li><a href="{% url user-register %}">Register</a></li>
@@ -35,12 +36,18 @@
                 {% if user.is_authenticated %}
                     <li><a href="{% url profile-update %}">Profile</a></li>
                     <li><a href="{% url user-logout %}">Logout</a></li>
-                    <li class="right">(logged in as {{user.username}})</li>
+                    <li class="right">(logged in as {{user.profile.display_name}})</li>
                 {% endif %}
             </ul>
         </div>
     </div><!-- end of top nav -->
-    
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     <div id="main"><!-- #main content  -->
         <div id="content"><!-- #content -->
              {% block content %}{% endblock %}

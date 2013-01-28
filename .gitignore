@@ -40,4 +40,4 @@ nosetests.xml
 # Specific to this project
 
 # create your own db and super user using "./manage.py syncd"
-/getopinionated.sqlite3
+/database.sqlite3

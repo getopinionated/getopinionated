@@ -1,25 +1,48 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Get Opinionated in Detail</title>
-</head>
-<body>
-<h1>{{ proposal.title }}</h1>
-<p>{{ proposal.proposal }}</p>
-<p>{{ proposal.motivation }}</p>
-<ul>
-{% for comment in proposal.comment_set.all %}
-    <li>
-    <form action="{% url proposal:vote comment.id %}" method="post">
-    	{% csrf_token %}
-	    <input type="submit" name="upvote" value="+1" />
-	    <input type="submit" name="upvote" value="-1" />
-	</form>
-	<strong>{{ comment.upvote }}</strong>
-    {{ comment.comment }}</li>
-{% endfor %}
+{% extends "base.html" %}
+{% load call_with_args %}
+{% load macros %}
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% macro updownvote votable_post %}
+  <div class="updownvote">
+    {% if votable_post|args:user|call:"can_press_upvote" %}
+      <div><a href="{% url posts-vote proposal.id votable_post.id 'up' %}">upvote</a></div>
+    {% else %}
+      <div>upvote</div>
+    {% endif %}
+    <div>{{ votable_post.votescore }}</div>
+    {% if votable_post|args:user|call:"can_press_downvote" %}
+      <div><a href="{% url posts-vote proposal.id votable_post.id 'down' %}">downvote</a></div>
+    {% else %}
+      <div>downvote</div>
+    {% endif %}
+  </div>
+{% endmacro %}
 
-</ul></body>
-</html>
+{% block extrastyle %}
+  <link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
+{% endblock %}
+
+{% block content %}
+  <div class="proposal">
+    {% usemacro updownvote proposal %}
+    <div class="content">
+      <h1>{{ proposal.title }}</h1>
+      <span class="creator">by {{proposal.creator.profile.display_name}}</span>
+      <div class="diff">{{ proposal.diff_with_context|linebreaksbr }}</div>
+      <div class="motivation">{{ proposal.motivation|linebreaks }}</div>
+    </div>
+    <ul>
+    <div class="comments">
+      {% for comment in proposal.comment_set.all %}
+        <div class="comment">
+          {% usemacro updownvote comment %}
+          <div class="content">
+            <h2>Comment</h2>
+            <span class="creator">by {{comment.creator.profile.display_name}}</span>
+            <div class="motivation">{{ comment.motivation|linebreaks }}</div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
