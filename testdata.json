@@ -21,9 +21,9 @@
         "pk": 2,
         "model": "auth.user",
         "fields": {
-            "username": "jdegrave",
-            "first_name": "Jonas",
-            "last_name": "Degrave",
+            "username": "317070",
+            "first_name": "Joownas",
+            "last_name": "D.",
             "is_active": true,
             "is_superuser": true,
             "is_staff": true,
