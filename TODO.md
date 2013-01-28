@@ -4,8 +4,6 @@ Todo
 Features
 --------
 
-- messages boveneaan het scherm na register, profileupdate, ..
-- profile in admin
 - i18n
 
 Ideas
