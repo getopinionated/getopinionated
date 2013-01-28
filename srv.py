@@ -8,6 +8,6 @@ status = os.system('python manage.py validate')
 if(not status):
     os.system('python manage.py syncdb --noinput')
     os.system('python manage.py loaddata testdata.json')
-    os.system('python manage.py runserver 8002')
+    os.system('python manage.py runserver 8000')
 else:
     print "Invalid models!"
