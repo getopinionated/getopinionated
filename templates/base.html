@@ -36,7 +36,7 @@
                 {% if user.is_authenticated %}
                     <li><a href="{% url profile-update %}">Profile</a></li>
                     <li><a href="{% url user-logout %}">Logout</a></li>
-                    <li class="right">(logged in as {{user.username}})</li>
+                    <li class="right">(logged in as {{user.profile.display_name}})</li>
                 {% endif %}
             </ul>
         </div>

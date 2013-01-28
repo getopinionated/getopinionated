@@ -34,7 +34,7 @@ def userregister(request):
             new_user = authenticate(username=request.POST['username'],
                                     password=request.POST['password1'])
             login(request, new_user)
-            messages.success(request, 'Registration complete.')
+            messages.success(request, 'Registration complete')
             return HttpResponseRedirect(reverse('profile-update'))
     else:
         form = ProfileCreationForm()
@@ -50,7 +50,7 @@ def profileupdate(request):
         form = ProfileUpdateForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Profile details updated.')
+            messages.success(request, 'Profile details updated')
             return HttpResponseRedirect(reverse('profile-update'))
     else:
         form = ProfileUpdateForm(instance=request.user)

@@ -1,4 +1,4 @@
-from models import Proposal, Comment
+from models import Proposal, Comment, UpDownVote
 from django.contrib import admin
 
 class CommentInline(admin.TabularInline):
@@ -6,9 +6,14 @@ class CommentInline(admin.TabularInline):
     fk_name = 'proposal'
     extra = 1
 
+class VoteInline(admin.TabularInline):
+    model = UpDownVote
+    # fk_name = 'proposal'
+    extra = 1
+
 class ProposalAdmin(admin.ModelAdmin):
     list_display = ['creator', 'title', ]
-    inlines = [CommentInline]
+    inlines = [CommentInline, VoteInline]
     list_filter = ['create_date']
 
 admin.site.register(Proposal, ProposalAdmin)

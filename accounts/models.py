@@ -2,11 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 
-# note: get profile from user: user.get_profile()
 class UserProfile(models.Model):  
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, related_name="profile")
 
-    def disiplay_name(self):
+    @property
+    def display_name(self):
         return self.user.username
 
 ### make sure profile is created when new user is created ###

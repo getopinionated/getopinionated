@@ -9,5 +9,5 @@ urlpatterns = patterns('',
             model=Proposal,
             template_name='proposal/detail.html'),
         name='proposals-detail'),
-    url(r'^(?P<post_id>\d+)/vote/P<updown>.+/$', views.vote, name='proposals-vote'),
+    url(r'^(?P<proposal_id>\d+)/(?P<post_id>\d+)/vote/(?P<updown>.+)/$', views.vote, name='posts-vote'),
 )

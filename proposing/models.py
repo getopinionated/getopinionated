@@ -5,21 +5,37 @@ import datetime
 
 class VotablePost(models.Model):
     """ super-model for all votable models """
-    # meta-data
     creator = models.ForeignKey(User, related_name="created_proposals")
     create_date = models.DateTimeField(auto_now=True)
 
     @property
-    def num_upvotes(self):
-        return self.up_down_votes.filter(is_up=True).count()
-
-    @property
-    def num_downvotes(self):
-        return self.up_down_votes.filter(is_up=False).count()
-
-    @property
     def votescore(self):
-        return self.num_updownvotes - self.num_downvotes
+        num_upvotes = self.up_down_votes.filter(is_up=True).count()
+        num_downvotes = self.up_down_votes.filter(is_up=False).count()
+        return num_upvotes - num_downvotes
+
+    def vote_from_user(self, user):
+        uservotes = self.up_down_votes.filter(user=user)
+        if uservotes:
+            return uservotes[0]
+        return None
+
+    def user_can_vote(self, user):
+        if self.creator == user:
+            return False
+        return not self.vote_from_user(user) != None
+
+    def user_has_voted(self, user):
+        vote = self.vote_from_user(user)
+        if vote != None:
+            return "up" if vote.is_up else "down"
+        return None
+
+    def can_press_upvote(self, user):
+        return self.user_can_vote(user) or self.user_has_voted(user) == 'up'
+
+    def can_press_downvote(self, user):
+        return self.user_can_vote(user) or self.user_has_voted(user) == 'down'
 
 class UpDownVote(models.Model):
     user = models.ForeignKey(User, related_name="up_down_votes")
@@ -40,7 +56,6 @@ class Proposal(VotablePost):
         return self.diff_textual
 
 class Comment(VotablePost):
-    # essentials
     proposal = models.ForeignKey(Proposal)
     motivation = models.TextField()
 

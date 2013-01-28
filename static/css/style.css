@@ -155,6 +155,9 @@ ul.messages {
 	margin-top: 5px;
 	font-weight: bold;
 }
+ul.messages li.error {
+	color: red;
+}
 
 /** CONTENT **/
 #content h1, h2, h3, h4, h5, h6 {

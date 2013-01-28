@@ -1,0 +1,46 @@
+/* horizontal layout */
+.proposal * {
+    clear: both;
+}
+.proposal .updownvote {
+    float: left;
+    width: 100px;
+    clear: none;
+}
+.proposal .content {
+    float: left;
+    width: 770px;
+    clear: none;
+}
+
+/* proposal up/down vote */
+.proposal .updownvote div {
+    padding-top: 5px;
+}
+.proposal .updownvote div:first-child {
+    padding-top: 40px;
+}
+
+/* proposal content */
+.proposal .content h1, .proposal .content h2 {
+    display: inline;
+}
+.proposal .content .creator {
+    padding-left: 20px;
+    color: #0A67A2;
+}
+.proposal .content .diff {
+    background-color: #DDEEFF;
+    padding: 10px;
+}
+.proposal .content .motivation {
+    padding: 10px 10px 10px 60px;
+}
+
+/* comment content */
+.comment .content {
+    border-top: 1px solid black;
+}
+.comment .content .motivation {
+    padding: 10px 10px 10px 10px;
+}

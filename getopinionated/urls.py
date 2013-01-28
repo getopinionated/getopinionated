@@ -14,6 +14,6 @@ urlpatterns = patterns('',
     url(r'^$', index, name="home-index"),
     (r'^accounts/', include('accounts.urls')),
     (r'^home/', include('home.urls')),
-	(r'^propositions/', include('proposing.urls')),
+	(r'^proposals/', include('proposing.urls')),
 )
 
