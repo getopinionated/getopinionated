@@ -33,10 +33,10 @@ class VotablePost(models.Model):
         return None
 
     def can_press_upvote(self, user):
-        return self.user_can_vote(user) or self.user_has_voted(user) == 'up'
+        return self.user_can_vote(user) or self.user_has_voted(user) == 'down'
 
     def can_press_downvote(self, user):
-        return self.user_can_vote(user) or self.user_has_voted(user) == 'down'
+        return self.user_can_vote(user) or self.user_has_voted(user) == 'up'
 
 class UpDownVote(models.Model):
     user = models.ForeignKey(User, related_name="up_down_votes")
