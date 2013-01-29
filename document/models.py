@@ -16,12 +16,24 @@ class Document(models.Model):
     version = models.IntegerField()
     
 class Diff(models.Model):
-    diff_text = models.TextField()
+    text_representation = models.TextField()
     
     def generateDiff(self, originaltext, derivedtext):
         diff = difflib.ndiff(originaltext.splitlines(1), derivedtext.splitlines(1))
         return Diff(''.join(diff) )
     
     def getOriginalText(self):
-        lines = self.diff_text.splitline(1)
-        correct_lines = ''.join(lines)
+        lines = self.text_representation.__str__().splitlines(1)
+        return ''.join([line[2:] for line in lines if line.startswith('- ') or line.startswith('  ')]) 
+    
+    def getNewText(self):
+        lines = self.text_representation.__str__().splitlines(1)
+        return ''.join([line[2:] for line in lines if line.startswith('+ ') or line.startswith('  ')])
+    
+    def getUnifiedDiff(self): #room for optimization
+        diff = difflib.unified_diff(self.getOriginalText().splitlines(1), self.getNewText().splitlines(1)) 
+        return ''.join(diff) 
+    
+    def getNDiff(self):
+        return self.text_representation
+        

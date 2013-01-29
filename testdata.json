@@ -478,10 +478,17 @@
     },
     {
         "pk": 1,
+        "model": "document.diff",
+        "fields": {
+            "text_representation": "+ cookie\n+ cookie\n  hallo\n- cookie\n- cookie"
+        }
+    },
+    {
+        "pk": 1,
         "model": "proposing.proposal",
         "fields": {
             "motivation": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\r\n\r\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            "diff_textual": "-; \tPATH\t1\r\n-; \tCOORD\t1005 957 CS\r\n-; \tRET\r\n #TAB\tX2X10\t10\r\n-\tERR44\r\n+\tFULLSP\r\n+\tPATH\t2",
+            "diff": 1,
             "title": "Copyright should be abolished"
         }
     },

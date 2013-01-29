@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 import datetime
+from document.models import Diff
 
 class VotablePost(models.Model):
     """ super-model for all votable models """
@@ -46,14 +47,14 @@ class UpDownVote(models.Model):
 class Proposal(VotablePost):
     title = models.CharField(max_length=255)
     motivation = models.TextField()
-    diff_textual = models.TextField()
+    diff = models.ForeignKey(Diff)
 
     def __unicode__(self):
         return "Proposal: {}".format(self.title)
     
     @property
     def diff_with_context(self):
-        return self.diff_textual
+        return self.diff.getNDiff()
 
 class Comment(VotablePost):
     proposal = models.ForeignKey(Proposal)
