@@ -1,25 +1,23 @@
 from django.db import models
 from django.utils import timezone
-import datetime
 
 import difflib
-# Create your models here.
 
 '''
     contains the final version of a certain document, e.g. the manifesto or the program
 '''
 
-class Document(models.Model):
+class FullDocument(models.Model):
     title = models.CharField(max_length=255)
-    full_text = models.TextField()
+    content = models.TextField() 
     create_date = models.DateTimeField('Date entered', default=timezone.now())
     version = models.IntegerField()
     
     def applyDiff(self, diff):
         originalText = diff.getOriginalText()
-        if originalText != self.full_text.__str__():
+        if originalText != self.content.__str__():
             raise Exception("This diff doesn't apply to this document!")
-        return Document(title=self.title, full_text=diff.getOriginalText(), create_date=timezone.now(), version=self.version+1)
+        return FullDocument(title=self.title, content=diff.getOriginalText(), create_date=timezone.now(), version=self.version+1)
 
 '''
     contains a diff between two versions of a document. Is the content of a proposal

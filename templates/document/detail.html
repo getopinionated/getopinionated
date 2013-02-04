@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load call_with_args %}
+{% load macros %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" href="{{STATIC_URL}}css/document.css" type="text/css" charset="utf-8" />
+{% endblock %}
+
+{% block content %}
+  <div class="document">
+  	<h1>{{ fulldocument.title }}</h1>
+    {{ fulldocument.content }}
+  </div>
+{% endblock %}

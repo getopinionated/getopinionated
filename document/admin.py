@@ -1,7 +1,7 @@
-from models import Document, Diff
+from models import FullDocument, Diff
 from django.contrib import admin
 
-admin.site.register(Document)
+admin.site.register(FullDocument)
 
 class DiffAdmin(admin.ModelAdmin):
     #fields = ['diff_text', 'getOriginalText', 'getNewText']

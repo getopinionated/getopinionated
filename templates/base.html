@@ -28,6 +28,8 @@
         <div class="menu">
             <ul>
                 <li><a href="{% url proposals-index %}">Proposals</a></li>
+                <li><a href="{% url document-detail 1 %}">Document</a></li>
+                
                 {% if not user.is_authenticated %}
                     <li><a href="{% url user-login %}">Login</a></li>
                     <li><a href="{% url user-register %}">Register</a></li>
