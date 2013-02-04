@@ -25,7 +25,6 @@ class Document(models.Model):
     contains a diff between two versions of a document. Is the content of a proposal
 '''
 
-    
 class Diff(models.Model):
     text_representation = models.TextField()
     

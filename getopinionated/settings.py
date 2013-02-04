@@ -114,6 +114,11 @@ INSTALLED_APPS = (
     'document',
 )
 
+AUTHENTICATION_BACKENDS = (
+    'accounts.backend.EmailModelBackend',
+    'django.contrib.auth.backends.ModelBackend', 
+)
+
 ### SSL settings (common.middleware.SSLRedirect) ###
 # Forced SSL
 SSL_URLS = (
