@@ -8,13 +8,12 @@ from django.shortcuts import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from common.shortcuts import render_to_response
 from decorators import not_logged_in
-from forms import ProfileCreationForm, ProfileUpdateForm
+from forms import ProfileCreationForm, ProfileUpdateForm, EmailAuthenticationForm
 
 @not_logged_in
 def userlogin(request):
     # Initialize the form either fresh or with the appropriate POST data as the instance
-    auth_form = AuthenticationForm(None, request.POST or None)
- 
+    auth_form = EmailAuthenticationForm(None, request.POST or None)
     # The form itself handles authentication and checking to make sure password and such are supplied.
     if auth_form.is_valid():
         login(request, auth_form.get_user())
@@ -31,7 +30,7 @@ def userregister(request):
         form = ProfileCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            new_user = authenticate(username=request.POST['username'],
+            new_user = authenticate(username=user.username,
                                     password=request.POST['password1'])
             login(request, new_user)
             messages.success(request, 'Registration complete')
