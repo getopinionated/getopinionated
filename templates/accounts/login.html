@@ -3,11 +3,11 @@
 {% block content %}
 
 <form action="{% url user-login %}" method="POST">
-    {% csrf_token %}
-    <table>
-    {{ form }}
-    </table>
-    <input type="submit" value="login" />
+  {% csrf_token %}
+  <table>
+  {{ form }}
+  </table>
+  <input type="submit" value="login" />
 </form>
 
 {% endblock %}

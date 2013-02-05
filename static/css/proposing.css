@@ -20,6 +20,9 @@
 .proposal .updownvote div:first-child {
     padding-top: 40px;
 }
+.proposal .updownvote div:last-child {
+    padding-bottom: 40px;
+}
 
 /* proposal content */
 .proposal .content h1, .proposal .content h2 {
@@ -43,4 +46,12 @@
 }
 .comment .content .motivation {
     padding: 10px 10px 10px 10px;
+}
+
+/* commentform */
+form.commentform h2 {
+    display: block !important;
+}
+form.commentform input, form.commentform textarea {
+    margin-left: 10px;
 }

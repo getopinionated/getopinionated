@@ -44,5 +44,18 @@
         </div>
       {% endfor %}
     </div>
+    <div class="comment">
+      <div class="updownvote">
+        &nbsp;
+      </div>
+      <div class="content">
+        <form action="{% url proposals-detail proposal.id %}" method="POST" class="commentform">
+          {% csrf_token %}
+          <h2>Write your own comment</h2>
+          {{ commentform.motivation }}
+          <br/><input type="submit" value="comment" />
+        </form>
+      </div>
+    </div>
   </div>
 {% endblock %}
