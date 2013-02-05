@@ -20,7 +20,7 @@ def vote(request, proposal_id, post_id, updown):
     assert updown in ['up', 'down'], 'illegal updown value'
     # check if upvote can be undone
     if post.user_has_voted(user) != None:
-        if post.user_has_voted(user) != updown:
+        if post.user_has_voted(user) == updown:
             vote = post.vote_from_user(user)
             vote.delete()
             messages.success(request, "Vote removed successfully")
