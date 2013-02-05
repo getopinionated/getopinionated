@@ -16,27 +16,33 @@ class VotablePost(models.Model):
         return num_upvotes - num_downvotes
 
     def vote_from_user(self, user):
+        if not user.is_authenticated():
+            return None
         uservotes = self.up_down_votes.filter(user=user)
         if uservotes:
             return uservotes[0]
         return None
 
     def user_can_vote(self, user):
+        if not user.is_authenticated():
+            return False
         if self.creator == user:
             return False
-        return not self.vote_from_user(user) != None
+        return self.vote_from_user(user) == None
 
     def user_has_voted(self, user):
+        if not user.is_authenticated():
+            return False
         vote = self.vote_from_user(user)
         if vote != None:
             return "up" if vote.is_up else "down"
         return None
 
     def can_press_upvote(self, user):
-        return self.user_can_vote(user) or self.user_has_voted(user) == 'down'
+        return self.user_can_vote(user) or self.user_has_voted(user) == 'up'
 
     def can_press_downvote(self, user):
-        return self.user_can_vote(user) or self.user_has_voted(user) == 'up'
+        return self.user_can_vote(user) or self.user_has_voted(user) == 'down'
 
 class UpDownVote(models.Model):
     user = models.ForeignKey(User, related_name="up_down_votes")
