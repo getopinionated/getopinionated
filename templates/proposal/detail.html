@@ -38,7 +38,9 @@
           {% usemacro updownvote comment %}
           <div class="content">
             <h2>Comment</h2>
-            <span class="creator">by {{comment.creator.profile.display_name}}</span>
+            {% if comment.creator %}
+              <span class="creator">by {{comment.creator.profile.display_name}}</span>
+            {% endif %}
             <div class="motivation">{{ comment.motivation|linebreaks }}</div>
           </div>
         </div>
@@ -52,8 +54,11 @@
         <form action="{% url proposals-detail proposal.id %}" method="POST" class="commentform">
           {% csrf_token %}
           <h2>Write your own comment</h2>
-          {{ commentform.motivation }}
-          <br/><input type="submit" value="comment" />
+          {{ commentform.motivation.errors }}
+          <p>{{ commentform.motivation }}</p>
+          {{ commentform.color.errors }}
+          <p>Color: {{ commentform.color }}</p>
+          <p><input type="submit" value="comment" /></p>
         </form>
       </div>
     </div>

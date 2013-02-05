@@ -52,6 +52,13 @@
 form.commentform h2 {
     display: block !important;
 }
-form.commentform input, form.commentform textarea {
-    margin-left: 10px;
+form.commentform > p {
+    margin: 0;
+    padding-left: 10px;
+}
+form.commentform > ul.errorlist{
+    list-style-type: none;
+    color: red;
+    margin: 0;
+    padding-left: 10px;
 }

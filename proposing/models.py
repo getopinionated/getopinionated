@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 class VotablePost(models.Model):
     """ super-model for all votable models """
-    creator = models.ForeignKey(User, related_name="created_proposals")
+    creator = models.ForeignKey(User, related_name="created_proposals", null=True)
     create_date = models.DateTimeField(auto_now=True)
 
     @property
@@ -63,8 +63,16 @@ class Proposal(VotablePost):
         return self.diff.getNDiff()
 
 class Comment(VotablePost):
+    # settings
+    COMMENT_COLORS = (
+        ('POS', 'positive'),
+        ('NEUTR', 'neutral'),
+        ('NEG', 'negative'),
+    )
+    # fields
     proposal = models.ForeignKey(Proposal)
     motivation = models.TextField()
+    color = models.CharField(max_length=10, choices=COMMENT_COLORS)
 
     def __unicode__(self):
         return "Comment on {}".format(self.proposal)

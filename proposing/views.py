@@ -20,7 +20,8 @@ def detail(request, proposal_id):
         if commentform.is_valid():
             new_comment = commentform.save(commit=False)
             new_comment.proposal = proposal
-            new_comment.creator = request.user
+            if request.user.is_authenticated():
+                new_comment.creator = request.user
             new_comment.save()
             messages.success(request, 'Comment added')
             return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_id,)))
