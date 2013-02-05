@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
 import datetime
 from document.models import Diff
+from django.contrib.auth.models import User
 
 class VotablePost(models.Model):
     """ super-model for all votable models """
