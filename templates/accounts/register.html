@@ -2,12 +2,10 @@
 
 {% block content %}
 
-<form action="{% url user-register %}" method="POST">
+<form action="{% url proposal-post %}" method="POST">
     {% csrf_token %}
-    <table>
     {{ form }}
-    </table>
-    <input type="submit" value="register" />
+    <input type="submit" value="submit" />
 </form>
 
 {% endblock %}

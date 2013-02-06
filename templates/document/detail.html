@@ -7,8 +7,17 @@
 {% endblock %}
 
 {% block content %}
-  <div class="document">
-  	<h1>{{ fulldocument.title }}</h1>
-    {{ fulldocument.content }}
-  </div>
+	<div class="document">
+		<h1>{{ fulldocument.title }}</h1>
+		{{ fulldocument.content }}
+	</div>
+
+
+	<form action="{% url document-detail fulldocument.pk %}" method="POST">
+	    {% csrf_token %}
+	    {{ form }}</br>
+	    <input type="submit" value="submit your proposal" />
+	</form>
+
+  
 {% endblock %}

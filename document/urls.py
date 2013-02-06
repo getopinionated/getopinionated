@@ -6,11 +6,9 @@ Created on Feb 4, 2013
 from django.conf.urls.defaults import *
 from django.views.generic import DetailView, ListView
 from models import FullDocument
+from views import documentView
 
 urlpatterns = patterns('document.views',
-    url(r'^Doc(?P<pk>\d+)$', DetailView.as_view(
-            model=FullDocument,
-            template_name='document/detail.html'),
-        name='document-detail'),
+    url(r'^Doc(?P<pk>\d+)$', documentView,name='document-detail'),
 )
 

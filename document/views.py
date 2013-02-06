@@ -2,33 +2,25 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from common.shortcuts import render_to_response
+from forms import ProposalForm
+from django.contrib.auth.decorators import login_required
+from models import FullDocument
 
-def vote(request, proposal_id, post_id, updown):
-    # get vars
-    post = get_object_or_404(VotablePost, pk=post_id)
-    user = request.user
-    proposal_detail_redirect = HttpResponseRedirect(reverse('proposals-detail', args=(proposal_id,)))
-    assert updown in ['up', 'down'], 'illegal updown value'
-    # check if upvote can be undone
-    if post.user_has_voted(user) != None:
-        if post.user_has_voted(user) != updown:
-            vote = post.vote_from_user(user)
-            vote.delete()
-            messages.success(request, "Vote removed successfully")
+@login_required
+def documentView(request, pk):
+        # Initialize the form either fresh or with the appropriate POST data as the instance
+    fulldocument = FullDocument.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = ProposalForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('profile-update'))
         else:
-            messages.error(request, "You already voted on this post")
-        return proposal_detail_redirect
-    # check if upvote is allowed
-    if not post.user_can_vote(user):
-        messages.error(request, "You can't vote on this post")
-        return proposal_detail_redirect
-    # create updownvote
-    vote = UpDownVote(
-        user = user,
-        post = post,
-        is_up = (updown == 'up'),
-    )
-    vote.save()
-    # redirect
-    messages.success(request, "Vote successful")
-    return proposal_detail_redirect
+            pass
+    else:
+        form = ProposalForm(instance=fulldocument)
+
+    return render_to_response(request, 'document/detail.html', {
+        'form': form,
+        'fulldocument': fulldocument
+    })
