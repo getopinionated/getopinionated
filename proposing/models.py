@@ -54,6 +54,7 @@ class Proposal(VotablePost):
     title = models.CharField(max_length=255)
     motivation = models.TextField()
     diff = models.ForeignKey(Diff)
+    views = models.IntegerField(default=0)
 
     def __unicode__(self):
         return "Proposal: {}".format(self.title)
@@ -62,6 +63,16 @@ class Proposal(VotablePost):
     def diff_with_context(self):
         return self.diff.getNDiff()
 
+    def isVoting(self):
+        return self.votescore()>10
+    
+    def isFinshed(self):
+        pass
+
+    def addView(self):
+        self.views += 1
+        self.save()
+        
 class Comment(VotablePost):
     # settings
     COMMENT_COLORS = (
