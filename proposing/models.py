@@ -72,7 +72,7 @@ class Comment(VotablePost):
     # fields
     proposal = models.ForeignKey(Proposal)
     motivation = models.TextField()
-    color = models.CharField(max_length=10, choices=COMMENT_COLORS)
+    color = models.CharField(max_length=10, choices=COMMENT_COLORS, default='NEUTR')
 
     def __unicode__(self):
         return "Comment on {}".format(self.proposal)
