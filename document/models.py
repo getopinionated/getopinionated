@@ -32,9 +32,10 @@ class Diff(models.Model):
     COMPLIANT = 3
     VERYCOMPLIANT = 4
     
-    def generateDiff(self, originaltext, derivedtext):
+    @staticmethod
+    def generateDiff(originaltext, derivedtext):
         diff = difflib.ndiff(originaltext.splitlines(1), derivedtext.splitlines(1))
-        return Diff(''.join(diff) )
+        return Diff( text_representation=''.join(diff) )
     
     def getOriginalText(self):
         lines = self.text_representation.__str__().splitlines(1)

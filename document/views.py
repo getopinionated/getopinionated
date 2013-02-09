@@ -10,10 +10,10 @@ def documentView(request, pk):
         # Initialize the form either fresh or with the appropriate POST data as the instance
     fulldocument = FullDocument.objects.get(pk=pk)
     if request.method == 'POST':
-        form = ProposalForm(request.POST, instance=request.user)
+        form = ProposalForm(request.POST, instance=fulldocument)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('profile-update'))
+            return HttpResponseRedirect(reverse('proposals-index'))
         else:
             pass
     else:
