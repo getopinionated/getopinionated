@@ -19,6 +19,15 @@ class FullDocument(models.Model):
             raise Exception("This diff doesn't apply to this document!")
         return FullDocument(title=self.title, content=diff.getOriginalText(), create_date=timezone.now(), version=self.version+1)
 
+    @staticmethod
+    def cleanText(text):
+        #clean carriages
+        text = text.replace('\r\n','\n')
+        text = text.replace('\r','\n')
+        if not text.endswith('\n'):
+            text = text + '/n'
+        return text
+
 '''
     contains a diff between two versions of a document. Is the content of a proposal
 '''
