@@ -25,7 +25,7 @@ class FullDocument(models.Model):
         text = text.replace('\r\n','\n')
         text = text.replace('\r','\n')
         if not text.endswith('\n'):
-            text = text + '/n'
+            text = text + '\n'
         return text
 
 '''
@@ -43,6 +43,8 @@ class Diff(models.Model):
     
     @staticmethod
     def generateDiff(originaltext, derivedtext):
+        originaltext = FullDocument.cleanText(originaltext)
+        derivedtext = FullDocument.cleanText(derivedtext)
         diff = difflib.ndiff(originaltext.splitlines(1), derivedtext.splitlines(1))
         return Diff( text_representation=''.join(diff) )
     

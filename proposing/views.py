@@ -8,7 +8,7 @@ from models import VotablePost, UpDownVote, Proposal, Comment
 from forms import CommentForm
 
 def index(request):
-    first_5_proposals = Proposal.objects.order_by('create_date')[:5]
+    first_5_proposals = Proposal.objects.order_by('create_date')[:]#for debugging purposes, results should actually be paginated
     return render(request, 'proposal/list.html', {
         'latest_proposal_list': first_5_proposals
     })

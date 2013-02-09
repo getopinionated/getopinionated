@@ -505,7 +505,7 @@
         "model": "document.fulldocument",
         "fields": {
             "title": "The Pirate Codex",
-            "content": "R",
+            "content": "R\n",
             "create_date": "2013-01-28T19:30:03.008Z",
             "version": 0
         }
