@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load call_with_args %}
+{% load macros %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
+{% endblock %}
+
+{% block content %}
+  <div class="proposal">
+    <div class="content">
+      <h1>{{ proposal.title }}</h1>
+      <span class="creator">by {{proposal.creator.profile.display_name}}</span>
+      <div class="diff">{{ proposal.diff_with_context|linebreaksbr }}</div>
+      <div class="motivation">{{ proposal.motivation|linebreaks }}</div>
+    </div>
+  </div>
+
+  <div class="votebuttons">
+	  <a href="{% url proposal-vote proposal.id '-5' %}">-5</a>
+	  <a href="{% url proposal-vote proposal.id '-4' %}">-4</a>
+	  <a href="{% url proposal-vote proposal.id '-3' %}">-3</a>
+	  <a href="{% url proposal-vote proposal.id '-2' %}">-2</a>
+	  <a href="{% url proposal-vote proposal.id '-1' %}">-1</a>
+	  <a href="{% url proposal-vote proposal.id '0' %}">0</a>
+	  <a href="{% url proposal-vote proposal.id '+1' %}">+1</a>
+	  <a href="{% url proposal-vote proposal.id '+2' %}">+2</a>
+	  <a href="{% url proposal-vote proposal.id '+3' %}">+3</a>
+	  <a href="{% url proposal-vote proposal.id '+4' %}">+4</a>
+	  <a href="{% url proposal-vote proposal.id '+5' %}">+5</a>
+  </div>
+
+{% endblock %}

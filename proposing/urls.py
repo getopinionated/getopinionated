@@ -7,4 +7,5 @@ urlpatterns = patterns('',
     url(r'^$', views.index, name='proposals-index'),
     url(r'^detail/(?P<proposal_id>\d+)/$', views.detail, name='proposals-detail'),
     url(r'^(?P<proposal_id>\d+)/(?P<post_id>\d+)/vote/(?P<updown>.+)/$', views.vote, name='posts-vote'),
+    url(r'^(?P<proposal_id>\d+)/vote/(?P<updown>.+)/$', views.proposalvote, name='proposal-vote'),
 )

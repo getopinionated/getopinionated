@@ -10,12 +10,12 @@ class VotablePost(models.Model):
     create_date = models.DateTimeField(auto_now=True)
 
     @property
-    def votescore(self):
+    def upvotescore(self):
         num_upvotes = self.up_down_votes.filter(is_up=True).count()
         num_downvotes = self.up_down_votes.filter(is_up=False).count()
         return num_upvotes - num_downvotes
 
-    def vote_from_user(self, user):
+    def updownvote_from_user(self, user):
         if not user.is_authenticated():
             return None
         uservotes = self.up_down_votes.filter(user=user)
@@ -23,32 +23,38 @@ class VotablePost(models.Model):
             return uservotes[0]
         return None
 
-    def user_can_vote(self, user):
+    def user_can_updownvote(self, user):
         if not user.is_authenticated():
             return False
         if self.creator == user:
             return False
-        return self.vote_from_user(user) == None
+        return self.updownvote_from_user(user) == None
 
-    def user_has_voted(self, user):
+    def user_has_updownvoted(self, user):
         if not user.is_authenticated():
             return False
-        vote = self.vote_from_user(user)
+        vote = self.updownvote_from_user(user)
         if vote != None:
             return "up" if vote.is_up else "down"
         return None
 
     def can_press_upvote(self, user):
-        return self.user_can_vote(user) or self.user_has_voted(user) == 'up'
+        return self.user_can_updownvote(user) or self.user_has_updownvoted(user) == 'up'
 
     def can_press_downvote(self, user):
-        return self.user_can_vote(user) or self.user_has_voted(user) == 'down'
+        return self.user_can_updownvote(user) or self.user_has_updownvoted(user) == 'down'
 
 class UpDownVote(models.Model):
     user = models.ForeignKey(User, related_name="up_down_votes")
     post = models.ForeignKey(VotablePost, related_name="up_down_votes")
     date = models.DateTimeField(auto_now=True)
     is_up = models.BooleanField("True if this is an upvote")
+
+class ProposalVote(models.Model):
+    user = models.ForeignKey(User, related_name="proposal_votes")
+    proposal = models.ForeignKey(VotablePost, related_name="proposal_votes")
+    date = models.DateTimeField(auto_now=True)
+    value = models.IntegerField("The value of the vote")
 
 class Proposal(VotablePost):
     title = models.CharField(max_length=255)
@@ -64,14 +70,39 @@ class Proposal(VotablePost):
         return self.diff.getNDiff()
 
     def isVoting(self):
-        return self.votescore()>10
+        return self.upvotescore>10
     
     def isFinshed(self):
-        pass
+        return self.upvotescore>10
 
     def addView(self):
         self.views += 1
         self.save()
+    
+    def proposalvote_from_user(self, user):
+        if not user.is_authenticated():
+            return None
+        uservotes = self.proposal_votes.filter(user=user)
+        if uservotes:
+            return uservotes[0]
+        return None
+
+    def user_has_proposalvoted(self, user):
+        if not user.is_authenticated():
+            return False
+        vote = self.proposalvote_from_user(user)
+        if vote != None:
+            return vote.value
+        return None
+
+    def user_can_proposalvote(self, user):
+        if not user.is_authenticated():
+            return False
+        # You can vote on your own proposals
+        #if self.creator == user:
+        #    return False
+        return self.proposalvote_from_user(user) == None
+
         
 class Comment(VotablePost):
     # settings
