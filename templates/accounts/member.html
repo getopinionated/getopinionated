@@ -1,0 +1,29 @@
+{% load macros %}
+{% load humanize %}
+{% load filters %}
+
+{% macro user-small user when %}
+	<div class="user-small">
+		<a href = {% url user-profile user.username %}>
+			<span title="{{when}}" class="user-time">{{when|naturaltime}}</span>
+		    <span class="user-name">{{user.profile.display_name}}</span>
+		    <span class="user-karma">{{user.profile.karma|mediumint}}</span>
+		</a>
+    </div>
+{% endmacro %}
+
+{% macro user-medium user when what %}
+	<div class="user-info">		
+		<div title="{{when}}" class="user-box-action">{{what}} {{when|naturaltime}}</div>
+	    <div class="user-box-avatar"></div>
+	    <div class="user-box-name">
+	    	<a href = {% url user-profile user.username %}>
+	    		{{user.profile.display_name}}
+	    	</a>
+	    	<br>
+	    	<div class="user-box-karma">{{user.profile.karma|mediumint}}</div>
+	    </div>
+	    
+    </div>
+{% endmacro %}
+

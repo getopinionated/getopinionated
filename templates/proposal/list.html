@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load filters %}
+{% load macros %}
+{% loadmacros "accounts/member.html" %}
 
 {% block content %}
 
@@ -33,6 +35,9 @@
         		</div>
         		<div class="summary">
         			<a href="{% url proposals-detail proposal.id %}">{{ proposal.title }}</a>
+        		</div>
+        		<div class="creator-small">
+        			<a href="{% usemacro user-small proposal.creator proposal.create_date%}</a>
         		</div>
         	</li>
         {% endfor %}

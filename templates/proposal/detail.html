@@ -2,6 +2,7 @@
 {% load call_with_args %}
 {% load macros %}
 {% load filters %}
+{% loadmacros "accounts/member.html" %}
 
 {% macro updownvote votable_post %}{% if votable_post|args:user|call:"can_press_upvote" %}<a href="{% url posts-vote proposal.id votable_post.id 'up' %}">+</a>{% else %}+{% endif %} / {% if votable_post|args:user|call:"can_press_downvote" %}<a href="{% url posts-vote proposal.id votable_post.id 'down' %}">-</a>{% else %}-{% endif %}<br/><span class="score">{% if votable_post.votescore %}{{ votable_post.votescore|smallint }}{% else %}0{% endif %}</span>{% endmacro %}
 
@@ -14,12 +15,14 @@
         <header class="content">
             <h1>
                 <span class="updownvote">{% usemacro updownvote proposal %}</span>
-                <span class="title">{{ proposal.title }}</span> 
-                <span class="creator">by {{proposal.creator.profile.display_name}}</span>
+                <span class="title">{{ proposal.title }}</span>
             </h1>
         </header>
         <div class="diff">{{ proposal.diff_with_context|linebreaksbr }}</div>
-        <div class="motivation">{{ proposal.motivation|linebreaks }}</div>
+        <div class="motivation">
+        	<span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>
+        	{{ proposal.motivation|linebreaks }}
+        </div>
         {% if proposal.isVoting and not proposal.isFinished%}
         	<div class="votebuttons">
 			  <a href="{% url proposal-vote proposal.id '-5' %}">-5</a>
@@ -42,7 +45,7 @@
                 <h2>
                     <span class="updownvote">{% usemacro updownvote comment %}</span>
                     <span class="title">Comment</span>
-                    {% if comment.creator %}<span class="creator">by {{comment.creator.profile.display_name}}</span>{% endif %}
+                    {% if comment.creator %}{% usemacro user-small comment.creator comment.create_date%}{% endif %}
                 </h2>
                 <div class="motivation">{{ comment.motivation|linebreaks }}</div>
             </div>

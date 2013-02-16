@@ -112,6 +112,7 @@ INSTALLED_APPS = (
     'home',
 	'proposing',
     'document',
+    'django.contrib.humanize',
 )
 
 AUTHENTICATION_BACKENDS = (
