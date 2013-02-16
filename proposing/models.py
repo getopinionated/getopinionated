@@ -21,8 +21,6 @@ class VotablePost(models.Model):
         num_downvotes = self.up_down_votes.filter(is_up=False).count()
         return num_upvotes - num_downvotes
 
-
-
     def updownvote_from_user(self, user):
         if not user.is_authenticated():
             return None
@@ -86,9 +84,11 @@ class Proposal(VotablePost):
             total += i*num_votes
         return total
 
+    @property
     def isVoting(self):
         return self.upvotescore>10
     
+    @property
     def isFinished(self):
         return self.proposalvotescore>10
 

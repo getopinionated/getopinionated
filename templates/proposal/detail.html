@@ -20,6 +20,22 @@
         </header>
         <div class="diff">{{ proposal.diff_with_context|linebreaksbr }}</div>
         <div class="motivation">{{ proposal.motivation|linebreaks }}</div>
+        {% if proposal.isVoting and not proposal.isFinished%}
+        	<div class="votebuttons">
+			  <a href="{% url proposal-vote proposal.id '-5' %}">-5</a>
+			  <a href="{% url proposal-vote proposal.id '-4' %}">-4</a>
+			  <a href="{% url proposal-vote proposal.id '-3' %}">-3</a>
+			  <a href="{% url proposal-vote proposal.id '-2' %}">-2</a>
+			  <a href="{% url proposal-vote proposal.id '-1' %}">-1</a>
+			  <a href="{% url proposal-vote proposal.id '0' %}">0</a>
+			  <a href="{% url proposal-vote proposal.id '+1' %}">+1</a>
+			  <a href="{% url proposal-vote proposal.id '+2' %}">+2</a>
+			  <a href="{% url proposal-vote proposal.id '+3' %}">+3</a>
+			  <a href="{% url proposal-vote proposal.id '+4' %}">+4</a>
+			  <a href="{% url proposal-vote proposal.id '+5' %}">+5</a>
+		  </div>
+        {% endif %}        
+        {% if proposal.isFinished or not proposal.isVoting %}
         <div class="comments">
             {% for comment in proposal.comment_set.all %}
             <div class="comment">
@@ -32,6 +48,8 @@
             </div>
             {% endfor %}
         </div>
+        {% endif %}
+        {% if not proposal.isVoting %}
         <div class="owncomment">
             <h2>Write your own comment</h2>
             <form action="{% url proposals-detail proposal.id %}" method="POST" class="commentform">
@@ -43,5 +61,7 @@
                 <p><input type="submit" value="comment" /></p>
             </form>
         </div>
+        {% endif %}
+        
     </article>
 {% endblock %}
