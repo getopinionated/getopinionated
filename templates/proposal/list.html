@@ -5,7 +5,35 @@
     {% if latest_proposal_list %}
         <ul>
         {% for proposal in latest_proposal_list %}
-            <li><a href="{% url proposals-detail proposal.id %}">{{ proposal.title }}</a></li>
+        	<li>
+        		<div class="numberblock upvotescore">
+        			<div class="mini-counts">
+        				{{ proposal.upvotescore }}
+        			</div>
+        			<div class="numberblocktext">
+        				votes
+        			</div>
+        		</div>
+        		<div class="numberblock numberofcomments">
+        			<div class="mini-counts">
+        				{{ proposal.numberofcomments }}
+        			</div>
+        			<div class="numberblocktext">
+        				comments
+        			</div>
+        		</div>
+        		<div class="numberblock views">
+        			<div class="mini-counts">
+        				{{ proposal.views }}
+        			</div>
+        			<div class="numberblocktext">
+        				views
+        			</div>
+        		</div>
+        		<div class="summary">
+        			<a href="{% url proposals-detail proposal.id %}">{{ proposal.title }}</a>
+        		</div>
+        	</li>
         {% endfor %}
         </ul>
     {% else %}
