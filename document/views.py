@@ -8,7 +8,7 @@ from models import FullDocument
 
 def documentView(request, pk):
         # Initialize the form either fresh or with the appropriate POST data as the instance
-    fulldocument = FullDocument.objects.get(pk=pk)
+    fulldocument = FullDocument.objects.get(pk=pk).getFinalVersion()
     if request.method == 'POST':
         form = ProposalForm(request.POST, instance=fulldocument)
         if form.is_valid():

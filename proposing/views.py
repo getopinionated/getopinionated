@@ -15,7 +15,13 @@ def index(request):
 
 def detail(request, proposal_id):
     proposal = get_object_or_404(Proposal, pk=proposal_id)
-    if proposal.isVoting():
+    if proposal.isFinished():
+        if not proposal.merged:
+            proposal.initiateVoteCount()
+        return render(request, 'proposal/finished.html', {
+            'proposal': proposal,
+        })
+    elif proposal.isVoting():
         return render(request, 'proposal/voting.html', {
             'proposal': proposal,
         })
