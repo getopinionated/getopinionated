@@ -5,7 +5,7 @@
 <form action="{% url profile-update %}" method="POST">
     {% csrf_token %}
     <table>
-    {{ form }}
+    {{ form.as_p }}
     </table>
     <input type="submit" value="update" />
 </form>

@@ -15,7 +15,7 @@
 
 	<form action="{% url document-detail fulldocument.pk %}" method="POST">
 	    {% csrf_token %}
-	    {{ form }}</br>
+	    {{ form.as_p }}</br>
 	    <input type="submit" value="submit your proposal" />
 	</form>
 
