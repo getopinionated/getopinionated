@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load call_with_args %}
+{% load macros %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
+{% endblock %}
+
+{% block content %}
+  <div class="proposal">
+    <div class="content">
+      <h1>{{ proposal.title }}</h1>
+      <span class="creator">by {{proposal.creator.profile.display_name}}</span>
+      <div class="diff">{{ proposal.diff_with_context|linebreaksbr }}</div>
+      <div class="motivation">{{ proposal.motivation|linebreaks }}</div>
+    </div>
+    <ul>
+    <div class="comments">
+      {% for comment in proposal.comment_set.all %}
+        <div class="comment">
+          <div class="content">
+            <h2>Comment</h2>
+            {% if comment.creator %}
+              <span class="creator">by {{comment.creator.profile.display_name}}</span>
+            {% endif %}
+            <div class="motivation">{{ comment.motivation|linebreaks }}</div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

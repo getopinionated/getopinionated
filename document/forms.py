@@ -20,6 +20,7 @@ class ProposalForm(forms.ModelForm):
         newcontent = FullDocument.cleanText(self.cleaned_data["content"])
         newdiff = Diff.generateDiff(self.originalcontent,
                                     newcontent)
+        newdiff.fulldocument = self.instance
         newdiff.save()
         
         newproposal = Proposal(title = self.cleaned_data["title"],

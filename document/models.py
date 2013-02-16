@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.db.models import Max
 
 import difflib
 
@@ -15,9 +16,21 @@ class FullDocument(models.Model):
     
     def applyDiff(self, diff):
         originalText = diff.getOriginalText()
-        if originalText != self.content.__str__():
+        mytext = FullDocument.cleanText(self.content.__str__())
+        if originalText != mytext:
             raise Exception("This diff doesn't apply to this document!")
-        return FullDocument(title=self.title, content=diff.getOriginalText(), create_date=timezone.now(), version=self.version+1)
+        newcontent = diff.getNewText()
+        newcontent = FullDocument.cleanText(newcontent)
+        document = FullDocument(title=self.title, content=diff.getNewText(), create_date=timezone.now(), version=self.version+1)
+        document.save()
+        return document
+
+    def getFinalVersion(self):
+        v = FullDocument.objects.all().aggregate(Max('version'))
+        return FullDocument.objects.get(version = v['version__max'])
+
+    def isFinalVersion(self):
+        return self.getFinalVersion().version == self.version
 
     @staticmethod
     def cleanText(text):
@@ -34,6 +47,7 @@ class FullDocument(models.Model):
 
 class Diff(models.Model):
     text_representation = models.TextField()
+    fulldocument = models.ForeignKey(FullDocument)
     
     VERYSAFE = 0
     SAFE = 1
@@ -95,4 +109,4 @@ class Diff(models.Model):
                 else:
                     index+=1
                     newlines.insert(index,'  %s'%diffline[2:])
-        return Diff(text_representation = ''.join(newlines))    
+        return Diff(text_representation = ''.join(newlines))   

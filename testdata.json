@@ -462,6 +462,16 @@
     },
     {
         "pk": 1,
+        "model": "document.fulldocument",
+        "fields": {
+            "title": "The Pirate Codex",
+            "content": "R\n",
+            "create_date": "2013-01-28T19:30:03.008Z",
+            "version": 0
+        }
+    },
+    {
+        "pk": 1,
         "model": "proposing.votablepost",
         "fields": {
             "create_date": "2013-01-28T19:30:03.008Z",
@@ -480,13 +490,16 @@
         "pk": 1,
         "model": "document.diff",
         "fields": {
-            "text_representation": "+ cookie\n+ cookie\n  hallo\n- cookie\n- cookie"
+            "text_representation": "+ cookie\n+ cookie\n  R\n+ cookie\n+ cookie",
+        	"fulldocument": 1
         }
     },
     {
         "pk": 1,
         "model": "proposing.proposal",
         "fields": {
+        	"views": 0,
+        	"merged": false,
             "motivation": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\r\n\r\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
             "diff": 1,
             "title": "Copyright should be abolished"
@@ -498,16 +511,6 @@
         "fields": {
             "proposal": 1,
             "motivation": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\r\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-        }
-    },
-    {
-        "pk": 1,
-        "model": "document.fulldocument",
-        "fields": {
-            "title": "The Pirate Codex",
-            "content": "R\n",
-            "create_date": "2013-01-28T19:30:03.008Z",
-            "version": 0
         }
     }
 ]

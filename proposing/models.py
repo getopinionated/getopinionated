@@ -61,6 +61,7 @@ class Proposal(VotablePost):
     motivation = models.TextField()
     diff = models.ForeignKey(Diff)
     views = models.IntegerField(default=0)
+    merged = models.BooleanField(default=False)
 
     def __unicode__(self):
         return "Proposal: {}".format(self.title)
@@ -69,11 +70,19 @@ class Proposal(VotablePost):
     def diff_with_context(self):
         return self.diff.getNDiff()
 
+    @property
+    def proposalvotescore(self):
+        total = 0
+        for i in xrange(-5,6):
+            num_votes = self.proposal_votes.filter(value = i).count()
+            total += i*num_votes
+        return total
+
     def isVoting(self):
         return self.upvotescore>10
     
-    def isFinshed(self):
-        return self.upvotescore>10
+    def isFinished(self):
+        return self.proposalvotescore>10
 
     def addView(self):
         self.views += 1
@@ -103,6 +112,24 @@ class Proposal(VotablePost):
         #    return False
         return self.proposalvote_from_user(user) == None
 
+    def proposalIsAccepted(self):
+        return self.proposalvotescore>0
+
+    def initiateVoteCount(self):
+        if self.proposalIsAccepted():
+            self.diff.fulldocument.getFinalVersion().applyDiff(self.diff)
+            proposals = Proposal.objects.filter(merged=False,)
+            for proposal in proposals:
+                if proposal.pk == self.pk:
+                    continue
+                if proposal.merged == True:
+                    continue
+                proposal.diff.applyDiffOnThisDiff(self.diff)
+            self.merged = True
+            self.save()
+        else:
+            return
+        
         
 class Comment(VotablePost):
     # settings
