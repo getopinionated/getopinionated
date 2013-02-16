@@ -3,17 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.forms import AuthenticationForm
+from common.stringify import int_to_roman
 
 import re
-
-TABLE=[('M',1000),('CM',900),('D',500),('CD',400),('C',100),('XC',90),('L',50),('XL',40),('X',10),('IX',9),('V',5),('IV',4),('I',1)]
-def int_to_roman (integer):
-    parts = []
-    for letter, value in TABLE:
-        while value <= integer:
-            integer -= value
-            parts.append(letter)
-    return ''.join(parts)
 
 class ProfileCreationForm(UserCreationForm):
     
