@@ -100,14 +100,14 @@ nav#top ul a {
 /* header */
 
 .title-get {
-    color: #363;
+    color: #ccc;
 }
 
 .title-opinionated {
     color: #666;
 }
 
-header {
+section#content > header {
     max-width: 1024px;
     margin: 0 auto;
     display: flex;
@@ -115,34 +115,29 @@ header {
     display: -moz-flex;
 }
 
-header div {
+section#content > header div {
     display: box;
     display: -webkit-box;
     display: -moz-box;
-    vertical-align: middle;
-    text-align: center;
 }
 
-header #header-logo {
+section#content > header #header-logo {
     box-flex: 0;
     -webkit-box-flex: 0;
     -moz-box-flex: 0;
 }
 
-header #header-title {
+section#content > header #header-title {
     box-flex: 1;
     -webkit-box-flex: 1;
     -moz-box-flex: 1;
     width: 100%;
-}
-
-header h1 {
-	margin: 0; 
     font-family: "Dosis ExtraBold"; 
 	font-size: 100px;
+    padding-left: 50px;
 }
 
-header a {
+section#content > header a {
 	color: inherit!important;
 	font-weight: normal!important;
 	text-decoration: none!important; 
@@ -198,6 +193,28 @@ ul.messages li.error {
     max-width: 1024px;
     margin: 0 auto;
     padding: 8px 0;
+    color: #333;
+}
+
+/* main general content */
+
+#main a,
+#main a:visited
+{
+    color: #777;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#main a:hover,
+#main a:active {
+    color: #aaa;
+
+}
+
+#main ul li {
+    margin: 0 0 0 34px;
+    list-style: url('../images/lightbulb.png')
 }
 
 /* footer */
@@ -284,3 +301,26 @@ form label {
     display: inline-block;
     width: 150px;
 }
+
+/* article */
+
+article.proposal {
+}
+
+article.proposal header.content {
+}
+
+article.proposal header.content .updownvote {
+    font-weight: bold;
+}
+
+article.proposal header.content .title{
+    font-weight: bold;
+    font-size: 2em;
+}
+
+article.proposal header.content .creator {
+    font-weight: bold;
+    color: #aaf;
+}
+

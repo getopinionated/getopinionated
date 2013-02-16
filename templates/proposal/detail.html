@@ -3,64 +3,62 @@
 {% load macros %}
 
 {% macro updownvote votable_post %}
-  <div class="updownvote">
     {% if votable_post|args:user|call:"can_press_upvote" %}
-      <div><a href="{% url posts-vote proposal.id votable_post.id 'up' %}">upvote</a></div>
+        <a href="{% url posts-vote proposal.id votable_post.id 'up' %}">+</a>
     {% else %}
-      <div>upvote</div>
+        +
     {% endif %}
-    <div>{{ votable_post.votescore }}</div>
+    /
     {% if votable_post|args:user|call:"can_press_downvote" %}
-      <div><a href="{% url posts-vote proposal.id votable_post.id 'down' %}">downvote</a></div>
+        <a href="{% url posts-vote proposal.id votable_post.id 'down' %}">-</a>
     {% else %}
-      <div>downvote</div>
+        <div>-</div>
     {% endif %}
-  </div>
+    ( {{ votable_post.votescore }} )
 {% endmacro %}
 
 {% block extrastyle %}
-  <link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
+    <link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
 {% endblock %}
 
 {% block content %}
-  <div class="proposal">
-    {% usemacro updownvote proposal %}
-    <div class="content">
-      <h1>{{ proposal.title }}</h1>
-      <span class="creator">by {{proposal.creator.profile.display_name}}</span>
-      <div class="diff">{{ proposal.diff_with_context|linebreaksbr }}</div>
-      <div class="motivation">{{ proposal.motivation|linebreaks }}</div>
-    </div>
-    <ul>
-    <div class="comments">
-      {% for comment in proposal.comment_set.all %}
-        <div class="comment">
-          {% usemacro updownvote comment %}
-          <div class="content">
-            <h2>Comment</h2>
-            {% if comment.creator %}
-              <span class="creator">by {{comment.creator.profile.display_name}}</span>
-            {% endif %}
-            <div class="motivation">{{ comment.motivation|linebreaks }}</div>
-          </div>
+    <article class="proposal">
+        <header class="content">
+            <span class="updownvote">{% usemacro updownvote proposal %}</span>
+            <span class="title">{{ proposal.title }}</span> 
+            <span class="creator">by {{proposal.creator.profile.display_name}}</span>
+        </header>
+        <div class="diff">{{ proposal.diff_with_context|linebreaksbr }}</div>
+        <div class="motivation">{{ proposal.motivation|linebreaks }}</div>
+        <div class="comments">
+            {% for comment in proposal.comment_set.all %}
+                <div class="comment">
+                    {% usemacro updownvote comment %}
+                    <div class="content">
+                        <h2>Comment</h2>
+                        {% if comment.creator %}
+                            <span class="creator">by {{comment.creator.profile.display_name}}</span>
+                        {% endif %}
+                        <div class="motivation">{{ comment.motivation|linebreaks }}</div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-      {% endfor %}
-    </div>
-    <div class="comment">
-      <div class="updownvote">
-        &nbsp;
-      </div>
-      <div class="content">
-        <form action="{% url proposals-detail proposal.id %}" method="POST" class="commentform">
-          {% csrf_token %}
-          <h2>Write your own comment</h2>
-          {{ commentform.motivation.errors }}
-          <p>{{ commentform.motivation }}</p>
-          {{ commentform.color.errors }}
-          <p>Color: {{ commentform.color }}</p>
-          <p><input type="submit" value="comment" /></p>
-        </form>
-      </div>
-    </div>
-  </div>
+        <div class="comment">
+            <div class="updownvote">
+                &nbsp;
+            </div>
+            <div class="content">
+                <form action="{% url proposals-detail proposal.id %}" method="POST" class="commentform">
+                    {% csrf_token %}
+                    <h2>Write your own comment</h2>
+                    {{ commentform.motivation.errors }}
+                    <p>{{ commentform.motivation }}</p>
+                    {{ commentform.color.errors }}
+                    <p>Color: {{ commentform.color }}</p>
+                    <p><input type="submit" value="comment" /></p>
+                </form>
+            </div>
+        </div>
+    </article>
 {% endblock %}
