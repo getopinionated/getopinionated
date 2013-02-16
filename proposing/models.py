@@ -149,3 +149,7 @@ class Comment(VotablePost):
 
     def __unicode__(self):
         return "Comment on {}".format(self.proposal)
+
+class Tag(models.Model):
+    proposal = models.ManyToManyField(Proposal, related_name="tags")
+    title = models.CharField()
