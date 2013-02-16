@@ -1,0 +1,61 @@
+.user-small {
+	display: inline-block;
+    color: #aaf;
+    font-size: 16px;
+    //font-weight: normal;
+}
+
+.user-time {
+	color: #999;
+}
+
+.user-name {
+	font-weight: bold;
+	color: #bbf;
+}
+
+.user-karma {
+	color: #999;
+}
+
+.user-info {
+	text-align: left;
+	display: block;
+	width: 175px;
+	height: 55px;
+	margin: 0 0 5px 0;
+	padding: 0;
+	border: 0;
+	font-size: 14px;
+	vertical-align: baseline;
+	background-color: #ddd;
+	padding-left: 5px;
+	padding-top: 2px;
+	text-align: left;
+	vertical-align: top;
+	align: left;
+}
+
+.user-box-action {
+	display: block;
+	vertical-align: top;
+	margin: 0 0 3px 0;
+}
+
+.user-box-avatar {
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	background-color: #000;
+}
+
+.user-box-name {
+	display: inline-block;
+	vertical-align: top;
+	margin: 0 0 1px 0;
+}
+
+.user-box-karma {
+	display: inline-block;
+	vertical-align: top;
+}

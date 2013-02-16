@@ -272,11 +272,28 @@ ul.messages li.error {
 	margin: 0;
 	padding: 0;
 	border: 0;
-	font-size: 100%;
-	vertical-align: middle;
+	font-size: 150%;
+	vertical-align: top;
 	background: transparent;
 }
 
+.creator-small {
+	display: inline-block;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+
+.creator-medium {
+	display: block;
+	margin: 8px 8px 0 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+    float: left;
+}
 
 /* footer */
 

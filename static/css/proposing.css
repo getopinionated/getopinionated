@@ -40,12 +40,6 @@ article.proposal .title{
     margin-right: 0.7em;
 }
 
-article.proposal .creator {
-    font-weight: bold;
-    color: #aaf;
-    font-size: 0.5em;
-}
-
 article.proposal .diff {
     background-color: #ccc;
     padding: 4px;

@@ -9,6 +9,15 @@ from django.core.urlresolvers import reverse
 from common.shortcuts import render_to_response
 from decorators import not_logged_in
 from forms import ProfileCreationForm, ProfileUpdateForm, EmailAuthenticationForm
+from django.contrib.auth.models import User
+
+@not_logged_in
+def userprofile(request, username):
+    # Initialize the form either fresh or with the appropriate POST data as the instance
+    user = User.objects().get(username=username)
+    return render_to_response(request, 'accounts/profile.html', {
+        'user': user,
+    })
 
 @not_logged_in
 def userlogin(request):
