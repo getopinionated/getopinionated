@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load call_with_args %}
 {% load macros %}
+{% load filters %}
 
-{% macro updownvote votable_post %}{% if votable_post|args:user|call:"can_press_upvote" %}<a href="{% url posts-vote proposal.id votable_post.id 'up' %}">+</a>{% else %}+{% endif %} / {% if votable_post|args:user|call:"can_press_downvote" %}<a href="{% url posts-vote proposal.id votable_post.id 'down' %}">-</a>{% else %}-{% endif %}<br/><span class="score">{% if votable_post.votescore %}{{ votable_post.votescore }}{% else %}0{% endif %}</span>{% endmacro %}
+{% macro updownvote votable_post %}{% if votable_post|args:user|call:"can_press_upvote" %}<a href="{% url posts-vote proposal.id votable_post.id 'up' %}">+</a>{% else %}+{% endif %} / {% if votable_post|args:user|call:"can_press_downvote" %}<a href="{% url posts-vote proposal.id votable_post.id 'down' %}">-</a>{% else %}-{% endif %}<br/><span class="score">{% if votable_post.votescore %}{{ votable_post.votescore|smallint }}{% else %}0{% endif %}</span>{% endmacro %}
 
 {% block extrastyle %}
     <link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
