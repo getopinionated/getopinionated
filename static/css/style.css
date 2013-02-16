@@ -217,6 +217,67 @@ ul.messages li.error {
     list-style: url('../images/lightbulb.png')
 }
 
+#main ul li {
+	display: block;
+    margin: 0px;
+    padding: 8px 0px 8px 0;
+    background-color: transparent;
+    color: #fff;
+}
+
+.numberblock {
+	margin: 0 3px 0 0;
+	padding: 5px;
+	width: 44px;
+	height: 44px;
+	display: inline-block;
+	vertical-align: baseline;
+}
+
+.mini-counts {
+	height: 28px;
+	font-size: 130%;
+	font-weight: normal;
+	text-align: center;
+	display: block;
+}
+
+.numberblocktext {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 60%;
+	text-align: center;
+	vertical-align: baseline;
+	background: transparent;
+}
+
+.upvotescore {
+	background-color: #444;
+	color: #fff;
+}
+
+.numberofcomments {
+	background-color: #333;
+	color: #fff;
+}
+
+.views {
+	background-color: #555;
+	color: #fff;
+}
+
+.summary {
+	display: inline-block;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	vertical-align: middle;
+	background: transparent;
+}
+
+
 /* footer */
 
 footer {

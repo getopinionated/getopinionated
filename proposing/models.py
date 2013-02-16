@@ -10,6 +10,10 @@ class VotablePost(models.Model):
     create_date = models.DateTimeField(auto_now=True)
 
     @property
+    def numberofcomments(self):
+        return self.up_down_votes.count()
+    
+    @property
     def upvotescore(self):
         num_upvotes = self.up_down_votes.filter(is_up=True).count()
         num_downvotes = self.up_down_votes.filter(is_up=False).count()
