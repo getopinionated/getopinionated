@@ -16,7 +16,7 @@ class ProposalForm(forms.ModelForm):
         model = FullDocument
         fields = ("content",)
 
-    def save(self, commit=True):
+    def save(self, user, commit=True):
         newcontent = FullDocument.cleanText(self.cleaned_data["content"])
         newdiff = Diff.generateDiff(self.originalcontent,
                                     newcontent)
@@ -25,5 +25,6 @@ class ProposalForm(forms.ModelForm):
         
         newproposal = Proposal(title = self.cleaned_data["title"],
                                motivation = self.cleaned_data["motivation"],
-                               diff = newdiff )
+                               diff = newdiff,
+                               creator = user )
         newproposal.save()

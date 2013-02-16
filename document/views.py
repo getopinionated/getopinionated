@@ -12,7 +12,7 @@ def documentView(request, pk):
     if request.method == 'POST':
         form = ProposalForm(request.POST, instance=fulldocument)
         if form.is_valid():
-            form.save()
+            form.save(user = request.user)
             return HttpResponseRedirect(reverse('proposals-index'))
         else:
             pass

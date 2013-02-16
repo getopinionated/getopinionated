@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load filters %}
 {% load macros %}
-{% loadmacros "accounts/member.html" %}
+{% loadmacros "proposal/proposal-macro.html" %}
 
 {% block content %}
 
@@ -9,36 +9,7 @@
         <ul>
         {% for proposal in latest_proposal_list %}
         	<li>
-        		<div class="numberblock upvotescore">
-        			<div class="mini-counts">
-        				{{ proposal.upvotescore|smallint }}
-        			</div>
-        			<div class="numberblocktext">
-        				votes
-        			</div>
-        		</div>
-        		<div class="numberblock numberofcomments">
-        			<div class="mini-counts">
-        				{{ proposal.numberofcomments|smallint }}
-        			</div>
-        			<div class="numberblocktext">
-        				comments
-        			</div>
-        		</div>
-        		<div class="numberblock views">
-        			<div class="mini-counts">
-        				{{ proposal.views|smallint }}
-        			</div>
-        			<div class="numberblocktext">
-        				views
-        			</div>
-        		</div>
-        		<div class="summary">
-        			<a href="{% url proposals-detail proposal.id %}">{{ proposal.title }}</a>
-        		</div>
-        		<div class="creator-small">
-        			<a href="{% usemacro user-small proposal.creator proposal.create_date%}</a>
-        		</div>
+        		{% usemacro proposal-for-list proposal %}
         	</li>
         {% endfor %}
         </ul>

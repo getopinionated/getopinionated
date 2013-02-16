@@ -10,13 +10,16 @@ from common.shortcuts import render_to_response
 from decorators import not_logged_in
 from forms import ProfileCreationForm, ProfileUpdateForm, EmailAuthenticationForm
 from django.contrib.auth.models import User
+from proposing.models import Proposal
+from django.shortcuts import render, get_object_or_404
 
-@not_logged_in
 def userprofile(request, username):
     # Initialize the form either fresh or with the appropriate POST data as the instance
-    user = User.objects().get(username=username)
-    return render_to_response(request, 'accounts/profile.html', {
-        'user': user,
+    member = get_object_or_404(User,username=username)
+    proposal_list = Proposal.objects.filter(creator=member)
+    return render(request, 'accounts/profile.html', {
+        'member': member,
+        'proposal_list': proposal_list
     })
 
 @not_logged_in

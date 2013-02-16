@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from django.conf.urls.defaults import *
-from views import *
+from views import userlogin,userregister,profileupdate,userlogout,userprofile
 
 urlpatterns = patterns('accounts.views',
     url(r'^login/$', userlogin, name='user-login'),

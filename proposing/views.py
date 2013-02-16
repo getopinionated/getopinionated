@@ -15,11 +15,15 @@ def index(request):
 
 def detail(request, proposal_id):
     proposal = get_object_or_404(Proposal, pk=proposal_id)
+    commentform = CommentForm()
+    proposal.addView()
+    
     if proposal.isFinished:
         if not proposal.merged:
             proposal.initiateVoteCount()
         return render(request, 'proposal/detail.html', {
             'proposal': proposal,
+            'commentform': commentform,
         })
     elif proposal.isVoting:
         return render(request, 'proposal/detail.html', {
