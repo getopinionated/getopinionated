@@ -1,0 +1,37 @@
+{% load macros %}
+{% load humanize %}
+{% load filters %}
+{% loadmacros "accounts/member-macro.html" %}
+
+{% macro proposal-for-list proposal %}
+	<div class="numberblock upvotescore">
+		<div class="mini-counts">
+			{{ proposal.upvotescore|smallint }}
+		</div>
+		<div class="numberblocktext">
+			votes
+		</div>
+	</div>
+	<div class="numberblock numberofcomments">
+		<div class="mini-counts">
+			{{ proposal.numberofcomments|smallint }}
+		</div>
+		<div class="numberblocktext">
+			comments
+		</div>
+	</div>
+	<div class="numberblock views">
+		<div class="mini-counts">
+			{{ proposal.views|smallint }}
+		</div>
+		<div class="numberblocktext">
+			views
+		</div>
+	</div>
+	<div class="summary">
+		<a href="{% url proposals-detail proposal.id %}">{{ proposal.title }}</a>
+	</div>
+	<div class="creator-small">
+		<a href="{% usemacro user-small proposal.creator proposal.create_date%}</a>
+</div>
+{% endmacro %}

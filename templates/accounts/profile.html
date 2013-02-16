@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load filters %}
+{% load macros %}
+{% loadmacros "proposal/proposal-macro.html" %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css/profile.css" type="text/css" charset="utf-8" />
+{% endblock %}
+
+{% block content %}
+
+    {% if proposal_list %}
+        <ul>
+        {% for proposal in proposal_list %}
+        	<li>
+        		{% usemacro proposal-for-list proposal %}
+        	</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>{{member.display_name}} made no proposals.</p>
+    {% endif %}
+
+{% endblock %}
