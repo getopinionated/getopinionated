@@ -147,7 +147,7 @@ section#content > header a {
 
 nav#menu {
     max-width: 1024px;
-    margin: 0 auto;
+    margin: 0 auto 24px;
     font-size: 16px;
     color: #777;
 }
@@ -300,27 +300,5 @@ form label {
     color: #000;
     display: inline-block;
     width: 150px;
-}
-
-/* article */
-
-article.proposal {
-}
-
-article.proposal header.content {
-}
-
-article.proposal header.content .updownvote {
-    font-weight: bold;
-}
-
-article.proposal header.content .title{
-    font-weight: bold;
-    font-size: 2em;
-}
-
-article.proposal header.content .creator {
-    font-weight: bold;
-    color: #aaf;
 }
 
