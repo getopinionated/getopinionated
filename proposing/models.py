@@ -4,6 +4,8 @@ import datetime
 from document.models import Diff
 from django.contrib.auth.models import User
 
+from common.stringify import niceBigInteger
+
 class VotablePost(models.Model):
     """ super-model for all votable models """
     creator = models.ForeignKey(User, related_name="created_proposals", null=True)
@@ -18,6 +20,8 @@ class VotablePost(models.Model):
         num_upvotes = self.up_down_votes.filter(is_up=True).count()
         num_downvotes = self.up_down_votes.filter(is_up=False).count()
         return num_upvotes - num_downvotes
+
+
 
     def updownvote_from_user(self, user):
         if not user.is_authenticated():
@@ -152,4 +156,4 @@ class Comment(VotablePost):
 
 class Tag(models.Model):
     proposal = models.ManyToManyField(Proposal, related_name="tags")
-    title = models.CharField()
+    title = models.CharField(max_length=35)
