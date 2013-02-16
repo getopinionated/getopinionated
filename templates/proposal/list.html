@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load filters %}
 
 {% block content %}
 
@@ -8,7 +9,7 @@
         	<li>
         		<div class="numberblock upvotescore">
         			<div class="mini-counts">
-        				{{ proposal.upvotescore }}
+        				{{ proposal.upvotescore|smallint }}
         			</div>
         			<div class="numberblocktext">
         				votes
@@ -16,7 +17,7 @@
         		</div>
         		<div class="numberblock numberofcomments">
         			<div class="mini-counts">
-        				{{ proposal.numberofcomments }}
+        				{{ proposal.numberofcomments|smallint }}
         			</div>
         			<div class="numberblocktext">
         				comments
@@ -24,7 +25,7 @@
         		</div>
         		<div class="numberblock views">
         			<div class="mini-counts">
-        				{{ proposal.views }}
+        				{{ proposal.views|smallint }}
         			</div>
         			<div class="numberblocktext">
         				views
