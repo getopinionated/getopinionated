@@ -1,64 +1,72 @@
-/* horizontal layout */
-.proposal * {
-    clear: both;
-}
-.proposal .updownvote {
-    float: left;
-    width: 100px;
-    clear: none;
-}
-.proposal .content {
-    float: left;
-    width: 770px;
-    clear: none;
+article.proposal {
 }
 
-/* proposal up/down vote */
-.proposal .updownvote div {
-    padding-top: 5px;
-}
-.proposal .updownvote div:first-child {
-    padding-top: 40px;
-}
-.proposal .updownvote div:last-child {
-    padding-bottom: 40px;
+article.proposal header.content {
+    border-bottom: 3px #777 solid;
+    font-size: 2em;
 }
 
-/* proposal content */
-.proposal .content h1, .proposal .content h2 {
-    display: inline;
-}
-.proposal .content .creator {
-    padding-left: 20px;
-    color: #0A67A2;
-}
-.proposal .content .diff {
-    background-color: #DDEEFF;
-    padding: 10px;
-}
-.proposal .content .motivation {
-    padding: 10px 10px 10px 60px;
+article.proposal header .updownvote {
+    font-size: 16px;
+    background-color: #777;
 }
 
-/* comment content */
-.comment .content {
-    border-top: 1px solid black;
-}
-.comment .content .motivation {
-    padding: 10px 10px 10px 10px;
+article.proposal .comment .updownvote {
+    font-size: 9px;
+    background-color: #aaa;
 }
 
-/* commentform */
-form.commentform h2 {
-    display: block !important;
+article.proposal .updownvote {
+    display: inline-block;
+    font-weight: bold;
+    color: #fff;
+    padding: 0.5em;
+    width: 4em;
+    text-align: center;
+    margin-right: 0.7em;
 }
-form.commentform > p {
-    margin: 0;
-    padding-left: 10px;
+
+article.proposal .updownvote .score {
+    font-size: 1.5em;
 }
-form.commentform > ul.errorlist{
-    list-style-type: none;
-    color: red;
-    margin: 0;
-    padding-left: 10px;
+
+#main article.proposal .updownvote a {
+    color: #fff;
+}
+
+article.proposal .title{
+    font-weight: bold;
+    color: #444;
+    margin-right: 0.7em;
+}
+
+article.proposal .creator {
+    font-weight: bold;
+    color: #aaf;
+    font-size: 0.5em;
+}
+
+article.proposal .diff {
+    background-color: #ccc;
+    padding: 4px;
+    color: #33a;
+    font-family: monospace;
+}
+
+article.proposal .motivation {
+    margin: 8px 0 48px;
+}
+
+article.proposal .comment .motivation {
+    padding-left: 48px;
+    font-size: 12px;
+}
+
+article.proposal .comment h2 {
+    border-bottom: 3px #aaa solid;
+    margin-top: 24px;
+}
+
+article.proposal .owncomment {
+    margin-top: 48px;
 }

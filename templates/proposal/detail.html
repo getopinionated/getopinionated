@@ -2,20 +2,7 @@
 {% load call_with_args %}
 {% load macros %}
 
-{% macro updownvote votable_post %}
-    {% if votable_post|args:user|call:"can_press_upvote" %}
-        <a href="{% url posts-vote proposal.id votable_post.id 'up' %}">+</a>
-    {% else %}
-        +
-    {% endif %}
-    /
-    {% if votable_post|args:user|call:"can_press_downvote" %}
-        <a href="{% url posts-vote proposal.id votable_post.id 'down' %}">-</a>
-    {% else %}
-        <div>-</div>
-    {% endif %}
-    ( {{ votable_post.votescore }} )
-{% endmacro %}
+{% macro updownvote votable_post %}{% if votable_post|args:user|call:"can_press_upvote" %}<a href="{% url posts-vote proposal.id votable_post.id 'up' %}">+</a>{% else %}+{% endif %} / {% if votable_post|args:user|call:"can_press_downvote" %}<a href="{% url posts-vote proposal.id votable_post.id 'down' %}">-</a>{% else %}-{% endif %}<br/><span class="score">{% if votable_post.votescore %}{{ votable_post.votescore }}{% else %}0{% endif %}</span>{% endmacro %}
 
 {% block extrastyle %}
     <link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
@@ -24,41 +11,36 @@
 {% block content %}
     <article class="proposal">
         <header class="content">
-            <span class="updownvote">{% usemacro updownvote proposal %}</span>
-            <span class="title">{{ proposal.title }}</span> 
-            <span class="creator">by {{proposal.creator.profile.display_name}}</span>
+            <h1>
+                <span class="updownvote">{% usemacro updownvote proposal %}</span>
+                <span class="title">{{ proposal.title }}</span> 
+                <span class="creator">by {{proposal.creator.profile.display_name}}</span>
+            </h1>
         </header>
         <div class="diff">{{ proposal.diff_with_context|linebreaksbr }}</div>
         <div class="motivation">{{ proposal.motivation|linebreaks }}</div>
         <div class="comments">
             {% for comment in proposal.comment_set.all %}
-                <div class="comment">
-                    {% usemacro updownvote comment %}
-                    <div class="content">
-                        <h2>Comment</h2>
-                        {% if comment.creator %}
-                            <span class="creator">by {{comment.creator.profile.display_name}}</span>
-                        {% endif %}
-                        <div class="motivation">{{ comment.motivation|linebreaks }}</div>
-                    </div>
-                </div>
+            <div class="comment">
+                <h2>
+                    <span class="updownvote">{% usemacro updownvote comment %}</span>
+                    <span class="title">Comment</span>
+                    {% if comment.creator %}<span class="creator">by {{comment.creator.profile.display_name}}</span>{% endif %}
+                </h2>
+                <div class="motivation">{{ comment.motivation|linebreaks }}</div>
+            </div>
             {% endfor %}
         </div>
-        <div class="comment">
-            <div class="updownvote">
-                &nbsp;
-            </div>
-            <div class="content">
-                <form action="{% url proposals-detail proposal.id %}" method="POST" class="commentform">
-                    {% csrf_token %}
-                    <h2>Write your own comment</h2>
-                    {{ commentform.motivation.errors }}
-                    <p>{{ commentform.motivation }}</p>
-                    {{ commentform.color.errors }}
-                    <p>Color: {{ commentform.color }}</p>
-                    <p><input type="submit" value="comment" /></p>
-                </form>
-            </div>
+        <div class="owncomment">
+            <h2>Write your own comment</h2>
+            <form action="{% url proposals-detail proposal.id %}" method="POST" class="commentform">
+                {% csrf_token %}
+                {{ commentform.color.errors }}
+                <p>Color: {{ commentform.color }}</p>
+                {{ commentform.motivation.errors }}
+                <p>{{ commentform.motivation }}</p>
+                <p><input type="submit" value="comment" /></p>
+            </form>
         </div>
     </article>
 {% endblock %}
