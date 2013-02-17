@@ -58,7 +58,7 @@
         <div class="comments">
             {% for comment in proposal.comment_set.all %}
             <div class="comment">
-                <h2>
+                <h2 class="{{ comment.color }}">
                     <span class="updownvote">{% usemacro updownvote comment %}</span>
                     <span class="title">Comment</span>
                     {% if comment.creator %}{% usemacro user-small comment.creator comment.create_date%}{% endif %}
