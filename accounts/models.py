@@ -10,6 +10,10 @@ class CustomUser(User):
     # Use UserManager to get the create_user method, etc.
     objects = UserManager()
 
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.username)
+        super(CustomUser, self).save(*args, **kwargs)
+
     @staticmethod
     def isValidUserName(username):
         """ check if slug derived from username already exists,
