@@ -444,6 +444,7 @@
         "model": "accounts.userprofile",
         "fields": {
             "user": 1,
+            "slug": "jnyman",
             "karma": 2
         }
     },
@@ -452,6 +453,7 @@
         "model": "accounts.userprofile",
         "fields": {
             "user": 2,
+            "slug": "317070",
             "karma": 10000
         }
     },
@@ -460,6 +462,7 @@
         "model": "accounts.userprofile",
         "fields": {
             "user": 3,
+            "slug": "sandbender",
             "karma": -100
         }
     },
