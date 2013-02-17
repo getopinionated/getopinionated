@@ -9,6 +9,7 @@ from models import FullDocument
 from views import documentView
 
 urlpatterns = patterns('document.views',
-    url(r'^Doc(?P<pk>\d+)$', documentView,name='document-detail'),
+    url(r'^(?P<document_slug>[-\w]+)$', documentView, name='latest-document-detail'),
+    url(r'^(?P<document_slug>[-\w]+)/v(?P<document_version>\d+)$', documentView, name='document-detail'),
 )
 

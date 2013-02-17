@@ -6,9 +6,13 @@ from forms import ProposalForm
 from django.contrib.auth.decorators import login_required
 from models import FullDocument
 
-def documentView(request, pk):
-        # Initialize the form either fresh or with the appropriate POST data as the instance
-    fulldocument = FullDocument.objects.get(pk=pk).getFinalVersion()
+def documentView(request, document_slug, document_version=None):
+    ## get the document
+    if document_version == None:
+        fulldocument = FullDocument.getFinalVersionFromSlug(document_slug)
+    else:
+        fulldocument = FullDocument.objects.get(slug=document_slug, version=document_version)
+    ## Initialize the form either fresh or with the appropriate POST data as the instance
     if request.method == 'POST':
         form = ProposalForm(request.POST, instance=fulldocument)
         if form.is_valid():

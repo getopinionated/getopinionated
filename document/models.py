@@ -1,6 +1,8 @@
+from django.http import Http404
 from django.db import models
 from django.utils import timezone
 from django.db.models import Max
+from django.template.defaultfilters import slugify
 
 import difflib
 
@@ -10,10 +12,20 @@ import difflib
 
 class FullDocument(models.Model):
     title = models.CharField(max_length=255)
+    slug = models.SlugField()
     content = models.TextField() 
     create_date = models.DateTimeField('Date entered', default=timezone.now())
     version = models.IntegerField()
     
+    class Meta:
+        unique_together = (("slug", "version"),)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            # Newly created object, so set slug
+            self.slug = slugify(self.title)
+        super(FullDocument, self).save(*args, **kwargs)
+
     def applyDiff(self, diff):
         originalText = diff.getOriginalText()
         mytext = FullDocument.cleanText(self.content.__str__())
@@ -26,8 +38,15 @@ class FullDocument(models.Model):
         return document
 
     def getFinalVersion(self):
-        v = FullDocument.objects.all().aggregate(Max('version'))
-        return FullDocument.objects.get(version = v['version__max'])
+        return self.getFinalVersionFromSlug(self.slug)
+
+    @staticmethod
+    def getFinalVersionFromSlug(slug):
+        docs_with_slug = FullDocument.objects.filter(slug=slug)
+        if docs_with_slug.count() == 0:
+            raise Http404('No documents found with this slug ({})'.format(slug))
+        v = docs_with_slug.aggregate(Max('version'))
+        return docs_with_slug.get(version = v['version__max'])
 
     def isFinalVersion(self):
         return self.getFinalVersion().version == self.version
