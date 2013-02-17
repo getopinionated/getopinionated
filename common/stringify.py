@@ -6,7 +6,7 @@ def int_to_roman(integer):
         while value <= integer:
             integer -= value
             parts.append(letter)
-    return ''.join(parts)
+    return ''.join(parts) if parts else '0'
  
  
 "-15k, -10k, -1,5k, -1k, -150, -100, -15, -10, -1, 0, 1, 15, 151, 1k, 1,5k, 1,51k, 10k, 15k, 15,1k, 150k, 151k, 1M, 1,5M, 1,51M"

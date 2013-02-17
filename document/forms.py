@@ -4,9 +4,9 @@ from document.models import FullDocument
 from proposing.models import Proposal 
 
 class ProposalForm(forms.ModelForm):
-    title = forms.CharField(label="",widget=forms.TextInput())
-    content = forms.CharField(label="",widget=forms.Textarea(attrs={'cols': 80, 'rows': 20}))
-    motivation = forms.CharField(label="",widget=forms.Textarea(attrs={'cols': 80, 'rows': 20}))
+    title = forms.CharField(widget=forms.TextInput())
+    content = forms.CharField(widget=forms.Textarea(attrs={'cols': 80, 'rows': 20}))
+    motivation = forms.CharField(widget=forms.Textarea(attrs={'cols': 80, 'rows': 20}))
 
     def __init__(self, *args, **kwargs):
         super(ProposalForm, self).__init__(*args, **kwargs)

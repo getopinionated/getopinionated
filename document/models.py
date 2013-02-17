@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.db.models import Max
 from django.template.defaultfilters import slugify
 
+from common.stringify import int_to_roman
 import difflib
 
 '''
@@ -15,7 +16,7 @@ class FullDocument(models.Model):
     slug = models.SlugField()
     content = models.TextField() 
     create_date = models.DateTimeField('Date entered', default=timezone.now())
-    version = models.IntegerField()
+    version = models.IntegerField(default=1)
     
     class Meta:
         unique_together = (("slug", "version"),)
@@ -59,6 +60,10 @@ class FullDocument(models.Model):
         if not text.endswith('\n'):
             text = text + '\n'
         return text
+
+    @property
+    def version_roman(self):
+        return int_to_roman(self.version)
 
 '''
     contains a diff between two versions of a document. Is the content of a proposal

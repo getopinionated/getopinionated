@@ -7,17 +7,18 @@
 {% endblock %}
 
 {% block content %}
-	<div class="document">
-		<h1>{{ fulldocument.title }}</h1>
-		{{ fulldocument.content|linebreaks }}
-	</div>
+  <div class="document">
+    <h1>{{ fulldocument.title }} version {{ fulldocument.version_roman }}</h1>
+    {{ fulldocument.content|linebreaks }}
+  </div>
 
 
-	<form action="{% url document-detail fulldocument.slug fulldocument.version %}" method="POST">
-	    {% csrf_token %}
-	    {{ form.as_p }}</br>
-	    <input type="submit" value="submit your proposal" />
-	</form>
-
+  <form action="{% url document-detail fulldocument.slug fulldocument.version %}" method="POST">
+    {% csrf_token %}
+    <table>
+      {{ form }}
+      <tr><td><input type="submit" value="submit your proposal" /></td></tr>
+    </table>
+  </form>
   
 {% endblock %}
