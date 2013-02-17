@@ -6,13 +6,13 @@
 
 {% macro updownvote votable_post %}
 	{% if votable_post|args:user|call:"can_press_upvote" %}
-		<a href="{% url posts-vote proposal.id votable_post.id 'up' %}">+</a>
+		<a href="{% url posts-vote proposal.slug votable_post.id 'up' %}">+</a>
 	{% else %}
 		+
 	{% endif %}
 	 / 
 	{% if votable_post|args:user|call:"can_press_downvote" %}
-		<a href="{% url posts-vote proposal.id votable_post.id 'down' %}">-</a>
+		<a href="{% url posts-vote proposal.slug votable_post.id 'down' %}">-</a>
 	{% else %}
 		-
 	{% endif %}
@@ -41,17 +41,17 @@
         </div>
         {% if proposal.isVoting and not proposal.isFinished%}
         	<div class="votebuttons">
-			  <a href="{% url proposal-vote proposal.id '-5' %}">-5</a>
-			  <a href="{% url proposal-vote proposal.id '-4' %}">-4</a>
-			  <a href="{% url proposal-vote proposal.id '-3' %}">-3</a>
-			  <a href="{% url proposal-vote proposal.id '-2' %}">-2</a>
-			  <a href="{% url proposal-vote proposal.id '-1' %}">-1</a>
-			  <a href="{% url proposal-vote proposal.id '0' %}">0</a>
-			  <a href="{% url proposal-vote proposal.id '+1' %}">+1</a>
-			  <a href="{% url proposal-vote proposal.id '+2' %}">+2</a>
-			  <a href="{% url proposal-vote proposal.id '+3' %}">+3</a>
-			  <a href="{% url proposal-vote proposal.id '+4' %}">+4</a>
-			  <a href="{% url proposal-vote proposal.id '+5' %}">+5</a>
+			  <a href="{% url proposal-vote proposal.slug '-5' %}">-5</a>
+			  <a href="{% url proposal-vote proposal.slug '-4' %}">-4</a>
+			  <a href="{% url proposal-vote proposal.slug '-3' %}">-3</a>
+			  <a href="{% url proposal-vote proposal.slug '-2' %}">-2</a>
+			  <a href="{% url proposal-vote proposal.slug '-1' %}">-1</a>
+			  <a href="{% url proposal-vote proposal.slug '0' %}">0</a>
+			  <a href="{% url proposal-vote proposal.slug '+1' %}">+1</a>
+			  <a href="{% url proposal-vote proposal.slug '+2' %}">+2</a>
+			  <a href="{% url proposal-vote proposal.slug '+3' %}">+3</a>
+			  <a href="{% url proposal-vote proposal.slug '+4' %}">+4</a>
+			  <a href="{% url proposal-vote proposal.slug '+5' %}">+5</a>
 		  </div>
         {% endif %}        
         {% if proposal.isFinished or not proposal.isVoting %}
@@ -71,7 +71,7 @@
         {% if not proposal.isVoting %}
         <div class="owncomment">
             <h2>Write your own comment</h2>
-            <form action="{% url proposals-detail proposal.id %}" method="POST" class="commentform">
+            <form action="{% url proposals-detail proposal.slug %}" method="POST" class="commentform">
                 {% csrf_token %}
                 {{ commentform.color.errors }}
                 <p>Color: {{ commentform.color }}</p>

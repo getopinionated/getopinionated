@@ -3,6 +3,7 @@ from django.utils import timezone
 import datetime
 from document.models import Diff
 from django.contrib.auth.models import User
+from django.template.defaultfilters import slugify
 
 from common.stringify import niceBigInteger
 
@@ -64,6 +65,7 @@ class ProposalVote(models.Model):
 
 class Proposal(VotablePost):
     title = models.CharField(max_length=255)
+    slug = models.SlugField()
     motivation = models.TextField()
     diff = models.ForeignKey(Diff)
     views = models.IntegerField(default=0)
@@ -72,6 +74,12 @@ class Proposal(VotablePost):
     def __unicode__(self):
         return "Proposal: {}".format(self.title)
     
+    def save(self, *args, **kwargs):
+        if not self.id:
+            # Newly created object, so set slug
+            self.slug = slugify(self.title)
+        super(Proposal, self).save(*args, **kwargs)
+
     @property
     def diff_with_context(self):
         return self.diff.getNDiff()

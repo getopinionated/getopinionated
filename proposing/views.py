@@ -13,8 +13,8 @@ def index(request):
         'latest_proposal_list': first_5_proposals
     })
 
-def detail(request, proposal_id):
-    proposal = get_object_or_404(Proposal, pk=proposal_id)
+def detail(request, proposal_slug):
+    proposal = get_object_or_404(Proposal, slug=proposal_slug)
     commentform = CommentForm()
     proposal.addView()
     
@@ -39,7 +39,7 @@ def detail(request, proposal_id):
                     new_comment.creator = request.user
                 new_comment.save()
                 messages.success(request, 'Comment added')
-                return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_id,)))
+                return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
         else:
             commentform = CommentForm()
             proposal.addView()
@@ -49,11 +49,11 @@ def detail(request, proposal_id):
     })
 
 @login_required
-def vote(request, proposal_id, post_id, updown):
+def vote(request, proposal_slug, post_id, updown):
     # get vars
     post = get_object_or_404(VotablePost, pk=post_id)
     user = request.user
-    proposal_detail_redirect = HttpResponseRedirect(reverse('proposals-detail', args=(proposal_id,)))
+    proposal_detail_redirect = HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
     assert updown in ['up', 'down'], 'illegal updown value'
     # check if upvote can be undone
     if post.user_has_updownvoted(user) != None:
@@ -80,11 +80,11 @@ def vote(request, proposal_id, post_id, updown):
     return proposal_detail_redirect
 
 @login_required
-def proposalvote(request, proposal_id, updown):
+def proposalvote(request, proposal_slug, updown):
     # get vars
-    proposal = get_object_or_404(Proposal, pk=proposal_id)
+    proposal = get_object_or_404(Proposal, slug=proposal_slug)
     user = request.user
-    proposal_detail_redirect = HttpResponseRedirect(reverse('proposals-detail', args=(proposal_id,)))
+    proposal_detail_redirect = HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
     assert updown in ['-5', '-4', '-3', '-2', '-1', '0', '+1', '+2', '+3', '+4', '+5'], 'illegal vote'
     # remove the previous vote of the user
     if proposal.user_has_proposalvoted(user) != None:

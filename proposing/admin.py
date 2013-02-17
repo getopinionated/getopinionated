@@ -21,6 +21,7 @@ class ProposalAdmin(admin.ModelAdmin):
     inlines = [CommentInline, UpDownVoteInline, ProposalVoteInline]
     list_filter = ['create_date']
     actions = ['add_15_upvotes','add_15_proposalvotes']
+    prepopulated_fields = {'slug': ('title',)}
 
     def add_15_upvotes(self, request, queryset):
         for proposal in queryset:
