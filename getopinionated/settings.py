@@ -117,8 +117,10 @@ INSTALLED_APPS = (
 
 AUTHENTICATION_BACKENDS = (
     'accounts.backend.EmailModelBackend',
-    'django.contrib.auth.backends.ModelBackend', 
+    'accounts.backend.CustomUserModelBackend',
 )
+# used by CustomUserModelBackend
+CUSTOM_USER_MODEL = 'accounts.CustomUser'
 
 ### SSL settings (common.middleware.SSLRedirect) ###
 # Forced SSL
@@ -159,9 +161,6 @@ LOGGING = {
         },
     }
 	}
-
-# Couple Django's user object to custom member
-AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
 # Import local settings
 try:

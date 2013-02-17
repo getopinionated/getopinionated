@@ -2,14 +2,14 @@ from django.db import models
 from django.utils import timezone
 import datetime
 from document.models import Diff
-from django.contrib.auth.models import User
+from accounts.models import CustomUser
 from django.template.defaultfilters import slugify
 
 from common.stringify import niceBigInteger
 
 class VotablePost(models.Model):
     """ super-model for all votable models """
-    creator = models.ForeignKey(User, related_name="created_proposals", null=True)
+    creator = models.ForeignKey(CustomUser, related_name="created_proposals", null=True)
     create_date = models.DateTimeField(auto_now_add=True)
 
     @property
@@ -52,13 +52,13 @@ class VotablePost(models.Model):
         return self.user_can_updownvote(user) or self.user_has_updownvoted(user) == 'down'
 
 class UpDownVote(models.Model):
-    user = models.ForeignKey(User, related_name="up_down_votes")
+    user = models.ForeignKey(CustomUser, related_name="up_down_votes")
     post = models.ForeignKey(VotablePost, related_name="up_down_votes")
     date = models.DateTimeField(auto_now=True)
     is_up = models.BooleanField("True if this is an upvote")
 
 class ProposalVote(models.Model):
-    user = models.ForeignKey(User, related_name="proposal_votes")
+    user = models.ForeignKey(CustomUser, related_name="proposal_votes")
     proposal = models.ForeignKey(VotablePost, related_name="proposal_votes")
     date = models.DateTimeField(auto_now=True)
     value = models.IntegerField("The value of the vote")

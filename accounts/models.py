@@ -1,13 +1,15 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, UserManager
 from django.db.models.signals import post_save
 from django.template.defaultfilters import slugify
 
-class UserProfile(models.Model):  
-    user = models.OneToOneField(User, related_name="profile")
+class CustomUser(User):
     slug = models.SlugField(unique=True)
     karma = models.IntegerField(default=0)
     
+    # Use UserManager to get the create_user method, etc.
+    objects = UserManager()
+
     @staticmethod
     def isValidUserName(username):
         """ check if slug derived from username already exists,
@@ -33,12 +35,5 @@ class UserProfile(models.Model):
 
     @property
     def display_name(self):
-        return self.user.username
+        return self.username
     
-### make sure profile is created when new user is created ###
-def create_user_profile(sender, instance, created, **kwargs):
-    profile, created = UserProfile.objects.get_or_create(user=instance)
-    if not created:
-        profile.slug = slugify(instance.username)
-        profile.save()
-post_save.connect(create_user_profile, sender=User)

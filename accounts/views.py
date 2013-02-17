@@ -6,16 +6,17 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.shortcuts import render, get_object_or_404
+
 from common.shortcuts import render_to_response
+from proposing.models import Proposal
 from decorators import not_logged_in
 from forms import ProfileCreationForm, ProfileUpdateForm, EmailAuthenticationForm
-from django.contrib.auth.models import User
-from proposing.models import Proposal
-from django.shortcuts import render, get_object_or_404
+from models import CustomUser
 
 def userprofile(request, username):
     # Initialize the form either fresh or with the appropriate POST data as the instance
-    member = get_object_or_404(User,username=username)
+    member = get_object_or_404(CustomUser,username=username)
     proposal_list = Proposal.objects.filter(creator=member)
     return render(request, 'accounts/profile.html', {
         'member': member,

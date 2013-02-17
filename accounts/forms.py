@@ -7,7 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.template.defaultfilters import slugify
 
 from common.stringify import int_to_roman
-from models import UserProfile
+from models import CustomUser
 
 error_messages = {
     'duplicate_username': _("A user with that username already exists."),
@@ -31,9 +31,9 @@ class ProfileCreationForm(UserCreationForm):
                          "@/./+/-/_ characters.")})
     
     def clean_username(self):
-        # check if slug is unique (via UserProfile.isValidUserName)
+        # check if slug is unique (via CustomUser.isValidUserName)
         username = self.cleaned_data["username"]
-        if not UserProfile.isValidUserName(username):
+        if not CustomUser.isValidUserName(username):
             raise forms.ValidationError(error_messages['duplicate_username'])
         try:
             User.objects.get(email=username)
@@ -52,12 +52,12 @@ class ProfileCreationForm(UserCreationForm):
             username = user.username.split("@", 1)[0] #take the part before the @ in the mail address as username
             username = username.replace('.','_')
             #if this username would already exist, add roman numbers until this is not the case
-            if not UserProfile.isValidUserName(username):
+            if not CustomUser.isValidUserName(username):
                 # the username/userslug does already exist
                 index = 2
                 while True:
                     username="{} {}".format(username, int_to_roman(index))
-                    if UserProfile.isValidUserName(username):
+                    if CustomUser.isValidUserName(username):
                         break
                     index += 1
             user.username = username
@@ -78,7 +78,7 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = ("username", "first_name", "last_name", "email")
 
     def clean_username(self):
-        # check if slug is unique (via UserProfile.isValidUserName)
+        # check if slug is unique (via CustomUser.isValidUserName)
         username = self.cleaned_data["username"]
         if not self.instance.profile.isValidUserNameChange(username):
             raise forms.ValidationError(error_messages['duplicate_username'])
