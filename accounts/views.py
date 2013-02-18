@@ -14,9 +14,9 @@ from decorators import not_logged_in
 from forms import CustomUserCreationForm, ProfileUpdateForm, EmailAuthenticationForm
 from models import CustomUser
 
-def userprofile(request, username):
+def userprofile(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
-    member = get_object_or_404(CustomUser,username=username)
+    member = get_object_or_404(CustomUser, slug=userslug)
     proposal_list = Proposal.objects.filter(creator=member)
     return render(request, 'accounts/profile.html', {
         'member': member,

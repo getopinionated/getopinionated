@@ -222,6 +222,8 @@ ul.messages li.error {
     margin: 0px;
     padding: 8px 0px 8px 0;
     background-color: transparent;
+}
+#main ul.errorlist li {
     color: #f00;
     font-style: italic;
 }
