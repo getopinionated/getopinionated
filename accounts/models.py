@@ -14,27 +14,16 @@ class CustomUser(User):
         self.slug = slugify(self.username)
         super(CustomUser, self).save(*args, **kwargs)
 
-    @staticmethod
-    def isValidUserName(username):
-        """ check if slug derived from username already exists,
-            the username is then automatically also unique
+    def isValidUserName(self, username):
+        """ Check if slug derived from username already exists,
+            the username is then automatically also unique.
+            Keeps into account possibly  already existing object.
         """
         userslug = slugify(username)
         try:
-            UserProfile.objects.get(slug=userslug)
-            return False
-        except UserProfile.DoesNotExist:
-            return True
-
-    def isValidUserNameChange(self, username):
-        """ same as isValidUserName, but keeps into account already
-            existing model
-        """
-        userslug = slugify(username)
-        try:
-            profile = UserProfile.objects.get(slug=userslug)
+            profile = CustomUser.objects.get(slug=userslug)
             return self.id == profile.id
-        except UserProfile.DoesNotExist:
+        except CustomUser.DoesNotExist:
             return True
 
     @property

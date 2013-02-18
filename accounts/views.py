@@ -11,7 +11,7 @@ from django.shortcuts import render, get_object_or_404
 from common.shortcuts import render_to_response
 from proposing.models import Proposal
 from decorators import not_logged_in
-from forms import ProfileCreationForm, ProfileUpdateForm, EmailAuthenticationForm
+from forms import CustomUserCreationForm, ProfileUpdateForm, EmailAuthenticationForm
 from models import CustomUser
 
 def userprofile(request, username):
@@ -40,7 +40,7 @@ def userlogin(request):
 def userregister(request):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     if request.method == 'POST':
-        form = ProfileCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             new_user = authenticate(username=user.username,
@@ -49,7 +49,7 @@ def userregister(request):
             messages.success(request, 'Registration complete')
             return HttpResponseRedirect(reverse('profile-update'))
     else:
-        form = ProfileCreationForm()
+        form = CustomUserCreationForm()
 
     return render_to_response(request, 'accounts/register.html', {
         'form': form,

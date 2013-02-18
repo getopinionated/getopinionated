@@ -15,8 +15,7 @@ error_messages = {
     'password_mismatch': _("The two password fields didn't match."),
 }
 
-class ProfileCreationForm(UserCreationForm):
-    
+class CustomUserCreationForm(UserCreationForm):
     """
     A form that creates a user, with no privileges, from the given username and
     password.
@@ -30,10 +29,14 @@ class ProfileCreationForm(UserCreationForm):
             'invalid': _("This value may contain only letters, numbers and "
                          "@/./+/-/_ characters.")})
     
+    class Meta:
+        model = CustomUser
+        fields = ("username",)
+
     def clean_username(self):
         # check if slug is unique (via CustomUser.isValidUserName)
         username = self.cleaned_data["username"]
-        if not CustomUser.isValidUserName(username):
+        if not self.instance.isValidUserName(username):
             raise forms.ValidationError(error_messages['duplicate_username'])
         try:
             User.objects.get(email=username)
@@ -42,8 +45,7 @@ class ProfileCreationForm(UserCreationForm):
         raise forms.ValidationError(error_messages['duplicate_email'])
 
     def save(self, commit=True):
-        user = super(ProfileCreationForm, self).save(commit=False)
-        
+        user = super(CustomUserCreationForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
         # if the username is a mailaddress
         if re.match(r'^[a-zA-Z0-9!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$', user.username):
@@ -52,12 +54,12 @@ class ProfileCreationForm(UserCreationForm):
             username = user.username.split("@", 1)[0] #take the part before the @ in the mail address as username
             username = username.replace('.','_')
             #if this username would already exist, add roman numbers until this is not the case
-            if not CustomUser.isValidUserName(username):
+            if not user.isValidUserName(username):
                 # the username/userslug does already exist
                 index = 2
                 while True:
                     username="{} {}".format(username, int_to_roman(index))
-                    if CustomUser.isValidUserName(username):
+                    if user.isValidUserName(username):
                         break
                     index += 1
             user.username = username
@@ -74,13 +76,13 @@ class ProfileUpdateForm(forms.ModelForm):
         # self.fields['username'].widget.attrs['readonly'] = True # text input
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ("username", "first_name", "last_name", "email")
 
     def clean_username(self):
         # check if slug is unique (via CustomUser.isValidUserName)
         username = self.cleaned_data["username"]
-        if not self.instance.profile.isValidUserNameChange(username):
+        if not self.instance.isValidUserName(username):
             raise forms.ValidationError(error_messages['duplicate_username'])
         return username
 
