@@ -1,6 +1,5 @@
 import re
 from django import forms
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.forms import AuthenticationForm
@@ -39,8 +38,8 @@ class CustomUserCreationForm(UserCreationForm):
         if not self.instance.isValidUserName(username):
             raise forms.ValidationError(error_messages['duplicate_username'])
         try:
-            User.objects.get(email=username)
-        except User.DoesNotExist:
+            CustomUser.objects.get(email=username)
+        except CustomUser.DoesNotExist:
             return username
         raise forms.ValidationError(error_messages['duplicate_email'])
 
