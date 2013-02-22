@@ -26,5 +26,5 @@ class ProposalForm(forms.ModelForm):
         newproposal = Proposal(title = self.cleaned_data["title"],
                                motivation = self.cleaned_data["motivation"],
                                diff = newdiff,
-                               creator = user )
+                               creator = user if user.is_authenticated() else None)
         newproposal.save()

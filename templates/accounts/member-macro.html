@@ -2,13 +2,13 @@
 {% load humanize %}
 {% load filters %}
 
-{% macro user-small user when %}
+{% macro user-small postinguser when %}
 	<div class="user-small">
-		{% if user %}
-		<a href="{% url user-profile user.slug %}">
+		{% if postinguser %}
+		<a href="{% url user-profile postinguser.slug %}">
 			<span title="{{when}}" class="user-time">{{when|naturaltime}}</span>
-		    <span class="user-name">{{user.display_name}}</span>
-		    <span class="user-karma">{{user.karma|mediumint}}</span>
+		    <span class="user-name">{{postinguser.display_name}}</span>
+		    <span class="user-karma">{{postinguser.karma|mediumint}}</span>
 		</a>
 		{% else %}
 			<span title="{{when}}" class="user-time">{{when|naturaltime}}</span>
@@ -16,17 +16,27 @@
     </div>
 {% endmacro %}
 
-{% macro user-medium user when what %}
-	<div class="user-info">		
-		<div title="{{when}}" class="user-box-action">{{what}} {{when|naturaltime}}</div>
-	    <div class="user-box-avatar"></div>
-	    <div class="user-box-name">
-	    	<a href="{% url user-profile user.slug %}">
-	    		{{user.display_name}}
-	    	</a>
-	    	<br>
-	    	<div class="user-box-karma">{{user.karma|mediumint}}</div>
-	    </div>
+{% macro user-medium postinguser when what %}
+	<div class="user-info">
+		{% if postinguser %}
+			<div title="{{when}}" class="user-box-action">{{what}} {{when|naturaltime}}</div>
+		    <div class="user-box-avatar"></div>
+		    <div class="user-box-name">
+		    	<a href="{% url user-profile postinguser.slug %}">
+		    		{{postinguser.display_name}}
+		    	</a>
+		    	<br>
+		    	<div class="user-box-karma">{{postinguser.karma|mediumint}}</div>
+		    </div>
+	    {% else %}
+	    	<div title="{{when}}" class="user-box-action">{{what}} {{when|naturaltime}}</div>
+	        <div class="user-box-avatar"></div>
+	        <div class="user-box-name">
+        		Anonymous
+	        	<br>
+	        	<div class="user-box-karma">&nbsp;</div>
+	        </div>
+		{% endif %}
     </div>
 {% endmacro %}
 
