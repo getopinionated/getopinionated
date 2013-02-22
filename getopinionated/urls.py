@@ -4,16 +4,15 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
 import settings
-from home.views import index
+import proposing.views
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
 	(r'^admin/', include(admin.site.urls)),
 	# (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
-    url(r'^$', index, name="home-index"),
+    url(r'^$', proposing.views.index, name="home-index"),
     (r'^accounts/', include('accounts.urls')),
-    (r'^home/', include('home.urls')),
 	(r'^proposals/', include('proposing.urls')),
 	(r'^document/', include('document.urls')),
 )

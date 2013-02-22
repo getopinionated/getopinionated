@@ -3,6 +3,8 @@
 
 {% block content %}
 
+<h1>Register</h1>
+
 <form action="{% url user-register %}" method="POST">
     {% csrf_token %}
     <table>

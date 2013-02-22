@@ -9,8 +9,9 @@
 {% endblock %}
 
 {% block content %}
+  <h1>{{ fulldocument.title }} version {{ fulldocument.version_roman }}</h1>
+  
   <div class="document">
-    <h1>{{ fulldocument.title }} version {{ fulldocument.version_roman }}</h1>
     {{ fulldocument.content|linebreaks }}
   </div>
 
