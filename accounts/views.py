@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import HttpResponseRedirect
@@ -34,6 +34,20 @@ def userlogin(request):
  
     return render_to_response(request, 'accounts/login.html', {
         'form': auth_form,
+    })
+
+@not_logged_in
+def passwordreset(request):
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            form.save(email_template_name='accounts/password_reset_email.txt')
+            messages.success(request, 'An email has been sent to the provided email address.')
+            return HttpResponseRedirect(reverse('password-reset'))
+    else:
+        form = PasswordResetForm()
+    return render_to_response(request, 'accounts/password-reset.html', {
+        'form': form,
     })
 
 @not_logged_in

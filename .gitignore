@@ -41,3 +41,6 @@ nosetests.xml
 
 # create your own db and super user using "./manage.py syncd"
 /database.sqlite3
+
+# local settings
+getopinionated/local_settings.py
