@@ -5,9 +5,17 @@
 <form action="{% url profile-update %}" method="POST">
     {% csrf_token %}
     <table>
-    {{ form.as_p }}
+        {{ profileform }}
     </table>
-    <input type="submit" value="update" />
+    <input type="submit" value="update"  name="profileupdate" />
+</form>
+
+<form action="{% url profile-update %}" method="POST">
+    {% csrf_token %}
+    <table>
+        {{ passwordform }}
+    </table>
+    <input type="submit" value="change password" name="passwordchange" />
 </form>
 
 {% endblock %}

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import HttpResponseRedirect
@@ -57,21 +57,32 @@ def userregister(request):
 
 @login_required
 def profileupdate(request):
-        # Initialize the form either fresh or with the appropriate POST data as the instance
-    if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
+    ## profile update form
+    if request.method == 'POST' and 'profileupdate' in request.POST:
+        profileform = ProfileUpdateForm(request.POST, instance=request.user)
+        if profileform.is_valid():
+            profileform.save()
             messages.success(request, 'Profile details updated')
             return HttpResponseRedirect(reverse('profile-update'))
     else:
-        form = ProfileUpdateForm(instance=request.user)
+        profileform = ProfileUpdateForm(instance=request.user)
+    ## password change form
+    if request.method == 'POST' and 'passwordchange' in request.POST:
+        passwordform = PasswordChangeForm(request.user, request.POST)
+        if passwordform.is_valid():
+            passwordform.save()
+            messages.success(request, 'Password changed')
+            return HttpResponseRedirect(reverse('profile-update'))
+    else:
+        passwordform = PasswordChangeForm(request.user)
 
     return render_to_response(request, 'accounts/update.html', {
-        'form': form,
+        'profileform': profileform,
+        'passwordform': passwordform,
     })
 
 @login_required
 def userlogout(request):
     logout(request)
     return HttpResponseRedirect(reverse('home-index'))
+    
