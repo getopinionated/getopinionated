@@ -3,6 +3,8 @@
 {% load macros %}
 {% loadmacros "proposal/proposal-macro.html" %}
 
+{% block title %}{% include "title.html" with subtitle="Proposals" %}{% endblock %}
+
 {% block content %}
 
     {% if latest_proposal_list %}

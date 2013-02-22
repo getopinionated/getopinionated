@@ -22,6 +22,8 @@
 	</span>
 {% endmacro %}
 
+{% block title %}{% include "title.html" with subtitle=proposal.title %}{% endblock %}
+
 {% block extrastyle %}
     <link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
 {% endblock %}
