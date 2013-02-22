@@ -4,11 +4,15 @@
 
 {% macro user-small user when %}
 	<div class="user-small">
-		<a href = {% url user-profile user.slug %}>
+		{% if user %}
+		<a href="{% url user-profile user.slug %}">
 			<span title="{{when}}" class="user-time">{{when|naturaltime}}</span>
 		    <span class="user-name">{{user.display_name}}</span>
 		    <span class="user-karma">{{user.karma|mediumint}}</span>
 		</a>
+		{% else %}
+			<span title="{{when}}" class="user-time">{{when|naturaltime}}</span>
+		{% endif %}
     </div>
 {% endmacro %}
 
@@ -17,7 +21,7 @@
 		<div title="{{when}}" class="user-box-action">{{what}} {{when|naturaltime}}</div>
 	    <div class="user-box-avatar"></div>
 	    <div class="user-box-name">
-	    	<a href = {% url user-profile user.slug %}>
+	    	<a href="{% url user-profile user.slug %}">
 	    		{{user.display_name}}
 	    	</a>
 	    	<br>
