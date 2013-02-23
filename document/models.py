@@ -78,6 +78,10 @@ class Diff(models.Model):
     NORMAL = 2
     COMPLIANT = 3
     VERYCOMPLIANT = 4
+
+    def __unicode__(self):
+        nchanges = len([l for l in self.text_representation.split('\n') if l.startswith('+') or l.startswith('-')])
+        return "Diff for {} with {} changes".format(self.fulldocument.title, nchanges)
     
     @staticmethod
     def generateDiff(originaltext, derivedtext):
