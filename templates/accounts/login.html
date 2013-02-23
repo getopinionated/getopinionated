@@ -6,9 +6,12 @@
 <h1>Login</h1>
 
 <form action="{% url user-login %}" method="POST">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <input type="submit" value="login" />
+    {% csrf_token %}
+    <table>
+        {{ form }}
+    </table>
+    <input type="submit" value="Login" />
+    <a href="{% url password-reset %}" style="padding-left: 40px;">Forgot password</a>
 </form>
 
 {% endblock %}

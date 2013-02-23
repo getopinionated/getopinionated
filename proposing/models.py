@@ -9,7 +9,7 @@ from common.stringify import niceBigInteger
 
 class VotablePost(models.Model):
     """ super-model for all votable models """
-    creator = models.ForeignKey(CustomUser, related_name="created_proposals", null=True, blank=True)
+    creator = models.ForeignKey(CustomUser, related_name="created_proposals", null=True)
     create_date = models.DateTimeField(auto_now_add=True)
 
     @property
@@ -64,8 +64,8 @@ class ProposalVote(models.Model):
     value = models.IntegerField("The value of the vote")
 
 class Proposal(VotablePost):
-    title = models.CharField(max_length=255, unique=True)
-    slug = models.SlugField(unique=True)
+    title = models.CharField(max_length=255)
+    slug = models.SlugField()
     motivation = models.TextField()
     diff = models.ForeignKey(Diff)
     views = models.IntegerField(default=0)
@@ -79,18 +79,6 @@ class Proposal(VotablePost):
             # Newly created object, so set slug
             self.slug = slugify(self.title)
         super(Proposal, self).save(*args, **kwargs)
-
-    def isValidTitle(self, title):
-        """ Check if slug derived from title already exists,
-            the title is then automatically also unique.
-            Keeps into account possibility of already existing object.
-        """
-        titleslug = slugify(title)
-        try:
-            proposal = Proposal.objects.get(slug=titleslug)
-            return self.id == proposal.id
-        except Proposal.DoesNotExist:
-            return True
 
     @property
     def diff_with_context(self):
@@ -176,4 +164,4 @@ class Comment(VotablePost):
 
 class Tag(models.Model):
     proposal = models.ManyToManyField(Proposal, related_name="tags")
-    name = models.CharField(max_length=35)
+    title = models.CharField(max_length=35)

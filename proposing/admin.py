@@ -17,7 +17,7 @@ class ProposalVoteInline(admin.TabularInline):
     extra = 3
 
 class ProposalAdmin(admin.ModelAdmin):
-    list_display = ['creator', 'title', ]
+    list_display = ['title', 'creator', ]
     inlines = [CommentInline, UpDownVoteInline, ProposalVoteInline]
     list_filter = ['create_date']
     actions = ['add_15_upvotes','add_15_proposalvotes']

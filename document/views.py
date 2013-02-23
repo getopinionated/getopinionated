@@ -5,7 +5,6 @@ from common.shortcuts import render_to_response
 from forms import ProposalForm
 from django.contrib.auth.decorators import login_required
 from models import FullDocument
-from proposing.models import Tag
 
 def documentView(request, document_slug, document_version=None):
     ## get the document
@@ -19,7 +18,6 @@ def documentView(request, document_slug, document_version=None):
         if form.is_valid():
             proposal = form.save(user = request.user)
             return HttpResponseRedirect(reverse('proposals-detail', args=(proposal.slug, )))
-
         else:
             pass
     else:

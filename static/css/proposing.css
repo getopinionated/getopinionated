@@ -40,13 +40,6 @@ article.proposal .title{
     margin-right: 0.7em;
 }
 
-article.proposal .comment .NEG .title{
-    color: #f55;
-}
-article.proposal .comment .POS .title{
-    color: #0c0;
-}
-
 article.proposal .diff {
     background-color: #ccc;
     padding: 4px;
