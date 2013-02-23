@@ -1,12 +1,16 @@
 {% extends "base.html" %}
+{% block title %}{% include "title.html" with subtitle="Register" %}{% endblock %}
 
 {% block content %}
 
+<h1>Register</h1>
+
 <form action="{% url user-register %}" method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="submit" />
+    <table>
+        {{ form }}
+    </table>
+    <input type="submit" value="Register" />
 </form>
 
 {% endblock %}
-

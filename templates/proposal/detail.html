@@ -63,7 +63,7 @@
                 <h2 class="{{ comment.color }}">
                     <span class="updownvote">{% usemacro updownvote comment %}</span>
                     <span class="title">Comment</span>
-                    {% if comment.creator %}{% usemacro user-small comment.creator comment.create_date%}{% endif %}
+                    {% usemacro user-small comment.creator comment.create_date %}
                 </h2>
                 <div class="motivation">{{ comment.motivation|linebreaks }}</div>
             </div>
