@@ -80,6 +80,18 @@ class Proposal(VotablePost):
             self.slug = slugify(self.title)
         super(Proposal, self).save(*args, **kwargs)
 
+    def isValidTitle(self, title):
+        """ Check if slug derived from title already exists,
+            the title is then automatically also unique.
+            Keeps into account possibility of already existing object.
+        """
+        titleslug = slugify(title)
+        try:
+            proposal = Proposal.objects.get(slug=titleslug)
+            return self.id == proposal.id
+        except Proposal.DoesNotExist:
+            return True
+
     @property
     def diff_with_context(self):
         return self.diff.getNDiff()
