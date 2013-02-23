@@ -4,10 +4,9 @@
 
 <form action="{% url user-register %}" method="POST">
     {% csrf_token %}
-    <table>
-        {{ form }}
-    </table>
-    <input type="submit" value="Register" />
+    {{ form.as_p }}
+    <input type="submit" value="submit" />
 </form>
 
 {% endblock %}
+

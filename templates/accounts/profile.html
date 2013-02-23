@@ -3,11 +3,14 @@
 {% load macros %}
 {% loadmacros "proposal/proposal-macro.html" %}
 
+{% block title %}{% include "title.html" with subtitle=member.display_name subtitle2="'s profile" %}{% endblock %}
+
 {% block extrastyle %}
     <link rel="stylesheet" href="{{STATIC_URL}}css/profile.css" type="text/css" charset="utf-8" />
 {% endblock %}
 
 {% block content %}
+    <h1>{{member.display_name}}'s Proposals</h1>
 
     {% if proposal_list %}
         <ul>

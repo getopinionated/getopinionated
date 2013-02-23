@@ -2,6 +2,8 @@
 {% load call_with_args %}
 {% load macros %}
 
+{% block title %}{% include "title.html" with subtitle=fulldocument.title subtitle2=" version " subtitle3=fulldocument.version_roman %}{% endblock %}
+
 {% block extrastyle %}
   <link rel="stylesheet" href="{{STATIC_URL}}css/document.css" type="text/css" charset="utf-8" />
   <link rel="stylesheet" href="{{STATIC_URL}}css/chosen.css" />
@@ -15,8 +17,9 @@
 {% endblock %}
 
 {% block content %}
+  <h1>{{ fulldocument.title }} version {{ fulldocument.version_roman }}</h1>
+  
   <div class="document">
-    <h1>{{ fulldocument.title }} version {{ fulldocument.version_roman }}</h1>
     {{ fulldocument.content|linebreaks }}
   </div>
 

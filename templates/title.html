@@ -1,0 +1,9 @@
+{% if subtitle3 %}
+    getOpinionated &bull; {{subtitle}}{{subtitle2}}{{subtitle3}}
+{% elif subtitle2 %}
+    getOpinionated &bull; {{subtitle}}{{subtitle2}}
+{% elif subtitle %}
+    getOpinionated &bull; {{subtitle}}
+{% else %}
+    getOpinionated
+{% endif %}
