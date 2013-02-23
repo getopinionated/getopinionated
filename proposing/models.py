@@ -64,8 +64,8 @@ class ProposalVote(models.Model):
     value = models.IntegerField("The value of the vote")
 
 class Proposal(VotablePost):
-    title = models.CharField(max_length=255)
-    slug = models.SlugField()
+    title = models.CharField(max_length=255, unique=True)
+    slug = models.SlugField(unique=True)
     motivation = models.TextField()
     diff = models.ForeignKey(Diff)
     views = models.IntegerField(default=0)
