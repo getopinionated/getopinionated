@@ -19,8 +19,16 @@ class ProposalForm(forms.ModelForm):
     def clean_title(self):
         title = self.cleaned_data["title"]
         if not Proposal().isValidTitle(title):
-            raise forms.ValidationError("This title has already been used.")
+            raise forms.ValidationError("This title has already been used")
         return title
+
+    def clean_content(self):
+        content = self.cleaned_data["content"]
+        newcont = FullDocument.cleanText(content)
+        origcont = FullDocument.cleanText(self.originalcontent)
+        if newcont == origcont:
+            raise forms.ValidationError("You should make at least one change")
+        return content
 
     def save(self, user, commit=True):
         newcontent = FullDocument.cleanText(self.cleaned_data["content"])
