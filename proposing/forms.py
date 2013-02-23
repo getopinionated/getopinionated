@@ -11,3 +11,4 @@ class CommentForm(forms.ModelForm):
         new_comment.proposal = proposal
         new_comment.creator = user if user.is_authenticated() else None
         new_comment.save()
+        return new_comment

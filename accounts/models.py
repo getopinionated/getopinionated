@@ -17,7 +17,7 @@ class CustomUser(User):
     def isValidUserName(self, username):
         """ Check if slug derived from username already exists,
             the username is then automatically also unique.
-            Keeps into account possibly  already existing object.
+            Keeps into account possibility of already existing object.
         """
         userslug = slugify(username)
         try:

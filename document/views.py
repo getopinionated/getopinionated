@@ -16,8 +16,8 @@ def documentView(request, document_slug, document_version=None):
     if request.method == 'POST':
         form = ProposalForm(request.POST, instance=fulldocument)
         if form.is_valid():
-            form.save(user = request.user)
-            return HttpResponseRedirect(reverse('proposals-index'))
+            proposal = form.save(user = request.user)
+            return HttpResponseRedirect(reverse('proposals-detail', args=(proposal.slug, )))
         else:
             pass
     else:

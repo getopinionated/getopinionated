@@ -16,6 +16,12 @@ class ProposalForm(forms.ModelForm):
         model = FullDocument
         fields = ("content",)
 
+    def clean_title(self):
+        title = self.cleaned_data["title"]
+        if not Proposal().isValidTitle(title):
+            raise forms.ValidationError("This title has already been used.")
+        return title
+
     def save(self, user, commit=True):
         newcontent = FullDocument.cleanText(self.cleaned_data["content"])
         newdiff = Diff.generateDiff(self.originalcontent,
@@ -28,3 +34,4 @@ class ProposalForm(forms.ModelForm):
                                diff = newdiff,
                                creator = user if user.is_authenticated() else None)
         newproposal.save()
+        return newproposal
