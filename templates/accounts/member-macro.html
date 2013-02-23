@@ -11,7 +11,7 @@
 		    <span class="user-karma">{{postinguser.karma|mediumint}}</span>
 		</a>
 		{% else %}
-			<span title="{{when}}" class="user-time">{{when|naturaltime}}</span>
+			<span title="{{when}}" class="user-time">{{when|humantime}}</span>
 		{% endif %}
     </div>
 {% endmacro %}
@@ -19,7 +19,7 @@
 {% macro user-medium postinguser when what %}
 	<div class="user-info">
 		{% if postinguser %}
-			<div title="{{when}}" class="user-box-action">{{what}} {{when|naturaltime}}</div>
+			<div title="{{when}}" class="user-box-action">{{what}} {{when|shorttime}}</div>
 		    <div class="user-box-avatar"></div>
 		    <div class="user-box-name">
 		    	<a href="{% url user-profile postinguser.slug %}">

@@ -109,7 +109,6 @@ INSTALLED_APPS = (
     'django.contrib.flatpages',
     'common',
     'accounts',
-    'home',
 	'proposing',
     'document',
     'django.contrib.humanize',
