@@ -4,6 +4,14 @@
 
 {% block extrastyle %}
   <link rel="stylesheet" href="{{STATIC_URL}}css/document.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="{{STATIC_URL}}css/chosen.css" />
+{% endblock %}
+
+{% block extrascripts %}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}js/chosen.jquery.js" type="text/javascript"></script>
+  <script src="{{STATIC_URL}}js/chosen.proto.js" type="text/javascript"></script>
+  <script type="text/javascript">$(".chzn-select").chosen();</script>
 {% endblock %}
 
 {% block content %}
@@ -17,6 +25,12 @@
     {% csrf_token %}
     <table>
       {{ form }}
+      <!--<tr><td><label for="id_Tags">Tags:</label></th><td><select data-placeholder="Choose tags" class="chzn-select" multiple tabindex="4">
+      	{% for tag in tags %}
+          <option value="{{ tag.name }}">{{ tag.name }}</option> 
+        {% endfor %}
+        </select>
+      </td></tr> -->
       <tr><td><input type="submit" value="submit your proposal" /></td></tr>
     </table>
   </form>
