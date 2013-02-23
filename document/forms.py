@@ -1,7 +1,9 @@
 from django import forms
 from models import Diff
 from document.models import FullDocument
-from proposing.models import Proposal 
+from proposing.models import Proposal , Tag
+from document.widgets import TagSelectorWidget
+from document.fields import TagChoiceField
 
 class ProposalForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput())
@@ -11,10 +13,16 @@ class ProposalForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProposalForm, self).__init__(*args, **kwargs)
         self.originalcontent = self.instance.content
+        self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget())
 
     class Meta:
         model = FullDocument
         fields = ("content",)
+
+    @staticmethod
+    def getTags():
+        return [(tag.pk, tag.name) for tag in Tag.objects.all()]
+
 
     def clean_title(self):
         title = self.cleaned_data["title"]

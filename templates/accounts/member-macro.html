@@ -6,7 +6,7 @@
 	<div class="user-small">
 		{% if postinguser %}
 		<a href="{% url user-profile postinguser.slug %}">
-			<span title="{{when}}" class="user-time">{{when|naturaltime}}</span>
+			<span title="{{when}}" class="user-time">{{when|humantime}}</span>
 		    <span class="user-name">{{postinguser.display_name}}</span>
 		    <span class="user-karma">{{postinguser.karma|mediumint}}</span>
 		</a>
@@ -29,7 +29,7 @@
 		    	<div class="user-box-karma">{{postinguser.karma|mediumint}}</div>
 		    </div>
 	    {% else %}
-	    	<div title="{{when}}" class="user-box-action">{{what}} {{when|naturaltime}}</div>
+	    	<div title="{{when}}" class="user-box-action">{{what}} {{when|shorttime}}</div>
 	        <div class="user-box-avatar"></div>
 	        <div class="user-box-name">
         		Anonymous

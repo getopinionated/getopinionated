@@ -1,5 +1,16 @@
 from models import Proposal, Comment, UpDownVote, ProposalVote
 from django.contrib import admin
+from proposing.models import Tag
+
+class ProposalInline(admin.TabularInline):
+    model = Tag.proposal.through
+
+class TagAdmin(admin.ModelAdmin):
+    inlines = [
+        ProposalInline,
+    ]
+    list_display = ('name',)
+    exclude = ('proposal',)
 
 class CommentInline(admin.TabularInline):
     model = Comment
@@ -42,3 +53,4 @@ class ProposalAdmin(admin.ModelAdmin):
     add_15_proposalvotes.short_description = "Add 15 proposal votes"
 
 admin.site.register(Proposal, ProposalAdmin)
+admin.site.register(Tag, TagAdmin)
