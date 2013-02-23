@@ -7,11 +7,10 @@ from django.template.defaultfilters import slugify
 from common.stringify import int_to_roman
 import difflib
 
-'''
-    contains the final version of a certain document, e.g. the manifesto or the program
-'''
 
 class FullDocument(models.Model):
+    """ contains the final version of a certain document, e.g. the manifesto or the program """
+
     title = models.CharField(max_length=255)
     slug = models.SlugField()
     content = models.TextField() 
@@ -65,11 +64,10 @@ class FullDocument(models.Model):
     def version_roman(self):
         return int_to_roman(self.version)
 
-'''
-    contains a diff between two versions of a document. Is the content of a proposal
-'''
 
 class Diff(models.Model):
+    """ contains a diff between two versions of a document. Is the content of a proposal """
+
     text_representation = models.TextField()
     fulldocument = models.ForeignKey(FullDocument)
     
