@@ -1,24 +1,13 @@
 {% extends "base.html" %}
-{% block title %}{% include "title.html" with subtitle="Update profile" %}{% endblock %}
 
 {% block content %}
 
-<h1>Update profile</h1>
-
 <form action="{% url profile-update %}" method="POST">
     {% csrf_token %}
     <table>
-        {{ profileform }}
+    {{ form.as_p }}
     </table>
-    <input type="submit" value="Update"  name="profileupdate" />
-</form>
-
-<form action="{% url profile-update %}" method="POST">
-    {% csrf_token %}
-    <table>
-        {{ passwordform }}
-    </table>
-    <input type="submit" value="Change password" name="passwordchange" />
+    <input type="submit" value="update" />
 </form>
 
 {% endblock %}

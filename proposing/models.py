@@ -176,4 +176,4 @@ class Comment(VotablePost):
 
 class Tag(models.Model):
     proposal = models.ManyToManyField(Proposal, related_name="tags")
-    title = models.CharField(max_length=35)
+    name = models.CharField(max_length=35)
