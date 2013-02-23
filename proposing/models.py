@@ -9,7 +9,7 @@ from common.stringify import niceBigInteger
 
 class VotablePost(models.Model):
     """ super-model for all votable models """
-    creator = models.ForeignKey(CustomUser, related_name="created_proposals", null=True)
+    creator = models.ForeignKey(CustomUser, related_name="created_proposals", null=True, blank=True)
     create_date = models.DateTimeField(auto_now_add=True)
 
     @property
@@ -79,6 +79,18 @@ class Proposal(VotablePost):
             # Newly created object, so set slug
             self.slug = slugify(self.title)
         super(Proposal, self).save(*args, **kwargs)
+
+    def isValidTitle(self, title):
+        """ Check if slug derived from title already exists,
+            the title is then automatically also unique.
+            Keeps into account possibility of already existing object.
+        """
+        titleslug = slugify(title)
+        try:
+            proposal = Proposal.objects.get(slug=titleslug)
+            return self.id == proposal.id
+        except Proposal.DoesNotExist:
+            return True
 
     @property
     def diff_with_context(self):

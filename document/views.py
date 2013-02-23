@@ -15,11 +15,11 @@ def documentView(request, document_slug, document_version=None):
         fulldocument = FullDocument.objects.get(slug=document_slug, version=document_version)
     ## Initialize the form either fresh or with the appropriate POST data as the instance
     if request.method == 'POST':
-        tags = request.POST.get('tags')
         form = ProposalForm(request.POST, instance=fulldocument)
         if form.is_valid():
-            form.save(user = request.user, tags=tags)
-            return HttpResponseRedirect(reverse('proposals-index'))
+            proposal = form.save(user = request.user)
+            return HttpResponseRedirect(reverse('proposals-detail', args=(proposal.slug, )))
+
         else:
             pass
     else:

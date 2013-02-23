@@ -21,10 +21,13 @@ class ProposalForm(forms.ModelForm):
         model = FullDocument
         fields = ("content",)
 
-    def clean_tags(self):
-        pass
+    def clean_title(self):
+        title = self.cleaned_data["title"]
+        if not Proposal().isValidTitle(title):
+            raise forms.ValidationError("This title has already been used.")
+        return title
 
-    def save(self, user, commit=True, tags=[]):
+    def save(self, user, commit=True):
         newcontent = FullDocument.cleanText(self.cleaned_data["content"])
         newdiff = Diff.generateDiff(self.originalcontent,
                                     newcontent)
@@ -34,7 +37,8 @@ class ProposalForm(forms.ModelForm):
         newproposal = Proposal(title = self.cleaned_data["title"],
                                motivation = self.cleaned_data["motivation"],
                                diff = newdiff,
-                               creator = user )
-        a = self.cleaned_data["tags"]
-        a.all()
+                               creator = user if user.is_authenticated() else None)
+        #a = self.cleaned_data["tags"]
+        #a.all()
         newproposal.save()
+        return newproposal
