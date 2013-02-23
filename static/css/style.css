@@ -222,7 +222,11 @@ ul.messages li.error {
     margin: 0px;
     padding: 8px 0px 8px 0;
     background-color: transparent;
-    color: #fff;
+}
+
+#main ul.errorlist li {
+    color: #f00;
+    font-style: italic;
 }
 
 .numberblock {
@@ -375,9 +379,14 @@ form input[type=submit] {
     color:#fff;
 }
 
-form label {
+form th {
     color: #000;
-    display: inline-block;
-    width: 150px;
+    font-weight: normal;
+    min-width: 150px;
+    text-align: left;
+    vertical-align: top;
+}
+form td {
+    vertical-align: bottom;
 }
 
