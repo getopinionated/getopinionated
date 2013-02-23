@@ -19,11 +19,6 @@ class ProposalForm(forms.ModelForm):
         model = FullDocument
         fields = ("content",)
 
-    @staticmethod
-    def getTags():
-        return [(tag.pk, tag.name) for tag in Tag.objects.all()]
-
-
     def clean_title(self):
         title = self.cleaned_data["title"]
         if not Proposal().isValidTitle(title):
@@ -49,5 +44,8 @@ class ProposalForm(forms.ModelForm):
                                motivation = self.cleaned_data["motivation"],
                                diff = newdiff,
                                creator = user if user.is_authenticated() else None)
+        newproposal.save()#save before the many-to-manyfield gets created
+        for tag in self.cleaned_data["tags"]:
+            newproposal.tags.add(tag)
         newproposal.save()
         return newproposal

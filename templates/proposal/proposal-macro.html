@@ -2,6 +2,7 @@
 {% load humanize %}
 {% load filters %}
 {% loadmacros "accounts/member-macro.html" %}
+{% loadmacros "proposal/tag-macro.html" %}
 
 {% macro proposal-for-list proposal %}
 	<div class="numberblock upvotescore">
@@ -28,10 +29,18 @@
 			views
 		</div>
 	</div>
-	<div class="summary">
-		<a href="{% url proposals-detail proposal.slug %}">{{ proposal.title }}</a>
+	<div class="explanation">
+		<div class="summary">
+			<a href="{% url proposals-detail proposal.slug %}">{{ proposal.title }}</a>
+		</div>
+		<div class="creator-small">
+			<a href="{% url user-profile proposal.creator %}">{% usemacro user-small proposal.creator proposal.create_date%}</a>
+		</div>
+		<br>
+		<div class="proposal-tags">
+			{% for tag in proposal.tags.all %}
+				{% usemacro tag-small tag %}
+			{% endfor %}
+		</div>
 	</div>
-	<div class="creator-small">
-		<a href="{% usemacro user-small proposal.creator proposal.create_date%}</a>
-</div>
 {% endmacro %}

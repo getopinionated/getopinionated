@@ -271,6 +271,16 @@ ul.messages li.error {
 	color: #fff;
 }
 
+.explanation {
+	display: inline-block;
+	width: 800px;
+	vertical-align: top;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;	
+}
+
 .summary {
 	display: inline-block;
 	margin: 0;
@@ -298,6 +308,10 @@ ul.messages li.error {
 	vertical-align: baseline;
 	background: transparent;
     float: right;
+}
+
+.proposal-tags {
+	display: inline-block;
 }
 
 /* footer */

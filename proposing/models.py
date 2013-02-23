@@ -175,5 +175,5 @@ class Comment(VotablePost):
         return "Comment on {}".format(self.proposal)
 
 class Tag(models.Model):
-    proposal = models.ManyToManyField(Proposal, related_name="tags")
+    proposals = models.ManyToManyField(Proposal, related_name="tags")
     name = models.CharField(max_length=35)

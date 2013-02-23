@@ -1,0 +1,9 @@
+.tag-button {
+	display: inline-block;
+    color: #aaf;
+    font-size: 16px;
+    background: #999;
+    padding: 3px 6px 3px 6px;
+    color: #fff;
+    border: 1px 1px 1px 1px;
+}

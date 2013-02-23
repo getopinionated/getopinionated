@@ -522,28 +522,32 @@
         "pk": 1,
         "model": "proposing.tag",
         "fields": {
-            "name": "Democracy"
+            "name": "Democracy",
+            "proposals": []
         }
     },
     {
         "pk": 2,
         "model": "proposing.tag",
         "fields": {
-            "name": "Copyright"
+            "name": "Copyright",
+            "proposals": []
         }
     },
     {
         "pk": 3,
         "model": "proposing.tag",
         "fields": {
-            "name": "Privacy"
+            "name": "Privacy",
+            "proposals": []
         }
     },
     {
         "pk": 4,
         "model": "proposing.tag",
         "fields": {
-            "name": "Transparency"
+            "name": "Transparency",
+            "proposals": []
         }
     }
 ]

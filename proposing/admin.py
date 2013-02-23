@@ -3,14 +3,14 @@ from django.contrib import admin
 from proposing.models import Tag
 
 class ProposalInline(admin.TabularInline):
-    model = Tag.proposal.through
+    model = Tag.proposals.through
 
 class TagAdmin(admin.ModelAdmin):
     inlines = [
         ProposalInline,
     ]
     list_display = ('name',)
-    exclude = ('proposal',)
+    exclude = ('proposals',)
 
 class CommentInline(admin.TabularInline):
     model = Comment
