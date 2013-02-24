@@ -21,12 +21,6 @@
     {% csrf_token %}
     <table>
       {{ form }}
-      <!--<tr><td><label for="id_Tags">Tags:</label></th><td><select data-placeholder="Choose tags" class="chzn-select" multiple tabindex="4">
-        {% for tag in tags %}
-          <option value="{{ tag.name }}">{{ tag.name }}</option> 
-        {% endfor %}
-        </select>
-      </td></tr> -->
       <tr><td><input type="submit" value="submit your proposal" /></td></tr>
     </table>
   </form>
