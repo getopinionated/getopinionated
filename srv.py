@@ -1,24 +1,29 @@
 #!/usr/bin/env python
-import os, shutil
 
-### make sure there are local settings ###
-try:
+from os import environ, chdir
+from os.path import exists, dirname
+from shutil import copy
+from django.core.management import call_command
+
+def chdir_to_project():
+    chdir(dirname(__file__))
+
+def import_local_settings():
+    local_settings_file = "getopinionated/local_settings.py"
+    local_settings_template = "getopinionated/local_settings_template.py"
+    if not exists(local_settings_file):
+        print "Local settings not found, creating new %s" % local_settings_file
+        copy(local_settings_file, local_settings_template)
     import getopinionated.local_settings
-except ImportError:
-    shutil.copy('getopinionated/local_settings.py.template', 'getopinionated/local_settings.py')
-    print "Note: Local settings created\n"
-    import getopinionated.local_settings
 
-### validate models ###
-status = os.system('python manage.py validate')
+def runserver():
+    chdir_to_project()
+    import_local_settings()
+    call_command('validate')
+    call_command('syncdb', noinput=True)
+    call_command('loaddata', 'testdata.json')
+    call_command('runserver', '8000')
 
-### start server ###
-if(not status):
-    os.system('python manage.py syncdb --noinput')
-    os.system('python manage.py loaddata testdata.json')
-    try:
-        os.system('python manage.py runserver 8000')
-    finally:
-        os.system('django-admin.py dumpdata')    
-else:
-    print "Invalid models!"
+if __name__ == "__main__":
+    environ.setdefault("DJANGO_SETTINGS_MODULE", "getopinionated.settings")
+    runserver();
