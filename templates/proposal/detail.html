@@ -3,6 +3,7 @@
 {% load macros %}
 {% load filters %}
 {% loadmacros "accounts/member-macro.html" %}
+{% loadmacros "proposal/tag-macro.html" %}
 
 {% macro updownvote votable_post %}
 	{% if votable_post|args:user|call:"can_press_upvote" %}
@@ -40,6 +41,11 @@
         <div class="motivation">
         	<span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>
         	{{ proposal.motivation|linebreaks }}
+        	<div class="proposal-tags">
+        		{% for tag in proposal.tags.all %}
+        			{% usemacro tag-small tag %}
+        		{% endfor %}
+        	</div>
         </div>
         {% if proposal.isVoting and not proposal.isFinished%}
         	<div class="votebuttons">
