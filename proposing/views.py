@@ -52,7 +52,6 @@ def detail(request, proposal_slug):
                 return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
         else:
             commentform = CommentForm()
-            proposal.addView()
     return render(request, 'proposal/detail.html', {
         'proposal': proposal,
         'commentform': commentform,
