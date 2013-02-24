@@ -229,6 +229,22 @@ ul.messages li.error {
     font-style: italic;
 }
 
+.proposal-list {
+	display: inline-block;
+	width: 80%;
+}
+
+.tag-list {
+	display: inline-block;
+	vertical-align: top;
+	width: 15%;
+}
+
+.tag-item {
+	display: block;
+	margin: 8px 0 0px 0;
+}
+
 .numberblock {
 	margin: 0 3px 0 0;
 	padding: 5px;
@@ -273,7 +289,7 @@ ul.messages li.error {
 
 .explanation {
 	display: inline-block;
-	width: 800px;
+	width: 75%;
 	vertical-align: top;
 	margin: 0;
 	padding: 0;

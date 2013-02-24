@@ -5,6 +5,7 @@ from common.shortcuts import render_to_response
 from forms import ProposalForm
 from django.contrib.auth.decorators import login_required
 from models import FullDocument
+from proposing.models import Tag
 
 def documentView(request, document_slug, document_version=None):
     ## get the document
@@ -22,6 +23,7 @@ def documentView(request, document_slug, document_version=None):
             pass
     else:
         form = ProposalForm(instance=fulldocument)
+    
 
     return render_to_response(request, 'document/detail.html', {
         'form': form,

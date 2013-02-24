@@ -5,3 +5,9 @@
 		{{ tag.name }}
 	</div>
 {% endmacro %}
+
+{% macro tag-medium tag %}
+	<div class="tag-button">
+		{{ tag.name }}
+	</div> × {{ tag.proposals.count }}
+{% endmacro %}

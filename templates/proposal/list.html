@@ -2,22 +2,32 @@
 {% load filters %}
 {% load macros %}
 {% loadmacros "proposal/proposal-macro.html" %}
+{% loadmacros "proposal/tag-macro.html" %}
 
 {% block title %}{% include "title.html" with subtitle="Proposals" %}{% endblock %}
 
 {% block content %}
-    <h1>Latest proposals</h1>
-
-    {% if latest_proposal_list %}
-        <ul>
-        {% for proposal in latest_proposal_list %}
-        	<li>
-        		{% usemacro proposal-for-list proposal %}
-        	</li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>No proposals are available.</p>
-    {% endif %}
-
+    <div class="proposal-list">
+	    <h1>Latest proposals</h1>
+	
+	    {% if latest_proposal_list %}
+	        <ul>
+	        {% for proposal in latest_proposal_list %}
+	        	<li>
+	        		{% usemacro proposal-for-list proposal %}
+	        	</li>
+	        {% endfor %}
+	        </ul>
+	    {% else %}
+	        <p>No proposals are available.</p>
+	    {% endif %}
+	</div>
+	<div class="tag-list">
+		<h1>Most used tags</h1>
+		{% for tag in taglist %}
+			<div class="tag-item">
+				{% usemacro tag-medium tag %}
+			</div>
+		{% endfor %}
+	</div>
 {% endblock %}

@@ -6,11 +6,15 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from models import VotablePost, UpDownVote, Proposal, Comment, ProposalVote
 from forms import CommentForm
+from proposing.models import Tag
+from django.db.models import Count
 
 def index(request):
     first_5_proposals = Proposal.objects.order_by('create_date')[:]#for debugging purposes, results should actually be paginated
+    taglist = Tag.objects.annotate(num_props=Count('proposals')).order_by('-num_props')
     return render(request, 'proposal/list.html', {
-        'latest_proposal_list': first_5_proposals
+        'latest_proposal_list': first_5_proposals,
+        'taglist': taglist
     })
 
 def detail(request, proposal_slug):
