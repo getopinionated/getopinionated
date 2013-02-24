@@ -15,5 +15,6 @@ urlpatterns = patterns('',
     (r'^accounts/', include('accounts.urls')),
 	(r'^proposals/', include('proposing.urls')),
 	(r'^document/', include('document.urls')),
+	url(r'^tag/(?P<tag_slug>[-\w]+)/$', proposing.views.tagindex, name='tag-index'),
 )
 

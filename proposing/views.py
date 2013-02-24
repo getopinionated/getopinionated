@@ -10,11 +10,21 @@ from proposing.models import Tag
 from django.db.models import Count
 
 def index(request):
-    first_5_proposals = Proposal.objects.order_by('create_date')[:]#for debugging purposes, results should actually be paginated
+    first_5_proposals = Proposal.objects.order_by('create_date')#for debugging purposes, results should actually be paginated
     taglist = Tag.objects.annotate(num_props=Count('proposals')).order_by('-num_props')
     return render(request, 'proposal/list.html', {
         'latest_proposal_list': first_5_proposals,
         'taglist': taglist
+    })
+    
+def tagindex(request, tag_slug):
+    tag = get_object_or_404(Tag, slug=tag_slug)
+    proposals = tag.proposals.order_by('create_date')[:]#for debugging purposes, results should actually be paginated
+    taglist = Tag.objects.annotate(num_props=Count('proposals')).order_by('-num_props')
+    return render(request, 'proposal/list.html', {
+        'latest_proposal_list': proposals,
+        'taglist': taglist,
+        'title': "Latest proposals on %s" % tag.name.lower()
     })
 
 def detail(request, proposal_slug):
@@ -105,3 +115,4 @@ def proposalvote(request, proposal_slug, updown):
     # redirect
     messages.success(request, "Vote successful")
     return proposal_detail_redirect
+

@@ -177,3 +177,10 @@ class Comment(VotablePost):
 class Tag(models.Model):
     proposals = models.ManyToManyField(Proposal, related_name="tags")
     name = models.CharField(max_length=35)
+    slug = models.SlugField()
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            # Newly created object, so set slug
+            self.slug = slugify(self.title)
+        super(Proposal, self).save(*args, **kwargs)

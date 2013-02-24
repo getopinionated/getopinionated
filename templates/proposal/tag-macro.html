@@ -1,13 +1,13 @@
 {% load macros %}
 
 {% macro tag-small tag %}
-	<div class="tag-button">
-		{{ tag.name }}
-	</div>
+	<a href="{% url tag-index tag.slug %}">
+		<div class="tag-button">
+			{{ tag.name }}
+		</div>
+	</a>
 {% endmacro %}
 
 {% macro tag-medium tag %}
-	<div class="tag-button">
-		{{ tag.name }}
-	</div> × {{ tag.proposals.count }}
+	{% usemacro tag-small tag %} × {{ tag.proposals.count }}
 {% endmacro %}
