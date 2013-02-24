@@ -452,7 +452,7 @@
         "model": "accounts.customuser",
         "fields": {
             "slug": "sandbender",
-            "karma": -30
+            "karma": 9970
         }
     },
     {
