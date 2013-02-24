@@ -8,9 +8,9 @@ class TagSelectorWidget(widgets.SelectMultiple):
 
     class Media:
         css = {
-            'all': ('css/chosen.css',)
+            'all': ('css/chosen/chosen.css',)
         }
-        js = ('https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js','js/chosen.jquery.js')
+        js = ('js/chosen/chosen.jquery.js',)
 
     def render(self, name, selected=None, attrs=None, choices=()):
         if selected is None: selected = []
@@ -23,18 +23,30 @@ class TagSelectorWidget(widgets.SelectMultiple):
         output.append('<script type="text/javascript">$("#%s").chosen();</script>'%attrs['id'])
         return mark_safe(u'\n'.join(output))
 
-    def value_from_datadict(self, data, files, name):
-        if isinstance(data, (MultiValueDict, MergeDict)):
-            return data.getlist(name)
-        return data.get(name, None)
 
-    def _has_changed(self, initial, data):
-        if initial is None:
-            initial = []
-        if data is None:
-            data = []
-        if len(initial) != len(data):
-            return True
-        initial_set = set([force_unicode(value) for value in initial])
-        data_set = set([force_unicode(value) for value in data])
-        return data_set != initial_set
+class RichTextEditorWidget(widgets.Textarea):
+
+    class Media:
+        css = {
+            'all': ('css/wysihtml5/bootstrap-wysihtml5.css',
+                    'css/wysihtml5/bootstrap.min.css')
+        }
+        js = ('js/wysihtml5/wysihtml5-0.3.0.js',
+              'js/wysihtml5/bootstrap.min.js',
+              'js/wysihtml5/bootstrap-wysihtml5.js')
+
+    def render(self, name, selected=None, attrs=None, choices=()):
+        if selected is None: selected = []
+        final_attrs = self.build_attrs(attrs, name=name)
+        output = [u'<textarea class="rich-text-widget" %s>' % flatatt(final_attrs)]
+        output.append('</textarea>')
+        output.append("""<script type="text/javascript">$('#%s').wysihtml5({
+            "font-styles": true,
+            "emphasis": true,
+            "lists": true,
+            "html": false,
+            "link": true,
+            "image": false,
+            "color": false  
+        });</script>"""%attrs['id'])
+        return mark_safe(u'\n'.join(output))

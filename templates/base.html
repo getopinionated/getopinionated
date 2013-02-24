@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="{{STATIC_URL}}css/users.css" type="text/css" charset="utf-8" />
     <link rel="stylesheet" href="{{STATIC_URL}}css/tags.css" type="text/css" charset="utf-8" />
     <link rel="stylesheet" href="{{STATIC_URL}}css/style.css" />
+    <script type="text/javascript" src="{{STATIC_URL}}js/jquery/jquery-1.9.1.js"></script>
     {% block extrastyle %}{% endblock %}
     <meta charset=utf-8" />
     {% block extrahead %} {% endblock %}
 </head>
 <body>
-
     <nav id="top">
         <ul>
             {% if not user.is_authenticated %}
@@ -39,6 +39,7 @@
             <ul>
                 <li><a href="{% url latest-document-detail 'the-pirate-codex' %}">Document</a></li>
                 <li><a href="{% url proposals-index %}">Proposals</a></li>
+                <li><a href="{% url proxy-index %}">Proxy</a></li>
             </ul>
         </nav>
 

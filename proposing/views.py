@@ -115,3 +115,8 @@ def proposalvote(request, proposal_slug, updown):
     messages.success(request, "Vote successful")
     return proposal_detail_redirect
 
+
+def proxy(request):
+    user = request.user
+
+

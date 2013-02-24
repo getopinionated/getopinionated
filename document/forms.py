@@ -2,12 +2,12 @@ from django import forms
 from models import Diff
 from document.models import FullDocument
 from proposing.models import Proposal , Tag
-from document.widgets import TagSelectorWidget
+from document.widgets import TagSelectorWidget, RichTextEditorWidget
 from document.fields import TagChoiceField
 
 class ProposalForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput())
-    content = forms.CharField(widget=forms.Textarea(attrs={'cols': 80, 'rows': 20}))
+    content = forms.CharField(widget=RichTextEditorWidget(attrs={'cols': 80, 'rows': 20}))
     motivation = forms.CharField(widget=forms.Textarea(attrs={'cols': 80, 'rows': 20}))
 
     def __init__(self, *args, **kwargs):

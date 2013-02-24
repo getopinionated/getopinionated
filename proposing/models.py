@@ -184,3 +184,4 @@ class Tag(models.Model):
             # Newly created object, so set slug
             self.slug = slugify(self.title)
         super(Proposal, self).save(*args, **kwargs)
+
