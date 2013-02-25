@@ -7,13 +7,14 @@ from document.fields import TagChoiceField
 
 class ProposalForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput())
-    content = forms.CharField(widget=RichTextEditorWidget(attrs={'cols': 80, 'rows': 20}))
     motivation = forms.CharField(widget=forms.Textarea(attrs={'cols': 80, 'rows': 20}))
 
     def __init__(self, *args, **kwargs):
         super(ProposalForm, self).__init__(*args, **kwargs)
         self.originalcontent = self.instance.content
+        self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'cols': 80, 'rows': 20}))
         self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget())
+        self.fields.keyOrder = ['title', 'content', 'motivation','tags']
 
     class Meta:
         model = FullDocument

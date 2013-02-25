@@ -35,10 +35,10 @@ class RichTextEditorWidget(widgets.Textarea):
               'js/wysihtml5/bootstrap.min.js',
               'js/wysihtml5/bootstrap-wysihtml5.js')
 
-    def render(self, name, selected=None, attrs=None, choices=()):
-        if selected is None: selected = []
+    def render(self, name, value, attrs=None):
         final_attrs = self.build_attrs(attrs, name=name)
         output = [u'<textarea class="rich-text-widget" %s>' % flatatt(final_attrs)]
+        output.append('%s'%value)
         output.append('</textarea>')
         output.append("""<script type="text/javascript">$('#%s').wysihtml5({
             "font-styles": true,
