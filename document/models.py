@@ -135,4 +135,4 @@ class Diff(models.Model):
                 else:
                     index+=1
                     newlines.insert(index,'  %s'%diffline[2:])
-        return Diff(text_representation = ''.join(newlines))   
+        return Diff(text_representation = ''.join(newlines))

@@ -2,3 +2,15 @@
     padding-left: 20px;
     color: #0A67A2;
 }
+
+.rich-text-widget {
+	width: 800px;
+}
+
+#id_motivation {
+	width: 800px;
+}
+
+.chosen {
+	width: 800px;
+}
