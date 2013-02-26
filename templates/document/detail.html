@@ -13,7 +13,9 @@
   <h1>{{ fulldocument.title }} version {{ fulldocument.version_roman }}</h1>
   
   <div class="document">
-    {{ fulldocument.content|linebreaks }}
+  	{% autoescape off %}
+    	{{ fulldocument.content }}
+	{% endautoescape %}
   </div>
 
 

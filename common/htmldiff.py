@@ -158,8 +158,8 @@ class HTMLMatcher(SequenceMatcher):
         return '''
 .insert { background-color: #aaffaa }
 .delete { background-color: #ff8888; text-decoration: line-through }
-.tagInsert { background-color: #007700; color: #ffffff }
-.tagDelete { background-color: #770000; color: #ffffff }
+.tagInsert { background-color: #ccffcc; color: #000 }
+.tagDelete { background-color: #ffcccc; color: #000 }
 '''
 
     def addStylesheet(self, html, ss):
@@ -180,9 +180,15 @@ class HTMLMatcher(SequenceMatcher):
     def endDeleteText(self):
         return '</span>'
     def formatInsertTag(self, tag):
-        return '<span class="tagInsert">insert: <tt>%s</tt></span>' % htmlEncode(tag)
+        if not tag.startswith("</"):
+            return '<span class="tagInsert">'
+        else:
+            return '</span>'
     def formatDeleteTag(self, tag):
-        return '<span class="tagDelete">delete: <tt>%s</tt></span>' % htmlEncode(tag)
+        if not tag.startswith("</"):
+            return '<span class="tagDelete">'
+        else:
+            return '</span>'
 
 class NoTagHTMLMatcher(HTMLMatcher):
     def formatInsertTag(self, tag):
