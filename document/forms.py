@@ -42,12 +42,22 @@ class ProposalForm(forms.ModelForm):
             if tag.name not in VALID_TAGS:
                 tag.hidden = True
             #remove all unsafe attributes (style, ...)
-            for attribute in tag.attrs:
-                if not (attribute in VALID_ATTRIBUTES):
-                    del attribute
+            remove = []
+            map = tag._getAttrMap()
+            
+            #TODO: there is a bug in the following code, attributes dont get removed
+            for attr, val in map.iteritems():
+                if attr not in VALID_ATTRIBUTES:
+                    #tag.attrs[-index] = 'hillo'
+                    remove.append(attr)
                 #remove all inline javascript
-                elif "javascript" in attribute[1]:
-                    del attribute
+                elif "javascript" in val:
+                    #tag.attrs[-index] = 'hallo'
+                    remove.append(attr)
+            
+            for attr in remove:
+                del tag[attr]
+            #tag.attrs = [tag.attrs[attr] for i in keep]
     
         newcont = soup.renderContents()
         
