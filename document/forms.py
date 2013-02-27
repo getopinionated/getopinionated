@@ -4,6 +4,7 @@ from document.models import FullDocument
 from proposing.models import Proposal , Tag
 from document.widgets import TagSelectorWidget, RichTextEditorWidget
 from document.fields import TagChoiceField
+from common.beautifulsoup import BeautifulSoup
 
 class ProposalForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput())
@@ -29,6 +30,27 @@ class ProposalForm(forms.ModelForm):
     def clean_content(self):
         content = self.cleaned_data["content"]
         newcont = FullDocument.cleanText(content)
+        
+        VALID_TAGS = ['strong', 'em', 'br', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'blockquote', 'a']
+        VALID_ATTRIBUTES = ["href","rel"]
+        
+        soup = BeautifulSoup(newcont)
+        
+        #sanitize html received by client
+        for tag in soup.findAll(True):
+            #remove all unsafe tags (script, form, iframe, media, ...)
+            if tag.name not in VALID_TAGS:
+                tag.hidden = True
+            #remove all unsafe attributes (style, ...)
+            for attribute in tag.attrs:
+                if not (attribute in VALID_ATTRIBUTES):
+                    del attribute
+                #remove all inline javascript
+                elif "javascript" in attribute[1]:
+                    del attribute
+    
+        newcont = soup.renderContents()
+        
         origcont = FullDocument.cleanText(self.originalcontent)
         if newcont == origcont:
             raise forms.ValidationError("You should make at least one change")
