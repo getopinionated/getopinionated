@@ -133,7 +133,6 @@ class HTMLMatcher(SequenceMatcher):
                 self.outInsert(text, out)
                 text = ''
                 out.write(self.formatInsertTag(item))
-                out.write(item)
             else:
                 text += item
         self.outInsert(text, out)
@@ -181,14 +180,14 @@ class HTMLMatcher(SequenceMatcher):
         return '</span>'
     def formatInsertTag(self, tag):
         if not tag.startswith("</"):
-            return '<span class="tagInsert">'
+            return '<span class="tagInsert">' + tag
         else:
-            return '</span>'
+            return tag + '</span>'
     def formatDeleteTag(self, tag):
         if not tag.startswith("</"):
-            return '<span class="tagDelete">'
+            return '<span class="tagDelete">'+tag
         else:
-            return '</span>'
+            return tag+'</span>'
 
 class NoTagHTMLMatcher(HTMLMatcher):
     def formatInsertTag(self, tag):
