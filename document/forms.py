@@ -5,6 +5,7 @@ from proposing.models import Proposal , Tag
 from document.widgets import TagSelectorWidget, RichTextEditorWidget
 from document.fields import TagChoiceField
 from common.beautifulsoup import BeautifulSoup
+from common import sanitizehtml
 
 class ProposalForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput())
@@ -29,40 +30,15 @@ class ProposalForm(forms.ModelForm):
 
     def clean_content(self):
         content = self.cleaned_data["content"]
-        newcont = FullDocument.cleanText(content)
         
         VALID_TAGS = ['strong', 'em', 'br', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'blockquote', 'a']
         VALID_ATTRIBUTES = ["href","rel"]
         
-        soup = BeautifulSoup(newcont)
-        
-        #sanitize html received by client
-        for tag in soup.findAll(True):
-            #remove all unsafe tags (script, form, iframe, media, ...)
-            if tag.name not in VALID_TAGS:
-                tag.hidden = True
-            #remove all unsafe attributes (style, ...)
-            remove = []
-            map = tag._getAttrMap()
-            
-            #TODO: there is a bug in the following code, attributes dont get removed
-            for attr, val in map.iteritems():
-                if attr not in VALID_ATTRIBUTES:
-                    #tag.attrs[-index] = 'hillo'
-                    remove.append(attr)
-                #remove all inline javascript
-                elif "javascript" in val:
-                    #tag.attrs[-index] = 'hallo'
-                    remove.append(attr)
-            
-            for attr in remove:
-                del tag[attr]
-            #tag.attrs = [tag.attrs[attr] for i in keep]
-    
-        newcont = soup.renderContents()
+        content = sanitizehtml.sanitizeHtml(content)
+        content = FullDocument.cleanText(content)
         
         origcont = FullDocument.cleanText(self.originalcontent)
-        if newcont == origcont:
+        if content == origcont:
             raise forms.ValidationError("You should make at least one change")
         return content
 
