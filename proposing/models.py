@@ -11,10 +11,6 @@ class VotablePost(models.Model):
     """ super-model for all votable models """
     creator = models.ForeignKey(CustomUser, related_name="created_proposals", null=True)
     create_date = models.DateTimeField(auto_now_add=True)
-
-    @property
-    def numberofcomments(self):
-        return self.comments.count()
     
     @property
     def upvotescore(self):
@@ -73,6 +69,10 @@ class Proposal(VotablePost):
 
     def __unicode__(self):
         return "Proposal: {}".format(self.title)
+    
+    @property
+    def numberofcomments(self):
+        return self.comments.count()
     
     def save(self, *args, **kwargs):
         if not self.id:
