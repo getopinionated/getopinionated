@@ -53,12 +53,6 @@ class UpDownVote(models.Model):
     date = models.DateTimeField(auto_now=True)
     is_up = models.BooleanField("True if this is an upvote")
 
-class ProposalVote(models.Model):
-    user = models.ForeignKey(CustomUser, related_name="proposal_votes")
-    proposal = models.ForeignKey(VotablePost, related_name="proposal_votes")
-    date = models.DateTimeField(auto_now=True)
-    value = models.IntegerField("The value of the vote")
-
 class Proposal(VotablePost):
     title = models.CharField(max_length=255)
     slug = models.SlugField()
@@ -69,6 +63,10 @@ class Proposal(VotablePost):
 
     def __unicode__(self):
         return "Proposal: {}".format(self.title)
+    
+    @property
+    def totalvotescore(self):
+        return self.upvotescore + self.proposal_votes.count()
     
     @property
     def numberofcomments(self):
@@ -157,8 +155,13 @@ class Proposal(VotablePost):
             self.save()
         else:
             return
-        
-        
+
+class ProposalVote(models.Model):
+    user = models.ForeignKey(CustomUser, related_name="proposal_votes")
+    proposal = models.ForeignKey(Proposal, related_name="proposal_votes")
+    date = models.DateTimeField(auto_now=True)
+    value = models.IntegerField("The value of the vote")
+
 class Comment(VotablePost):
     # settings
     COMMENT_COLORS = (
