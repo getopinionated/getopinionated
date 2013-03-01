@@ -14,7 +14,7 @@ class VotablePost(models.Model):
 
     @property
     def numberofcomments(self):
-        return self.up_down_votes.count()
+        return self.comments.count()
     
     @property
     def upvotescore(self):
@@ -167,7 +167,7 @@ class Comment(VotablePost):
         ('NEG', 'negative'),
     )
     # fields
-    proposal = models.ForeignKey(Proposal)
+    proposal = models.ForeignKey(Proposal, related_name="comments")
     motivation = models.TextField()
     color = models.CharField(max_length=10, choices=COMMENT_COLORS, default='NEUTR')
 
