@@ -23,4 +23,6 @@ def shorttime(value):
 
 @register.filter(name='diffrender',is_safe=True)
 def diffrender(diff, contextlines=3):
-    return mark_safe(htmldiff(diff.getOriginalText(), diff.getNewText(), addStylesheet=True))
+    return mark_safe( #dangerous! Take precautions against XSS
+                     htmldiff(diff.getOriginalText(), diff.getNewText(), addStylesheet=True)
+                     )
