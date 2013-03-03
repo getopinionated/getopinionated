@@ -4,6 +4,7 @@ import sys, os
 from os.path import dirname
 
 SITE_ROOT = dirname(dirname(os.path.realpath(__file__)))
+sys.path.insert(0, os.path.join(SITE_ROOT, 'libs'))
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -112,6 +113,7 @@ INSTALLED_APPS = (
 	'proposing',
     'document',
     'django.contrib.humanize',
+    'libs.sorl.thumbnail'
 )
 
 AUTHENTICATION_BACKENDS = (

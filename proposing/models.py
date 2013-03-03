@@ -70,7 +70,7 @@ class Proposal(VotablePost):
         vp = VotingProperties.objects.get(pk=1)
         shouldStartVoting = (self.create_date + datetime.timedelta(days=vp.daysUntilVotingFinishes) > timezone.now()
                             and
-                            self.upvotescore() > vp.minimalUpvotes)
+                            self.upvotescore > vp.minimalUpvotes)
         return shouldStartVoting
     
     @property
