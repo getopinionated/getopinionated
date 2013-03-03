@@ -178,16 +178,21 @@ class HTMLMatcher(SequenceMatcher):
         return '<span class="delete">'
     def endDeleteText(self):
         return '</span>'
+    
     def formatInsertTag(self, tag):
-        if not tag.startswith("</"):
-            return '<span class="tagInsert">' + tag
-        else:
+        if tag.startswith("</"):
             return tag + '</span>'
+        if tag.startswith("<br"):
+            return '<span class="tagInsert type1">&para;' + tag + '</span>'
+        return '<span class="tagInsert">' + tag
+            
     def formatDeleteTag(self, tag):
-        if not tag.startswith("</"):
-            return '<span class="tagDelete">'+tag
-        else:
+        if tag.startswith("</"):
             return tag+'</span>'
+        if tag.startswith("<br"):
+            return '<span class="tagDelete type1">&para;' + tag + '</span>'
+        return '<span class="tagDelete">'+tag
+            
 
 class NoTagHTMLMatcher(HTMLMatcher):
     def formatInsertTag(self, tag):

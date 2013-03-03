@@ -1741,18 +1741,6 @@ try:
 except ImportError:
     chardet = None
 
-# cjkcodecs and iconv_codec make Python know about more character encodings.
-# Both are available from http://cjkpython.i18n.org/
-# They're built in if you use Python 2.4.
-try:
-    import cjkcodecs.aliases
-except ImportError:
-    pass
-try:
-    import iconv_codec
-except ImportError:
-    pass
-
 class UnicodeDammit:
     """A class for detecting the encoding of a *ML document and
     converting it to a Unicode string. If the source encoding is
