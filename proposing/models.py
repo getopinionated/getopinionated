@@ -6,6 +6,7 @@ from accounts.models import CustomUser
 from django.template.defaultfilters import slugify
 
 from common.stringify import niceBigInteger
+from django.utils import timezone
 
 class VotablePost(models.Model):
     """ super-model for all votable models """
@@ -60,6 +61,27 @@ class Proposal(VotablePost):
     diff = models.ForeignKey(Diff)
     views = models.IntegerField(default=0)
     merged = models.BooleanField(default=False)
+    isVoting = models.BooleanField(default=False)
+    isFinished = models.BooleanField(default=False)
+    voting_date = models.DateTimeField(default=None, null=True, blank=True) 
+    
+    @property
+    def shouldStartVoting(self):
+        vp = VotingProperties.objects.get(pk=1)
+        shouldStartVoting = (self.create_date + datetime.timedelta(days=vp.daysUntilVotingFinishes) > timezone.now()
+                            and
+                            self.upvotescore() > vp.minimalUpvotes)
+        return shouldStartVoting
+    
+    @property
+    def shouldBeFinished(self):
+        if not self.isVoting:
+            return False
+        vp = VotingProperties.objects.get(pk=1)
+        shouldBeFinished = self.voting_date + datetime.timedelta(days=vp.daysUntilVotingFinishes) > datetime.datetime.now()
+        return shouldBeFinished
+        
+
 
     def __unicode__(self):
         return "Proposal: {}".format(self.title)
@@ -101,14 +123,6 @@ class Proposal(VotablePost):
             num_votes = self.proposal_votes.filter(value = i).count()
             total += i*num_votes
         return total
-
-    @property
-    def isVoting(self):
-        return self.upvotescore>10
-    
-    @property
-    def isFinished(self):
-        return self.proposalvotescore>10
 
     def addView(self):
         self.views += 1
@@ -188,3 +202,22 @@ class Tag(models.Model):
             self.slug = slugify(self.title)
         super(Proposal, self).save(*args, **kwargs)
 
+
+'''
+    Singleton object containing the properties of the voting system
+'''
+class VotingProperties(models.Model):
+    daysUntilVotingStarts = models.IntegerField(default=7)
+    minimalUpvotes = models.IntegerField(default=3)
+    daysUntilVotingFinishes = models.IntegerField(default=7)
+
+    def save(self): 
+        if self.__class__.objects.all().count(): 
+            #There exists another object in the DB 
+            obj = self.__class__.objects.all()[0] 
+            for field in self._meta.fields: 
+                if not field.name == self._meta.auto_field.name: 
+                    setattr(obj, field.name, getattr(self, field.name)) 
+            super(VotingProperties, obj).save() 
+        else: 
+            super(VotingProperties, self).save() 

@@ -504,6 +504,8 @@
         "fields": {
         	"views": 0,
         	"merged": false,
+            "isVoting": false,
+            "isFinished": false,
             "motivation": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\r\n\r\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
             "diff": 1,
             "title": "Copyright should be abolished",
@@ -552,6 +554,15 @@
             "name": "Transparency",
             "slug": "transparency",
             "proposals": []
+        }
+    },
+    {
+        "pk": 1,
+        "model": "proposing.VotingProperties",
+        "fields": {
+            "daysUntilVotingStarts": 7,
+    		"minimalUpvotes": 3,
+    		"daysUntilVotingFinishes": 7 
         }
     }
 ]
