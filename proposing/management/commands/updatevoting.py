@@ -27,4 +27,4 @@ class Command(NoArgsCommand):
                 finished +=1
             proposal.save()
         
-        self.stdout.write('Successfully updated:\n\t%d proposals to the voting phase\n\t%d proposals to the finished phase' % (voting, finished))
+        self.stdout.write('Successfully updated:\n\t%d proposals to the voting phase\n\t%d proposals to the finished phase\n' % (voting, finished))
