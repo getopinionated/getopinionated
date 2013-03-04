@@ -73,7 +73,8 @@ def userregister(request):
 def profileupdate(request):
     ## profile update form
     if request.method == 'POST' and 'profileupdate' in request.POST:
-        profileform = ProfileUpdateForm(request.POST, instance=request.user)
+        profileform = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
+        
         if profileform.is_valid():
             profileform.save()
             messages.success(request, 'Profile details updated')

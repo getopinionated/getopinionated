@@ -2,6 +2,8 @@ from django.conf.urls import patterns, url
 from django.views.generic import DetailView, ListView
 import views
 from models import Proposal
+from getopinionated.settings import STATIC_ROOT
+from django.conf.global_settings import MEDIA_ROOT
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='proposals-index'),

@@ -30,10 +30,7 @@ class ProposalForm(forms.ModelForm):
 
     def clean_content(self):
         content = self.cleaned_data["content"]
-        
-        VALID_TAGS = ['strong', 'em', 'br', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'blockquote', 'a']
-        VALID_ATTRIBUTES = ["href","rel"]
-        
+                
         content = sanitizehtml.sanitizeHtml(content)
         content = FullDocument.cleanText(content)
         

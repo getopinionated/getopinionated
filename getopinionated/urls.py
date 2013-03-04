@@ -5,6 +5,7 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 import settings
 import proposing.views
+from getopinionated.settings import MEDIA_ROOT
 
 admin.autodiscover()
 
@@ -16,5 +17,7 @@ urlpatterns = patterns('',
 	(r'^proposals/', include('proposing.urls')),
 	(r'^document/', include('document.urls')),
 	url(r'^tag/(?P<tag_slug>[-\w]+)/$', proposing.views.tagindex, name='tag-index'),
+	(r'^media/(?P<path>.*)$', 'django.views.static.serve',
+            {'document_root': MEDIA_ROOT, }),
 )
 

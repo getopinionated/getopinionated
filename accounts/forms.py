@@ -7,6 +7,8 @@ from django.template.defaultfilters import slugify
 
 from common.stringify import int_to_roman
 from models import CustomUser
+import libs.sorl.thumbnail.fields
+from libs.sorl.thumbnail.shortcuts import get_thumbnail
 
 error_messages = {
     'duplicate_username': _("A user with that username already exists."),
@@ -69,14 +71,18 @@ class CustomUserCreationForm(UserCreationForm):
         return user
 
 class ProfileUpdateForm(forms.ModelForm):
-
+    '''avatar = libs.sorl.thumbnail.fields.ImageField(
+        label='Select a file',
+        help_text='max. 42 megabytes'
+    )'''
+    
     def __init__(self, *args, **kwargs):
         super(forms.ModelForm, self).__init__(*args, **kwargs)
         # self.fields['username'].widget.attrs['readonly'] = True # text input
 
     class Meta:
         model = CustomUser
-        fields = ("username", "first_name", "last_name", "email")
+        fields = ("username", "first_name", "last_name", "email", "avatar")
 
     def clean_username(self):
         # check if slug is unique (via CustomUser.isValidUserName)
@@ -86,7 +92,7 @@ class ProfileUpdateForm(forms.ModelForm):
         return username
 
     def clean_status(self):
-        return self.instance.status
+        return self.instance.status    
 
 class EmailAuthenticationForm(AuthenticationForm):
     username = forms.CharField(label=_("Email address or username"), max_length=30)
