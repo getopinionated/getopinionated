@@ -1,6 +1,7 @@
 {% load macros %}
 {% load humanize %}
 {% load filters %}
+{% load thumbnail %}
 
 {% macro user-small postinguser when %}
 	<div class="user-small">
@@ -20,8 +21,13 @@
 	<div class="user-info">
 		{% if postinguser %}
 			<div title="{{when}}" class="user-box-action">{{what}} {{when|shorttime}}</div>
-		    <div class="user-box-avatar"></div>
-		    <div class="user-box-name">
+		    {% thumbnail postinguser.avatar "32x32" crop="center" as im %}
+				<div class="user-box-avatar">
+			    	<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+			    </div>
+		    {% empty %}
+			{% endthumbnail %}
+			<div class="user-box-name">
 		    	<a href="{% url user-profile postinguser.slug %}">
 		    		{{postinguser.display_name}}
 		    	</a>

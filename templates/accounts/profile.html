@@ -2,6 +2,7 @@
 {% load filters %}
 {% load macros %}
 {% loadmacros "proposal/proposal-macro.html" %}
+{% load thumbnail %}
 
 {% block title %}{% include "title.html" with subtitle=member.display_name subtitle2="'s profile" %}{% endblock %}
 
@@ -10,8 +11,15 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{member.display_name}}'s Proposals</h1>
 
+	<h1>{{member.display_name}}'s Proposals</h1>
+	{% thumbnail member.avatar "128x128" crop="center" as im %}
+		<div class="profile-picture">
+	    	<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+	    </div>
+    {% empty %}
+	{% endthumbnail %}
+	
     {% if proposal_list %}
         <ul>
         {% for proposal in proposal_list %}

@@ -23,6 +23,8 @@ def runserver():
     call_command('syncdb', noinput=True)
     call_command('loaddata', 'testdata.json')
     call_command('updatevoting')
+    call_command('thumbnail', 'cleanup')
+    #call_command('thumbnail', 'clear')
     call_command('runserver', '8000')
 
 if __name__ == "__main__":
