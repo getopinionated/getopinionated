@@ -10,7 +10,7 @@ from django.utils import timezone
 
 class VotablePost(models.Model):
     """ super-model for all votable models """
-    creator = models.ForeignKey(CustomUser, related_name="created_proposals", null=True)
+    creator = models.ForeignKey(CustomUser, related_name="created_proposals", null=True, blank=True)
     create_date = models.DateTimeField(auto_now_add=True)
     
     @property

@@ -172,6 +172,9 @@ CACHES = {
         #'LOCATION': '127.0.0.1:11211',
     }
 }
+
+# default url after login (used in contrib.auth)
+LOGIN_REDIRECT_URL = '/'
  
 # Import local settings
 try:

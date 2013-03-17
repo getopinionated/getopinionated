@@ -44,3 +44,6 @@ nosetests.xml
 
 # local settings
 getopinionated/local_settings.py
+
+# custom scripts
+jsrv.py
