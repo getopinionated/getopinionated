@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from django.contrib.auth import logout, authenticate
-from django.contrib.auth.views import login
+from django.contrib.auth import authenticate
+from django.contrib.auth.views import login, logout
 from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -94,6 +94,5 @@ def profileupdate(request):
 
 @login_required
 def userlogout(request):
-    logout(request)
-    return HttpResponseRedirect(reverse('home-index'))
+    return logout(request, next_page='/')
     

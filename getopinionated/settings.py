@@ -175,6 +175,12 @@ CACHES = {
 
 # default url after login (used in contrib.auth)
 LOGIN_REDIRECT_URL = '/'
+
+# gets access to 'request' variable in templates
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
+TEMPLATE_CONTEXT_PROCESSORS = TCP + (
+    'django.core.context_processors.request',
+)
  
 # Import local settings
 try:
