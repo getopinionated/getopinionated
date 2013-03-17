@@ -1,14 +1,15 @@
 from django import forms
 from models import Diff
+from common.forms import FocussingModelForm
+from common import sanitizehtml
 from document.models import FullDocument
 from proposing.models import Proposal , Tag
 from document.widgets import TagSelectorWidget, RichTextEditorWidget
 from document.fields import TagChoiceField
 from common.beautifulsoup import BeautifulSoup
-from common import sanitizehtml
 
 class ProposalForm(forms.ModelForm):
-    title = forms.CharField(widget=forms.TextInput())
+    title = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'autofocus'})) # forus on page-load (html5))
     motivation = forms.CharField(widget=forms.Textarea(attrs={'cols': 80, 'rows': 20}))
 
     def __init__(self, *args, **kwargs):
