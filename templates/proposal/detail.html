@@ -48,23 +48,20 @@
         	</div>
         </div>
         {% if proposal.isVoting and not proposal.isFinished%}
-        	<div class="votebuttons">
-			  <a href="{% url proposal-vote proposal.slug '-5' %}">-5</a>
-			  <a href="{% url proposal-vote proposal.slug '-4' %}">-4</a>
-			  <a href="{% url proposal-vote proposal.slug '-3' %}">-3</a>
-			  <a href="{% url proposal-vote proposal.slug '-2' %}">-2</a>
-			  <a href="{% url proposal-vote proposal.slug '-1' %}">-1</a>
-			  <a href="{% url proposal-vote proposal.slug '0' %}">0</a>
-			  <a href="{% url proposal-vote proposal.slug '+1' %}">+1</a>
-			  <a href="{% url proposal-vote proposal.slug '+2' %}">+2</a>
-			  <a href="{% url proposal-vote proposal.slug '+3' %}">+3</a>
-			  <a href="{% url proposal-vote proposal.slug '+4' %}">+4</a>
-			  <a href="{% url proposal-vote proposal.slug '+5' %}">+5</a>
-		  </div>
+            <div class="votes">
+                <h2>Cast your vote:</h2>
+                <div class="votebuttons">
+                    {% for option, helptext in proposal.voteOptions %}
+                        <a href="{% url proposal-vote proposal.slug option %}">
+                            <div>{{option}}</div>
+                            <div class="small">{% if helptext %}{{helptext}}{% else %}&nbsp;{% endif %}</div>
+                        </a>
+                    {% endfor %}
+              </div>
+            </div>
         {% endif %}        
-        {% if proposal.isFinished or not proposal.isVoting %}
         <div class="comments">
-            {% for comment in proposal.comment_set.all %}
+            {% for comment in proposal.comments.all %}
             <div class="comment">
                 <h2 class="{{ comment.color }}">
                     <span class="updownvote">{% usemacro updownvote comment %}</span>
@@ -75,7 +72,6 @@
             </div>
             {% endfor %}
         </div>
-        {% endif %}
         {% if not proposal.isVoting %}
         <div class="owncomment">
             <h2>Write your own comment</h2>
