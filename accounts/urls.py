@@ -6,7 +6,7 @@ from views import userlogin, userregister, profileupdate, userlogout, userprofil
 urlpatterns = patterns('accounts.views',
     url(r'^login/$', userlogin, name='user-login'),
     url(r'^register/$', userregister, name='user-register'),
-    url(r'^update/$', profileupdate, name='profile-update'),
+    url(r'^profile/$', profileupdate, name='profile-update'),
     url(r'^logout/$', userlogout, name='user-logout'),
     url(r'^user/(?P<userslug>[-\w]+)$', userprofile, name='user-profile'),
     url(r'^passwordreset/$', passwordreset, name='password-reset'),

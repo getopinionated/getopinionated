@@ -67,3 +67,30 @@ article.proposal .owncomment {
     margin-top: 48px;
 }
 
+article.proposal .votebuttons {
+    padding-left: 50px;
+}
+
+article.proposal .votes {
+    background-color: #eee;
+    padding: 20px;
+}
+article.proposal .votes h2 {
+    margin-bottom: 20px;
+}
+article.proposal .votes .votebuttons a {
+    color: white !important;
+    background-color: #777;
+    display: inline-block;
+    font-weight: bold;
+    padding: 0.5em;
+    width: 2em;
+    text-align: center;
+    margin-right: 0.7em;
+}
+article.proposal .votes .votebuttons a:hover {
+    background-color: #999;
+}
+article.proposal .votes .votebuttons a div.small {
+    font-size: 0.6em;
+}

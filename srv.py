@@ -6,7 +6,8 @@ from shutil import copy
 from django.core.management import call_command
 
 def chdir_to_project():
-    chdir(dirname(__file__))
+    if dirname(__file__):
+        chdir(dirname(__file__))
 
 def import_local_settings():
     local_settings_file = "getopinionated/local_settings.py"
@@ -29,4 +30,4 @@ def runserver():
 
 if __name__ == "__main__":
     environ.setdefault("DJANGO_SETTINGS_MODULE", "getopinionated.settings")
-    runserver();
+    runserver()

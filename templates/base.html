@@ -16,13 +16,13 @@
     <nav id="top">
         <ul>
             {% if not user.is_authenticated %}
-                <li><a href="{% url user-login %}">Login</a></li>
+                <li><a href="{% url user-login %}?next={{request.path|urlencode}}">Login</a></li>
                 <li><a href="{% url user-register %}">Register</a></li>
             {% endif %}
             {% block menu %} {% endblock %}
             {% if user.is_authenticated %}
                 <li><a href="{% url profile-update %}">Profile</a></li>
-                <li><a href="{% url user-logout %}">Logout</a></li>
+                <li><a href="{% url user-logout %}?next={{request.path|urlencode}}">Logout</a></li>
                 <li class="right">(logged in as {{user.display_name}})</li>
             {% endif %}
         </ul>

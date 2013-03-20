@@ -6,6 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.template.defaultfilters import slugify
 
 from common.stringify import int_to_roman
+from common.forms import FocussingModelForm
 from models import CustomUser
 import libs.sorl.thumbnail.fields
 from libs.sorl.thumbnail.shortcuts import get_thumbnail
@@ -16,7 +17,7 @@ error_messages = {
     'password_mismatch': _("The two password fields didn't match."),
 }
 
-class CustomUserCreationForm(UserCreationForm):
+class CustomUserCreationForm(FocussingModelForm, UserCreationForm):
     """
     A form that creates a user, with no privileges, from the given username and
     password.
@@ -70,19 +71,21 @@ class CustomUserCreationForm(UserCreationForm):
             user.save()
         return user
 
-class ProfileUpdateForm(forms.ModelForm):
+class ProfileUpdateForm(FocussingModelForm):
     '''avatar = libs.sorl.thumbnail.fields.ImageField(
         label='Select a file',
         help_text='max. 42 megabytes'
     )'''
     
     def __init__(self, *args, **kwargs):
-        super(forms.ModelForm, self).__init__(*args, **kwargs)
+        super(ProfileUpdateForm, self).__init__(*args, **kwargs)
+        # make username readonly (not necessary anymore)
         # self.fields['username'].widget.attrs['readonly'] = True # text input
 
     class Meta:
         model = CustomUser
         fields = ("username", "first_name", "last_name", "email", "avatar")
+
 
     def clean_username(self):
         # check if slug is unique (via CustomUser.isValidUserName)
@@ -95,4 +98,5 @@ class ProfileUpdateForm(forms.ModelForm):
         return self.instance.status    
 
 class EmailAuthenticationForm(AuthenticationForm):
-    username = forms.CharField(label=_("Email address or username"), max_length=30)
+    username = forms.CharField(label=_("Email address or username"), max_length=30,
+        widget=forms.TextInput(attrs={'autofocus': 'autofocus'})) # forus on page-load (html5)

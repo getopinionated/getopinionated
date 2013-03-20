@@ -9,6 +9,7 @@
     {% csrf_token %}
     <table>
         {{ form }}
+        <input type="hidden" name="next" value="{{ next }}" />
     </table>
     <input type="submit" value="Login" />
     <a href="{% url password-reset %}" style="padding-left: 40px;">Forgot password</a>

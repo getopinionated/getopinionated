@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import authenticate
+from django.contrib.auth.views import login, logout
 from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -25,16 +26,11 @@ def userprofile(request, userslug):
 
 @not_logged_in
 def userlogin(request):
-    # Initialize the form either fresh or with the appropriate POST data as the instance
-    auth_form = EmailAuthenticationForm(None, request.POST or None)
-    # The form itself handles authentication and checking to make sure password and such are supplied.
-    if auth_form.is_valid():
-        login(request, auth_form.get_user())
-        return HttpResponseRedirect(reverse('home-index'))
- 
-    return render_to_response(request, 'accounts/login.html', {
-        'form': auth_form,
-    })
+    return login(request,
+        authentication_form=EmailAuthenticationForm,
+        template_name='accounts/login.html',
+    )
+
 
 @not_logged_in
 def passwordreset(request):
@@ -98,6 +94,5 @@ def profileupdate(request):
 
 @login_required
 def userlogout(request):
-    logout(request)
-    return HttpResponseRedirect(reverse('home-index'))
+    return logout(request, next_page='/')
     
