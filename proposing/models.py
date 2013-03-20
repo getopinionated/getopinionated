@@ -170,6 +170,22 @@ class Proposal(VotablePost):
         else:
             return
 
+    @staticmethod
+    def voteOptions():
+        """ returns vote options, fit for use in template """
+        return [
+            ('-5', 'Againts'),
+            ('-4', ''),
+            ('-2', ''),
+            ('-1', ''),
+            ('0', 'Neutral'),
+            ('1', ''),
+            ('2', ''),
+            ('3', ''),
+            ('4', ''),
+            ('5', 'For'),
+        ]
+
 class ProposalVote(models.Model):
     user = models.ForeignKey(CustomUser, related_name="proposal_votes")
     proposal = models.ForeignKey(Proposal, related_name="proposal_votes")
@@ -221,3 +237,12 @@ class VotingProperties(models.Model):
             super(VotingProperties, obj).save() 
         else: 
             super(VotingProperties, self).save() 
+
+'''
+    object containing the issued proxies for the voting system
+'''
+class Proxy(models.Model):
+    delegating = models.ForeignKey(CustomUser, related_name="proxies")
+    delegate = models.ForeignKey(CustomUser, related_name="received_proxies")
+    tag = models.ForeignKey(Tag, related_name="proxies")
+
