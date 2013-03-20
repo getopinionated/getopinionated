@@ -237,3 +237,12 @@ class VotingProperties(models.Model):
             super(VotingProperties, obj).save() 
         else: 
             super(VotingProperties, self).save() 
+
+'''
+    object containing the issued proxies for the voting system
+'''
+class Proxy(models.Model):
+    delegating = models.ForeignKey(CustomUser, related_name="proxies")
+    delegate = models.ForeignKey(CustomUser, related_name="received_proxies")
+    tag = models.ForeignKey(Tag, related_name="proxies")
+
