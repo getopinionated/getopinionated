@@ -525,8 +525,7 @@
         "model": "proposing.tag",
         "fields": {
             "name": "Democracy",
-            "slug": "democracy",
-            "proposals": [1]
+            "slug": "democracy"
         }
     },
     {
@@ -534,8 +533,7 @@
         "model": "proposing.tag",
         "fields": {
             "name": "Copyright",
-            "slug": "copyright",
-            "proposals": [1]
+            "slug": "copyright"
         }
     },
     {
@@ -543,8 +541,7 @@
         "model": "proposing.tag",
         "fields": {
             "name": "Privacy",
-            "slug": "privacy",
-            "proposals": []
+            "slug": "privacy"
         }
     },
     {
@@ -552,8 +549,7 @@
         "model": "proposing.tag",
         "fields": {
             "name": "Transparency",
-            "slug": "transparency",
-            "proposals": []
+            "slug": "transparency"
         }
     },
     {

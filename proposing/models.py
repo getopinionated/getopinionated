@@ -54,6 +54,20 @@ class UpDownVote(models.Model):
     date = models.DateTimeField(auto_now=True)
     is_up = models.BooleanField("True if this is an upvote")
 
+class Tag(models.Model):
+    name = models.CharField(max_length=35)
+    slug = models.SlugField()
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            # Newly created object, so set slug
+            self.slug = slugify(self.name)
+        super(Tag, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.name
+
+
 class Proposal(VotablePost):
     title = models.CharField(max_length=255)
     slug = models.SlugField()
@@ -64,6 +78,7 @@ class Proposal(VotablePost):
     isVoting = models.BooleanField(default=False)
     isFinished = models.BooleanField(default=False)
     voting_date = models.DateTimeField(default=None, null=True, blank=True) 
+    tags = models.ManyToManyField(Tag, related_name="proposals")
     
     @property
     def shouldStartVoting(self):
@@ -206,18 +221,6 @@ class Comment(VotablePost):
 
     def __unicode__(self):
         return "Comment on {}".format(self.proposal)
-
-class Tag(models.Model):
-    proposals = models.ManyToManyField(Proposal, related_name="tags")
-    name = models.CharField(max_length=35)
-    slug = models.SlugField()
-    
-    def save(self, *args, **kwargs):
-        if not self.id:
-            # Newly created object, so set slug
-            self.slug = slugify(self.title)
-        super(Proposal, self).save(*args, **kwargs)
-
 
 '''
     Singleton object containing the properties of the voting system
