@@ -1,10 +1,13 @@
-from models import Proposal, Comment, UpDownVote, ProposalVote
+from models import Proposal, Comment, UpDownVote, ProposalVote, ProposalType
 from django.contrib import admin
 from proposing.models import Tag
 
 class TagAdmin(admin.ModelAdmin):
     list_display = ('name',)
     prepopulated_fields = {'slug': ('name',)}
+
+class ProposalTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'daysUntilVotingStarts', 'minimalUpvotes', 'daysUntilVotingFinishes')
 
 class CommentInline(admin.TabularInline):
     model = Comment
@@ -13,12 +16,10 @@ class CommentInline(admin.TabularInline):
 
 class UpDownVoteInline(admin.TabularInline):
     model = UpDownVote
-    # fk_name = 'proposal'
     extra = 3
 
 class ProposalVoteInline(admin.TabularInline):
     model = ProposalVote
-    # fk_name = 'proposal'
     extra = 3
 
 class ProposalAdmin(admin.ModelAdmin):
@@ -48,3 +49,4 @@ class ProposalAdmin(admin.ModelAdmin):
 
 admin.site.register(Proposal, ProposalAdmin)
 admin.site.register(Tag, TagAdmin)
+admin.site.register(ProposalType, ProposalTypeAdmin)

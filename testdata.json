@@ -1,5 +1,14 @@
 [
     {
+        "pk": 64,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_customuser",
+            "name": "Can add custom user",
+            "content_type": 10
+        }
+    },
+    {
         "pk": 28,
         "model": "auth.permission",
         "fields": {
@@ -9,11 +18,29 @@
         }
     },
     {
+        "pk": 65,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_customuser",
+            "name": "Can change custom user",
+            "content_type": 10
+        }
+    },
+    {
         "pk": 29,
         "model": "auth.permission",
         "fields": {
             "codename": "change_userprofile",
             "name": "Can change user profile",
+            "content_type": 10
+        }
+    },
+    {
+        "pk": 66,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_customuser",
+            "name": "Can delete custom user",
             "content_type": 10
         }
     },
@@ -162,6 +189,60 @@
         }
     },
     {
+        "pk": 58,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_diff",
+            "name": "Can add diff",
+            "content_type": 20
+        }
+    },
+    {
+        "pk": 59,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_diff",
+            "name": "Can change diff",
+            "content_type": 20
+        }
+    },
+    {
+        "pk": 60,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_diff",
+            "name": "Can delete diff",
+            "content_type": 20
+        }
+    },
+    {
+        "pk": 55,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_fulldocument",
+            "name": "Can add full document",
+            "content_type": 19
+        }
+    },
+    {
+        "pk": 56,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_fulldocument",
+            "name": "Can change full document",
+            "content_type": 19
+        }
+    },
+    {
+        "pk": 57,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_fulldocument",
+            "name": "Can delete full document",
+            "content_type": 19
+        }
+    },
+    {
         "pk": 25,
         "model": "auth.permission",
         "fields": {
@@ -189,11 +270,74 @@
         }
     },
     {
+        "pk": 46,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_comment",
+            "name": "Can add comment",
+            "content_type": 16
+        }
+    },
+    {
+        "pk": 47,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_comment",
+            "name": "Can change comment",
+            "content_type": 16
+        }
+    },
+    {
+        "pk": 48,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_comment",
+            "name": "Can delete comment",
+            "content_type": 16
+        }
+    },
+    {
+        "pk": 43,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_proposal",
+            "name": "Can add proposal",
+            "content_type": 15
+        }
+    },
+    {
+        "pk": 44,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_proposal",
+            "name": "Can change proposal",
+            "content_type": 15
+        }
+    },
+    {
+        "pk": 45,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_proposal",
+            "name": "Can delete proposal",
+            "content_type": 15
+        }
+    },
+    {
         "pk": 40,
         "model": "auth.permission",
         "fields": {
             "codename": "add_comment",
             "name": "Can add comment",
+            "content_type": 14
+        }
+    },
+    {
+        "pk": 70,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_proposaltype",
+            "name": "Can add proposal type",
             "content_type": 14
         }
     },
@@ -207,6 +351,15 @@
         }
     },
     {
+        "pk": 71,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_proposaltype",
+            "name": "Can change proposal type",
+            "content_type": 14
+        }
+    },
+    {
         "pk": 42,
         "model": "auth.permission",
         "fields": {
@@ -216,11 +369,83 @@
         }
     },
     {
+        "pk": 72,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_proposaltype",
+            "name": "Can delete proposal type",
+            "content_type": 14
+        }
+    },
+    {
+        "pk": 49,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_proposalvote",
+            "name": "Can add proposal vote",
+            "content_type": 17
+        }
+    },
+    {
+        "pk": 50,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_proposalvote",
+            "name": "Can change proposal vote",
+            "content_type": 17
+        }
+    },
+    {
+        "pk": 51,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_proposalvote",
+            "name": "Can delete proposal vote",
+            "content_type": 17
+        }
+    },
+    {
+        "pk": 52,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_proxy",
+            "name": "Can add proxy",
+            "content_type": 18
+        }
+    },
+    {
+        "pk": 53,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_proxy",
+            "name": "Can change proxy",
+            "content_type": 18
+        }
+    },
+    {
+        "pk": 54,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_proxy",
+            "name": "Can delete proxy",
+            "content_type": 18
+        }
+    },
+    {
         "pk": 37,
         "model": "auth.permission",
         "fields": {
             "codename": "add_proposal",
             "name": "Can add proposal",
+            "content_type": 13
+        }
+    },
+    {
+        "pk": 67,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_tag",
+            "name": "Can add tag",
             "content_type": 13
         }
     },
@@ -234,11 +459,29 @@
         }
     },
     {
+        "pk": 68,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_tag",
+            "name": "Can change tag",
+            "content_type": 13
+        }
+    },
+    {
         "pk": 39,
         "model": "auth.permission",
         "fields": {
             "codename": "delete_proposal",
             "name": "Can delete proposal",
+            "content_type": 13
+        }
+    },
+    {
+        "pk": 69,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_tag",
+            "name": "Can delete tag",
             "content_type": 13
         }
     },
@@ -378,6 +621,33 @@
         }
     },
     {
+        "pk": 61,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_kvstore",
+            "name": "Can add kv store",
+            "content_type": 21
+        }
+    },
+    {
+        "pk": 62,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_kvstore",
+            "name": "Can change kv store",
+            "content_type": 21
+        }
+    },
+    {
+        "pk": 63,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_kvstore",
+            "name": "Can delete kv store",
+            "content_type": 21
+        }
+    },
+    {
         "pk": 1,
         "model": "auth.user",
         "fields": {
@@ -393,14 +663,6 @@
             "password": "sha1$46949$88d4863560db97d0ea0bcff6f1170ffd61b01856",
             "email": "test@gmail.com",
             "date_joined": "2011-08-05T19:42:36Z"
-        }
-    },
-    {
-        "pk": 1,
-        "model": "accounts.customuser",
-        "fields": {
-            "slug": "jnyman",
-            "karma": 30
         }
     },
     {
@@ -422,14 +684,6 @@
         }
     },
     {
-        "pk": 2,
-        "model": "accounts.customuser",
-        "fields": {
-            "slug": "317070",
-            "karma": 50000
-        }
-    },
-    {
         "pk": 3,
         "model": "auth.user",
         "fields": {
@@ -448,14 +702,6 @@
         }
     },
     {
-        "pk": 3,
-        "model": "accounts.customuser",
-        "fields": {
-            "slug": "sandbender",
-            "karma": 9970
-        }
-    },
-    {
         "pk": 1,
         "model": "sites.site",
         "fields": {
@@ -465,13 +711,35 @@
     },
     {
         "pk": 1,
-        "model": "document.fulldocument",
+        "model": "accounts.customuser",
         "fields": {
-            "title": "The Pirate Codex",
-            "slug": "the-pirate-codex",
-            "content": "Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />The globalization of knowledge and human culture through digitalization and networking challenges all aspects of our traditional legal, economic and social systems. The wrong responses to this challenge make up just one of the reasons which promote the emergence of a complete totalitarian global police state. The fear of international terrorism makes security seem more important than freedom and mutes many of those who might otherwise defend freedom.<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.",
-            "create_date": "2013-01-28T19:30:03.008Z",
-            "version": 0
+            "groups": [],
+            "user_permissions": [],
+            "slug": "jnyman",
+            "avatar": "",
+            "karma": 30
+        }
+    },
+    {
+        "pk": 2,
+        "model": "accounts.customuser",
+        "fields": {
+            "groups": [],
+            "user_permissions": [],
+            "slug": "317070",
+            "avatar": "",
+            "karma": 50000
+        }
+    },
+    {
+        "pk": 3,
+        "model": "accounts.customuser",
+        "fields": {
+            "groups": [],
+            "user_permissions": [],
+            "slug": "sandbender",
+            "avatar": "",
+            "karma": 9970
         }
     },
     {
@@ -491,33 +759,19 @@
         }
     },
     {
-        "pk": 1,
-        "model": "document.diff",
+        "pk": 3,
+        "model": "proposing.votablepost",
         "fields": {
-            "text_representation": "+ cookie\n+ cookie\n  R\n+ cookie\n+ cookie",
-        	"fulldocument": 1
+            "create_date": "2013-03-24T17:11:13.473Z",
+            "creator": null
         }
     },
     {
-        "pk": 1,
-        "model": "proposing.proposal",
+        "pk": 4,
+        "model": "proposing.votablepost",
         "fields": {
-        	"views": 0,
-        	"merged": false,
-            "isVoting": false,
-            "isFinished": false,
-            "motivation": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\r\n\r\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            "diff": 1,
-            "title": "Copyright should be abolished",
-            "slug": "copyright-should-be-abolished"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "proposing.comment",
-        "fields": {
-            "proposal": 1,
-            "motivation": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\r\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            "create_date": "2013-03-24T17:11:56.451Z",
+            "creator": null
         }
     },
     {
@@ -553,12 +807,115 @@
         }
     },
     {
+        "pk": 5,
+        "model": "proposing.tag",
+        "fields": {
+            "name": "Environment",
+            "slug": "environment"
+        }
+    },
+    {
         "pk": 1,
-        "model": "proposing.VotingProperties",
+        "model": "proposing.proposaltype",
+        "fields": {
+            "daysUntilVotingStarts": 1,
+            "daysUntilVotingFinishes": 3,
+            "name": "Spelling correction",
+            "minimalUpvotes": 2
+        }
+    },
+    {
+        "pk": 2,
+        "model": "proposing.proposaltype",
         "fields": {
             "daysUntilVotingStarts": 7,
-    		"minimalUpvotes": 3,
-    		"daysUntilVotingFinishes": 7 
+            "daysUntilVotingFinishes": 7,
+            "name": "Default",
+            "minimalUpvotes": 3
+        }
+    },
+    {
+        "pk": 1,
+        "model": "proposing.proposal",
+        "fields": {
+            "motivation": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\r\n\r\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "views": 2,
+            "isFinished": false,
+            "title": "Copyright should be abolished",
+            "proposal_type": 2,
+            "isVoting": false,
+            "tags": [
+                1,
+                2
+            ],
+            "diff": 1,
+            "voting_date": null,
+            "slug": "copyright-should-be-abolished",
+            "merged": false
+        }
+    },
+    {
+        "pk": 3,
+        "model": "proposing.proposal",
+        "fields": {
+            "motivation": "The environment subject was missing.",
+            "views": 3,
+            "isFinished": false,
+            "title": "Protect the environment",
+            "proposal_type": null,
+            "isVoting": false,
+            "tags": [
+                5
+            ],
+            "diff": 2,
+            "voting_date": null,
+            "slug": "protect-the-environment",
+            "merged": false
+        }
+    },
+    {
+        "pk": 2,
+        "model": "proposing.comment",
+        "fields": {
+            "color": "NEUTR",
+            "proposal": 1,
+            "motivation": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\r\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        }
+    },
+    {
+        "pk": 4,
+        "model": "proposing.comment",
+        "fields": {
+            "color": "NEG",
+            "proposal": 3,
+            "motivation": "Environment is not important. We should just leave this problem to the next generation."
+        }
+    },
+    {
+        "pk": 1,
+        "model": "document.fulldocument",
+        "fields": {
+            "content": "Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />The globalization of knowledge and human culture through digitalization and networking challenges all aspects of our traditional legal, economic and social systems. The wrong responses to this challenge make up just one of the reasons which promote the emergence of a complete totalitarian global police state. The fear of international terrorism makes security seem more important than freedom and mutes many of those who might otherwise defend freedom.<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.",
+            "version": 0,
+            "create_date": "2013-01-28T19:30:03.008Z",
+            "slug": "the-pirate-codex",
+            "title": "The Pirate Codex"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "document.diff",
+        "fields": {
+            "fulldocument": 1,
+            "text_representation": "+ cookie\n+ cookie\n  R\n+ cookie\n+ cookie"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "document.diff",
+        "fields": {
+            "fulldocument": 1,
+            "text_representation": "- Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />The globalization of knowledge and human culture through digitalization and networking challenges all aspects of our traditional legal, economic and social systems. The wrong responses to this challenge make up just one of the reasons which promote the emergence of a complete totalitarian global police state. The fear of international terrorism makes security seem more important than freedom and mutes many of those who might otherwise defend freedom.<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.\n?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n+ Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />The globalization of knowledge and human culture through digitalization and networking challenges all aspects of our traditional legal, economic and social systems. The wrong responses to this challenge make up just one of the reasons which promote the emergence of a complete totalitarian global police state. The fear of international terrorism makes security seem more important than freedom and mutes many of those who might otherwise defend freedom.<br /><br />The main focus of every political movement should be to protect the environment.<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.\n?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ^^^^^^^^^^^^^^^^^^^ ^^   ^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^ ^^^^^^^^           +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n"
         }
     }
 ]
