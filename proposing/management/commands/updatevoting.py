@@ -18,6 +18,7 @@ class Command(NoArgsCommand):
                 voting_cnt +=1
             # proposal might already be finished
             if proposal.shouldBeFinished():
+                proposal.initiateVoteCount()
                 proposal.voting_stage = 'FINISHED'
                 finished_cnt +=1
             proposal.save()

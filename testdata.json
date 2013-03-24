@@ -201,8 +201,7 @@
             ],
             "diff": 1,
             "voting_date": null,
-            "slug": "copyright-should-be-abolished",
-            "merged": false
+            "slug": "copyright-should-be-abolished"
         }
     },
     {
@@ -219,8 +218,7 @@
             ],
             "diff": 2,
             "voting_date": null,
-            "slug": "protect-the-environment",
-            "merged": false
+            "slug": "protect-the-environment"
         }
     },
     {

@@ -1,5 +1,6 @@
 import datetime
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 from django.template.defaultfilters import slugify
 from common.stringify import niceBigInteger
@@ -89,7 +90,6 @@ class Proposal(VotablePost):
     motivation = models.TextField()
     diff = models.ForeignKey(Diff)
     views = models.IntegerField(default=0)
-    merged = models.BooleanField(default=False)
     voting_stage = models.CharField(max_length=20, choices=VOTING_STAGE, default='DISCUSSION')
     voting_date = models.DateTimeField(default=None, null=True, blank=True)
     proposal_type = models.ForeignKey(ProposalType)
@@ -185,21 +185,24 @@ class Proposal(VotablePost):
         # check if user has already voted
         return self.proposalvote_from_user(user) == None
 
-    def proposalIsAccepted(self):
+    def isAccepted(self):
         return self.proposalvotescore>0
 
     def initiateVoteCount(self):
-        if self.proposalIsAccepted():
-            self.diff.fulldocument.getFinalVersion().applyDiff(self.diff)
-            proposals = Proposal.objects.filter(merged=False,)
-            for proposal in proposals:
-                if proposal.pk == self.pk:
-                    continue
-                if proposal.merged == True:
-                    continue
-                proposal.diff.applyDiffOnThisDiff(self.diff)
-            self.merged = True
-            self.save()
+        if self.isAccepted():
+            ## apply this diff
+            try:
+                self.diff.fulldocument.getFinalVersion().applyDiff(self.diff)
+            except Exception as e:
+                print "Error applying diff to final version: ", e
+                # TODO: catch this in nice way
+            ## convert other proposal diffs
+            for proposal in Proposal.objects.filter(~Q(voting_stage='FINISHED'), ~Q(pk=self.pk)):
+                try:
+                    proposal.diff.applyDiffOnThisDiff(self.diff)
+                except Exception as e:
+                    print "Error applying diff to other diffs: ", e
+                    # TODO: catch this in nice way
         else:
             return
 
