@@ -12,7 +12,7 @@ class VotablePost(models.Model):
     """ super-model for all votable models """
     creator = models.ForeignKey(CustomUser, related_name="created_proposals", null=True, blank=True)
     create_date = models.DateTimeField(auto_now_add=True)
-    
+
     @property
     def upvotescore(self):
         num_upvotes = self.up_down_votes.filter(is_up=True).count()
@@ -57,7 +57,7 @@ class UpDownVote(models.Model):
 class Tag(models.Model):
     name = models.CharField(max_length=35)
     slug = models.SlugField()
-    
+
     def save(self, *args, **kwargs):
         if not self.id:
             # Newly created object, so set slug
@@ -67,6 +67,14 @@ class Tag(models.Model):
     def __unicode__(self):
         return self.name
 
+class ProposalType(models.Model):
+    name = models.CharField(max_length=255)
+    daysUntilVotingStarts = models.IntegerField("Days until voting starts", default=7)
+    minimalUpvotes = models.IntegerField("Minimal upvotes", default=3)
+    daysUntilVotingFinishes = models.IntegerField("Days until voting finishes", default=7)
+
+    def __unicode__(self):
+        return self.name
 
 class Proposal(VotablePost):
     title = models.CharField(max_length=255)
@@ -77,38 +85,38 @@ class Proposal(VotablePost):
     merged = models.BooleanField(default=False)
     isVoting = models.BooleanField(default=False)
     isFinished = models.BooleanField(default=False)
-    voting_date = models.DateTimeField(default=None, null=True, blank=True) 
+    voting_date = models.DateTimeField(default=None, null=True, blank=True)
+    # proposal_type = models.ForeignKey(ProposalType)
+    proposal_type = models.ForeignKey(ProposalType, null=True, blank=True) # TMP
     tags = models.ManyToManyField(Tag, related_name="proposals")
-    
+
+    def __unicode__(self):
+        return "Proposal: {}".format(self.title)
+
     @property
     def shouldStartVoting(self):
-        vp = VotingProperties.objects.get(pk=1)
-        shouldStartVoting = (self.create_date + datetime.timedelta(days=vp.daysUntilVotingFinishes) > timezone.now()
+        properties = self.proposal_type
+        shouldStartVoting = (self.create_date + datetime.timedelta(days=properties.daysUntilVotingFinishes) > timezone.now()
                             and
-                            self.upvotescore > vp.minimalUpvotes)
+                            self.upvotescore > properties.minimalUpvotes)
         return shouldStartVoting
-    
+
     @property
     def shouldBeFinished(self):
         if not self.isVoting:
             return False
-        vp = VotingProperties.objects.get(pk=1)
-        shouldBeFinished = self.voting_date + datetime.timedelta(days=vp.daysUntilVotingFinishes) > datetime.datetime.now()
+        properties = self.proposal_type
+        shouldBeFinished = self.voting_date + datetime.timedelta(days=properties.daysUntilVotingFinishes) > datetime.datetime.now()
         return shouldBeFinished
-        
 
-
-    def __unicode__(self):
-        return "Proposal: {}".format(self.title)
-    
     @property
     def totalvotescore(self):
         return self.upvotescore + self.proposal_votes.count()
-    
+
     @property
     def numberofcomments(self):
         return self.comments.count()
-    
+
     def save(self, *args, **kwargs):
         if not self.id:
             # Newly created object, so set slug
@@ -142,7 +150,7 @@ class Proposal(VotablePost):
     def addView(self):
         self.views += 1
         self.save()
-    
+
     def proposalvote_from_user(self, user):
         if not user.is_authenticated():
             return None
@@ -201,12 +209,6 @@ class Proposal(VotablePost):
             ('5', 'For'),
         ]
 
-class ProposalVote(models.Model):
-    user = models.ForeignKey(CustomUser, related_name="proposal_votes")
-    proposal = models.ForeignKey(Proposal, related_name="proposal_votes")
-    date = models.DateTimeField(auto_now=True)
-    value = models.IntegerField("The value of the vote")
-
 class Comment(VotablePost):
     # settings
     COMMENT_COLORS = (
@@ -222,24 +224,11 @@ class Comment(VotablePost):
     def __unicode__(self):
         return "Comment on {}".format(self.proposal)
 
-'''
-    Singleton object containing the properties of the voting system
-'''
-class VotingProperties(models.Model):
-    daysUntilVotingStarts = models.IntegerField(default=7)
-    minimalUpvotes = models.IntegerField(default=3)
-    daysUntilVotingFinishes = models.IntegerField(default=7)
-
-    def save(self): 
-        if self.__class__.objects.all().count(): 
-            #There exists another object in the DB 
-            obj = self.__class__.objects.all()[0] 
-            for field in self._meta.fields: 
-                if not field.name == self._meta.auto_field.name: 
-                    setattr(obj, field.name, getattr(self, field.name)) 
-            super(VotingProperties, obj).save() 
-        else: 
-            super(VotingProperties, self).save() 
+class ProposalVote(models.Model):
+    user = models.ForeignKey(CustomUser, related_name="proposal_votes")
+    proposal = models.ForeignKey(Proposal, related_name="proposal_votes")
+    date = models.DateTimeField(auto_now=True)
+    value = models.IntegerField("The value of the vote")
 
 '''
     object containing the issued proxies for the voting system
