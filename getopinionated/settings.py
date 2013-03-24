@@ -81,8 +81,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'common.middleware.SSLRedirect',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
-    'django.middleware.cache.UpdateCacheMiddleware',
-    "django.middleware.cache.FetchFromCacheMiddleware",
+    # 'django.middleware.cache.UpdateCacheMiddleware',
+    # "django.middleware.cache.FetchFromCacheMiddleware",
 )
 
 ROOT_URLCONF = 'getopinionated.urls'
@@ -165,13 +165,13 @@ LOGGING = {
     }
 }
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-        #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        #'LOCATION': '127.0.0.1:11211',
-    }
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+#         #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#         #'LOCATION': '127.0.0.1:11211',
+#     }
+# }
 
 # default url after login (used in contrib.auth)
 LOGIN_REDIRECT_URL = '/'

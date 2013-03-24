@@ -2,15 +2,9 @@ from models import Proposal, Comment, UpDownVote, ProposalVote
 from django.contrib import admin
 from proposing.models import Tag
 
-class ProposalInline(admin.TabularInline):
-    model = Tag.proposals.through
-
 class TagAdmin(admin.ModelAdmin):
-    inlines = [
-        ProposalInline,
-    ]
     list_display = ('name',)
-    exclude = ('proposals',)
+    prepopulated_fields = {'slug': ('name',)}
 
 class CommentInline(admin.TabularInline):
     model = Comment
