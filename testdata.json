@@ -170,10 +170,10 @@
         "pk": 1,
         "model": "proposing.proposaltype",
         "fields": {
-            "daysUntilVotingStarts": 1,
+            "daysUntilVotingStarts": 0,
             "daysUntilVotingFinishes": 3,
             "name": "Spelling correction",
-            "minimalUpvotes": 2
+            "minimalUpvotes": 3
         }
     },
     {
