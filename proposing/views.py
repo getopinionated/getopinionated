@@ -101,6 +101,10 @@ def proposalvote(request, proposal_slug, updown):
     if proposal.user_has_proposalvoted(user) != None:
         vote = proposal.proposalvote_from_user(user)
         vote.delete()
+    # check if vote is in progress
+    if proposal.voting_stage != 'VOTING':
+        messages.error(request, "Vote is not in progress")
+        return proposal_detail_redirect
     # check if upvote is allowed
     if not proposal.user_can_proposalvote(user):
         messages.error(request, "You can't vote on this proposal")
