@@ -76,38 +76,29 @@ class ProposalType(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class Proposal(VotablePost):
+    # settings
+    VOTING_STAGE = (
+        ('DISCUSSION', 'Discussion'),
+        ('VOTING', 'Voting in progress'),
+        ('FINISHED', 'Finished'),
+    )
+    # fields
     title = models.CharField(max_length=255)
     slug = models.SlugField()
     motivation = models.TextField()
     diff = models.ForeignKey(Diff)
     views = models.IntegerField(default=0)
     merged = models.BooleanField(default=False)
-    isVoting = models.BooleanField(default=False)
-    isFinished = models.BooleanField(default=False)
+    voting_stage = models.CharField(max_length=20, choices=VOTING_STAGE, default='DISCUSSION')
     voting_date = models.DateTimeField(default=None, null=True, blank=True)
     # proposal_type = models.ForeignKey(ProposalType)
     proposal_type = models.ForeignKey(ProposalType, null=True, blank=True) # TMP
     tags = models.ManyToManyField(Tag, related_name="proposals")
 
     def __unicode__(self):
-        return "Proposal: {}".format(self.title)
-
-    @property
-    def shouldStartVoting(self):
-        properties = self.proposal_type
-        shouldStartVoting = (self.create_date + datetime.timedelta(days=properties.daysUntilVotingFinishes) > timezone.now()
-                            and
-                            self.upvotescore > properties.minimalUpvotes)
-        return shouldStartVoting
-
-    @property
-    def shouldBeFinished(self):
-        if not self.isVoting:
-            return False
-        properties = self.proposal_type
-        shouldBeFinished = self.voting_date + datetime.timedelta(days=properties.daysUntilVotingFinishes) > datetime.datetime.now()
-        return shouldBeFinished
+        return self.title
 
     @property
     def totalvotescore(self):
@@ -116,6 +107,26 @@ class Proposal(VotablePost):
     @property
     def numberofcomments(self):
         return self.comments.count()
+
+    def shouldStartVoting(self):
+        # check relevance
+        if self.voting_stage != 'DISCUSSION':
+            return False
+        # should start voting if start properties fullfilled
+        properties = self.proposal_type
+        shouldStartVoting = (self.create_date + datetime.timedelta(days=properties.daysUntilVotingFinishes) > timezone.now()
+                            and
+                            self.upvotescore > properties.minimalUpvotes)
+        return shouldStartVoting
+
+    def shouldBeFinished(self):
+        # check relevance
+        if self.voting_stage != 'VOTING':
+            return False
+        # should finish voting if end properties fullfilled
+        properties = self.proposal_type
+        shouldBeFinished = self.voting_date + datetime.timedelta(days=properties.daysUntilVotingFinishes) > datetime.datetime.now()
+        return shouldBeFinished
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -173,6 +184,7 @@ class Proposal(VotablePost):
         # You can vote on your own proposals
         #if self.creator == user:
         #    return False
+        # check if user has already voted
         return self.proposalvote_from_user(user) == None
 
     def proposalIsAccepted(self):
