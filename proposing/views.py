@@ -46,8 +46,6 @@ def detail(request, proposal_slug):
             'proposal': proposal,
         })
     elif proposal.voting_stage == 'FINISHED':
-        if not proposal.merged:
-            proposal.initiateVoteCount()
         return render(request, 'proposal/detail.html', {
             'proposal': proposal,
             'commentform': commentform,
