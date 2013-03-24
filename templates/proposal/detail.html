@@ -47,7 +47,7 @@
         		{% endfor %}
         	</div>
         </div>
-        {% if proposal.isVoting and not proposal.isFinished%}
+        {% if proposal.voting_stage == 'VOTING' %}
             <div class="votes">
                 <h2>Cast your vote:</h2>
                 <div class="votebuttons">
@@ -72,7 +72,7 @@
             </div>
             {% endfor %}
         </div>
-        {% if not proposal.isVoting %}
+        {% if proposal.voting_stage == 'DISCUSSION' %}
         <div class="owncomment">
             <h2>Write your own comment</h2>
             <form action="{% url proposals-detail proposal.slug %}" method="POST" class="commentform">

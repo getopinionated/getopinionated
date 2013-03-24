@@ -32,18 +32,7 @@ def detail(request, proposal_slug):
     commentform = CommentForm()
     proposal.addView()
     
-    if proposal.isFinished:
-        if not proposal.merged:
-            proposal.initiateVoteCount()
-        return render(request, 'proposal/detail.html', {
-            'proposal': proposal,
-            'commentform': commentform,
-        })
-    elif proposal.isVoting:
-        return render(request, 'proposal/detail.html', {
-            'proposal': proposal,
-        })
-    else:
+    if proposal.voting_stage == 'DISCUSSION':
         if request.method == 'POST':
             commentform = CommentForm(request.POST)
             if commentform.is_valid():
@@ -52,6 +41,19 @@ def detail(request, proposal_slug):
                 return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
         else:
             commentform = CommentForm()
+    elif proposal.voting_stage == 'VOTING':
+        return render(request, 'proposal/detail.html', {
+            'proposal': proposal,
+        })
+    elif proposal.voting_stage == 'FINISHED':
+        if not proposal.merged:
+            proposal.initiateVoteCount()
+        return render(request, 'proposal/detail.html', {
+            'proposal': proposal,
+            'commentform': commentform,
+        })
+    else:
+        raise Exception('illegal voting_stage')
     return render(request, 'proposal/detail.html', {
         'proposal': proposal,
         'commentform': commentform,
@@ -94,7 +96,7 @@ def proposalvote(request, proposal_slug, updown):
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
     user = request.user
     proposal_detail_redirect = HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
-    assert updown in ['-5', '-4', '-3', '-2', '-1', '0', '+1', '+2', '+3', '+4', '+5'], 'illegal vote'
+    assert updown in dict(Proposal.voteOptions()).keys(), 'illegal vote'
     # remove the previous vote of the user
     if proposal.user_has_proposalvoted(user) != None:
         vote = proposal.proposalvote_from_user(user)
