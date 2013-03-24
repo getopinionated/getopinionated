@@ -212,7 +212,7 @@
             "motivation": "The environment subject was missing.",
             "views": 3,
             "title": "Protect the environment",
-            "proposal_type": null,
+            "proposal_type": 2,
             "voting_stage": "DISCUSSION",
             "tags": [
                 5

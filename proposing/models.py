@@ -1,12 +1,11 @@
+import datetime
 from django.db import models
 from django.utils import timezone
-import datetime
+from django.template.defaultfilters import slugify
+from common.stringify import niceBigInteger
 from document.models import Diff
 from accounts.models import CustomUser
-from django.template.defaultfilters import slugify
 
-from common.stringify import niceBigInteger
-from django.utils import timezone
 
 class VotablePost(models.Model):
     """ super-model for all votable models """
@@ -14,7 +13,7 @@ class VotablePost(models.Model):
     create_date = models.DateTimeField(auto_now_add=True)
 
     @property
-    def upvotescore(self):
+    def upvote_score(self):
         num_upvotes = self.up_down_votes.filter(is_up=True).count()
         num_downvotes = self.up_down_votes.filter(is_up=False).count()
         return num_upvotes - num_downvotes
@@ -93,8 +92,7 @@ class Proposal(VotablePost):
     merged = models.BooleanField(default=False)
     voting_stage = models.CharField(max_length=20, choices=VOTING_STAGE, default='DISCUSSION')
     voting_date = models.DateTimeField(default=None, null=True, blank=True)
-    # proposal_type = models.ForeignKey(ProposalType)
-    proposal_type = models.ForeignKey(ProposalType, null=True, blank=True) # TMP
+    proposal_type = models.ForeignKey(ProposalType)
     tags = models.ManyToManyField(Tag, related_name="proposals")
 
     def __unicode__(self):
@@ -102,10 +100,10 @@ class Proposal(VotablePost):
 
     @property
     def totalvotescore(self):
-        return self.upvotescore + self.proposal_votes.count()
+        return self.upvote_score + self.proposal_votes.count()
 
     @property
-    def numberofcomments(self):
+    def number_of_comments(self):
         return self.comments.count()
 
     def shouldStartVoting(self):
@@ -114,9 +112,9 @@ class Proposal(VotablePost):
             return False
         # should start voting if start properties fullfilled
         properties = self.proposal_type
-        shouldStartVoting = (self.create_date + datetime.timedelta(days=properties.daysUntilVotingFinishes) > timezone.now()
+        shouldStartVoting = (timezone.now() > self.create_date + datetime.timedelta(days=properties.daysUntilVotingFinishes)
                             and
-                            self.upvotescore > properties.minimalUpvotes)
+                            self.upvote_score > properties.minimalUpvotes)
         return shouldStartVoting
 
     def shouldBeFinished(self):
@@ -125,7 +123,7 @@ class Proposal(VotablePost):
             return False
         # should finish voting if end properties fullfilled
         properties = self.proposal_type
-        shouldBeFinished = self.voting_date + datetime.timedelta(days=properties.daysUntilVotingFinishes) > datetime.datetime.now()
+        shouldBeFinished = timezone.now() > self.voting_date + datetime.timedelta(days=properties.daysUntilVotingFinishes)
         return shouldBeFinished
 
     def save(self, *args, **kwargs):

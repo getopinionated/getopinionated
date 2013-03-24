@@ -1,10 +1,6 @@
-'''
-Created on Mar 2, 2013
-
-@author: jonas
-'''
-
 from django.core.management.base import BaseCommand, CommandError, NoArgsCommand
+from django.db.models import Q
+from django.utils import timezone
 from proposing.models import Proposal
 import datetime
 
@@ -15,11 +11,10 @@ class Command(NoArgsCommand):
         voting_cnt = 0
         finished_cnt = 0
         
-        for proposal in Proposal.objects.filter(voting_stage = 'FINISHED'):
-            
+        for proposal in Proposal.objects.filter(~Q(voting_stage='FINISHED')):
             if proposal.shouldStartVoting():
                 proposal.voting_stage = 'VOTING'
-                proposal.voting_date = datetime.datetime.now()
+                proposal.voting_date = timezone.now()
                 voting_cnt +=1
             # proposal might already be finished
             if proposal.shouldBeFinished():
