@@ -81,7 +81,7 @@ class Proposal(VotablePost):
     # settings
     VOTING_STAGE = (
         ('DISCUSSION', 'Discussion'),
-        ('VOTING', 'Voting in progress'),
+        ('VOTING', 'Voting'),
         ('FINISHED', 'Finished'),
     )
     # fields

@@ -297,6 +297,15 @@ ul.messages li.error {
 	background: transparent;	
 }
 
+.voting-stage {
+    color: white;
+    background-color: #555;
+    font-size: 80%;
+    border-radius: 3px;
+    margin-right: 5px;
+    padding: 3px 4px 3px 6px;
+}
+
 .summary {
 	display: inline-block;
 	margin: 0;

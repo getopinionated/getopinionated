@@ -30,6 +30,9 @@
 		</div>
 	</div>
 	<div class="explanation">
+		<span class="voting-stage">
+			{{ proposal.get_voting_stage_display }}
+		</span>
 		<div class="summary">
 			<a href="{% url proposals-detail proposal.slug %}">{{ proposal.title }}</a>
 		</div>
