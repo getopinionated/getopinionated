@@ -71,6 +71,71 @@ article.proposal .votebuttons {
     padding-left: 50px;
 }
 
+/***** timeline *****/
+article.proposal .timeline {
+    background-color: #eee;
+    padding: 20px;
+}
+article.proposal .timeline h2 {
+    margin-bottom: 10px;
+}
+article.proposal .timeline ul.events {
+    list-style-type: none;
+    margin: 0;
+    padding: 0 0 8px 0;
+    display: block;
+    overflow: auto;
+}
+article.proposal .timeline ul.events li {
+    width: 200px;
+    color: #777;
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-bottom: 6px;
+    padding: 0 !important;
+    text-align: center;
+    float: left;
+}
+article.proposal .timeline ul.intervals {
+    list-style-type: none;
+    padding: 0;
+    width: 510px;
+    display: block;
+    padding-left: 100px;
+    overflow: auto;
+    background-color: #ccc !important;
+}
+article.proposal .timeline ul.intervals li {
+    border-left: 1px solid #999;
+    color: #999;
+    float: left;
+    font-size: 1.2em;
+    margin: 0;
+    padding: 15px 0;
+    text-align: center;
+    width: 199px;
+}
+article.proposal .timeline ul.intervals li:last-child {
+    width: 50px;
+}
+article.proposal .timeline ul.intervals li.current {
+    color: #222;
+}
+article.proposal .timeline .now {
+    position: relative;
+    width: 200px;
+    text-align: center;
+    top: -2px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+article.proposal .timeline .now .line {
+    width: 100px;
+    border-right: 1px solid;
+    height: 10px;
+}
+
+/***** vote buttons *****/
 article.proposal .votes {
     background-color: #eee;
     padding: 20px;

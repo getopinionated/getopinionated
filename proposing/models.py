@@ -1,3 +1,4 @@
+from __future__ import division
 import datetime
 from django.db import models
 from django.db.models import Q
@@ -106,15 +107,34 @@ class Proposal(VotablePost):
     def number_of_comments(self):
         return self.comments.count()
 
+    @property
+    def estimatedVotingDate(self):
+        properties = self.proposal_type
+        if self.voting_stage == 'DISCUSSION':
+            nominal_date = self.create_date + datetime.timedelta(days=properties.daysUntilVotingStarts)
+            return nominal_date if timezone.now() < nominal_date else timezone.now()
+        else:
+            return self.voting_date
+
+    @property
+    def estimatedFinishDate(self):
+        properties = self.proposal_type
+        return self.estimatedVotingDate + datetime.timedelta(days=properties.daysUntilVotingFinishes)
+
+    def minimalContraintsAreMet(self):
+        """ True if non-date constraints are met """
+        properties = self.proposal_type
+        return self.upvote_score > properties.minimalUpvotes
+
     def shouldStartVoting(self):
         # check relevance
         if self.voting_stage != 'DISCUSSION':
             return False
         # should start voting if start properties fullfilled
         properties = self.proposal_type
-        shouldStartVoting = (timezone.now() > self.create_date + datetime.timedelta(days=properties.daysUntilVotingFinishes)
+        shouldStartVoting = (timezone.now() > self.create_date + datetime.timedelta(days=properties.daysUntilVotingStarts)
                             and
-                            self.upvote_score > properties.minimalUpvotes)
+                            self.minimalContraintsAreMet())
         return shouldStartVoting
 
     def shouldBeFinished(self):
@@ -215,6 +235,27 @@ class Proposal(VotablePost):
             ('4', ''),
             ('5', 'For'),
         ]
+
+    def current_date_to_px(self):
+        """ get pixels for timeline in detail.html for current date pointer """
+        ## get vars
+        d10 = datetime.timedelta(days=10)
+        begin, voting, finish = self.create_date.date(), self.estimatedVotingDate.date(), self.estimatedFinishDate.date()
+        now = timezone.now().date()
+        ## get fixed places
+        fixed_date_to_px = [
+            (begin - d10, -50),
+            (begin, 0),
+            (voting, 200),
+            (finish, 400),
+            (finish + d10, 450),
+        ]
+        ## linear interpolation between fixed dates
+        px = fixed_date_to_px[0][1]
+        for (date1, px1), (date2, px2) in zip(fixed_date_to_px[:-1], fixed_date_to_px[1:]):
+            if date1 < now <= date2:
+                px = px1 + (px2-px1)/(date2-date1).days*(now-date1).days
+        return px if now < fixed_date_to_px[-1][0] else fixed_date_to_px[-1][1];
 
 class Comment(VotablePost):
     # settings
