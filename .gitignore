@@ -45,5 +45,6 @@ nosetests.xml
 # local settings
 getopinionated/local_settings.py
 
-# custom scripts
+# custom files
 jsrv.py
+getopinionated.sublime-*
