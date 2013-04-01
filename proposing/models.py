@@ -176,14 +176,8 @@ class Proposal(VotablePost):
             return vote.value
         return None
 
-    def user_can_proposalvote(self, user):
-        if not user.is_authenticated():
-            return False
-        # You can vote on your own proposals
-        #if self.creator == user:
-        #    return False
-        # check if user has already voted
-        return self.proposalvote_from_user(user) == None
+    def user_has_proposalvoted_on(self, user, option):
+        return self.user_has_proposalvoted(user) == int(option)
 
     def isAccepted(self):
         return self.proposalvotescore>0
