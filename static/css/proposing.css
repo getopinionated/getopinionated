@@ -91,6 +91,9 @@ article.proposal .votes .votebuttons a {
 article.proposal .votes .votebuttons a:hover {
     background-color: #999;
 }
+article.proposal .votes .votebuttons a.voted {
+    background-color: #bbb;
+}
 article.proposal .votes .votebuttons a div.small {
     font-size: 0.6em;
 }

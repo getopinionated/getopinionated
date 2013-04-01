@@ -49,13 +49,24 @@
         </div>
         {% if proposal.voting_stage == 'VOTING' %}
             <div class="votes">
-                <h2>Cast your vote:</h2>
+                {% if proposal|args:user|call:"user_has_proposalvoted" == None %}
+                    <h2>Cast your vote:</h2>
+                {% else %}
+                    <h2>Change your vote:</h2>
+                {% endif %}
                 <div class="votebuttons">
                     {% for option, helptext in proposal.voteOptions %}
-                        <a href="{% url proposal-vote proposal.slug option %}">
-                            <div>{{option}}</div>
-                            <div class="small">{% if helptext %}{{helptext}}{% else %}&nbsp;{% endif %}</div>
-                        </a>
+                        {% if proposal|args:user|args:option|call:"user_has_proposalvoted_on" %}
+                            <a href="{% url proposal-vote proposal.slug option %}" class="voted">
+                                <div>{{option}}</div>
+                                <div class="small">{% if helptext %}{{helptext}}{% else %}&nbsp;{% endif %}</div>
+                            </a>
+                        {% else %}
+                            <a href="{% url proposal-vote proposal.slug option %}">
+                                <div>{{option}}</div>
+                                <div class="small">{% if helptext %}{{helptext}}{% else %}&nbsp;{% endif %}</div>
+                            </a>
+                        {% endif %}
                     {% endfor %}
               </div>
             </div>
