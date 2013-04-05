@@ -60,8 +60,12 @@ class HTMLMatcher(SequenceMatcher):
             pos = match.end()
         return result
 
+    #TODO: split on sentences, not words
     def splitWords(self, t):
-        return re.findall(r'([^ \n\r\t,.&;/#=<>()-]+|(?:[ \n\r\t]|&nbsp;)+|[,.&;/#=<>()-])', t)
+        #split words by word regex
+        #return re.findall(r'([^ \n\r\t,.&;/#=<>()-]+|(?:[ \n\r\t]|&nbsp;)+|[,.&;/#=<>()-])', t)
+        #split words by sentence regex
+        return re.findall(r'([.;<>()]?[^\n\r\t.;<>()]+[.;<>()]?|(?:[\n\r\t]|&nbsp;)+)', t)
 
     def splitHTML(self, t):
         t = commentRE.sub('', t)
@@ -72,6 +76,7 @@ class HTMLMatcher(SequenceMatcher):
                 result.append(item)
             else:
                 result.extend(self.splitWords(item))
+                #result.append(item)
         return result
 
     def htmlDiff(self, addStylesheet=False):
