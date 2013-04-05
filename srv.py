@@ -21,7 +21,7 @@ def runserver():
     chdir_to_project()
     import_local_settings()
     call_command('validate')
-    call_command('syncdb', noinput=True)
+    call_command('syncdb', noinput=True, interactive=False)
     call_command('loaddata', 'testdata.json')
     call_command('updatevoting')
     call_command('thumbnail', 'cleanup')
