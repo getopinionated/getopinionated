@@ -285,4 +285,4 @@ class Proxy(models.Model):
     delegating = models.ForeignKey(CustomUser, related_name="proxies")
     delegate = models.ForeignKey(CustomUser, related_name="received_proxies")
     tag = models.ForeignKey(Tag, related_name="proxies")
-
+    testfield = models.DateTimeField(auto_now=True)
