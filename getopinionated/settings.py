@@ -115,7 +115,9 @@ INSTALLED_APPS = (
 	'proposing',
     'document',
     'django.contrib.humanize',
-    'libs.sorl.thumbnail'
+    'libs.sorl.thumbnail',
+    # external apps
+    'south'
 )
 
 AUTHENTICATION_BACKENDS = (
