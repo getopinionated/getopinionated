@@ -7,4 +7,15 @@ sudo apt-get install memcached
 # install python binding for memcached: python-memcache (no 'd')
 sudo apt-get install python-memcache
 
+# install pip
+sudo apt-get install python-pip
+
+sudo apt-get install pip
+
+sudo pip install south
+
+sudo apt-get install python-dev
+sudo pip install fabric
+
 #set up cron to update everything every 5 minutes
+
