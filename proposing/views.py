@@ -8,6 +8,7 @@ from models import VotablePost, UpDownVote, Proposal, Comment, ProposalVote
 from forms import CommentForm
 from proposing.models import Tag
 from django.db.models import Count
+from proposing.forms import ProxyForm
 
 def index(request):
     first_5_proposals = Proposal.objects.order_by('create_date')#for debugging purposes, results should actually be paginated
@@ -56,6 +57,19 @@ def detail(request, proposal_slug):
         'proposal': proposal,
         'commentform': commentform,
     })
+
+
+@login_required
+def proxy(request):
+    user = request.user
+    proxyform = ProxyForm(user)
+    return render(request, 'accounts/proxy.html', {
+            'user': user,
+            'proxyform': proxyform,
+        })
+
+
+
 
 @login_required
 def vote(request, proposal_slug, post_id, updown):
@@ -121,9 +135,4 @@ def proposalvote(request, proposal_slug, score):
     # redirect
     messages.success(request, "Vote successful")
     return proposal_detail_redirect
-
-
-def proxy(request):
-    user = request.user
-
 
