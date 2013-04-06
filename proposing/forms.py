@@ -3,9 +3,11 @@ from common.forms import FocussingModelForm
 from common.beautifulsoup import BeautifulSoup
 from common import sanitizehtml
 from document.models import FullDocument, Diff
-from document.widgets import TagSelectorWidget, RichTextEditorWidget
-from document.fields import TagChoiceField
+from proposing.widgets import TagSelectorWidget, RichTextEditorWidget
+from proposing.fields import TagChoiceField, UserChoiceField
 from models import VotablePost, UpDownVote, Proposal, Comment, Tag
+from django.contrib.auth.models import User
+from accounts.models import CustomUser
 
 
 class ProposalForm(forms.ModelForm):
@@ -68,3 +70,11 @@ class CommentForm(forms.ModelForm):
         new_comment.creator = user if user.is_authenticated() else None
         new_comment.save()
         return new_comment
+
+class ProxyForm(forms.Form):
+    main_proxy = UserChoiceField(queryset=CustomUser.objects.all(), widget=TagSelectorWidget())
+    
+    def __init__(self, user, *args, **kwargs):
+        super(ProxyForm, self).__init__(*args, **kwargs)
+        self.user = user
+        

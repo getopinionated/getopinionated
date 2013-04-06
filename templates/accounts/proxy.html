@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load filters %}
+{% load macros %}
+{% loadmacros "accounts/member-macro.html" %}
+{% loadmacros "proposal/tag-macro.html" %}
+
+{% block title %}{% include "title.html" with subtitle="Proposals" %}{% endblock %}
+
+
+{% block extrastyle %}
+  <link rel="stylesheet" href="{{STATIC_URL}}css/proxy.css" type="text/css" charset="utf-8" />
+  <script type="text/javascript" src="{{STATIC_URL}}js/proxy.js"></script>
+  {{ proxyform.media }}
+{% endblock %}
+
+{% block content %}
+<div>
+	<div>
+		My vote for everything goes to {{ proxyform.main_proxy }}
+	</div>
+	<div id="proxy_list">
+	
+	</div>
+	 <input type="button" id="addProxyButton" value="Add another proxy" />
+</div>
+ {% endblock %}
