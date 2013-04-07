@@ -1,4 +1,5 @@
 #!/bin/bash
+#testing server
 cd /home/de317070/webapps/getopinionated/getopinionated/getopinionated
 git fetch
 newUpdatesAvailable=`git diff HEAD FETCH_HEAD`
