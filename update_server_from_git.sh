@@ -7,5 +7,5 @@ if [ "$newUpdatesAvailable" != "" ]
 then
 	git reset --hard
 	git pull
-	restart
+	$HOME/webapps/getopinionated/apache2/bin/restart
 fi
