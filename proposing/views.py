@@ -68,16 +68,16 @@ def vote(request, proposal_slug, post_id, updown):
     proposal_detail_redirect = HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
     assert updown in ['up', 'down'], 'illegal updown value'
     # check if upvote can be undone
-    if post.user_has_updownvoted(user) != None:
-        if post.user_has_updownvoted(user) == updown:
-            vote = post.updownvote_from_user(user)
+    if post.userHasUpdownvoted(user) != None:
+        if post.userHasUpdownvoted(user) == updown:
+            vote = post.updownvoteFromUser(user)
             vote.delete()
             messages.success(request, "Vote removed successfully")
         else:
             messages.error(request, "You already voted on this post")
         return proposal_detail_redirect
     # check if upvote is allowed
-    if not post.user_can_updownvote(user):
+    if not post.userCanUpdownvote(user):
         messages.error(request, "You can't vote on this post")
         return proposal_detail_redirect
     # create updownvote
@@ -105,14 +105,14 @@ def proposalvote(request, proposal_slug, score):
         messages.error(request, "Vote is not in progress")
         return proposal_detail_redirect
     # check if user is cancelling vote
-    if proposal.user_has_proposalvoted(user) == votevalue:
-        vote = proposal.proposalvote_from_user(user)
+    if proposal.userHasProposalvoted(user) == votevalue:
+        vote = proposal.proposalvoteFromUser(user)
         vote.delete()
         messages.success(request, "Vote removed")
         return proposal_detail_redirect
     # remove the previous vote of the user
-    if proposal.user_has_proposalvoted(user) != None:
-        vote = proposal.proposalvote_from_user(user)
+    if proposal.userHasProposalvoted(user) != None:
+        vote = proposal.proposalvoteFromUser(user)
         vote.delete()
     # create ProposalVote
     vote = ProposalVote(

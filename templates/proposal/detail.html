@@ -6,13 +6,13 @@
 {% loadmacros "proposal/tag-macro.html" %}
 
 {% macro updownvote votable_post %}
-	{% if votable_post|args:user|call:"can_press_upvote" %}
+	{% if votable_post|args:user|call:"canPressUpvote" %}
 		<a href="{% url posts-vote proposal.slug votable_post.id 'up' %}">+</a>
 	{% else %}
 		+
 	{% endif %}
 	 / 
-	{% if votable_post|args:user|call:"can_press_downvote" %}
+	{% if votable_post|args:user|call:"canPressDownvote" %}
 		<a href="{% url posts-vote proposal.slug votable_post.id 'down' %}">-</a>
 	{% else %}
 		-
@@ -67,7 +67,7 @@
                     <li {% if proposal.voting_stage == 'VOTING' %}class="current"{% endif %}>Voting</li>
                     <li>&nbsp;</li>
                 </ul> <!-- end .intervals -->
-                <div class="now" style="left: {{proposal.current_date_to_px}}px">
+                <div class="now" style="left: {{proposal.currentDateToPx}}px">
                     <div class="line">&nbsp;</div>
                     <div>now</div>
                 </div> <!-- end .now -->
@@ -87,7 +87,7 @@
                     <li class="current">Expired</li>
                     <li>&nbsp;</li>
                 </ul> <!-- end .intervals -->
-                <div class="now" style="left: {{proposal.current_date_to_px}}px">
+                <div class="now" style="left: {{proposal.currentDateToPx}}px">
                     <div class="line">&nbsp;</div>
                     <div>now</div>
                 </div> <!-- end .now -->
@@ -95,14 +95,14 @@
         </div> <!-- end .timeline -->
         {% if proposal.voting_stage == 'VOTING' %}
             <div class="votes">
-                {% if proposal|args:user|call:"user_has_proposalvoted" == None %}
+                {% if proposal|args:user|call:"userHasProposalvoted" == None %}
                     <h2>Cast your vote:</h2>
                 {% else %}
                     <h2>Change your vote:</h2>
                 {% endif %}
                 <div class="votebuttons">
                     {% for option, helptext in proposal.voteOptions %}
-                        {% if proposal|args:user|args:option|call:"user_has_proposalvoted_on" %}
+                        {% if proposal|args:user|args:option|call:"userHasProposalvotedOn" %}
                             <a href="{% url proposal-vote proposal.slug option %}" class="voted">
                                 <div>{{option}}</div>
                                 <div class="small">{% if helptext %}{{helptext}}{% else %}&nbsp;{% endif %}</div>
