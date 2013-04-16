@@ -152,6 +152,7 @@ article.proposal .votes .votebuttons a {
     width: 2em;
     text-align: center;
     margin-right: 0.7em;
+    border-radius: 10px;
 }
 article.proposal .votes .votebuttons a:hover {
     background-color: #999;
