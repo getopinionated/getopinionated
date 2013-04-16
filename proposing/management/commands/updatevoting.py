@@ -10,17 +10,25 @@ class Command(NoArgsCommand):
     def handle_noargs(self, *args, **kwargs):
         voting_cnt = 0
         finished_cnt = 0
+        expired_cnt = 0
         
         for proposal in Proposal.objects.filter(~Q(voting_stage='FINISHED')):
             if proposal.shouldStartVoting():
                 proposal.voting_stage = 'VOTING'
                 proposal.voting_date = timezone.now()
                 voting_cnt +=1
-            # proposal might already be finished
+                proposal.save()
             if proposal.shouldBeFinished():
                 proposal.initiateVoteCount()
                 proposal.voting_stage = 'FINISHED'
                 finished_cnt +=1
-            proposal.save()
+                proposal.save()
+            if proposal.shouldExpire():
+                proposal.voting_stage = 'EXPIRED'
+                expired_cnt +=1
+                proposal.save()
         
-        self.stdout.write('Successfully updated:\n\t%d proposals to the voting phase\n\t%d proposals to the finished phase\n' % (voting_cnt, finished_cnt))
+        self.stdout.write('Successfully updated:\n')
+        self.stdout.write('{} proposals to the voting phase\n'.format(voting_cnt))
+        self.stdout.write('{} proposals to the finished phase\n'.format(finished_cnt))
+        self.stdout.write('{} proposals expired\n'.format(expired_cnt))

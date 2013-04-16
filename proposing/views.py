@@ -30,10 +30,10 @@ def tagindex(request, tag_slug):
 
 def detail(request, proposal_slug):
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
-    commentform = CommentForm()
+    commentform = None
     proposal.addView()
     
-    if proposal.voting_stage == 'DISCUSSION':
+    if proposal.commentsAllowed():
         if request.method == 'POST':
             commentform = CommentForm(request.POST)
             if commentform.is_valid():
@@ -42,17 +42,6 @@ def detail(request, proposal_slug):
                 return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
         else:
             commentform = CommentForm()
-    elif proposal.voting_stage == 'VOTING':
-        return render(request, 'proposal/detail.html', {
-            'proposal': proposal,
-        })
-    elif proposal.voting_stage == 'FINISHED':
-        return render(request, 'proposal/detail.html', {
-            'proposal': proposal,
-            'commentform': commentform,
-        })
-    else:
-        raise Exception('illegal voting_stage')
     return render(request, 'proposal/detail.html', {
         'proposal': proposal,
         'commentform': commentform,
