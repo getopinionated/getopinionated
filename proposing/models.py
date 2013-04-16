@@ -73,6 +73,7 @@ class ProposalType(models.Model):
     daysUntilVotingStarts = models.IntegerField("Days until voting starts", default=7)
     minimalUpvotes = models.IntegerField("Minimal upvotes", default=3)
     daysUntilVotingFinishes = models.IntegerField("Days until voting finishes", default=7)
+    daysUntilVotingExpires = models.IntegerField("Days until proposal expires", default=60, help_text="Starts from proposal creation date, expiration is due to lack of interest.")
 
     def __unicode__(self):
         return self.name
@@ -84,6 +85,7 @@ class Proposal(VotablePost):
         ('DISCUSSION', 'Discussion'),
         ('VOTING', 'Voting'),
         ('FINISHED', 'Finished'),
+        ('EXPIRED', 'Expired'),
     )
     # fields
     title = models.CharField(max_length=255)
@@ -121,6 +123,14 @@ class Proposal(VotablePost):
         properties = self.proposal_type
         return self.estimatedVotingDate + datetime.timedelta(days=properties.daysUntilVotingFinishes)
 
+    @property
+    def expirationDate(self):
+        """ date the proposal expires because lack of interest """
+        properties = self.proposal_type
+        if self.minimalContraintsAreMet():
+            return None
+        return self.create_date + datetime.timedelta(days=properties.daysUntilVotingExpires)
+
     def minimalContraintsAreMet(self):
         """ True if non-date constraints are met """
         properties = self.proposal_type
@@ -145,6 +155,9 @@ class Proposal(VotablePost):
         properties = self.proposal_type
         shouldBeFinished = timezone.now() > self.voting_date + datetime.timedelta(days=properties.daysUntilVotingFinishes)
         return shouldBeFinished
+
+    def shouldExpire(self):
+        return self.expirationDate and timezone.now() > self.expirationDate
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -220,6 +233,9 @@ class Proposal(VotablePost):
         else:
             return
 
+    def commentsAllowed(self):
+        return self.voting_stage == 'DISCUSSION'
+
     @staticmethod
     def voteOptions():
         """ returns vote options, fit for use in template """
@@ -236,12 +252,13 @@ class Proposal(VotablePost):
             ('5', 'For'),
         ]
 
-    def current_date_to_px(self):
-        """ get pixels for timeline in detail.html for current date pointer """
+    def date_to_px(self, date):
+        """ get pixels for timeline in detail.html """
+        ## check sanity
+        assert self.voting_stage != 'EXPIRED'
         ## get vars
         d10 = datetime.timedelta(days=10)
         begin, voting, finish = self.create_date.date(), self.estimatedVotingDate.date(), self.estimatedFinishDate.date()
-        now = timezone.now().date()
         ## get fixed places
         fixed_date_to_px = [
             (begin - d10, -50),
@@ -253,9 +270,25 @@ class Proposal(VotablePost):
         ## linear interpolation between fixed dates
         px = fixed_date_to_px[0][1]
         for (date1, px1), (date2, px2) in zip(fixed_date_to_px[:-1], fixed_date_to_px[1:]):
-            if date1 < now <= date2:
-                px = px1 + (px2-px1)/(date2-date1).days*(now-date1).days
-        return px if now < fixed_date_to_px[-1][0] else fixed_date_to_px[-1][1];
+            if date1 < date <= date2:
+                px = px1 + (px2-px1)/(date2-date1).days*(date-date1).days
+        return px if date < fixed_date_to_px[-1][0] else fixed_date_to_px[-1][1];
+        
+    def current_date_to_px(self):
+        if self.voting_stage != 'EXPIRED':
+            return self.date_to_px(timezone.now().date())
+        else:
+            return 300
+
+    def expirationDateToPx(self):
+        ## check if expiration date is relevant
+        if not self.expirationDate:
+            return None
+        ## only show expiration if it is in the near future (30 days)
+        if (self.expirationDate - timezone.now()).days > 30:
+            return None
+        ## calculate pixels
+        return self.date_to_px(self.expirationDate.date())
 
 class Comment(VotablePost):
     # settings
