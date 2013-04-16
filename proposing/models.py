@@ -190,7 +190,7 @@ class Proposal(VotablePost):
 
     def user_has_proposalvoted(self, user):
         if not user.is_authenticated():
-            return False
+            return None
         vote = self.proposalvote_from_user(user)
         if vote != None:
             return vote.value
