@@ -15,12 +15,16 @@
 
 {% block content %}
 <div>
+	<form>
 	<div>
 		My vote for everything goes to {{ proxyform.main_proxy }}
 	</div>
-	<div id="proxy_list">
-	
+	<div class="proxy_list">
+		<div id ="0" class="proxy_item" style="visibility:hidden">
+			I delegate my vote for the tags {{ proxyform.side_proxy_tags }} to {{ proxyform.side_proxy }}
+		</div>
 	</div>
+	</form>
 	 <input type="button" id="addProxyButton" value="Add another proxy" />
 </div>
  {% endblock %}
