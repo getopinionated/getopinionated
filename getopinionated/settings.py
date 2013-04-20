@@ -197,6 +197,15 @@ except ImportError:
 TEMPLATE_DEBUG = DEBUG
 MANAGERS = ADMINS
 
+# easier template debugging (http://stackoverflow.com/questions/4300442/show-undefined-variable-errors-in-templates)
+if DEBUG:
+    class InvalidString(str):
+        def __mod__(self, other):
+            from django.template.base import TemplateSyntaxError
+            raise TemplateSyntaxError(
+                "Undefined variable or unknown value for: \"%s\"" % other)
+    TEMPLATE_STRING_IF_INVALID = InvalidString("%s")
+
 # favour django-mailer but fall back to django.core.mail
 if "mailer" in INSTALLED_APPS:
     from mailer import send_mail

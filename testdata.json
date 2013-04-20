@@ -9,10 +9,10 @@
             "is_active": true,
             "is_superuser": true,
             "is_staff": true,
-            "last_login": "2011-09-17T09:26:22Z",
+            "last_login": "2013-04-16T19:48:27.885Z",
             "groups": [],
             "user_permissions": [],
-            "password": "sha1$46949$88d4863560db97d0ea0bcff6f1170ffd61b01856",
+            "password": "pbkdf2_sha256$10000$Ze3Zb4pRx1k3$lD4CksPyzQO68dSOk+3wcPiKE1yMCf0aK1MTTqIpAdo=",
             "email": "test@gmail.com",
             "date_joined": "2011-08-05T19:42:36Z"
         }
@@ -127,6 +127,488 @@
         }
     },
     {
+        "pk": 5,
+        "model": "proposing.votablepost",
+        "fields": {
+            "create_date": "2013-04-07T14:34:58.701Z",
+            "creator": null
+        }
+    },
+    {
+        "pk": 6,
+        "model": "proposing.votablepost",
+        "fields": {
+            "create_date": "2013-04-16T19:45:08.114Z",
+            "creator": null
+        }
+    },
+    {
+        "pk": 7,
+        "model": "proposing.votablepost",
+        "fields": {
+            "create_date": "2013-04-16T19:46:33.048Z",
+            "creator": null
+        }
+    },
+    {
+        "pk": 8,
+        "model": "proposing.votablepost",
+        "fields": {
+            "create_date": "2013-04-16T19:52:32.466Z",
+            "creator": null
+        }
+    },
+    {
+        "pk": 1,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:31:55.458Z",
+            "post": 3,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 2,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:31:55.516Z",
+            "post": 3,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 3,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:31:55.526Z",
+            "post": 3,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 4,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:31:55.536Z",
+            "post": 3,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 5,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:31:55.546Z",
+            "post": 3,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 6,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:31:55.556Z",
+            "post": 3,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 7,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:31:55.567Z",
+            "post": 3,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 8,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:31:55.579Z",
+            "post": 3,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 9,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:31:55.590Z",
+            "post": 3,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 10,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:31:55.602Z",
+            "post": 3,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 11,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:31:55.615Z",
+            "post": 3,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 12,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:31:55.626Z",
+            "post": 3,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 13,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:31:55.639Z",
+            "post": 3,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 14,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:31:55.652Z",
+            "post": 3,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 15,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:31:55.666Z",
+            "post": 3,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 16,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:36:54.216Z",
+            "post": 5,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 17,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:36:54.239Z",
+            "post": 5,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 18,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:36:54.251Z",
+            "post": 5,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 19,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:36:54.260Z",
+            "post": 5,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 20,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:36:54.275Z",
+            "post": 5,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 21,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:36:54.284Z",
+            "post": 5,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 22,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:36:54.292Z",
+            "post": 5,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 23,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:36:54.303Z",
+            "post": 5,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 24,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:36:54.316Z",
+            "post": 5,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 25,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:36:54.330Z",
+            "post": 5,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 26,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:36:54.342Z",
+            "post": 5,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 27,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:36:54.354Z",
+            "post": 5,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 28,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:36:54.367Z",
+            "post": 5,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 29,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:36:54.379Z",
+            "post": 5,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 30,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-07T14:36:54.391Z",
+            "post": 5,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 31,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-16T19:48:39.057Z",
+            "post": 6,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 32,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-16T19:48:39.126Z",
+            "post": 6,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 33,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-16T19:48:39.136Z",
+            "post": 6,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 34,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-16T19:48:39.146Z",
+            "post": 6,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 35,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-16T19:48:39.157Z",
+            "post": 6,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 36,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-16T19:48:39.167Z",
+            "post": 6,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 37,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-16T19:48:39.179Z",
+            "post": 6,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 38,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-16T19:48:39.190Z",
+            "post": 6,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 39,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-16T19:48:39.202Z",
+            "post": 6,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 40,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-16T19:48:39.215Z",
+            "post": 6,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 41,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-16T19:48:39.229Z",
+            "post": 6,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 42,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-16T19:48:39.251Z",
+            "post": 6,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 43,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-16T19:48:39.264Z",
+            "post": 6,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 44,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-16T19:48:39.277Z",
+            "post": 6,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
+        "pk": 45,
+        "model": "proposing.updownvote",
+        "fields": {
+            "date": "2013-04-16T19:48:39.290Z",
+            "post": 6,
+            "user": 1,
+            "is_up": true
+        }
+    },
+    {
         "pk": 1,
         "model": "proposing.tag",
         "fields": {
@@ -167,11 +649,44 @@
         }
     },
     {
+        "pk": 6,
+        "model": "proposing.tag",
+        "fields": {
+            "name": "Finance",
+            "slug": "finance"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "proposing.tag",
+        "fields": {
+            "name": "Economics",
+            "slug": "economics"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "proposing.tag",
+        "fields": {
+            "name": "Spelling",
+            "slug": "spelling"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "proposing.tag",
+        "fields": {
+            "name": "Healthcare",
+            "slug": "healthcare"
+        }
+    },
+    {
         "pk": 1,
         "model": "proposing.proposaltype",
         "fields": {
             "daysUntilVotingStarts": 0,
             "daysUntilVotingFinishes": 3,
+            "daysUntilVotingExpires": 2,
             "name": "Spelling correction",
             "minimalUpvotes": 3
         }
@@ -182,6 +697,7 @@
         "fields": {
             "daysUntilVotingStarts": 7,
             "daysUntilVotingFinishes": 7,
+            "daysUntilVotingExpires": 60,
             "name": "Default",
             "minimalUpvotes": 3
         }
@@ -191,17 +707,17 @@
         "model": "proposing.proposal",
         "fields": {
             "motivation": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\r\n\r\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            "views": 2,
+            "views": 8,
             "title": "Copyright should be abolished",
             "proposal_type": 2,
-            "voting_stage": "DISCUSSION",
+            "voting_date": null,
             "tags": [
                 1,
                 2
             ],
             "diff": 1,
-            "voting_date": null,
-            "slug": "copyright-should-be-abolished"
+            "slug": "copyright-should-be-abolished",
+            "voting_stage": "EXPIRED"
         }
     },
     {
@@ -209,16 +725,67 @@
         "model": "proposing.proposal",
         "fields": {
             "motivation": "The environment subject was missing.",
-            "views": 3,
+            "views": 11,
             "title": "Protect the environment",
             "proposal_type": 2,
-            "voting_stage": "DISCUSSION",
+            "voting_date": "2013-03-29T15:32:05Z",
             "tags": [
                 5
             ],
             "diff": 2,
+            "slug": "protect-the-environment",
+            "voting_stage": "FINISHED"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "proposing.proposal",
+        "fields": {
+            "motivation": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nam cursus. Morbi ut mi. Nullam enim leo, egestas id, condimentum at, laoreet mattis, massa. Sed eleifend nonummy diam. Praesent mauris ante, elementum et, bibendum at, posuere sit amet, nibh. Duis tincidunt lectus quis dui viverra vestibulum. Suspendisse vulputate aliquam dui. Nulla elementum dui ut augue. Aliquam vehicula mi at mauris. Maecenas placerat, nisl at consequat rhoncus, sem nunc gravida justo, quis eleifend arcu velit quis lacus. Morbi magna magna, tincidunt a, mattis non, imperdiet vitae, tellus. Sed odio est, auctor ac, sollicitudin in, consequat vitae, orci. Fusce id felis. Vivamus sollicitudin metus eget eros.\r\n\r\nPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In posuere felis nec tortor. Pellentesque faucibus. Ut accumsan ultricies elit. Maecenas at justo id velit placerat molestie. Donec dictum lectus non odio. Cras a ante vitae enim iaculis aliquam. Mauris nunc quam, venenatis nec, euismod sit amet, egestas placerat, est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras id elit. Integer quis urna. Ut ante enim, dapibus malesuada, fringilla eu, condimentum quis, tellus. Aenean porttitor eros vel dolor. Donec convallis pede venenatis nibh. Duis quam. Nam eget lacus. Aliquam erat volutpat. Quisque dignissim congue leo.",
+            "views": 3,
+            "title": "Stop tax avoidance",
+            "proposal_type": 2,
+            "voting_date": "2013-04-16T19:41:07.573Z",
+            "tags": [
+                6
+            ],
+            "diff": 3,
+            "slug": "stop-tax-avoidance",
+            "voting_stage": "VOTING"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "proposing.proposal",
+        "fields": {
+            "motivation": "Some people want a conditional healthcare, e.g. for smokers. However, a disease can never be traced back to one single cause.",
+            "views": 6,
+            "title": "Healthcare is unconditional",
+            "proposal_type": 2,
             "voting_date": null,
-            "slug": "protect-the-environment"
+            "tags": [
+                9
+            ],
+            "diff": 4,
+            "slug": "healthcare-is-unconditional",
+            "voting_stage": "DISCUSSION"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "proposing.proposal",
+        "fields": {
+            "motivation": "I'm stupid and I don't know how to spel.",
+            "views": 2,
+            "title": "Spelling: focus -> fokus",
+            "proposal_type": 1,
+            "voting_date": null,
+            "tags": [
+                8
+            ],
+            "diff": 5,
+            "slug": "spelling-focus-fokus",
+            "voting_stage": "DISCUSSION"
         }
     },
     {
@@ -240,12 +807,172 @@
         }
     },
     {
+        "pk": 7,
+        "model": "proposing.comment",
+        "fields": {
+            "color": "NEG",
+            "proposal": 6,
+            "motivation": "I don't care about the certainty of tracing back. A smokers cancer treatment should not be payed by the tax payer!"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-04-07T14:37:00.568Z",
+            "proposal": 3,
+            "user": 1,
+            "value": 5
+        }
+    },
+    {
+        "pk": 3,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-04-07T14:37:00.578Z",
+            "proposal": 3,
+            "user": 1,
+            "value": 5
+        }
+    },
+    {
+        "pk": 4,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-04-07T14:37:00.589Z",
+            "proposal": 3,
+            "user": 1,
+            "value": 5
+        }
+    },
+    {
+        "pk": 5,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-04-07T14:37:00.600Z",
+            "proposal": 3,
+            "user": 1,
+            "value": 5
+        }
+    },
+    {
+        "pk": 6,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-04-07T14:37:00.613Z",
+            "proposal": 3,
+            "user": 1,
+            "value": 5
+        }
+    },
+    {
+        "pk": 7,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-04-07T14:37:00.624Z",
+            "proposal": 3,
+            "user": 1,
+            "value": 5
+        }
+    },
+    {
+        "pk": 8,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-04-07T14:37:00.634Z",
+            "proposal": 3,
+            "user": 1,
+            "value": 5
+        }
+    },
+    {
+        "pk": 9,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-04-07T14:37:00.642Z",
+            "proposal": 3,
+            "user": 1,
+            "value": 5
+        }
+    },
+    {
+        "pk": 10,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-04-07T14:37:00.652Z",
+            "proposal": 3,
+            "user": 1,
+            "value": 5
+        }
+    },
+    {
+        "pk": 11,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-04-07T14:37:00.660Z",
+            "proposal": 3,
+            "user": 1,
+            "value": 5
+        }
+    },
+    {
+        "pk": 12,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-04-07T14:37:00.670Z",
+            "proposal": 3,
+            "user": 1,
+            "value": 5
+        }
+    },
+    {
+        "pk": 13,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-04-07T14:37:00.682Z",
+            "proposal": 3,
+            "user": 1,
+            "value": 5
+        }
+    },
+    {
+        "pk": 14,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-04-07T14:37:00.693Z",
+            "proposal": 3,
+            "user": 1,
+            "value": 5
+        }
+    },
+    {
+        "pk": 15,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-04-07T14:37:00.706Z",
+            "proposal": 3,
+            "user": 1,
+            "value": 5
+        }
+    },
+    {
         "pk": 1,
         "model": "document.fulldocument",
         "fields": {
             "content": "Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />The globalization of knowledge and human culture through digitalization and networking challenges all aspects of our traditional legal, economic and social systems. The wrong responses to this challenge make up just one of the reasons which promote the emergence of a complete totalitarian global police state. The fear of international terrorism makes security seem more important than freedom and mutes many of those who might otherwise defend freedom.<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.",
             "version": 0,
             "create_date": "2013-01-28T19:30:03.008Z",
+            "slug": "the-pirate-codex",
+            "title": "The Pirate Codex"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "document.fulldocument",
+        "fields": {
+            "content": "Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />The globalization of knowledge and human culture through digitalization and networking challenges all aspects of our traditional legal, economic and social systems. The wrong responses to this challenge make up just one of the reasons which promote the emergence of a complete totalitarian global police state. The fear of international terrorism makes security seem more important than freedom and mutes many of those who might otherwise defend freedom.<br /><br />The main focus of every political movement should be to protect the environment.<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.\n",
+            "version": 1,
+            "create_date": "2013-04-07T14:39:05.419Z",
             "slug": "the-pirate-codex",
             "title": "The Pirate Codex"
         }
@@ -264,6 +991,30 @@
         "fields": {
             "fulldocument": 1,
             "text_representation": "- Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />The globalization of knowledge and human culture through digitalization and networking challenges all aspects of our traditional legal, economic and social systems. The wrong responses to this challenge make up just one of the reasons which promote the emergence of a complete totalitarian global police state. The fear of international terrorism makes security seem more important than freedom and mutes many of those who might otherwise defend freedom.<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.\n?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n+ Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />The globalization of knowledge and human culture through digitalization and networking challenges all aspects of our traditional legal, economic and social systems. The wrong responses to this challenge make up just one of the reasons which promote the emergence of a complete totalitarian global police state. The fear of international terrorism makes security seem more important than freedom and mutes many of those who might otherwise defend freedom.<br /><br />The main focus of every political movement should be to protect the environment.<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.\n?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ^^^^^^^^^^^^^^^^^^^ ^^   ^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^ ^^^^^^^^           +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "document.diff",
+        "fields": {
+            "fulldocument": 1,
+            "text_representation": "- Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />The globalization of knowledge and human culture through digitalization and networking challenges all aspects of our traditional legal, economic and social systems. The wrong responses to this challenge make up just one of the reasons which promote the emergence of a complete totalitarian global police state. The fear of international terrorism makes security seem more important than freedom and mutes many of those who might otherwise defend freedom.<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.\n?                                                                                                                                                                                                                                                                                                                                                                                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n+ Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />More regulation for money transactions!<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.\n?                                                                                                                                                                                                                                                                                                                                                                                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^\n"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "document.diff",
+        "fields": {
+            "fulldocument": 2,
+            "text_representation": "- Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />The globalization of knowledge and human culture through digitalization and networking challenges all aspects of our traditional legal, economic and social systems. The wrong responses to this challenge make up just one of the reasons which promote the emergence of a complete totalitarian global police state. The fear of international terrorism makes security seem more important than freedom and mutes many of those who might otherwise defend freedom.<br /><br />The main focus of every political movement should be to protect the environment.<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.\n+ Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />The globalization of knowledge and human culture through digitalization and networking challenges all aspects of our traditional legal, economic and social systems. The wrong responses to this challenge make up just one of the reasons which promote the emergence of a complete totalitarian global police state. The fear of international terrorism makes security seem more important than freedom and mutes many of those who might otherwise defend freedom.<br /><br />The main focus of every political movement should be to protect the environment.<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.<br /><br />Health care is unconditional.<br />\n?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                +++++++++++++++++++++++++++++++++++++++++++++++\n"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "document.diff",
+        "fields": {
+            "fulldocument": 2,
+            "text_representation": "- Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />The globalization of knowledge and human culture through digitalization and networking challenges all aspects of our traditional legal, economic and social systems. The wrong responses to this challenge make up just one of the reasons which promote the emergence of a complete totalitarian global police state. The fear of international terrorism makes security seem more important than freedom and mutes many of those who might otherwise defend freedom.<br /><br />The main focus of every political movement should be to protect the environment.<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.\n?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ^^^^^^\n+ Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />The globalization of knowledge and human culture through digitalization and networking challenges all aspects of our traditional legal, economic and social systems. The wrong responses to this challenge make up just one of the reasons which promote the emergence of a complete totalitarian global police state. The fear of international terrorism makes security seem more important than freedom and mutes many of those who might otherwise defend freedom.<br /><br />The main fokus of every political movement should be to protect the environment.<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.\n?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ^^^^^^\n"
         }
     }
 ]

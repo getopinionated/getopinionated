@@ -20,7 +20,7 @@ class VotablePost(models.Model):
         num_downvotes = self.up_down_votes.filter(is_up=False).count()
         return num_upvotes - num_downvotes
 
-    def updownvote_from_user(self, user):
+    def updownvoteFromUser(self, user):
         if not user.is_authenticated():
             return None
         uservotes = self.up_down_votes.filter(user=user)
@@ -28,26 +28,26 @@ class VotablePost(models.Model):
             return uservotes[0]
         return None
 
-    def user_can_updownvote(self, user):
+    def userCanUpdownvote(self, user):
         if not user.is_authenticated():
             return False
         if self.creator == user:
             return False
-        return self.updownvote_from_user(user) == None
+        return self.updownvoteFromUser(user) == None
 
-    def user_has_updownvoted(self, user):
+    def userHasUpdownvoted(self, user):
         if not user.is_authenticated():
             return False
-        vote = self.updownvote_from_user(user)
+        vote = self.updownvoteFromUser(user)
         if vote != None:
             return "up" if vote.is_up else "down"
         return None
 
-    def can_press_upvote(self, user):
-        return self.user_can_updownvote(user) or self.user_has_updownvoted(user) == 'up'
+    def canPressUpvote(self, user):
+        return self.userCanUpdownvote(user) or self.userHasUpdownvoted(user) == 'up'
 
-    def can_press_downvote(self, user):
-        return self.user_can_updownvote(user) or self.user_has_updownvoted(user) == 'down'
+    def canPressDownvote(self, user):
+        return self.userCanUpdownvote(user) or self.userHasUpdownvoted(user) == 'down'
 
 class UpDownVote(models.Model):
     user = models.ForeignKey(CustomUser, related_name="up_down_votes")
@@ -73,6 +73,7 @@ class ProposalType(models.Model):
     daysUntilVotingStarts = models.IntegerField("Days until voting starts", default=7)
     minimalUpvotes = models.IntegerField("Minimal upvotes", default=3)
     daysUntilVotingFinishes = models.IntegerField("Days until voting finishes", default=7)
+    daysUntilVotingExpires = models.IntegerField("Days until proposal expires", default=60, help_text="Starts from proposal creation date, expiration is due to lack of interest.")
 
     def __unicode__(self):
         return self.name
@@ -84,6 +85,7 @@ class Proposal(VotablePost):
         ('DISCUSSION', 'Discussion'),
         ('VOTING', 'Voting'),
         ('FINISHED', 'Finished'),
+        ('EXPIRED', 'Expired'),
     )
     # fields
     title = models.CharField(max_length=255)
@@ -121,6 +123,14 @@ class Proposal(VotablePost):
         properties = self.proposal_type
         return self.estimatedVotingDate + datetime.timedelta(days=properties.daysUntilVotingFinishes)
 
+    @property
+    def expirationDate(self):
+        """ date the proposal expires because lack of interest """
+        properties = self.proposal_type
+        if self.minimalContraintsAreMet():
+            return None
+        return self.create_date + datetime.timedelta(days=properties.daysUntilVotingExpires)
+
     def minimalContraintsAreMet(self):
         """ True if non-date constraints are met """
         properties = self.proposal_type
@@ -146,6 +156,9 @@ class Proposal(VotablePost):
         shouldBeFinished = timezone.now() > self.voting_date + datetime.timedelta(days=properties.daysUntilVotingFinishes)
         return shouldBeFinished
 
+    def shouldExpire(self):
+        return self.expirationDate and timezone.now() > self.expirationDate
+
     def save(self, *args, **kwargs):
         if not self.id:
             # Newly created object, so set slug
@@ -165,7 +178,7 @@ class Proposal(VotablePost):
             return True
 
     @property
-    def diff_with_context(self):
+    def diffWithContext(self):
         return self.diff.getNDiff()
 
     @property
@@ -180,7 +193,7 @@ class Proposal(VotablePost):
         self.views += 1
         self.save()
 
-    def proposalvote_from_user(self, user):
+    def proposalvoteFromUser(self, user):
         if not user.is_authenticated():
             return None
         uservotes = self.proposal_votes.filter(user=user)
@@ -188,16 +201,16 @@ class Proposal(VotablePost):
             return uservotes[0]
         return None
 
-    def user_has_proposalvoted(self, user):
+    def userHasProposalvoted(self, user):
         if not user.is_authenticated():
-            return False
-        vote = self.proposalvote_from_user(user)
+            return None
+        vote = self.proposalvoteFromUser(user)
         if vote != None:
             return vote.value
         return None
 
-    def user_has_proposalvoted_on(self, user, option):
-        return self.user_has_proposalvoted(user) == int(option)
+    def userHasProposalvotedOn(self, user, option):
+        return self.userHasProposalvoted(user) == int(option)
 
     def isAccepted(self):
         return self.proposalvotescore>0
@@ -220,6 +233,9 @@ class Proposal(VotablePost):
         else:
             return
 
+    def commentsAllowed(self):
+        return self.voting_stage == 'DISCUSSION'
+
     @staticmethod
     def voteOptions():
         """ returns vote options, fit for use in template """
@@ -236,14 +252,15 @@ class Proposal(VotablePost):
             ('5', 'For'),
         ]
 
-    def current_date_to_px(self):
-        """ get pixels for timeline in detail.html for current date pointer """
+    def dateToPx(self, date):
+        """ get pixels for timeline in detail.html """
+        ## check sanity
+        assert self.voting_stage != 'EXPIRED'
         ## get vars
         d10 = datetime.timedelta(days=10)
         begin, voting, finish = self.create_date.date(), self.estimatedVotingDate.date(), self.estimatedFinishDate.date()
-        now = timezone.now().date()
         ## get fixed places
-        fixed_date_to_px = [
+        fixed_dateToPx = [
             (begin - d10, -50),
             (begin, 0),
             (voting, 200),
@@ -251,11 +268,27 @@ class Proposal(VotablePost):
             (finish + d10, 450),
         ]
         ## linear interpolation between fixed dates
-        px = fixed_date_to_px[0][1]
-        for (date1, px1), (date2, px2) in zip(fixed_date_to_px[:-1], fixed_date_to_px[1:]):
-            if date1 < now <= date2:
-                px = px1 + (px2-px1)/(date2-date1).days*(now-date1).days
-        return px if now < fixed_date_to_px[-1][0] else fixed_date_to_px[-1][1];
+        px = fixed_dateToPx[0][1]
+        for (date1, px1), (date2, px2) in zip(fixed_dateToPx[:-1], fixed_dateToPx[1:]):
+            if date1 < date <= date2:
+                px = px1 + (px2-px1)/(date2-date1).days*(date-date1).days
+        return px if date < fixed_dateToPx[-1][0] else fixed_dateToPx[-1][1];
+        
+    def currentDateToPx(self):
+        if self.voting_stage != 'EXPIRED':
+            return self.dateToPx(timezone.now().date())
+        else:
+            return 300
+
+    def expirationDateToPx(self):
+        ## check if expiration date is relevant
+        if not self.expirationDate:
+            return None
+        ## only show expiration if it is in the near future (30 days)
+        if (self.expirationDate - timezone.now()).days > 30:
+            return None
+        ## calculate pixels
+        return self.dateToPx(self.expirationDate.date())
 
 class Comment(VotablePost):
     # settings
