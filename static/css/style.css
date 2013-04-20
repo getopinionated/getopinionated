@@ -212,9 +212,10 @@ ul.messages li.error {
 
 }
 
+/* far too broad applicable. Is destroying layout from plugins, such as chosen
 #main ul li {
     margin: 0 0 0 34px;
-    list-style: url('../images/lightbulb.png')
+    list-style: url('/static/images/lightbulb.png')
 }
 
 #main ul li {
@@ -228,6 +229,7 @@ ul.messages li.error {
     color: #f00;
     font-style: italic;
 }
+*/
 
 .proposal-list {
 	display: inline-block;

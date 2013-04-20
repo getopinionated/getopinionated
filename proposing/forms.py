@@ -8,6 +8,9 @@ from proposing.fields import TagChoiceField, UserChoiceField
 from models import VotablePost, UpDownVote, Proposal, Comment, Tag
 from django.contrib.auth.models import User
 from accounts.models import CustomUser
+from django.forms.widgets import SelectMultiple
+from django.forms.fields import MultipleChoiceField
+from django.forms.models import ModelMultipleChoiceField
 
 
 class ProposalForm(forms.ModelForm):
@@ -73,8 +76,9 @@ class CommentForm(forms.ModelForm):
 
 class ProxyForm(forms.Form):
     main_proxy = UserChoiceField(queryset=CustomUser.objects.all(), widget=TagSelectorWidget())
+    side_proxy = ModelMultipleChoiceField(queryset=CustomUser.objects.all())
+    side_proxy_tags = ModelMultipleChoiceField(queryset=Tag.objects.all())
     
     def __init__(self, user, *args, **kwargs):
         super(ProxyForm, self).__init__(*args, **kwargs)
         self.user = user
-        
