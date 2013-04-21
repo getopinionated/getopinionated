@@ -212,11 +212,11 @@ class Proposal(VotablePost):
     def userHasProposalvotedOn(self, user, option):
         return self.userHasProposalvoted(user) == int(option)
 
-    def isAccepted(self):
+    def isApproved(self):
         return self.proposalvotescore>0
 
     def initiateVoteCount(self):
-        if self.isAccepted():
+        if self.isApproved():
             ## apply this diff
             try:
                 self.diff.fulldocument.getFinalVersion().applyDiff(self.diff)
