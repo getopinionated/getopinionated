@@ -15,16 +15,18 @@
 
 {% block content %}
 <div>
-	<form>
+	<form action="{% url proxy-index %}" method="POST" class="proxyform">
+	{% csrf_token %}
 	<div>
 		My vote for everything goes to {{ proxyform.main_proxy }}
 	</div>
 	<div class="proxy_list">
-		<div id ="0" class="proxy_item" style="visibility:hidden">
+		<div id ="0" class="proxy_item" style="display:none">
 			I delegate my vote for the tags {{ proxyform.side_proxy_tags }} to {{ proxyform.side_proxy }}
 		</div>
 	</div>
+	<input type="button" id="addProxyButton" value="Add another proxy" />
+	<input type="submit" id="submitButton" value="Save your proxies" />
 	</form>
-	 <input type="button" id="addProxyButton" value="Add another proxy" />
 </div>
  {% endblock %}

@@ -51,7 +51,13 @@ def detail(request, proposal_slug):
 @login_required
 def proxy(request):
     user = request.user
-    proxyform = ProxyForm(user)
+    
+    if request.method == 'POST':
+        proxyform = ProxyForm(user, request.POST)
+        proxyform.save()
+        
+    else:
+        proxyform = ProxyForm(user)
     return render(request, 'accounts/proxy.html', {
             'user': user,
             'proxyform': proxyform,

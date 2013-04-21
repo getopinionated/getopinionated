@@ -1,11 +1,27 @@
 from models import Proposal, Comment, UpDownVote, ProposalVote, ProposalType
 from django.contrib import admin
-from proposing.models import Tag
+from proposing.models import Tag, Proxy
 
 class TagAdmin(admin.ModelAdmin):
+    model = Tag
     list_display = ('name',)
     prepopulated_fields = {'slug': ('name',)}
 
+
+class UserInlineForProxy(admin.TabularInline):
+    model = Proxy.delegates.through
+    extra = 1
+    
+class TagInlineForProxy(admin.TabularInline):
+    model = Proxy.tags.through
+    extra = 1
+
+class ProxyAdmin(admin.ModelAdmin):
+    model = Proxy
+    list_display = ('delegating',)
+    inlines = (TagInlineForProxy,UserInlineForProxy)
+    exclude = ('tags','delegates')
+    
 class ProposalTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'daysUntilVotingStarts', 'minimalUpvotes', 'daysUntilVotingFinishes')
 
@@ -49,4 +65,5 @@ class ProposalAdmin(admin.ModelAdmin):
 
 admin.site.register(Proposal, ProposalAdmin)
 admin.site.register(Tag, TagAdmin)
+admin.site.register(Proxy, ProxyAdmin)
 admin.site.register(ProposalType, ProposalTypeAdmin)

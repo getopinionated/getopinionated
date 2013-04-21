@@ -6,6 +6,8 @@ $(document).ready(function(){
 		$("#"+count+">select").each( function(){
 			currentid = $(this).attr('id');
 			$(this).attr('id',currentid+''+count);
+			currentname = $(this).attr('name');
+			$(this).attr('name',currentname+''+count);
 		});
 		$("#"+count+">select").chosen({no_results_text: "No results matched"});
 	});

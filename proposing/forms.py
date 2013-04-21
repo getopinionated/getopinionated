@@ -11,6 +11,7 @@ from accounts.models import CustomUser
 from django.forms.widgets import SelectMultiple
 from django.forms.fields import MultipleChoiceField
 from django.forms.models import ModelMultipleChoiceField
+from proposing.models import Proxy
 
 
 class ProposalForm(forms.ModelForm):
@@ -55,7 +56,7 @@ class ProposalForm(forms.ModelForm):
         ## create proposal
         newproposal = super(ProposalForm, self).save(commit=False)
         newproposal.diff = newdiff
-        newproposal.creator = creator = user if user.is_authenticated() else None
+        newproposal.creator = user if user.is_authenticated() else None
         newproposal.save()#save before the many-to-manyfield gets created
         for tag in self.cleaned_data["tags"]:
             newproposal.tags.add(tag)
@@ -76,9 +77,28 @@ class CommentForm(forms.ModelForm):
 
 class ProxyForm(forms.Form):
     main_proxy = UserChoiceField(queryset=CustomUser.objects.all(), widget=TagSelectorWidget())
-    side_proxy = ModelMultipleChoiceField(queryset=CustomUser.objects.all())
-    side_proxy_tags = ModelMultipleChoiceField(queryset=Tag.objects.all())
+    side_proxy = UserChoiceField(queryset=CustomUser.objects.all())
+    side_proxy_tags = TagChoiceField(queryset=Tag.objects.all())
     
     def __init__(self, user, *args, **kwargs):
-        super(ProxyForm, self).__init__(*args, **kwargs)
         self.user = user
+        super(ProxyForm, self).__init__(*args, **kwargs)        
+
+    def save(self):
+        ## create diff
+        count = 1
+        
+        while "side_proxy%d"%count in self.data:
+            newproxy = Proxy(delegating=self.user)
+            newproxy.save()
+            for user in self.data["side_proxy%d"%count]:
+                user_object = CustomUser.objects.get(pk=user)
+                newproxy.delegates.add(user_object)
+        
+            for tag in self.data["side_proxy_tags%d"%count]:
+                tag_object = Tag.objects.get(pk=tag)
+                newproxy.tags.add(tag_object)
+        
+            newproxy.save()
+            count+=1
+        return

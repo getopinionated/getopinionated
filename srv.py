@@ -22,8 +22,8 @@ def runserver():
     import_local_settings()
     call_command('validate')
     call_command('syncdb', noinput=True, interactive=False)
-    call_command('loaddata', 'testdata.json')
-    call_command('updatevoting')
+    call_command('loaddata', 'testdata.json') #bug in testdata!
+    #call_command('updatevoting')
     call_command('thumbnail', 'cleanup')
     #call_command('thumbnail', 'clear')
     call_command('runserver', '8000')
