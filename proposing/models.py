@@ -80,6 +80,7 @@ class ProposalType(models.Model):
 
 class Proposal(VotablePost):
     # settings
+    QUORUM_SIZE = 3 # minimal 3 proposalvotes for approvement
     VOTING_STAGE = (
         ('DISCUSSION', 'Discussion'),
         ('VOTING', 'Voting'),
@@ -108,6 +109,10 @@ class Proposal(VotablePost):
     @property
     def number_of_comments(self):
         return self.comments.count()
+
+    @property
+    def finishedVoting(self):
+        return self.voting_stage == 'APPROVED' or self.voting_stage == 'REJECTED'
 
     @property
     def estimatedVotingDate(self):
@@ -182,12 +187,12 @@ class Proposal(VotablePost):
         return self.diff.getNDiff()
 
     @property
-    def proposalvotescore(self):
+    def avgProposalvoteScore(self):
         total = 0
         for i in xrange(-5,6):
-            num_votes = self.proposal_votes.filter(value = i).count()
+            num_votes = self.numVotesOn(i)
             total += i*num_votes
-        return total
+        return total / self.proposal_votes.count() if self.proposal_votes.count() else 0
 
     def addView(self):
         self.views += 1
@@ -213,7 +218,7 @@ class Proposal(VotablePost):
         return self.userHasProposalvoted(user) == int(option)
 
     def isApproved(self):
-        return self.proposalvotescore>0
+        return self.avgProposalvoteScore > 0 and self.proposal_votes.count() > self.QUORUM_SIZE
 
     def initiateVoteCount(self):
         if self.isApproved():
@@ -279,7 +284,7 @@ class Proposal(VotablePost):
             if date1 < date <= date2:
                 px = px1 + (px2-px1)/(date2-date1).days*(date-date1).days
         return px if date < fixed_dateToPx[-1][0] else fixed_dateToPx[-1][1];
-        
+
     def currentDateToPx(self):
         if self.voting_stage != 'EXPIRED':
             return self.dateToPx(timezone.now().date())
@@ -295,6 +300,16 @@ class Proposal(VotablePost):
             return None
         ## calculate pixels
         return self.dateToPx(self.expirationDate.date())
+
+    def numVotesOn(self, vote_value):
+        return self.proposal_votes.filter(value = vote_value).count()
+
+    def numVotesToPx(self, vote_value):
+        max_num_votes = max([self.numVotesOn(i) for i in xrange(-5,6)])
+        num_votes = self.numVotesOn(int(vote_value))
+        fraction = num_votes / max_num_votes
+        BAR_HEIGHT = 150 # px
+        return fraction * BAR_HEIGHT
 
 class Comment(VotablePost):
     # settings
@@ -327,4 +342,3 @@ class Proxy(models.Model):
 
     class Meta:
         verbose_name_plural = "Proxies"
-    

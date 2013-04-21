@@ -11,7 +11,7 @@
 	{% else %}
 		+
 	{% endif %}
-	 / 
+	 /
 	{% if votable_post|args:user|call:"canPressDownvote" %}
 		<a href="{% url posts-vote proposal.slug votable_post.id 'down' %}">-</a>
 	{% else %}
@@ -25,9 +25,9 @@
 {% macro date_with_help date %}
     {% if proposal.minimalContraintsAreMet %}
         {{date|date:"j F"}}
-    {% else %} 
+    {% else %}
         <acronym title="This proposal needs {{proposal.proposal_type.minimalUpvotes}} upvotes before voting is started. The date ({{date|date:"j F"}}) is an estimate.&#10;&#10;Proposal might expire on {{proposal.expirationDate|date:"j F"}} if the required number of upvotes is not met.">({{date|date:"j F"}})</acronym>
-    {% endif %} 
+    {% endif %}
 {% endmacro %}
 
 {% block title %}{% include "title.html" with subtitle=proposal.title %}{% endblock %}
@@ -116,7 +116,28 @@
                     {% endfor %}
               </div>
             </div>
-        {% endif %}        
+        {% elif proposal.finishedVoting %}
+            <div class="votingresults">
+                <h2>Voting Result: {{ proposal.get_voting_stage_display }}</h2>
+                <p>Average score: {{ proposal.avgProposalvoteScore }}</p>
+                <p>#votes: {{ proposal.proposal_votes.count }}</p>
+                <p><a href="dummy">See list of voters</a></p>
+                <div class="resultchart">
+                    <h3>Vote distribution:</h3>
+                    {% for option, helptext in proposal.voteOptions %}
+                        <div class="optionbar">
+                            <div class="numvotes" style="height: {{ proposal|args:option|call:"numVotesToPx" }}px;">
+                                <span>{{ proposal|args:option|call:"numVotesOn" }}</span>
+                            </div>
+                            <div class="caption">
+                                <div>{{option}}</div>
+                                <div class="small">{% if helptext %}{{helptext}}{% else %}&nbsp;{% endif %}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+              </div>
+            </div>
+        {% endif %}
         <div class="comments">
             {% for comment in proposal.comments.all %}
             <div class="comment">
@@ -142,6 +163,6 @@
             </form>
         </div>
         {% endif %}
-        
+
     </article>
 {% endblock %}
