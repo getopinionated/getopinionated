@@ -80,7 +80,7 @@ class ProposalType(models.Model):
 
 class Proposal(VotablePost):
     # settings
-    QUORUM_SIZE = 3 # minimal 3 proposalvotes for approvement
+    QUORUM_SIZE = 30 # minimal 3 proposalvotes for approvement
     VOTING_STAGE = (
         ('DISCUSSION', 'Discussion'),
         ('VOTING', 'Voting'),
@@ -218,6 +218,7 @@ class Proposal(VotablePost):
         return self.userHasProposalvoted(user) == int(option)
 
     def isApproved(self):
+        # TODO: should quorum be number of voters of number of votes (c.f.r. liquid democracy, one person can have many votes)
         return self.avgProposalvoteScore > 0 and self.proposal_votes.count() > self.QUORUM_SIZE
 
     def initiateVoteCount(self):
