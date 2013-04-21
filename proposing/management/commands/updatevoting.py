@@ -12,7 +12,11 @@ class Command(NoArgsCommand):
         finished_cnt = 0
         expired_cnt = 0
         
-        for proposal in Proposal.objects.filter(~Q(voting_stage='FINISHED')):
+        for proposal in Proposal.objects.filter(
+                    ~Q(voting_stage='APPROVED'),
+                    ~Q(voting_stage='REJECTED'),
+                    ~Q(voting_stage='EXPIRED'),
+                ):
             if proposal.shouldStartVoting():
                 proposal.voting_stage = 'VOTING'
                 proposal.voting_date = timezone.now()
@@ -20,7 +24,7 @@ class Command(NoArgsCommand):
                 proposal.save()
             if proposal.shouldBeFinished():
                 proposal.initiateVoteCount()
-                proposal.voting_stage = 'FINISHED'
+                proposal.voting_stage = 'APPROVED' if proposal.isAccepted() else 'REJECTED'
                 finished_cnt +=1
                 proposal.save()
             if proposal.shouldExpire():

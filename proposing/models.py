@@ -83,7 +83,8 @@ class Proposal(VotablePost):
     VOTING_STAGE = (
         ('DISCUSSION', 'Discussion'),
         ('VOTING', 'Voting'),
-        ('FINISHED', 'Finished'),
+        ('APPROVED', 'Approved'),
+        ('REJECTED', 'Rejected'),
         ('EXPIRED', 'Expired'),
     )
     # fields
@@ -223,7 +224,12 @@ class Proposal(VotablePost):
                 print "Error applying diff to final version: ", e
                 # TODO: catch this in nice way
             ## convert other proposal diffs
-            for proposal in Proposal.objects.filter(~Q(voting_stage='FINISHED'), ~Q(pk=self.pk)):
+            for proposal in Proposal.objects.filter(
+                    ~Q(voting_stage='APPROVED'),
+                    ~Q(voting_stage='REJECTED'),
+                    ~Q(voting_stage='EXPIRED'),
+                    ~Q(pk=self.pk),
+                ):
                 try:
                     proposal.diff.applyDiffOnThisDiff(self.diff)
                 except Exception as e:
