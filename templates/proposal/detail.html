@@ -126,7 +126,7 @@
                         <span style="color: red">(did not reach <acronym title="minimal number of voters">quorum</acronym> of {{proposal.QUORUM_SIZE}} people)</span>
                     {% endif %}
                 </p>
-                <p><a href="dummy">See list of voters</a></p>
+                <p><a href="{% url proposals-listofvoters proposal.slug %}">See list of voters</a></p>
                 <div class="resultchart">
                     <h3>Vote distribution:</h3>
                     {% for option, helptext in proposal.voteOptions %}

@@ -80,7 +80,7 @@ class ProposalType(models.Model):
 
 class Proposal(VotablePost):
     # settings
-    QUORUM_SIZE = 30 # minimal 3 proposalvotes for approvement
+    QUORUM_SIZE = 4 # minimal # of proposalvotes for approvement
     VOTING_STAGE = (
         ('DISCUSSION', 'Discussion'),
         ('VOTING', 'Voting'),
@@ -110,7 +110,6 @@ class Proposal(VotablePost):
     def number_of_comments(self):
         return self.comments.count()
 
-    @property
     def finishedVoting(self):
         return self.voting_stage == 'APPROVED' or self.voting_stage == 'REJECTED'
 
@@ -311,6 +310,9 @@ class Proposal(VotablePost):
         fraction = num_votes / max_num_votes
         BAR_HEIGHT = 150 # px
         return fraction * BAR_HEIGHT
+
+    def votesOn(self, vote_value):
+        return self.proposal_votes.filter(value = vote_value)
 
 class Comment(VotablePost):
     # settings

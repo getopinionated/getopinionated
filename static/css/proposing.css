@@ -204,3 +204,22 @@ article.proposal .votingresults .resultchart .optionbar .caption {
 article.proposal .votingresults .resultchart .optionbar .caption div.small {
     font-size: 0.6em;
 }
+
+
+/***** list of voters *****/
+article.listofvoters {
+    overflow: auto;
+}
+article.listofvoters h1 {
+    color: #444;
+    margin: 0 0 20px 0;
+    font-size: 2em;
+}
+article.listofvoters h2 {
+    clear: both;
+}
+article.listofvoters .user-info {
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}

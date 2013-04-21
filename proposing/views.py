@@ -17,7 +17,7 @@ def index(request):
         'latest_proposal_list': first_5_proposals,
         'taglist': taglist
     })
-    
+
 def tagindex(request, tag_slug):
     tag = get_object_or_404(Tag, slug=tag_slug)
     proposals = tag.proposals.order_by('create_date')[:]#for debugging purposes, results should actually be paginated
@@ -32,7 +32,7 @@ def detail(request, proposal_slug):
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
     commentform = None
     proposal.addView()
-    
+
     if proposal.commentsAllowed():
         if request.method == 'POST':
             commentform = CommentForm(request.POST)
@@ -51,11 +51,11 @@ def detail(request, proposal_slug):
 @login_required
 def proxy(request):
     user = request.user
-    
+
     if request.method == 'POST':
         proxyform = ProxyForm(user, request.POST)
         proxyform.save()
-        
+
     else:
         proxyform = ProxyForm(user)
     return render(request, 'accounts/proxy.html', {
@@ -64,7 +64,14 @@ def proxy(request):
         })
 
 
-
+@login_required
+def listofvoters(request, proposal_slug):
+    proposal = get_object_or_404(Proposal, slug=proposal_slug)
+    if not proposal.finishedVoting():
+        raise Exception('Hacking attempt by {}'.format(request.user))
+    return render(request, 'proposal/listofvoters.html', {
+        'proposal': proposal,
+    })
 
 @login_required
 def vote(request, proposal_slug, post_id, updown):
@@ -130,4 +137,3 @@ def proposalvote(request, proposal_slug, score):
     # redirect
     messages.success(request, "Vote successful")
     return proposal_detail_redirect
-
