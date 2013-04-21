@@ -24,7 +24,7 @@ class Command(NoArgsCommand):
                 proposal.save()
             if proposal.shouldBeFinished():
                 proposal.initiateVoteCount()
-                proposal.voting_stage = 'APPROVED' if proposal.isAccepted() else 'REJECTED'
+                proposal.voting_stage = 'APPROVED' if proposal.isApproved() else 'REJECTED'
                 finished_cnt +=1
                 proposal.save()
             if proposal.shouldExpire():
