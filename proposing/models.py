@@ -78,7 +78,6 @@ class ProposalType(models.Model):
     def __unicode__(self):
         return self.name
 
-
 class Proposal(VotablePost):
     # settings
     VOTING_STAGE = (
@@ -240,8 +239,9 @@ class Proposal(VotablePost):
     def voteOptions():
         """ returns vote options, fit for use in template """
         return [
-            ('-5', 'Againts'),
+            ('-5', 'Against'),
             ('-4', ''),
+            ('-3', ''),
             ('-2', ''),
             ('-1', ''),
             ('0', 'Neutral'),
@@ -316,6 +316,9 @@ class ProposalVote(models.Model):
 '''
 class Proxy(models.Model):
     delegating = models.ForeignKey(CustomUser, related_name="proxies")
-    delegate = models.ForeignKey(CustomUser, related_name="received_proxies")
-    tag = models.ForeignKey(Tag, related_name="proxies")
-    testfield = models.DateTimeField(auto_now=True)
+    delegates = models.ManyToManyField(CustomUser, related_name="received_proxies")
+    tags = models.ManyToManyField(Tag, related_name="allproxies")
+
+    class Meta:
+        verbose_name_plural = "Proxies"
+    

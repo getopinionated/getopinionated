@@ -405,7 +405,8 @@ textarea {
 }
 
 select:active,
-form input[type=submit]:active {
+form input[type=submit]:active,
+form input[type=button]:active {
     border: 1px solid #777;
     padding: 4px 16px;
     background-color: #f7f7f7;
@@ -413,7 +414,8 @@ form input[type=submit]:active {
 }
 
 select,
-form input[type=submit] {
+form input[type=submit],
+form input[type=button] {
     border: 1px solid #777;
     padding: 4px 16px;
     background-color:#777;
