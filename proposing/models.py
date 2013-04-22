@@ -80,10 +80,12 @@ class ProposalType(models.Model):
 
 class Proposal(VotablePost):
     # settings
+    QUORUM_SIZE = 4 # minimal # of proposalvotes for approvement
     VOTING_STAGE = (
         ('DISCUSSION', 'Discussion'),
         ('VOTING', 'Voting'),
-        ('FINISHED', 'Finished'),
+        ('APPROVED', 'Approved'),
+        ('REJECTED', 'Rejected'),
         ('EXPIRED', 'Expired'),
     )
     # fields
@@ -107,6 +109,9 @@ class Proposal(VotablePost):
     @property
     def number_of_comments(self):
         return self.comments.count()
+
+    def finishedVoting(self):
+        return self.voting_stage == 'APPROVED' or self.voting_stage == 'REJECTED'
 
     @property
     def estimatedVotingDate(self):
@@ -181,12 +186,12 @@ class Proposal(VotablePost):
         return self.diff.getNDiff()
 
     @property
-    def proposalvotescore(self):
+    def avgProposalvoteScore(self):
         total = 0
         for i in xrange(-5,6):
-            num_votes = self.proposal_votes.filter(value = i).count()
+            num_votes = self.numVotesOn(i)
             total += i*num_votes
-        return total
+        return total / self.proposal_votes.count() if self.proposal_votes.count() else 0
 
     def addView(self):
         self.views += 1
@@ -211,11 +216,12 @@ class Proposal(VotablePost):
     def userHasProposalvotedOn(self, user, option):
         return self.userHasProposalvoted(user) == int(option)
 
-    def isAccepted(self):
-        return self.proposalvotescore>0
+    def isApproved(self):
+        # TODO: should quorum be number of voters of number of votes (c.f.r. liquid democracy, one person can have many votes)
+        return self.avgProposalvoteScore > 0 and self.proposal_votes.count() > self.QUORUM_SIZE
 
     def initiateVoteCount(self):
-        if self.isAccepted():
+        if self.isApproved():
             ## apply this diff
             try:
                 self.diff.fulldocument.getFinalVersion().applyDiff(self.diff)
@@ -223,7 +229,12 @@ class Proposal(VotablePost):
                 print "Error applying diff to final version: ", e
                 # TODO: catch this in nice way
             ## convert other proposal diffs
-            for proposal in Proposal.objects.filter(~Q(voting_stage='FINISHED'), ~Q(pk=self.pk)):
+            for proposal in Proposal.objects.filter(
+                    ~Q(voting_stage='APPROVED'),
+                    ~Q(voting_stage='REJECTED'),
+                    ~Q(voting_stage='EXPIRED'),
+                    ~Q(pk=self.pk),
+                ):
                 try:
                     proposal.diff.applyDiffOnThisDiff(self.diff)
                 except Exception as e:
@@ -273,7 +284,7 @@ class Proposal(VotablePost):
             if date1 < date <= date2:
                 px = px1 + (px2-px1)/(date2-date1).days*(date-date1).days
         return px if date < fixed_dateToPx[-1][0] else fixed_dateToPx[-1][1];
-        
+
     def currentDateToPx(self):
         if self.voting_stage != 'EXPIRED':
             return self.dateToPx(timezone.now().date())
@@ -289,6 +300,19 @@ class Proposal(VotablePost):
             return None
         ## calculate pixels
         return self.dateToPx(self.expirationDate.date())
+
+    def numVotesOn(self, vote_value):
+        return self.proposal_votes.filter(value = vote_value).count()
+
+    def numVotesToPx(self, vote_value):
+        max_num_votes = max([self.numVotesOn(i) for i in xrange(-5,6)])
+        num_votes = self.numVotesOn(int(vote_value))
+        fraction = num_votes / max_num_votes
+        BAR_HEIGHT = 150 # px
+        return fraction * BAR_HEIGHT
+
+    def votesOn(self, vote_value):
+        return self.proposal_votes.filter(value = vote_value)
 
 class Comment(VotablePost):
     # settings
@@ -321,4 +345,3 @@ class Proxy(models.Model):
 
     class Meta:
         verbose_name_plural = "Proxies"
-    

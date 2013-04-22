@@ -163,3 +163,63 @@ article.proposal .votes .votebuttons a.voted {
 article.proposal .votes .votebuttons a div.small {
     font-size: 0.6em;
 }
+
+/***** voting results *****/
+article.proposal .votingresults {
+    background-color: #eee;
+    padding: 20px;
+    margin-top: 25px;
+}
+article.proposal .votingresults h2 {
+    margin-bottom: 20px;
+}
+article.proposal .votingresults .resultchart {
+    padding-top: 20px;
+}
+article.proposal .votingresults .resultchart h3 {
+    padding-bottom: 10px;
+}
+article.proposal .votingresults .resultchart .optionbar {
+    display: inline-block;
+    width: 55px;
+}
+article.proposal .votingresults .resultchart .optionbar .numvotes {
+    position: relative;
+    background-color: #999;
+}
+article.proposal .votingresults .resultchart .optionbar .numvotes span {
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+article.proposal .votingresults .resultchart .optionbar .caption {
+    border-top: 1px solid black;
+    font-weight: bold;
+    width: 2em;
+    text-align: center;
+    width: 100%;
+}
+article.proposal .votingresults .resultchart .optionbar .caption div.small {
+    font-size: 0.6em;
+}
+
+
+/***** list of voters *****/
+article.listofvoters {
+    overflow: auto;
+}
+article.listofvoters h1 {
+    color: #444;
+    margin: 0 0 20px 0;
+    font-size: 2em;
+}
+article.listofvoters h2 {
+    clear: both;
+}
+article.listofvoters .user-info {
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}

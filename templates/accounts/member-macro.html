@@ -46,3 +46,21 @@
     </div>
 {% endmacro %}
 
+{% macro user-in-list user %}
+	<div class="user-info">
+	    {% thumbnail user.avatar "32x32" crop="center" as im %}
+			<div class="user-box-avatar">
+		    	<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+		    </div>
+	    {% empty %}
+		{% endthumbnail %}
+		<div class="user-box-name">
+	    	<a href="{% url user-profile user.slug %}">
+	    		{{user.display_name}}
+	    	</a>
+	    	<br>
+	    	<div class="user-box-karma">{{user.karma|mediumint}}</div>
+	    </div>
+    </div>
+{% endmacro %}
+
