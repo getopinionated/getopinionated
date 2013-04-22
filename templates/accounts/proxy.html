@@ -21,10 +21,16 @@
 		My vote for everything goes to {{ proxyform.main_proxy }}
 	</div>
 	<div class="proxy_list">
-		<div id ="0" class="proxy_item" style="display:none">
+		<div id ="itemhidden" class="proxy_item" style="display:none">
 			I delegate my vote for the tags {{ proxyform.side_proxy_tags }} to {{ proxyform.side_proxy }}
 		</div>
+		{% for userfield, tagfield in proxyform.getDefaultFieldList %}
+			<div id="item{{ forloop.counter0 }}" class="proxy_item">
+				I delegate my vote for the tags {{ tagfield }} to {{ userfield }}
+			</div>
+		{% endfor%}
 	</div>
+	<input type="number" id="tagfieldcount" name="tagfieldcount" value="{{ proxyform.getDefaultFieldList|length }}"  style="display:none" />
 	<input type="button" id="addProxyButton" value="Add another proxy" />
 	<input type="submit" id="submitButton" value="Save your proxies" />
 	</form>

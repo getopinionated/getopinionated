@@ -12,6 +12,7 @@ from django.forms.widgets import SelectMultiple
 from django.forms.fields import MultipleChoiceField
 from django.forms.models import ModelMultipleChoiceField
 from proposing.models import Proxy
+import itertools
 
 
 class ProposalForm(forms.ModelForm):
@@ -83,22 +84,53 @@ class ProxyForm(forms.Form):
     def __init__(self, user, *args, **kwargs):
         self.user = user
         super(ProxyForm, self).__init__(*args, **kwargs)        
-
+        proxies = Proxy.objects.filter(delegating=user)
+        count = 0
+        self.defaultfields = []
+        for proxy in proxies:
+            default = {}
+            for delegate in proxy.delegates.all():
+                default[delegate.pk] = True
+            userfield = UserChoiceField(queryset=CustomUser.objects.all(),initial=default, widget=TagSelectorWidget())
+            self.fields["side_proxy%d"%count] = userfield
+            
+            default = {}
+            for tag in proxy.tags.all():
+                default[tag.pk] = True
+            tagfield = TagChoiceField(queryset=Tag.objects.all(), initial=default, widget=TagSelectorWidget())
+            self.fields["side_proxy_tags%d"%count] = tagfield
+            self.defaultfields.append(("side_proxy%d"%count,"side_proxy_tags%d"%count))
+            count += 1
+        
+    def getDefaultFieldList(self):
+        l = []
+        fields = list(self)
+        for username,tagname in self.defaultfields:
+            userfield = None
+            tagfield = None
+            for field in fields:
+                if field.name == username:
+                    userfield = field
+                if field.name == tagname:
+                    tagfield = field
+            if userfield and tagfield:
+                l.append((userfield, tagfield))
+        return l
+    
     def save(self):
         ## create diff
-        count = 1
-        
-        while "side_proxy%d"%count in self.data:
-            newproxy = Proxy(delegating=self.user)
-            newproxy.save()
-            for user in self.data["side_proxy%d"%count]:
-                user_object = CustomUser.objects.get(pk=user)
-                newproxy.delegates.add(user_object)
-        
-            for tag in self.data["side_proxy_tags%d"%count]:
-                tag_object = Tag.objects.get(pk=tag)
-                newproxy.tags.add(tag_object)
-        
-            newproxy.save()
-            count+=1
+        Proxy.objects.filter(delegating=self.user).delete()
+        for count in xrange(int(self.data["tagfieldcount"])):
+            if "side_proxy%d"%count in self.data.keys() and "side_proxy_tags%d"%count in self.data.keys():
+                newproxy = Proxy(delegating=self.user)
+                newproxy.save()
+                for user in self.data["side_proxy%d"%count]:
+                    user_object = CustomUser.objects.get(pk=user)
+                    newproxy.delegates.add(user_object)
+            
+                for tag in self.data["side_proxy_tags%d"%count]:
+                    tag_object = Tag.objects.get(pk=tag)
+                    newproxy.tags.add(tag_object)
+                
+                newproxy.save()
         return
