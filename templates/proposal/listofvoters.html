@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load call_with_args %}
+{% load macros %}
+{% load filters %}
+{% loadmacros "accounts/member-macro.html" %}
+
+{% block title %}{% include "title.html" with subtitle=proposal.title %}{% endblock %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
+{% endblock %}
+
+{% block content %}
+    <article class="listofvoters">
+        <header class="content">
+            <h1>{{ proposal.title }}</h1>
+        </header>
+        {% for option, helptext in proposal.voteOptions %}
+            {% if proposal|args:option|call:"numVotesOn" != 0 %}
+                <h2>Users that voted on {{option}} {% if helptext %}({{helptext}}){% endif %}</h2>
+                {% for vote in proposal|args:option|call:"votesOn" %}
+                    {% usemacro user-in-list vote.user %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </article>
+{% endblock %}
