@@ -56,8 +56,7 @@ def proxy(request):
         proxyform = ProxyForm(user, request.POST)
         proxyform.save()
 
-    else:
-        proxyform = ProxyForm(user)
+    proxyform = ProxyForm(user)
     return render(request, 'accounts/proxy.html', {
             'user': user,
             'proxyform': proxyform,

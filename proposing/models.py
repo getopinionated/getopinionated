@@ -342,6 +342,7 @@ class Proxy(models.Model):
     delegating = models.ForeignKey(CustomUser, related_name="proxies")
     delegates = models.ManyToManyField(CustomUser, related_name="received_proxies")
     tags = models.ManyToManyField(Tag, related_name="allproxies")
+    isdefault = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Proxies"
