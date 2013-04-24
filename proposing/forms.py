@@ -77,27 +77,29 @@ class CommentForm(forms.ModelForm):
         return new_comment
 
 class ProxyForm(forms.Form):
-    main_proxy = UserChoiceField(queryset=CustomUser.objects.all(), widget=TagSelectorWidget())
+    
     side_proxy = UserChoiceField(queryset=CustomUser.objects.all())
     side_proxy_tags = TagChoiceField(queryset=Tag.objects.all())
     
     def __init__(self, user, *args, **kwargs):
         self.user = user
         super(ProxyForm, self).__init__(*args, **kwargs)        
-        proxies = Proxy.objects.filter(delegating=user)
+        proxies = Proxy.objects.all().filter(delegating=user)
+        userset = CustomUser.objects.exclude(pk=self.user.pk)
+        tagset = Tag.objects.all()
+        
+        try:
+            self.fields['main_proxy'] = UserChoiceField(queryset=userset, widget=TagSelectorWidget(), initial=proxies.get(isdefault=True).delegates.all())
+        except:
+            self.fields['main_proxy'] = UserChoiceField(queryset=userset, widget=TagSelectorWidget())
+        
         count = 0
         self.defaultfields = []
-        for proxy in proxies:
-            default = {}
-            for delegate in proxy.delegates.all():
-                default[delegate.pk] = True
-            userfield = UserChoiceField(queryset=CustomUser.objects.all(),initial=default, widget=TagSelectorWidget())
+        for proxy in proxies.filter(isdefault=False):
+            userfield = UserChoiceField(queryset=userset, widget=TagSelectorWidget(), initial=proxy.delegates.all())
             self.fields["side_proxy%d"%count] = userfield
-            
-            default = {}
-            for tag in proxy.tags.all():
-                default[tag.pk] = True
-            tagfield = TagChoiceField(queryset=Tag.objects.all(), initial=default, widget=TagSelectorWidget())
+                        
+            tagfield = TagChoiceField(queryset=tagset, widget=TagSelectorWidget(), initial=proxy.tags.all())
             self.fields["side_proxy_tags%d"%count] = tagfield
             self.defaultfields.append(("side_proxy%d"%count,"side_proxy_tags%d"%count))
             count += 1
@@ -120,15 +122,23 @@ class ProxyForm(forms.Form):
     def save(self):
         ## create diff
         Proxy.objects.filter(delegating=self.user).delete()
+        newproxy = Proxy(delegating=self.user,isdefault=True)
+        newproxy.save()
+        if 'main_proxy' in self.data.keys():
+            for user in self.data.getlist('main_proxy'):
+                user_object = CustomUser.objects.get(pk=user)
+                newproxy.delegates.add(user_object)
+        newproxy.save()
+        
         for count in xrange(int(self.data["tagfieldcount"])):
             if "side_proxy%d"%count in self.data.keys() and "side_proxy_tags%d"%count in self.data.keys():
                 newproxy = Proxy(delegating=self.user)
                 newproxy.save()
-                for user in self.data["side_proxy%d"%count]:
+                for user in self.data.getlist("side_proxy%d"%count):
                     user_object = CustomUser.objects.get(pk=user)
                     newproxy.delegates.add(user_object)
             
-                for tag in self.data["side_proxy_tags%d"%count]:
+                for tag in self.data.getlist("side_proxy_tags%d"%count):
                     tag_object = Tag.objects.get(pk=tag)
                     newproxy.tags.add(tag_object)
                 
