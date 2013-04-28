@@ -3,29 +3,87 @@ import datetime
 from django.utils import timezone
 from django.test import TestCase
 
-from proposal.models import Proposal
+from proposing.models import Proposal,Proxy,ProposalVote, Tag, ProposalType
 from django.core.urlresolvers import reverse
+from accounts.models import CustomUser
+from django.contrib.auth.models import User
+from document.models import Diff, FullDocument
 
-class ProposalMethodTests(TestCase):
-
-    def test_was_published_recently_with_future_poll(self):
-        """
-        was_published_recently() should return False for polls whose
-        pub_date is in the future
-        """
-        future_proposal = Proposal(create_date=timezone.now() + datetime.timedelta(days=30))
-        self.assertEqual(future_proposal.was_published_recently(), False)
+class VoteCountTestCase(TestCase):
+    def setUp(self):
+        numusers = 10
+        self.users = []
+        for i in xrange(numusers):
+            u = CustomUser(username="U%d"%i)
+            u.save()
+            self.users.append(u)
         
+        numtags = 10
+        self.tags = []
+        for i in xrange(numtags):
+            t = Tag(name="T%d"%i)
+            t.save()
+            self.tags.append(t)
         
-def create_proposal(title, extra_days):
-    """
-    Creates a poll with the given `title` published the given number of
-    `extra_days` offset to now (negative for polls published in the past,
-    positive for polls that have yet to be published).
-    """
-    return Proposal.objects.create(title=title,
-        create_date=timezone.now() + datetime.timedelta(days=extra_days))
+        tupples = [(0,[],[1,2,3,4],True),
+                   (0,[0],[1,2,3,4],False),
+                   (1,[0,1],[2],False),
+                   (2,[],[3,4],True),
+                   ]
+        self.proxies = []
+        for tupple in tupples:
+            p = Proxy(delegating = self.users[tupple[0]],isdefault=tupple[3])
+            p.save()
+            for t in tupple[1]:
+                p.tags.add(self.tags[t])
+            for d in tupple[2]:
+                p.delegates.add(self.users[d])
+            p.save()
+            self.proxies.append(p)
+        
+        t = ProposalType()
+        t.save()
+        doc = FullDocument()
+        doc.save()
+        diff = Diff(fulldocument=doc)
+        diff.save()
+        self.proposal = Proposal(title="Test", diff=diff, proposal_type=t)
+        self.proposal.save()
+    
+    def setupVotes(self,tupples):
+        self.votes = []
+        for tupple in tupples:
+            p = ProposalVote(user=self.users[tupple[0]],proposal=self.proposal,value=tupple[1])
+            p.save()
+    
+    def testVote1(self):
+        self.setupVotes([(0,0)])
+        self.assertEqual(self.proposal.avgProposalvoteScore, 0.0)
+    
+    def testVote2(self):
+        self.setupVotes([(0,1)])
+        self.assertEqual(self.proposal.avgProposalvoteScore, 1.0)
+    
+    def testVote3(self):
+        self.setupVotes([(0,1),(1,0)])
+        self.assertEqual(self.proposal.avgProposalvoteScore, 0.5)
+        
+    def testVote4(self):
+        self.setupVotes([(0,-1),(1,1)])
+        self.assertEqual(self.proposal.avgProposalvoteScore, 0.0)
+    
+    def testVote5(self):
+        self.setupVotes([])
+        self.assertEqual(self.proposal.avgProposalvoteScore, 0.0)
+    
+    def testVote6(self):
+        self.setupVotes([(0,1),(0,1)]) #TODO: should protest! Illegal votes have been cast
+        self.assertEqual(self.proposal.avgProposalvoteScore, 1.0)       
 
+    def testVote7(self):
+        self.setupVotes([(0,0),(3,3)])
+        self.proposal.tags.add(self.tags[1])
+        self.assertEqual(self.proposal.avgProposalvoteScore, 2.0)       
 
 '''
 class ProposalViewTests(TestCase):
