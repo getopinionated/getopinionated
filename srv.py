@@ -24,7 +24,7 @@ def runserver():
     call_command('validate')
     call_command('syncdb', noinput=True, interactive=False)
     call_command('migrate')
-    call_command('loaddata', 'testdata.json') #bug in testdata!
+    call_command('loaddata', 'testdata.json')
     #call_command('updatevoting')
     call_command('thumbnail', 'cleanup')
     #call_command('thumbnail', 'clear')
