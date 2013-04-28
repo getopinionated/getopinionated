@@ -20,6 +20,7 @@ def import_local_settings():
 def runserver():
     chdir_to_project()
     import_local_settings()
+    call_command('test', 'proposing')
     call_command('validate')
     call_command('syncdb', noinput=True, interactive=False)
     call_command('migrate')

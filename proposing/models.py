@@ -185,13 +185,50 @@ class Proposal(VotablePost):
     def diffWithContext(self):
         return self.diff.getNDiff()
 
+
+###################################################################################################
+
     @property
     def avgProposalvoteScore(self):
+        # set up graph, doing as few queries as possible
+        voters = self.proposal_votes.values('user')
+        #exclude proxies from people who voted themselves
+        proxies = Proxy.objects.exclude(delegating__in = voters).all()      
+        #select edges with the correct tag
+        validproxies = proxies.exclude(tags__in = Tag.objects.exclude(pk__in=self.tags.values('pk'))).filter(isdefault=False)
+        #select default edges from delegating people not in the previous set
+        validproxies = validproxies | (proxies.filter(isdefault=True).exclude(delegating__in = validproxies.values('delegating')))
+        
+        validproxies = list(validproxies)
+        votes = list(self.proposal_votes.all())
+        
+        proxiecount = {} #to keep track in how many votes proxies result
+        voterqueue = {}
+        for vote in votes:
+            mainvoter = vote.user
+            voterqueue[vote] = [mainvoter]
+            #following can be sped up. Sort lists instead of comparing elementwise
+            for voter in voterqueue[vote]:
+                if proxiecount.has_key(voter):
+                    proxiecount[voter] += 1
+                else:
+                    proxiecount[voter] = 1
+                for proxy in validproxies:
+                    if voter in proxy.delegates.all() and not proxy.delegating in voterqueue[vote]:
+                        voterqueue[vote].append(proxy.delegating)
+        
         total = 0
-        for i in xrange(-5,6):
-            num_votes = self.numVotesOn(i)
-            total += i*num_votes
-        return total / self.proposal_votes.count() if self.proposal_votes.count() else 0
+        for vote in votes:
+            numvotes = 0.0
+            for voter in voterqueue[vote]:
+                numvotes += 1.0 / proxiecount[voter]
+            total += numvotes * vote.value
+        
+        if total == 0.0:
+            return 0
+        average = total / len(proxiecount.keys())
+        return average
+        
 
     def addView(self):
         self.views += 1
@@ -218,6 +255,9 @@ class Proposal(VotablePost):
 
     def isApproved(self):
         # TODO: should quorum be number of voters of number of votes (c.f.r. liquid democracy, one person can have many votes)
+        # Quorum is always number of voters, not number of votes. A quorum is needed to avoid under-the-radar-behaviour.
+        
+        
         return self.avgProposalvoteScore > 0 and self.proposal_votes.count() > self.QUORUM_SIZE
 
     def initiateVoteCount(self):
