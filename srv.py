@@ -20,13 +20,17 @@ def import_local_settings():
 def runserver():
     chdir_to_project()
     import_local_settings()
+    call_command('syncdb')
     call_command('test', 'proposing')
-    call_command('validate')
-    call_command('syncdb', noinput=True, interactive=False)
-    call_command('migrate')
+    
     call_command('loaddata', 'testdata.json')
-    #call_command('updatevoting')
+    call_command('validate')
+    call_command('migrate')
+    call_command('updatevoting')
     call_command('thumbnail', 'cleanup')
+    call_command('collectstatic')
+    
+    
     #call_command('thumbnail', 'clear')
     #call_command('runserver', '8000')
 
