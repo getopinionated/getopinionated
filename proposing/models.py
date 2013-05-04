@@ -408,7 +408,7 @@ class Comment(VotablePost):
         return "Comment on {}".format(self.proposal)
 
     def isEditableBy(self, user):
-        if not super(Proposal, self).isEditableBy(user):
+        if not super(Comment, self).isEditableBy(user):
             return False
         return self.proposal.voting_stage == 'DISCUSSION' \
             or self.proposal.voting_stage == 'VOTING'
