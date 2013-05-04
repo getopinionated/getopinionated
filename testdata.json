@@ -1,6 +1,14 @@
 [
     {
         "pk": 1,
+        "model": "auth.group",
+        "fields": {
+            "name": "moderators",
+            "permissions": []
+        }
+    },
+    {
+        "pk": 1,
         "model": "auth.user",
         "fields": {
             "username": "jnyman",
@@ -9,7 +17,7 @@
             "is_active": true,
             "is_superuser": true,
             "is_staff": true,
-            "last_login": "2013-04-16T19:48:27.885Z",
+            "last_login": "2013-05-04T13:43:49.030Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$Ze3Zb4pRx1k3$lD4CksPyzQO68dSOk+3wcPiKE1yMCf0aK1MTTqIpAdo=",
