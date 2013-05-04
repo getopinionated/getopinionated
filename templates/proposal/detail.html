@@ -144,7 +144,16 @@
         {% elif proposal.finishedVoting %}
             <div class="votingresults">
                 <h2>Voting Result: {{ proposal.get_voting_stage_display }}</h2>
-                <p>Average score: {{ proposal.avgProposalvoteScore|floatformat:"2" }}</p>
+                <p>Average score: {{ proposal.avgProposalvoteScore|floatformat:"-2" }}</p>
+                {% if proxyvote != None %}
+                    <p>You voted '{{ proxyvote.value|floatformat:"-2" }}'
+                    {% if proxyvote.voted_self %}
+                    	with {{ proxyvote.numvotes }} votes.
+                    {% else %}
+                    	through {{ proxyvote.numvotes }} proxies.
+                    {% endif %}             
+                    </p>
+                {% endif %}
                 <p>
                     #voters: {{ proposal.proposal_votes.count }}
                     {% if proposal.proposal_votes.count < proposal.QUORUM_SIZE %}
