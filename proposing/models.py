@@ -383,6 +383,12 @@ class Comment(VotablePost):
     def __unicode__(self):
         return "Comment on {}".format(self.proposal)
 
+    def isEditableBy(self, user):
+        if not super(Proposal, self).isEditableBy(user):
+            return False
+        return self.proposal.voting_stage == 'DISCUSSION' \
+            or self.proposal.voting_stage == 'VOTING'
+
 class ProposalVote(models.Model):
     user = models.ForeignKey(CustomUser, related_name="proposal_votes")
     proposal = models.ForeignKey(Proposal, related_name="proposal_votes")
