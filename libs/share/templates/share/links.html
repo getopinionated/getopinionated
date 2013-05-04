@@ -1,0 +1,25 @@
+<ul class="share-bar">
+	{% for provider in providers.main %}
+
+	 <li class="share share-link-{{provider}}">
+	 {% with "share/providers/"|add:provider|add:".html" as template %}
+	 	{% include template %}
+	 {% endwith %}
+	 </li>
+	 {% endfor %}
+	 {% if providers.more %}
+ 	<li class="more">
+ 		<a class="more">| More</a>
+ 		<ul class="share-bar-more closed">
+ 			<span class="triangle"></span>
+ 			{% for provider in providers.more %}
+				<li class="share share-link-{{provider}}">
+				{% with "share/providers/"|add:provider|add:".html" as template %}
+					{% include template %}
+				{% endwith %}
+				</li>
+ 			{% endfor %}
+ 		</ul>
+	</li>
+	{% endif %}
+</ul>

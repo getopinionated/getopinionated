@@ -19,5 +19,6 @@ urlpatterns = patterns('',
 	url(r'^tag/(?P<tag_slug>[-\w]+)/$', proposing.views.tagindex, name='tag-index'),
 	(r'^media/(?P<path>.*)$', 'django.views.static.serve',
             {'document_root': MEDIA_ROOT, }),
+	(r'^share/', include('share.urls')),
 )
 
