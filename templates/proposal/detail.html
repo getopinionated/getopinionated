@@ -141,7 +141,7 @@
         {% elif proposal.finishedVoting %}
             <div class="votingresults">
                 <h2>Voting Result: {{ proposal.get_voting_stage_display }}</h2>
-                <p>Average score: {{ proposal.avgProposalvoteScore }}</p>
+                <p>Average score: {{ proposal.avgProposalvoteScore|floatformat:"2" }}</p>
                 <p>
                     #voters: {{ proposal.proposal_votes.count }}
                     {% if proposal.proposal_votes.count < proposal.QUORUM_SIZE %}
@@ -157,7 +157,7 @@
                     {% for option, helptext in proposal.voteOptions %}
                         <div class="optionbar">
                             <div class="numvotes" style="height: {{ proposal|args:option|call:"numVotesToPx" }}px;">
-                                <span>{{ proposal|args:option|call:"numVotesOn" }}</span>
+                                <span>{{ proposal|args:option|call:"numVotesOn"|floatformat:"-2" }}</span>
                             </div>
                             <div class="caption">
                                 <div>{{option}}</div>
@@ -170,7 +170,7 @@
         {% endif %}
         <div class="comments">
             {% for comment in proposal.comments.all %}
-            <div class="comment">
+            <div class="comment" id="comment_{{ comment.id }}">
                 <h2 class="{{ comment.color }}">
                     <span class="updownvote">{% usemacro updownvote comment %}</span>
                     <span class="title">Comment</span>
@@ -180,11 +180,11 @@
                     {% if not commenteditform or commenteditform.comment_id != comment.id %}
                         {{ comment.motivation|linebreaks }}
                         {% if comment|args:user|call:"isEditableBy" %}
-                            <a href="{% url comment-edit proposal.slug comment.id %}" class="edit">edit</a>
+                            <a href="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" class="edit">edit</a>
                         {% endif %}
                     {% else %}
                         <table>
-                            <form action="{% url comment-edit proposal.slug comment.id %}" method="POST">
+                            <form action="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" method="POST">
                                 {{commenteditform}}
                                 {% csrf_token %}
                                 <tr>

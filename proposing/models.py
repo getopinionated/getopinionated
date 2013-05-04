@@ -108,6 +108,7 @@ class Proposal(VotablePost):
     voting_date = models.DateTimeField(default=None, null=True, blank=True)
     proposal_type = models.ForeignKey(ProposalType)
     tags = models.ManyToManyField(Tag, related_name="proposals")
+    avgProposalvoteScore = models.FloatField("score", default=0.0) 
 
     def __unicode__(self):
         return self.title
@@ -195,73 +196,6 @@ class Proposal(VotablePost):
     def diffWithContext(self):
         return self.diff.getNDiff()
 
-
-###################################################################################################
-
-    @property
-    def avgProposalvoteScore(self):
-        
-        # deleta all previous results (safety, this method may be called twice, even though it shouldn't)
-        ProxyProposalVote.objects.filter(proposal=self).delete()
-        
-        # set up graph, doing as few queries as possible
-        voters = self.proposal_votes.values('user')
-        #exclude proxies from people who voted themselves
-        proxies = Proxy.objects.exclude(delegating__in = voters).all()      
-        #select edges with the correct tag
-        validproxies = proxies.exclude(tags__in = Tag.objects.exclude(pk__in=self.tags.values('pk'))).filter(isdefault=False)
-        #select default edges from delegating people not in the previous set
-        validproxies = validproxies | (proxies.filter(isdefault=True).exclude(delegating__in = validproxies.values('delegating')))
-        
-        validproxies = list(validproxies)
-        votes = list(self.proposal_votes.all())
-        
-        #TODO: check for users having made 2 votes, this seriously breaks the algorithm, other than not
-        #      being democratic at all
-        
-        
-        proxiecount = {} #to keep track in how many votes proxies result
-        voterqueue = {}
-        for vote in votes:
-            mainvoter = vote.user
-            voterqueue[vote] = [mainvoter]
-            #following can be sped up. Sort lists before comparing elementwise
-            i=0
-            while i<len(voterqueue[vote]):
-                voter = voterqueue[vote][i]
-                i += 1
-                if proxiecount.has_key(voter):
-                    proxiecount[voter] += 1
-                else:
-                    proxiecount[voter] = 1
-                for proxy in validproxies:
-                    if (voter in proxy.delegates.all()) and (proxy.delegating not in voterqueue[vote]):
-                        voterqueue[vote].append(proxy.delegating)
-                        
-        
-        total = 0
-        for vote in votes:
-            numvotes = 0.0
-            actualvote = ProxyProposalVote.objects.get_or_create(user=vote.user, proposal=self, value=vote.value, voted_self=True)[0]
-            for voter in voterqueue[vote]:
-                numvotes += 1.0 / float(proxiecount[voter])
-                actualvote.vote_traject.add(voter)
-                if voter!=vote.user:
-                    proxyvote = ProxyProposalVote.objects.get_or_create(user=voter, proposal=self)[0]
-                    proxyvote.vote_traject.add(vote.user)
-                    proxyvote.value += float(vote.value) / float(proxiecount[voter])
-                    proxyvote.numvotes = proxiecount[voter]
-                    proxyvote.save()
-            actualvote.numvotes = numvotes
-            actualvote.save()
-            total += numvotes * vote.value
-        
-        if total == 0.0:
-            return 0
-        average = total / len(proxiecount.keys())
-        return average
-
-        
     def addView(self):
         self.views += 1
         self.save()
@@ -289,30 +223,7 @@ class Proposal(VotablePost):
         # QUESTION: should quorum be number of voters of number of votes (c.f.r. liquid democracy, one person can have many votes)
         # Quorum is always number of voters, not number of votes. A quorum is needed to avoid under-the-radar-behaviour.
         return self.avgProposalvoteScore > 0 and self.proposal_votes.count() >= self.QUORUM_SIZE
-
-    def initiateVoteCount(self):
-        if self.isApproved():
-            ## apply this diff
-            try:
-                self.diff.fulldocument.getFinalVersion().applyDiff(self.diff)
-            except Exception as e:
-                print "Error applying diff to final version: ", e
-                # TODO: catch this in nice way
-            ## convert other proposal diffs
-            for proposal in Proposal.objects.filter(
-                    ~Q(voting_stage='APPROVED'),
-                    ~Q(voting_stage='REJECTED'),
-                    ~Q(voting_stage='EXPIRED'),
-                    ~Q(pk=self.pk),
-                ):
-                try:
-                    proposal.diff.applyDiffOnThisDiff(self.diff)
-                except Exception as e:
-                    print "Error applying diff to other diffs: ", e
-                    # TODO: catch this in nice way
-        else:
-            return
-
+    
     def commentsAllowed(self):
         return self.voting_stage == 'DISCUSSION'
 
