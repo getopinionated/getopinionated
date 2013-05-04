@@ -49,7 +49,10 @@
         </header>
         <div class="diff">{{ proposal.diff|diffrender }}</div>
         <div class="motivation">
-        	<span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>
+            <span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>
+            {% if proposal.edits.count %}
+            	<span class="creator-medium">{% usemacro user-medium proposal.lastEdit.user proposal.lastEdit.date "edited" %}</span>
+            {% endif %}
             {% if not proposaleditform %}
                 {{ proposal.motivation|linebreaks }}
             	<div class="proposal-tags">
@@ -175,6 +178,15 @@
                     <span class="updownvote">{% usemacro updownvote comment %}</span>
                     <span class="title">Comment</span>
                     {% usemacro user-small comment.creator comment.create_date %}
+                    {% if comment.edits.count %}
+                        <span class="editedby">edited by</span>
+                        <div class="user-small">
+                            <a href="{% url user-profile comment.lastEdit.user.slug %}">
+                                <span class="user-name">{{comment.lastEdit.user.display_name}}</span>
+                            </a>
+                            <span title="{{comment.lastEdit.date}}" class="user-time">, {{comment.lastEdit.date|humantime}}</span>
+                        </div>
+                    {% endif %}
                 </h2>
                 <div class="motivation">
                     {% if not commenteditform or commenteditform.comment_id != comment.id %}

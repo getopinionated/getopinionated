@@ -59,6 +59,9 @@ class VotablePost(models.Model):
             return True
         return False
 
+    def lastEdit(self):
+        return self.edits.latest('id')
+
 class UpDownVote(models.Model):
     user = models.ForeignKey(CustomUser, related_name="up_down_votes")
     post = models.ForeignKey(VotablePost, related_name="up_down_votes")
@@ -77,6 +80,11 @@ class Tag(models.Model):
 
     def __unicode__(self):
         return self.name
+
+class VotablePostEdit(models.Model):
+    user = models.ForeignKey(CustomUser)
+    post = models.ForeignKey(VotablePost, related_name="edits")
+    date = models.DateTimeField(auto_now=True)
 
 class ProposalType(models.Model):
     name = models.CharField(max_length=255)
