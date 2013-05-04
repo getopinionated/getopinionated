@@ -121,10 +121,13 @@
                 <h2>Voting Result: {{ proposal.get_voting_stage_display }}</h2>
                 <p>Average score: {{ proposal.avgProposalvoteScore }}</p>
                 <p>
-                    #votes: {{ proposal.proposal_votes.count }}
+                    #voters: {{ proposal.proposal_votes.count }}
                     {% if proposal.proposal_votes.count < proposal.QUORUM_SIZE %}
                         <span style="color: red">(did not reach <acronym title="minimal number of voters">quorum</acronym> of {{proposal.QUORUM_SIZE}} people)</span>
                     {% endif %}
+                </p>
+                <p>
+                    #votes: {{ proposal.total_proxy_proposal_votes.count }}
                 </p>
                 <p><a href="{% url proposals-listofvoters proposal.slug %}">See list of voters</a></p>
                 <div class="resultchart">

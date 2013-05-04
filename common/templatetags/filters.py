@@ -26,3 +26,7 @@ def diffrender(diff, contextlines=3):
     return mark_safe( #dangerous! Take precautions against XSS
                      htmldiff(diff.getOriginalText(), diff.getNewText(), addStylesheet=True)
                      )
+
+@register.filter(name='nicejoin')
+def nicejoin(l):
+    return l[:-1].join(",").append(" and ").append(l[-1])

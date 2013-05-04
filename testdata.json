@@ -35,10 +35,10 @@
             "is_active": true,
             "is_superuser": true,
             "is_staff": true,
-            "last_login": "2011-08-28T08:25:17Z",
+            "last_login": "2013-05-03T20:02:02.477Z",
             "groups": [],
             "user_permissions": [],
-            "password": "sha1$46949$88d4863560db97d0ea0bcff6f1170ffd61b01856",
+            "password": "pbkdf2_sha256$10000$1cuSSBfv3l12$7DmmHte/05Z7YFDyNmzSAOc19N+Pv3qMtMixTjpydNo=",
             "email": "jonas@pirateparty.be",
             "date_joined": "2011-08-28T08:25:17Z"
         }
@@ -57,6 +57,186 @@
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$y5xsKf2cFmCG$bfGBmJ+4pSBJrJaYpdWe7TG5MPreIfpr2lVIzvCY9tM=",
+            "email": "sandb.bender@gmail.com",
+            "date_joined": "2011-08-28T08:26:08Z"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "auth.user",
+        "fields": {
+            "username": "u1",
+            "first_name": "u",
+            "last_name": "1",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2013-05-03T19:55:56.113Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$9nbAa9jlHiL7$MliWCMBJxeozrVtlbrY6xkvrt1gQkUx++NBH1oQD4/s=",
+            "email": "sandb.bender@gmail.com",
+            "date_joined": "2011-08-28T08:26:08Z"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "auth.user",
+        "fields": {
+            "username": "u2",
+            "first_name": "u",
+            "last_name": "2",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2013-05-03T19:56:44.281Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$X1SNybNsjGbK$lnJ0xLwD641j0hMce+D7Fb6+TY8rSr9gcgu+Y43h1+c=",
+            "email": "sandb.bender@gmail.com",
+            "date_joined": "2011-08-28T08:26:08Z"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "auth.user",
+        "fields": {
+            "username": "u3",
+            "first_name": "u",
+            "last_name": "3",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2013-05-03T19:57:10.177Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$ZuCyudZdKEEF$hwR2kZaxrL7kEOy5Di2WdWP1p2jWpu9UI5WpGLNq4FA=",
+            "email": "sandb.bender@gmail.com",
+            "date_joined": "2011-08-28T08:26:08Z"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "auth.user",
+        "fields": {
+            "username": "u4",
+            "first_name": "u",
+            "last_name": "4",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2013-05-03T19:57:31.789Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$E4FAyXDpt2my$TLKOgVUWlg1VMiD6psnlhPxYQ+UZntqDQ6ig7okE5bQ=",
+            "email": "sandb.bender@gmail.com",
+            "date_joined": "2011-08-28T08:26:08Z"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "auth.user",
+        "fields": {
+            "username": "u5",
+            "first_name": "u",
+            "last_name": "5",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2013-05-03T19:58:20.486Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$u5FglB4ukUos$jgg+nZ+Hu+Ghgl2LO/YxH/AR5AEnMzrbhV2ViHYg2Zw=",
+            "email": "sandb.bender@gmail.com",
+            "date_joined": "2011-08-28T08:26:08Z"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "auth.user",
+        "fields": {
+            "username": "u6",
+            "first_name": "u",
+            "last_name": "6",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2013-05-03T19:58:41.320Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$wqGMTxfDK6Ya$FzKTj1o2o9L2TEMtuZ9Cu/3Bh/4rcP6P7WU1spnUtwM=",
+            "email": "sandb.bender@gmail.com",
+            "date_joined": "2011-08-28T08:26:08Z"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "auth.user",
+        "fields": {
+            "username": "u7",
+            "first_name": "u",
+            "last_name": "7",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2013-05-03T19:58:56.357Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$7c0Ff4nRurUX$kNDdFPJOVYHejTTwlJxrIyrz2k0Ad9r9rRLwFCV7HOE=",
+            "email": "sandb.bender@gmail.com",
+            "date_joined": "2011-08-28T08:26:08Z"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "auth.user",
+        "fields": {
+            "username": "u8",
+            "first_name": "u",
+            "last_name": "8",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2013-05-03T19:59:14.646Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$f6omdkuoe88m$vSI6b7hB251bC3UTaya1O93XCLz0ohArVjoRz5ojqZA=",
+            "email": "sandb.bender@gmail.com",
+            "date_joined": "2011-08-28T08:26:08Z"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "auth.user",
+        "fields": {
+            "username": "u9",
+            "first_name": "u",
+            "last_name": "9",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2013-05-03T20:01:07.100Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$NEGOWOBhYzfL$egLdmeh2asXIczeiASborTnw3+NMmAhZHHKVYjhErgQ=",
+            "email": "sandb.bender@gmail.com",
+            "date_joined": "2011-08-28T08:26:08Z"
+        }
+    },
+    {
+        "pk": 13,
+        "model": "auth.user",
+        "fields": {
+            "username": "u10",
+            "first_name": "u",
+            "last_name": "10",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2013-05-03T20:01:29.314Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$JsFgK6ywgXsN$Uaa8l/5Qo18EnpeXPBBwSjsf8tRL447t6/NP37WcKFU=",
             "email": "sandb.bender@gmail.com",
             "date_joined": "2011-08-28T08:26:08Z"
         }
@@ -88,7 +268,7 @@
             "user_permissions": [],
             "slug": "317070",
             "avatar": "",
-            "karma": 50000
+            "karma": 5000000
         }
     },
     {
@@ -100,6 +280,116 @@
             "slug": "sandbender",
             "avatar": "",
             "karma": 9970
+        }
+    },
+    {
+        "pk": 4,
+        "model": "accounts.customuser",
+        "fields": {
+            "groups": [],
+            "user_permissions": [],
+            "slug": "u1",
+            "avatar": "",
+            "karma": 9910
+        }
+    },
+    {
+        "pk": 5,
+        "model": "accounts.customuser",
+        "fields": {
+            "groups": [],
+            "user_permissions": [],
+            "slug": "u2",
+            "avatar": "",
+            "karma": 9910
+        }
+    },
+    {
+        "pk": 6,
+        "model": "accounts.customuser",
+        "fields": {
+            "groups": [],
+            "user_permissions": [],
+            "slug": "u3",
+            "avatar": "",
+            "karma": 9910
+        }
+    },
+    {
+        "pk": 7,
+        "model": "accounts.customuser",
+        "fields": {
+            "groups": [],
+            "user_permissions": [],
+            "slug": "u4",
+            "avatar": "",
+            "karma": 9910
+        }
+    },
+    {
+        "pk": 8,
+        "model": "accounts.customuser",
+        "fields": {
+            "groups": [],
+            "user_permissions": [],
+            "slug": "u5",
+            "avatar": "",
+            "karma": 9910
+        }
+    },
+    {
+        "pk": 9,
+        "model": "accounts.customuser",
+        "fields": {
+            "groups": [],
+            "user_permissions": [],
+            "slug": "u6",
+            "avatar": "",
+            "karma": 9910
+        }
+    },
+    {
+        "pk": 10,
+        "model": "accounts.customuser",
+        "fields": {
+            "groups": [],
+            "user_permissions": [],
+            "slug": "u7",
+            "avatar": "",
+            "karma": 9910
+        }
+    },
+    {
+        "pk": 11,
+        "model": "accounts.customuser",
+        "fields": {
+            "groups": [],
+            "user_permissions": [],
+            "slug": "u8",
+            "avatar": "",
+            "karma": 9910
+        }
+    },
+    {
+        "pk": 12,
+        "model": "accounts.customuser",
+        "fields": {
+            "groups": [],
+            "user_permissions": [],
+            "slug": "u9",
+            "avatar": "",
+            "karma": 9910
+        }
+    },
+    {
+        "pk": 13,
+        "model": "accounts.customuser",
+        "fields": {
+            "groups": [],
+            "user_permissions": [],
+            "slug": "u10",
+            "avatar": "",
+            "karma": 9910
         }
     },
     {
@@ -718,14 +1008,14 @@
             "views": 8,
             "title": "Copyright should be abolished",
             "proposal_type": 2,
-            "voting_date": null,
+            "voting_date": "2013-03-29T15:32:05Z",
             "tags": [
                 1,
                 2
             ],
             "diff": 1,
             "slug": "copyright-should-be-abolished",
-            "voting_stage": "EXPIRED"
+            "voting_stage": "VOTING"
         }
     },
     {
@@ -733,7 +1023,7 @@
         "model": "proposing.proposal",
         "fields": {
             "motivation": "The environment subject was missing.",
-            "views": 11,
+            "views": 14,
             "title": "Protect the environment",
             "proposal_type": 2,
             "voting_date": "2013-03-29T15:32:05Z",
@@ -750,7 +1040,7 @@
         "model": "proposing.proposal",
         "fields": {
             "motivation": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nam cursus. Morbi ut mi. Nullam enim leo, egestas id, condimentum at, laoreet mattis, massa. Sed eleifend nonummy diam. Praesent mauris ante, elementum et, bibendum at, posuere sit amet, nibh. Duis tincidunt lectus quis dui viverra vestibulum. Suspendisse vulputate aliquam dui. Nulla elementum dui ut augue. Aliquam vehicula mi at mauris. Maecenas placerat, nisl at consequat rhoncus, sem nunc gravida justo, quis eleifend arcu velit quis lacus. Morbi magna magna, tincidunt a, mattis non, imperdiet vitae, tellus. Sed odio est, auctor ac, sollicitudin in, consequat vitae, orci. Fusce id felis. Vivamus sollicitudin metus eget eros.\r\n\r\nPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In posuere felis nec tortor. Pellentesque faucibus. Ut accumsan ultricies elit. Maecenas at justo id velit placerat molestie. Donec dictum lectus non odio. Cras a ante vitae enim iaculis aliquam. Mauris nunc quam, venenatis nec, euismod sit amet, egestas placerat, est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras id elit. Integer quis urna. Ut ante enim, dapibus malesuada, fringilla eu, condimentum quis, tellus. Aenean porttitor eros vel dolor. Donec convallis pede venenatis nibh. Duis quam. Nam eget lacus. Aliquam erat volutpat. Quisque dignissim congue leo.",
-            "views": 3,
+            "views": 5,
             "title": "Stop tax avoidance",
             "proposal_type": 2,
             "voting_date": "2013-04-16T19:41:07.573Z",
@@ -770,13 +1060,13 @@
             "views": 6,
             "title": "Healthcare is unconditional",
             "proposal_type": 2,
-            "voting_date": null,
+            "voting_date": "2013-05-03T20:03:33.799Z",
             "tags": [
                 9
             ],
             "diff": 4,
             "slug": "healthcare-is-unconditional",
-            "voting_stage": "DISCUSSION"
+            "voting_stage": "VOTING"
         }
     },
     {
@@ -793,7 +1083,7 @@
             ],
             "diff": 5,
             "slug": "spelling-focus-fokus",
-            "voting_stage": "DISCUSSION"
+            "voting_stage": "EXPIRED"
         }
     },
     {
@@ -824,133 +1114,23 @@
         }
     },
     {
-        "pk": 2,
-        "model": "proposing.proposalvote",
-        "fields": {
-            "date": "2013-04-07T14:37:00.568Z",
-            "proposal": 3,
-            "user": 1,
-            "value": 5
-        }
-    },
-    {
-        "pk": 3,
-        "model": "proposing.proposalvote",
-        "fields": {
-            "date": "2013-04-07T14:37:00.578Z",
-            "proposal": 3,
-            "user": 1,
-            "value": 5
-        }
-    },
-    {
-        "pk": 4,
-        "model": "proposing.proposalvote",
-        "fields": {
-            "date": "2013-04-07T14:37:00.589Z",
-            "proposal": 3,
-            "user": 1,
-            "value": 5
-        }
-    },
-    {
-        "pk": 5,
-        "model": "proposing.proposalvote",
-        "fields": {
-            "date": "2013-04-07T14:37:00.600Z",
-            "proposal": 3,
-            "user": 1,
-            "value": 5
-        }
-    },
-    {
-        "pk": 6,
-        "model": "proposing.proposalvote",
-        "fields": {
-            "date": "2013-04-07T14:37:00.613Z",
-            "proposal": 3,
-            "user": 1,
-            "value": 5
-        }
-    },
-    {
-        "pk": 7,
-        "model": "proposing.proposalvote",
-        "fields": {
-            "date": "2013-04-07T14:37:00.624Z",
-            "proposal": 3,
-            "user": 1,
-            "value": 5
-        }
-    },
-    {
-        "pk": 8,
-        "model": "proposing.proposalvote",
-        "fields": {
-            "date": "2013-04-07T14:37:00.634Z",
-            "proposal": 3,
-            "user": 1,
-            "value": 5
-        }
-    },
-    {
-        "pk": 9,
-        "model": "proposing.proposalvote",
-        "fields": {
-            "date": "2013-04-07T14:37:00.642Z",
-            "proposal": 3,
-            "user": 1,
-            "value": 5
-        }
-    },
-    {
-        "pk": 10,
-        "model": "proposing.proposalvote",
-        "fields": {
-            "date": "2013-04-07T14:37:00.652Z",
-            "proposal": 3,
-            "user": 1,
-            "value": 5
-        }
-    },
-    {
-        "pk": 11,
-        "model": "proposing.proposalvote",
-        "fields": {
-            "date": "2013-04-07T14:37:00.660Z",
-            "proposal": 3,
-            "user": 1,
-            "value": 5
-        }
-    },
-    {
-        "pk": 12,
-        "model": "proposing.proposalvote",
-        "fields": {
-            "date": "2013-04-07T14:37:00.670Z",
-            "proposal": 3,
-            "user": 1,
-            "value": 5
-        }
-    },
-    {
         "pk": 13,
         "model": "proposing.proposalvote",
         "fields": {
-            "date": "2013-04-07T14:37:00.682Z",
-            "proposal": 3,
-            "user": 1,
-            "value": 5
+            "date": "2013-05-04T14:28:04.052Z",
+            "proposal": 5,
+            "user": 3,
+            "value": 2
         }
     },
     {
         "pk": 14,
         "model": "proposing.proposalvote",
         "fields": {
-            "date": "2013-04-07T14:37:00.693Z",
-            "proposal": 3,
+            "date": "2013-05-04T14:27:49.165Z",
+            "proposal": 5,
             "user": 1,
-            "value": 5
+            "value": -5
         }
     },
     {
@@ -961,6 +1141,343 @@
             "proposal": 3,
             "user": 1,
             "value": 5
+        }
+    },
+    {
+        "pk": 17,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-05-03T20:02:12.152Z",
+            "proposal": 5,
+            "user": 2,
+            "value": -2
+        }
+    },
+    {
+        "pk": 18,
+        "model": "proposing.proposalvote",
+        "fields": {
+            "date": "2013-05-03T20:02:27.428Z",
+            "proposal": 3,
+            "user": 2,
+            "value": 1
+        }
+    },
+    {
+        "pk": 1,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 4,
+            "delegates": [
+                2
+            ],
+            "isdefault": true,
+            "tags": []
+        }
+    },
+    {
+        "pk": 2,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 4,
+            "delegates": [
+                7,
+                10,
+                12
+            ],
+            "isdefault": false,
+            "tags": [
+                2
+            ]
+        }
+    },
+    {
+        "pk": 3,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 5,
+            "delegates": [
+                10
+            ],
+            "isdefault": true,
+            "tags": []
+        }
+    },
+    {
+        "pk": 4,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 5,
+            "delegates": [
+                1
+            ],
+            "isdefault": false,
+            "tags": [
+                2
+            ]
+        }
+    },
+    {
+        "pk": 5,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 6,
+            "delegates": [
+                12
+            ],
+            "isdefault": true,
+            "tags": []
+        }
+    },
+    {
+        "pk": 6,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 7,
+            "delegates": [
+                2
+            ],
+            "isdefault": true,
+            "tags": []
+        }
+    },
+    {
+        "pk": 7,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 7,
+            "delegates": [
+                10
+            ],
+            "isdefault": false,
+            "tags": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+            ]
+        }
+    },
+    {
+        "pk": 8,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 8,
+            "delegates": [
+                6
+            ],
+            "isdefault": true,
+            "tags": []
+        }
+    },
+    {
+        "pk": 9,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 9,
+            "delegates": [
+                1
+            ],
+            "isdefault": true,
+            "tags": []
+        }
+    },
+    {
+        "pk": 10,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 10,
+            "delegates": [
+                2
+            ],
+            "isdefault": true,
+            "tags": []
+        }
+    },
+    {
+        "pk": 11,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 11,
+            "delegates": [],
+            "isdefault": true,
+            "tags": []
+        }
+    },
+    {
+        "pk": 12,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 11,
+            "delegates": [
+                2
+            ],
+            "isdefault": false,
+            "tags": [
+                1
+            ]
+        }
+    },
+    {
+        "pk": 13,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 11,
+            "delegates": [
+                2
+            ],
+            "isdefault": false,
+            "tags": [
+                2
+            ]
+        }
+    },
+    {
+        "pk": 14,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 11,
+            "delegates": [
+                3
+            ],
+            "isdefault": false,
+            "tags": [
+                4
+            ]
+        }
+    },
+    {
+        "pk": 15,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 11,
+            "delegates": [
+                6
+            ],
+            "isdefault": false,
+            "tags": [
+                7
+            ]
+        }
+    },
+    {
+        "pk": 16,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 11,
+            "delegates": [
+                5
+            ],
+            "isdefault": false,
+            "tags": [
+                5
+            ]
+        }
+    },
+    {
+        "pk": 17,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 11,
+            "delegates": [
+                10
+            ],
+            "isdefault": false,
+            "tags": [
+                6
+            ]
+        }
+    },
+    {
+        "pk": 18,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 11,
+            "delegates": [
+                8
+            ],
+            "isdefault": false,
+            "tags": [
+                5
+            ]
+        }
+    },
+    {
+        "pk": 19,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 11,
+            "delegates": [
+                7
+            ],
+            "isdefault": false,
+            "tags": [
+                3
+            ]
+        }
+    },
+    {
+        "pk": 20,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 11,
+            "delegates": [
+                12
+            ],
+            "isdefault": false,
+            "tags": [
+                8
+            ]
+        }
+    },
+    {
+        "pk": 21,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 12,
+            "delegates": [
+                2,
+                6
+            ],
+            "isdefault": true,
+            "tags": []
+        }
+    },
+    {
+        "pk": 22,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 13,
+            "delegates": [
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+            ],
+            "isdefault": true,
+            "tags": []
+        }
+    },
+    {
+        "pk": 23,
+        "model": "proposing.proxy",
+        "fields": {
+            "delegating": 2,
+            "delegates": [
+                1
+            ],
+            "isdefault": true,
+            "tags": []
         }
     },
     {
