@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 from accounts.models import CustomUser
 from django.contrib.auth.models import User
 from document.models import Diff, FullDocument
+from proposing.management.commands.updatevoting import Command
 
 class VoteCountTestCase(TestCase):
     def setUp(self):
@@ -58,31 +59,38 @@ class VoteCountTestCase(TestCase):
     
     def testVote1(self):
         self.setupVotes([(0,0)])
+        Command.doVoteCount(self.proposal)
         self.assertEqual(self.proposal.avgProposalvoteScore, 0.0)
     
     def testVote2(self):
         self.setupVotes([(0,1)])
+        Command.doVoteCount(self.proposal)
         self.assertEqual(self.proposal.avgProposalvoteScore, 1.0)
     
     def testVote3(self):
         self.setupVotes([(0,1),(1,0)])
+        Command.doVoteCount(self.proposal)
         self.assertEqual(self.proposal.avgProposalvoteScore, 0.5)
         
     def testVote4(self):
         self.setupVotes([(0,-1),(1,1)])
+        Command.doVoteCount(self.proposal)
         self.assertEqual(self.proposal.avgProposalvoteScore, 0.0)
     
     def testVote5(self):
         self.setupVotes([])
+        Command.doVoteCount(self.proposal)
         self.assertEqual(self.proposal.avgProposalvoteScore, 0.0)
     
     def testVote6(self):
         self.setupVotes([(0,1),(0,1)]) #TODO: should protest! Illegal votes have been cast
+        Command.doVoteCount(self.proposal)
         self.assertEqual(self.proposal.avgProposalvoteScore, 1.0)       
 
     def testVote7(self):
         self.setupVotes([(0,0),(3,3)])
         self.proposal.tags.add(self.tags[1])
+        Command.doVoteCount(self.proposal)
         self.assertEqual(self.proposal.avgProposalvoteScore, 2.0)       
 
 '''

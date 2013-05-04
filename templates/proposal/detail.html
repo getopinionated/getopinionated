@@ -119,7 +119,7 @@
         {% elif proposal.finishedVoting %}
             <div class="votingresults">
                 <h2>Voting Result: {{ proposal.get_voting_stage_display }}</h2>
-                <p>Average score: {{ proposal.avgProposalvoteScore }}</p>
+                <p>Average score: {{ proposal.avgProposalvoteScore|floatformat:"2" }}</p>
                 <p>
                     #voters: {{ proposal.proposal_votes.count }}
                     {% if proposal.proposal_votes.count < proposal.QUORUM_SIZE %}
@@ -135,7 +135,7 @@
                     {% for option, helptext in proposal.voteOptions %}
                         <div class="optionbar">
                             <div class="numvotes" style="height: {{ proposal|args:option|call:"numVotesToPx" }}px;">
-                                <span>{{ proposal|args:option|call:"numVotesOn" }}</span>
+                                <span>{{ proposal|args:option|call:"numVotesOn"|floatformat:"-2" }}</span>
                             </div>
                             <div class="caption">
                                 <div>{{option}}</div>
