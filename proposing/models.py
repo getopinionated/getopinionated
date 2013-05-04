@@ -7,6 +7,7 @@ from django.template.defaultfilters import slugify
 from common.stringify import niceBigInteger
 from document.models import Diff
 from accounts.models import CustomUser
+from django.db.models.aggregates import Sum
 
 
 class VotablePost(models.Model):
@@ -89,7 +90,7 @@ class ProposalType(models.Model):
 
 class Proposal(VotablePost):
     # settings
-    QUORUM_SIZE = 4 # minimal # of proposalvotes for approvement
+    QUORUM_SIZE = 1 # minimal # of proposalvotes for approvement
     VOTING_STAGE = (
         ('DISCUSSION', 'Discussion'),
         ('VOTING', 'Voting'),
@@ -199,6 +200,10 @@ class Proposal(VotablePost):
 
     @property
     def avgProposalvoteScore(self):
+        
+        # deleta all previous results (safety, this method may be called twice, even though it shouldn't)
+        ProxyProposalVote.objects.filter(proposal=self).delete()
+        
         # set up graph, doing as few queries as possible
         voters = self.proposal_votes.values('user')
         #exclude proxies from people who voted themselves
@@ -211,34 +216,52 @@ class Proposal(VotablePost):
         validproxies = list(validproxies)
         votes = list(self.proposal_votes.all())
         
+        #TODO: check for users having made 2 votes, this seriously breaks the algorithm, other than not
+        #      being democratic at all
+        
+        
         proxiecount = {} #to keep track in how many votes proxies result
         voterqueue = {}
         for vote in votes:
             mainvoter = vote.user
             voterqueue[vote] = [mainvoter]
-            #following can be sped up. Sort lists instead of comparing elementwise
-            for voter in voterqueue[vote]:
+            #following can be sped up. Sort lists before comparing elementwise
+            i=0
+            while i<len(voterqueue[vote]):
+                voter = voterqueue[vote][i]
+                i += 1
                 if proxiecount.has_key(voter):
                     proxiecount[voter] += 1
                 else:
                     proxiecount[voter] = 1
                 for proxy in validproxies:
-                    if voter in proxy.delegates.all() and not proxy.delegating in voterqueue[vote]:
+                    if (voter in proxy.delegates.all()) and (proxy.delegating not in voterqueue[vote]):
                         voterqueue[vote].append(proxy.delegating)
+                        
         
         total = 0
         for vote in votes:
             numvotes = 0.0
+            actualvote = ProxyProposalVote.objects.get_or_create(user=vote.user, proposal=self, value=vote.value, voted_self=True)[0]
             for voter in voterqueue[vote]:
-                numvotes += 1.0 / proxiecount[voter]
+                numvotes += 1.0 / float(proxiecount[voter])
+                actualvote.vote_traject.add(voter)
+                if voter!=vote.user:
+                    proxyvote = ProxyProposalVote.objects.get_or_create(user=voter, proposal=self)[0]
+                    proxyvote.vote_traject.add(vote.user)
+                    proxyvote.value += float(vote.value) / float(proxiecount[voter])
+                    proxyvote.numvotes = proxiecount[voter]
+                    proxyvote.save()
+            actualvote.numvotes = numvotes
+            actualvote.save()
             total += numvotes * vote.value
         
         if total == 0.0:
             return 0
         average = total / len(proxiecount.keys())
         return average
-        
 
+        
     def addView(self):
         self.views += 1
         self.save()
@@ -263,11 +286,9 @@ class Proposal(VotablePost):
         return self.userHasProposalvoted(user) == int(option)
 
     def isApproved(self):
-        # TODO: should quorum be number of voters of number of votes (c.f.r. liquid democracy, one person can have many votes)
+        # QUESTION: should quorum be number of voters of number of votes (c.f.r. liquid democracy, one person can have many votes)
         # Quorum is always number of voters, not number of votes. A quorum is needed to avoid under-the-radar-behaviour.
-        
-        
-        return self.avgProposalvoteScore > 0 and self.proposal_votes.count() > self.QUORUM_SIZE
+        return self.avgProposalvoteScore > 0 and self.proposal_votes.count() >= self.QUORUM_SIZE
 
     def initiateVoteCount(self):
         if self.isApproved():
@@ -314,7 +335,7 @@ class Proposal(VotablePost):
             ('2', ''),
             ('3', ''),
             ('4', ''),
-            ('5', 'For'),
+            ('5', 'In favor'),
         ]
 
     def dateToPx(self, date):
@@ -356,17 +377,20 @@ class Proposal(VotablePost):
         return self.dateToPx(self.expirationDate.date())
 
     def numVotesOn(self, vote_value):
-        return self.proposal_votes.filter(value = vote_value).count()
-
+        a = self.total_proxy_proposal_votes.filter(value = vote_value, voted_self=True).aggregate(Sum('numvotes'))
+        return a['numvotes__sum'] or 0
+    
     def numVotesToPx(self, vote_value):
         max_num_votes = max([self.numVotesOn(i) for i in xrange(-5,6)])
+        if max_num_votes==0:
+            return 0
         num_votes = self.numVotesOn(int(vote_value))
         fraction = num_votes / max_num_votes
         BAR_HEIGHT = 150 # px
         return fraction * BAR_HEIGHT
 
     def votesOn(self, vote_value):
-        return self.proposal_votes.filter(value = vote_value)
+        return self.total_proxy_proposal_votes.filter(value = vote_value, voted_self=True)
 
 class Comment(VotablePost):
     # settings
@@ -394,6 +418,14 @@ class ProposalVote(models.Model):
     proposal = models.ForeignKey(Proposal, related_name="proposal_votes")
     date = models.DateTimeField(auto_now=True)
     value = models.IntegerField("The value of the vote")
+
+class ProxyProposalVote(models.Model):
+    user = models.ForeignKey(CustomUser, related_name="total_proxy_proposal_votes")
+    proposal = models.ForeignKey(Proposal, related_name="total_proxy_proposal_votes")
+    value = models.FloatField("The value of the vote", default=0.0)
+    vote_traject = models.ManyToManyField(CustomUser)
+    voted_self = models.BooleanField(default=False)
+    numvotes = models.FloatField(default=0)
 
 '''
     object containing the issued proxies for the voting system

@@ -3,6 +3,14 @@
 {% load filters %}
 {% load thumbnail %}
 
+{% macro user-micro postinguser %}
+		{% if postinguser %}
+		<a href="{% url user-profile postinguser.slug %}"><span class="user-name">{{postinguser.display_name}}</span></a>
+		{% else %}
+		{% endif %}
+    
+{% endmacro %}
+
 {% macro user-small postinguser when %}
 	<div class="user-small">
 		{% if postinguser %}
