@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from models import VotablePost, UpDownVote, Proposal, Comment, ProposalVote
-from forms import CommentForm
+from forms import CommentForm, ProposalEditForm, CommentEditForm
 from proposing.models import Tag
 from django.db.models import Count
 from proposing.forms import ProxyForm
@@ -45,6 +45,42 @@ def detail(request, proposal_slug):
     return render(request, 'proposal/detail.html', {
         'proposal': proposal,
         'commentform': commentform,
+    })
+
+def editproposal(request, proposal_slug):
+    proposal = get_object_or_404(Proposal, slug=proposal_slug)
+    if not proposal.isEditableBy(request.user):
+        return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
+    if request.method == 'POST':
+        editform = ProposalEditForm(request.POST, instance=proposal)
+        if editform.is_valid():
+            editform.save()
+            messages.success(request, 'Proposal edited')
+            return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
+    else:
+        editform = ProposalEditForm(instance=proposal)
+    return render(request, 'proposal/detail.html', {
+        'proposal': proposal,
+        'proposaleditform': editform,
+    })
+
+def editcomment(request, proposal_slug, comment_id):
+    proposal = get_object_or_404(Proposal, slug=proposal_slug)
+    comment = get_object_or_404(Comment, id=comment_id)
+    if not comment.isEditableBy(request.user):
+        return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
+    if request.method == 'POST':
+        editform = CommentEditForm(request.POST, instance=comment)
+        if editform.is_valid():
+            editform.save()
+            messages.success(request, 'Comment edited')
+            return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
+    else:
+        editform = CommentEditForm(instance=comment)
+    editform.comment_id = int(comment_id)
+    return render(request, 'proposal/detail.html', {
+        'commenteditform': editform,
+        'proposal': proposal,
     })
 
 

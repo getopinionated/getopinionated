@@ -52,6 +52,34 @@ article.proposal .diff {
 article.proposal .motivation {
     margin: 8px 0 48px;
 }
+article.proposal .motivation label {
+    display: none;
+}
+article.proposal .motivation form {
+    background-color: inherit !important;
+    padding: 0px !important;
+    margin: 0px !important;
+}
+article.proposal .motivation .chzn-container,
+article.proposal .motivation textarea {
+    width: 700px !important;
+}
+article.proposal .motivation .chzn-container * {
+    border: 0 ! important;
+}
+
+article.proposal a.edit {
+    font-size: 14px;
+    display: block;
+    color: #bbb!important;
+}
+article.proposal a.edit:active,
+article.proposal a.edit:visited {
+    color: #bbb!important;
+}
+article.proposal a.edit:hover {
+    color: #888!important;
+}
 
 article.proposal .comment .motivation {
     padding-left: 48px;
@@ -61,6 +89,10 @@ article.proposal .comment .motivation {
 article.proposal .comment h2 {
     border-bottom: 3px #aaa solid;
     margin-top: 24px;
+}
+article.proposal .comment a.edit {
+    margin-top: 10px;
+    font-size: 12px;
 }
 
 article.proposal .owncomment {

@@ -11,6 +11,8 @@ urlpatterns = patterns('',
     url(r'^(?P<proposal_slug>[-\w]+)/voters$', views.listofvoters, name='proposals-listofvoters'),
     url(r'^(?P<proposal_slug>[-\w]+)/(?P<post_id>\d+)/vote/(?P<updown>.+)/$', views.vote, name='posts-vote'),
     url(r'^(?P<proposal_slug>[-\w]+)/vote/(?P<score>.+)/$', views.proposalvote, name='proposal-vote'),
+    url(r'^(?P<proposal_slug>[-\w]+)/edit/$', views.editproposal, name='proposal-edit'),
+    url(r'^(?P<proposal_slug>[-\w]+)/edit/(?P<comment_id>\d+)/$', views.editcomment, name='comment-edit'),
     
     url(r'^proxy$', views.proxy, name='proxy-index'),
 )

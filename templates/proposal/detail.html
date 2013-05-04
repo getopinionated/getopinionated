@@ -34,6 +34,9 @@
 
 {% block extrastyle %}
     <link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
+    {% if proposaleditform %}
+        {{ proposaleditform.media }}
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -47,12 +50,31 @@
         <div class="diff">{{ proposal.diff|diffrender }}</div>
         <div class="motivation">
         	<span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>
-            {{ proposal.motivation|linebreaks }}
-        	<div class="proposal-tags">
-        		{% for tag in proposal.tags.all %}
-        			{% usemacro tag-small tag %}
-        		{% endfor %}
-        	</div>
+            {% if not proposaleditform %}
+                {{ proposal.motivation|linebreaks }}
+            	<div class="proposal-tags">
+            		{% for tag in proposal.tags.all %}
+            			{% usemacro tag-small tag %}
+            		{% endfor %}
+            	</div>
+                {% if proposal|args:user|call:"isEditableBy" %}
+                    <a href="{% url proposal-edit proposal.slug %}" class="edit">edit</a>
+                {% endif %}
+            {% else %}
+                <table>
+                    <form action="{% url proposal-edit proposal.slug %}" method="POST">
+                        {{proposaleditform}}
+                        {% csrf_token %}
+                        <tr>
+                            <td></td>
+                            <td>
+                                <input type="submit" value="Edit" />
+                                <a href="{% url proposals-detail proposal.slug %}" class="edit" style="display:inline-block;">cancel</a>
+                            </td>
+                        </tr>
+                    </form>
+                </table>
+            {% endif %}
         </div>
         <div class="timeline">
             <h2>Timeline</h2>
@@ -151,11 +173,32 @@
                     <span class="title">Comment</span>
                     {% usemacro user-small comment.creator comment.create_date %}
                 </h2>
-                <div class="motivation">{{ comment.motivation|linebreaks }}</div>
+                <div class="motivation">
+                    {% if not commenteditform or commenteditform.comment_id != comment.id %}
+                        {{ comment.motivation|linebreaks }}
+                        {% if comment|args:user|call:"isEditableBy" %}
+                            <a href="{% url comment-edit proposal.slug comment.id %}" class="edit">edit</a>
+                        {% endif %}
+                    {% else %}
+                        <table>
+                            <form action="{% url comment-edit proposal.slug comment.id %}" method="POST">
+                                {{commenteditform}}
+                                {% csrf_token %}
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input type="submit" value="Edit" />
+                                        <a href="{% url proposals-detail proposal.slug %}" class="edit" style="display:inline-block;">cancel</a>
+                                    </td>
+                                </tr>
+                            </form>
+                        </table>
+                    {% endif %}
+                </div>
             </div>
             {% endfor %}
         </div>
-        {% if proposal.voting_stage == 'DISCUSSION' %}
+        {% if commentform %}
         <div class="owncomment">
             <h2>Write your own comment</h2>
             <form action="{% url proposals-detail proposal.slug %}" method="POST" class="commentform">
