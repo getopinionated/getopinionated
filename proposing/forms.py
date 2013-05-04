@@ -5,7 +5,7 @@ from common import sanitizehtml
 from document.models import FullDocument, Diff
 from proposing.widgets import TagSelectorWidget, RichTextEditorWidget
 from proposing.fields import TagChoiceField, UserChoiceField
-from models import VotablePost, UpDownVote, Proposal, Comment, Tag
+from models import VotablePost, UpDownVote, Proposal, Comment, Tag, VotablePostEdit
 from django.contrib.auth.models import User
 from accounts.models import CustomUser
 from django.forms.widgets import SelectMultiple
@@ -76,7 +76,13 @@ class CommentForm(forms.ModelForm):
         new_comment.save()
         return new_comment
 
-class ProposalEditForm(forms.ModelForm):
+class VotablePostEditForm(forms.ModelForm):
+    def save(self, user, commit=True):
+        votable_post = super(VotablePostEditForm, self).save(commit=commit)
+        VotablePostEdit(user=user, post=votable_post).save()
+        return votable_post
+
+class ProposalEditForm(VotablePostEditForm):
     def __init__(self, *args, **kwargs):
         super(ProposalEditForm, self).__init__(*args, **kwargs)
         self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget())
@@ -85,7 +91,7 @@ class ProposalEditForm(forms.ModelForm):
         model = Proposal
         fields = ('motivation', 'tags',)
 
-class CommentEditForm(forms.ModelForm):
+class CommentEditForm(VotablePostEditForm):
     class Meta:
         model = Comment
         fields = ('motivation', 'color',)
