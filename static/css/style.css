@@ -52,6 +52,10 @@
 	padding: 0;
 }
 
+a {
+    outline: 0;
+}
+
 /* render html5 elements as block */
 
 body {

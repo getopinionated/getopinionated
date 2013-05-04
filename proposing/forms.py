@@ -76,6 +76,20 @@ class CommentForm(forms.ModelForm):
         new_comment.save()
         return new_comment
 
+class ProposalEditForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ProposalEditForm, self).__init__(*args, **kwargs)
+        self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget())
+
+    class Meta:
+        model = Proposal
+        fields = ('motivation', 'tags',)
+
+class CommentEditForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('motivation', 'color',)
+
 class ProxyForm(forms.Form):
     
     side_proxy = UserChoiceField(queryset=CustomUser.objects.all())
