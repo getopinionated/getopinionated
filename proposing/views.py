@@ -47,7 +47,8 @@ def detail(request, proposal_slug):
             proxyvote = ProxyProposalVote.objects.get(user=request.user,proposal=proposal)
         except ProxyProposalVote.DoesNotExist:
             proxyvote = None
-        
+    else:
+        proxyvote = None
     return render(request, 'proposal/detail.html', {
         'proposal': proposal,
         'commentform': commentform,

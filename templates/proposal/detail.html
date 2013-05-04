@@ -2,6 +2,7 @@
 {% load call_with_args %}
 {% load macros %}
 {% load filters %}
+{% load share_tags %}
 {% loadmacros "accounts/member-macro.html" %}
 {% loadmacros "proposal/tag-macro.html" %}
 
@@ -37,6 +38,8 @@
     {% if proposaleditform %}
         {{ proposaleditform.media }}
     {% endif %}
+    {% share_css %}
+	{% share_js %}        
 {% endblock %}
 
 {% block content %}
@@ -47,6 +50,7 @@
                 <span class="title">{{ proposal.title }}</span>
             </h1>
         </header>
+        {% share facebook twitter googleplus %}
         <div class="diff">{{ proposal.diff|diffrender }}</div>
         <div class="motivation">
             <span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>

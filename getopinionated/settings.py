@@ -3,6 +3,7 @@
 import sys, os
 from os.path import dirname
 
+DIR_ROOT = os.path.realpath(__file__)
 SITE_ROOT = dirname(dirname(os.path.realpath(__file__)))
 sys.path.insert(0, os.path.join(SITE_ROOT, 'libs'))
 
@@ -43,7 +44,7 @@ MEDIA_URL = 'http://localhost:8000/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ""
+STATIC_ROOT = os.path.join(SITE_ROOT, 'tmp/static')#Override this on your server
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -94,7 +95,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-	os.path.join(SITE_ROOT, 'templates')
+	os.path.join(SITE_ROOT, 'templates'),
+    os.path.join(SITE_ROOT, 'libs/share/templates')
 )
 
 INSTALLED_APPS = (
@@ -116,6 +118,7 @@ INSTALLED_APPS = (
     'document',
     'django.contrib.humanize',
     'libs.sorl.thumbnail',
+    'libs.share',
     # external apps
     'south'
 )
