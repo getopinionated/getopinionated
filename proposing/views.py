@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from models import VotablePost, UpDownVote, Proposal, Comment, ProposalVote
 from forms import CommentForm, ProposalEditForm, CommentEditForm
-from proposing.models import Tag
+from proposing.models import Tag, ProxyProposalVote
 from django.db.models import Count
 from proposing.forms import ProxyForm
 
@@ -42,9 +42,16 @@ def detail(request, proposal_slug):
                 return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
         else:
             commentform = CommentForm()
+    if proposal.voting_stage in ['APPROVED', 'REJECTED', 'EXPIRED']:
+        try:
+            proxyvote = ProxyProposalVote.objects.get(user=request.user,proposal=proposal)
+        except ProxyProposalVote.DoesNotExist:
+            proxyvote = None
+        
     return render(request, 'proposal/detail.html', {
         'proposal': proposal,
         'commentform': commentform,
+        'proxyvote': proxyvote
     })
 
 def editproposal(request, proposal_slug):
