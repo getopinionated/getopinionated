@@ -49,6 +49,15 @@ class VotablePost(models.Model):
     def canPressDownvote(self, user):
         return self.userCanUpdownvote(user) or self.userHasUpdownvoted(user) == 'down'
 
+    def isEditableBy(self, user):
+        if not user.is_authenticated():
+            return False
+        if self.creator == user:
+            return True
+        if user.groups.filter(name__iexact="moderators"):
+            return True
+        return False
+
 class UpDownVote(models.Model):
     user = models.ForeignKey(CustomUser, related_name="up_down_votes")
     post = models.ForeignKey(VotablePost, related_name="up_down_votes")
@@ -284,6 +293,11 @@ class Proposal(VotablePost):
             return
 
     def commentsAllowed(self):
+        return self.voting_stage == 'DISCUSSION'
+
+    def isEditableBy(self, user):
+        if not super(Proposal, self).isEditableBy(user):
+            return False
         return self.voting_stage == 'DISCUSSION'
 
     @staticmethod
