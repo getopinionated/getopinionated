@@ -3,6 +3,7 @@
 {% load macros %}
 {% load filters %}
 {% loadmacros "accounts/member-macro.html" %}
+{% loadmacros "common/comma.html" %}
 
 {% block title %}{% include "title.html" with subtitle=proposal.title %}{% endblock %}
 
@@ -20,6 +21,8 @@
                 <h2>Users that voted on {{option}} {% if helptext %}({{helptext}}){% endif %}</h2>
                 {% for vote in proposal|args:option|call:"votesOn" %}
                     {% usemacro user-in-list vote.user %}
+                    voted for 
+                    {% for voter in vote.vote_traject.all %}{% usemacro user-micro voter %}{% usemacro comma %}{% endfor %}
                 {% endfor %}
             {% endif %}
         {% endfor %}
