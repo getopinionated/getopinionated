@@ -5,6 +5,8 @@ git fetch
 newUpdatesAvailable=`git diff HEAD FETCH_HEAD`
 if [ "$newUpdatesAvailable" != "" ]
 then
+	git update-index --assume-unchanged getopinionated/local_settings.py
+	git rm --cached getopinionated/local_settings.py
 	git reset --hard
 	git pull
 	$HOME/webapps/getopinionated/apache2/bin/restart

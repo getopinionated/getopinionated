@@ -3,7 +3,6 @@
 import sys, os
 from os.path import dirname
 
-DIR_ROOT = os.path.realpath(__file__)
 SITE_ROOT = dirname(dirname(os.path.realpath(__file__)))
 sys.path.insert(0, os.path.join(SITE_ROOT, 'libs'))
 
