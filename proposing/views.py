@@ -61,7 +61,7 @@ def editproposal(request, proposal_slug):
     if request.method == 'POST':
         editform = ProposalEditForm(request.POST, instance=proposal)
         if editform.is_valid():
-            editform.save()
+            editform.save(request.user)
             messages.success(request, 'Proposal edited')
             return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
     else:
@@ -79,7 +79,7 @@ def editcomment(request, proposal_slug, comment_id):
     if request.method == 'POST':
         editform = CommentEditForm(request.POST, instance=comment)
         if editform.is_valid():
-            editform.save()
+            editform.save(request.user)
             messages.success(request, 'Comment edited')
             return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
     else:

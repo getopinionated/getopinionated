@@ -81,6 +81,10 @@ article.proposal a.edit:hover {
     color: #888!important;
 }
 
+article.proposal .comment .editedby {
+    font-size: 16px;
+    margin-left: 40px;
+}
 article.proposal .comment .motivation {
     padding-left: 48px;
     font-size: 12px;
