@@ -21,14 +21,16 @@ def runserver():
     chdir_to_project()
     import_local_settings()
     call_command('syncdb')
-    call_command('test', 'proposing')
     
     call_command('loaddata', 'testdata.json')
+    
+    
     call_command('validate')
     call_command('migrate')
-    call_command('updatevoting')
+    #call_command('updatevoting')
     call_command('thumbnail', 'cleanup')
-    call_command('collectstatic')
+    call_command('test', 'proposing')
+    #call_command('collectstatic')
     
     
     #call_command('thumbnail', 'clear')
