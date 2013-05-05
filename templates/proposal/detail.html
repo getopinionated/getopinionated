@@ -33,6 +33,8 @@
 
 {% block title %}{% include "title.html" with subtitle=proposal.title %}{% endblock %}
 
+{% block description %}User {{ proposal.creator }} proposed the following for the program of the Pirate Party. Join the discussion and vote. Get opinionated &bull; {{ proposal.title }}: {{ proposal.motivation }}{% endblock %}
+
 {% block extrastyle %}
     <link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
     {% if proposaleditform %}
