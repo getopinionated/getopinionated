@@ -50,7 +50,7 @@
                 <span class="title">{{ proposal.title }}</span>
             </h1>
         </header>
-        {% share facebook twitter googleplus %}
+        {% share %}
         <div class="diff">{{ proposal.diff|diffrender }}</div>
         <div class="motivation">
             <span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>
