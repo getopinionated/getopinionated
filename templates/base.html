@@ -4,6 +4,8 @@
 <html>
 <head>
     <title>{% block title %}{% include "title.html" %}{% endblock %}</title>
+    <meta name="description" content="{% block description %}{% endblock %}" />
+    <link rel="image_src" href="{% block image %}{{STATIC_URL}}images/logo.png{% endblock %}" / >
     <link rel="stylesheet" href="{{STATIC_URL}}css/users.css" type="text/css" charset="utf-8" />
     <link rel="stylesheet" href="{{STATIC_URL}}css/tags.css" type="text/css" charset="utf-8" />
     <link rel="stylesheet" href="{{STATIC_URL}}css/style.css" />
