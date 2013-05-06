@@ -224,7 +224,7 @@ GOOGLE_OAUTH2_CLIENT_ID      = ''
 GOOGLE_OAUTH2_CLIENT_SECRET  = ''
 
 LOGIN_URL          = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/accounts/logout/'
+LOGIN_REDIRECT_URL = '/accounts/profile/'
 LOGIN_ERROR_URL    = '/accounts/login-error/'
 
 #SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/another-login-url/'
