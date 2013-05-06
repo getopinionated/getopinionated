@@ -212,7 +212,15 @@ else:
 MAILER_LOCKFILE = os.path.join(SITE_ROOT, 'send_mail.lock')
 MAILER_PAUSE_SEND = False
 
-
+SOCIAL_AUTH_PIPELINE = (
+    'social_auth.backends.pipeline.social.social_auth_user',
+    'social_auth.backends.pipeline.associate.associate_by_email',
+    'social_auth.backends.pipeline.user.get_username',
+    'social_auth.backends.pipeline.user.create_user',
+    'social_auth.backends.pipeline.social.associate_user',
+    'social_auth.backends.pipeline.user.update_user_details',
+    'accounts.pipelines.get_user_avatar',
+)
 
 TWITTER_CONSUMER_KEY         = ''
 TWITTER_CONSUMER_SECRET      = ''
