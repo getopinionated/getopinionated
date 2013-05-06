@@ -4,6 +4,7 @@ from social_auth.backends import google
 from social_auth.signals import socialauth_registered
 from urllib import urlopen
 from getopinionated.settings import MEDIA_ROOT
+import os
 
 def get_user_avatar(backend, details, response, social_user, uid,\
                     user, *args, **kwargs):
@@ -16,9 +17,9 @@ def get_user_avatar(backend, details, response, social_user, uid,\
  
     if url:
         avatar = urlopen(url).read()
-        path = MEDIA_ROOT+'/avatars/'+user.slug
+        path = os.path.join(user.avatar.upload_to, user.slug + '.jpg')
         fout = open(path, "wb") #filepath is where to save the image
         fout.write(avatar)
         fout.close()
-        user.avatar = file(path)
+        user.avatar = path
         user.save()
