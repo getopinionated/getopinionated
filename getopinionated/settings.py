@@ -98,6 +98,13 @@ TEMPLATE_DIRS = (
     os.path.join(SITE_ROOT, 'libs/share/templates')
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'social_auth.context_processors.social_auth_by_name_backends',
+    'social_auth.context_processors.social_auth_backends',
+    'social_auth.context_processors.social_auth_by_type_backends',
+    'social_auth.context_processors.social_auth_login_redirect',
+)
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -118,6 +125,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'libs.sorl.thumbnail',
     'libs.share',
+    'social_auth',
     # external apps
     'south'
 )
@@ -125,7 +133,15 @@ INSTALLED_APPS = (
 AUTHENTICATION_BACKENDS = (
     'accounts.backend.EmailModelBackend',
     'accounts.backend.CustomUserModelBackend',
+    'social_auth.backends.twitter.TwitterBackend',
+    'social_auth.backends.facebook.FacebookBackend',
+    'social_auth.backends.google.GoogleOAuth2Backend',
+    'social_auth.backends.contrib.linkedin.LinkedinBackend',
+    'social_auth.backends.contrib.github.GithubBackend',
+    'social_auth.backends.OpenIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
 )
+
 # used by CustomUserModelBackend
 CUSTOM_USER_MODEL = 'accounts.CustomUser'
 
@@ -222,3 +238,29 @@ MAILER_PAUSE_SEND = False
 
 
 
+TWITTER_CONSUMER_KEY         = ''
+TWITTER_CONSUMER_SECRET      = ''
+FACEBOOK_APP_ID              = ''
+FACEBOOK_API_SECRET          = ''
+LINKEDIN_CONSUMER_KEY        = ''
+LINKEDIN_CONSUMER_SECRET     = ''
+GOOGLE_OAUTH2_CLIENT_ID      = ''
+GOOGLE_OAUTH2_CLIENT_SECRET  = ''
+
+LOGIN_URL          = '/login-form/'
+LOGIN_REDIRECT_URL = '/logged-in/'
+LOGIN_ERROR_URL    = '/login-error/'
+
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/another-login-url/'
+
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'
+SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/new-association-redirect-url/'
+SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
+SOCIAL_AUTH_BACKEND_ERROR_URL = '/new-error-url/'
+SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
+SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
+
+#TODO: fix if needed?
+#SOCIAL_AUTH_USER_MODEL = 'accounts.CustomUser'
+
+SOCIAL_AUTH_FORCE_POST_DISCONNECT = True

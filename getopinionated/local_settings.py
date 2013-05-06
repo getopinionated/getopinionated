@@ -25,3 +25,5 @@ EMAIL_HOST_USER = '<username>@gmail.com'
 EMAIL_HOST_PASSWORD = '<gmail password>'
 EMAIL_USE_TLS = True
 
+FACEBOOK_APP_ID              = '298186733641393'
+FACEBOOK_API_SECRET          = 'a3e382a140420334f8d1b0889e54d906'
