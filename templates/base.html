@@ -21,7 +21,7 @@
                 <li><a href="{% url user-login %}?next={{request.path|urlencode}}">Login</a></li>
                 <li><a href="{% url socialauth_begin "facebook" %}"><img src="{{STATIC_URL}}images/facebook.png" alt="facebook" /></a></li>
                 <li><a href="{% url socialauth_begin "twitter" %}"><img src="{{STATIC_URL}}images/twitter.png" alt="twitter" /></a></li>
-                <li><a href="{% url socialauth_begin "google" %}"><img src="{{STATIC_URL}}images/google.png" alt="google" /></a></li>
+                <li><a href="{% url socialauth_begin "google-oauth2" %}"><img src="{{STATIC_URL}}images/google.png" alt="google" /></a></li>
                 <li><a href="{% url socialauth_begin "linkedin" %}"><img src="{{STATIC_URL}}images/linkedin.png" alt="linkedin" /></a></li>
                 <li><a href="{% url user-register %}">Register</a></li>
             {% endif %}
@@ -30,7 +30,7 @@
                 <li>Tie my account to the following social network:</li>
                 <li><a href="{% url socialauth_begin "facebook" %}"><img src="{{STATIC_URL}}images/facebook.png" alt="facebook" /></a></li>
                 <li><a href="{% url socialauth_begin "twitter" %}"><img src="{{STATIC_URL}}images/twitter.png" alt="twitter" /></a></li>
-                <li><a href="{% url socialauth_begin "google" %}"><img src="{{STATIC_URL}}images/google.png" alt="google" /></a></li>
+                <li><a href="{% url socialauth_begin "google-oauth2" %}"><img src="{{STATIC_URL}}images/google.png" alt="google" /></a></li>
                 <li><a href="{% url socialauth_begin "linkedin" %}"><img src="{{STATIC_URL}}images/linkedin.png" alt="linkedin" /></a></li>
                 <li><a href="{% url profile-update %}">Profile</a></li>
                 <li><a href="{% url user-logout %}?next={{request.path|urlencode}}">Logout</a></li>
