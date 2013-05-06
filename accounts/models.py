@@ -43,3 +43,43 @@ class CustomUser(User):
             if w > 750 or h > 750:
                 raise forms.ValidationError(u'That image is too big. The image needs to be 700x700px (or less).')
         return image
+    
+from social_auth.backends.facebook import FacebookBackend
+from social_auth.backends.twitter import TwitterBackend
+from social_auth.backends import google
+from social_auth.signals import socialauth_registered
+def new_users_handler(sender, user, response, details, **kwargs):
+    user.is_new = True
+    if user.is_new:
+        if "id" in response:
+            
+            from urllib2 import urlopen, HTTPError
+            from django.template.defaultfilters import slugify
+            from django.core.files.base import ContentFile
+            
+            try:
+                url = None
+                if sender == FacebookBackend:
+                    url = "http://graph.facebook.com/%s/picture?type=large" \
+                                % response["id"]
+                elif sender == google.GoogleOAuth2Backend and "picture" in response:
+                    url = response["picture"]
+    
+                elif sender == TwitterBackend:
+                        url = response["profile_image_url"]
+                        
+                if url:
+                    avatar = urlopen(url)
+                    profile = CustomUser(user=user)
+                    
+                    profile.avatar.save(slugify(user.username + " social") + '.jpg', 
+                            ContentFile(avatar.read()))              
+                                    
+                    profile.save()
+    
+            except HTTPError:
+                pass
+    
+    return False
+ 
+socialauth_registered.connect(new_users_handler, sender=None)

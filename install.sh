@@ -17,5 +17,9 @@ sudo pip install south
 sudo apt-get install python-dev
 sudo pip install fabric
 
+#install social-auth
+sudo pip install easy_install
+sudo easy_install django-social-auth
+
 #set up cron to update everything every 5 minutes
 
