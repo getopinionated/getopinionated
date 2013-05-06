@@ -3,7 +3,7 @@ from social_auth.backends.twitter import TwitterBackend
 from social_auth.backends import google
 from social_auth.signals import socialauth_registered
 from urllib import urlopen
-from getopinionated.settings import MEDIA_ROOT
+from getopinionated.settings import MEDIA_ROOT, MEDIA_URL
 import os
 
 def get_user_avatar(backend, details, response, social_user, uid,\
@@ -21,5 +21,5 @@ def get_user_avatar(backend, details, response, social_user, uid,\
         fout = open(path, "wb") #filepath is where to save the image
         fout.write(avatar)
         fout.close()
-        user.avatar = path
+        user.avatar = MEDIA_URL + user.slug + '.jpg'
         user.save()
