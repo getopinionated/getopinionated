@@ -6,6 +6,7 @@ from urllib import urlopen
 from getopinionated.settings import MEDIA_ROOT, MEDIA_URL
 import os
 
+#TODO: this is called on every login, this might be a little too much?
 def get_user_avatar(backend, details, response, social_user, uid,\
                     user, *args, **kwargs):
     url = None
