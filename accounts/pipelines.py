@@ -21,5 +21,5 @@ def get_user_avatar(backend, details, response, social_user, uid,\
         fout = open(path, "wb") #filepath is where to save the image
         fout.write(avatar)
         fout.close()
-        user.avatar = MEDIA_URL + user.slug + '.jpg'
+        user.avatar = MEDIA_URL + 'avatars/' + user.slug + '.jpg'
         user.save()
