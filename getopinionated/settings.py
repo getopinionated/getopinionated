@@ -223,11 +223,11 @@ LINKEDIN_CONSUMER_SECRET     = ''
 GOOGLE_OAUTH2_CLIENT_ID      = ''
 GOOGLE_OAUTH2_CLIENT_SECRET  = ''
 
-LOGIN_URL          = '/login-form/'
-LOGIN_REDIRECT_URL = '/logged-in/'
+LOGIN_URL          = '/login/'
+LOGIN_REDIRECT_URL = '/logout/'
 LOGIN_ERROR_URL    = '/login-error/'
 
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/another-login-url/'
+#SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/another-login-url/'
 
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'
 SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/new-association-redirect-url/'
@@ -237,7 +237,7 @@ SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
 SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
 
 #TODO: fix if needed?
-#SOCIAL_AUTH_USER_MODEL = 'accounts.CustomUser'
+SOCIAL_AUTH_USER_MODEL = 'accounts.CustomUser'
 
 
 SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
