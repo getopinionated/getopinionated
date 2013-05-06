@@ -202,16 +202,6 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     'django.core.context_processors.request',
 )
  
-# Import local settings
-try:
-    from local_settings import *
-except ImportError:
-    try:
-        from mod_python import apache
-        apache.log_error("You need to copy local_settings.py.example to local_settings.py and edit settings")
-    except ImportError:
-        import sys
-        sys.stderr.write("You need to copy local_settings.py.example to local_settings.py and edit settings")
 TEMPLATE_DEBUG = DEBUG
 MANAGERS = ADMINS
 
@@ -263,4 +253,18 @@ SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
 #TODO: fix if needed?
 #SOCIAL_AUTH_USER_MODEL = 'accounts.CustomUser'
 
+
 SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
+
+#####################################################################################
+# Import local settings
+#####################################################################################
+try:
+    from local_settings import *
+except ImportError:
+    try:
+        from mod_python import apache
+        apache.log_error("You need to copy local_settings.py.example to local_settings.py and edit settings")
+    except ImportError:
+        import sys
+        sys.stderr.write("You need to copy local_settings.py.example to local_settings.py and edit settings")
