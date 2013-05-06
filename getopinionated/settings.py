@@ -223,16 +223,16 @@ LINKEDIN_CONSUMER_SECRET     = ''
 GOOGLE_OAUTH2_CLIENT_ID      = ''
 GOOGLE_OAUTH2_CLIENT_SECRET  = ''
 
-LOGIN_URL          = 'accounts/login/'
-LOGIN_REDIRECT_URL = 'accounts/logout/'
-LOGIN_ERROR_URL    = 'accounts/login-error/'
+LOGIN_URL          = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/accounts/logout/'
+LOGIN_ERROR_URL    = '/accounts/login-error/'
 
 #SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/another-login-url/'
 
 #SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'
 #SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/new-association-redirect-url/'
 #SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
-SOCIAL_AUTH_BACKEND_ERROR_URL = 'accounts/new-error-url/'
+SOCIAL_AUTH_BACKEND_ERROR_URL = '/accounts/new-error-url/'
 #SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
 #SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
 
