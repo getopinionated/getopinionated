@@ -37,7 +37,7 @@
 			<a href="{% url proposals-detail proposal.slug %}">{{ proposal.title }}</a>
 		</div>
 		<div class="creator-small">
-			<a href="{% url user-profile proposal.creator %}">{% usemacro user-small proposal.creator proposal.create_date%}</a>
+			<a href="{% url user-profile proposal.creator.slug %}">{% usemacro user-small proposal.creator proposal.create_date%}</a>
 		</div>
 		<br>
 		<div class="proposal-tags">
