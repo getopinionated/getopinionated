@@ -202,20 +202,6 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     'django.core.context_processors.request',
 )
  
-TEMPLATE_DEBUG = DEBUG
-MANAGERS = ADMINS
-
-# easier template debugging (http://stackoverflow.com/questions/4300442/show-undefined-variable-errors-in-templates)
-if DEBUG:
-    class InvalidString(str):
-        def __mod__(self, other):
-            # hack for bug in admin
-            if str(other) == 'header.class_attrib':
-                return
-            from django.template.base import TemplateSyntaxError
-            raise TemplateSyntaxError(
-                "Undefined variable or unknown value for: \"%s\"" % other)
-    TEMPLATE_STRING_IF_INVALID = InvalidString("%s")
 
 # favour django-mailer but fall back to django.core.mail
 if "mailer" in INSTALLED_APPS:
@@ -268,3 +254,18 @@ except ImportError:
     except ImportError:
         import sys
         sys.stderr.write("You need to copy local_settings.py.example to local_settings.py and edit settings")
+
+TEMPLATE_DEBUG = DEBUG
+MANAGERS = ADMINS
+
+# easier template debugging (http://stackoverflow.com/questions/4300442/show-undefined-variable-errors-in-templates)
+if DEBUG:
+    class InvalidString(str):
+        def __mod__(self, other):
+            # hack for bug in admin
+            if str(other) == 'header.class_attrib':
+                return
+            from django.template.base import TemplateSyntaxError
+            raise TemplateSyntaxError(
+                "Undefined variable or unknown value for: \"%s\"" % other)
+    TEMPLATE_STRING_IF_INVALID = InvalidString("%s")
