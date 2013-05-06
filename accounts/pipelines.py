@@ -11,7 +11,8 @@ def get_user_avatar(backend, details, response, social_user, uid,\
     url = None
     if backend.__class__ == FacebookBackend:
         url = "http://graph.facebook.com/%s/picture?type=large" % response['id']
- 
+    elif backend.__class__ == google.GoogleOAuth2Backend and "picture" in response:
+        url = response["picture"]
     elif backend.__class__ == TwitterBackend:
         url = response.get('profile_image_url', '').replace('_normal', '')
  
