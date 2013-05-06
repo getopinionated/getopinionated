@@ -17,7 +17,7 @@ def get_user_avatar(backend, details, response, social_user, uid,\
  
     if url:
         avatar = urlopen(url).read()
-        path = os.path.join(user.avatar.upload_to, user.slug + '.jpg')
+        path = os.path.join(os.path.join(MEDIA_ROOT,'avatars'), user.slug + '.jpg')
         fout = open(path, "wb") #filepath is where to save the image
         fout.write(avatar)
         fout.close()
