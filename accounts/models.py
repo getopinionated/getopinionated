@@ -8,7 +8,7 @@ from getopinionated.settings import MEDIA_ROOT
 class CustomUserManager(UserManager):
     def create_user(self, username, *args, **kwargs):
         user = super(CustomUserManager, self).create_user(username, *args, **kwargs)
-        user.slug = slugify(self.username)
+        user.slug = slugify(username)
         user.save()
         return user
 
