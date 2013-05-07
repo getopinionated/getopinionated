@@ -29,6 +29,6 @@ def get_user_avatar(backend, details, response, social_user, uid,\
         fout.write(avatar)
         fout.close()
         user.avatar = MEDIA_URL + 'avatars/' + user.slug + '.' + avatar.content_type
-        user.avatar.width = w
-        user.avatar.height = h
+        #user.avatar.width = w
+        #user.avatar.height = h
         user.save()
