@@ -36,9 +36,11 @@
 		<div class="summary">
 			<a href="{% url proposals-detail proposal.slug %}">{{ proposal.title }}</a>
 		</div>
-		<div class="creator-small">
-			<a href="{% url user-profile proposal.creator.slug %}">{% usemacro user-small proposal.creator proposal.create_date%}</a>
-		</div>
+		{% if proposal.creator %}
+			<div class="creator-small">
+				<a href="{% url user-profile proposal.creator.slug %}">{% usemacro user-small proposal.creator proposal.create_date%}</a>
+			</div>
+		{% endif %}
 		<br>
 		<div class="proposal-tags">
 			{% for tag in proposal.tags.all %}
