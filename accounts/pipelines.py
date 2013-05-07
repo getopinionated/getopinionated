@@ -19,9 +19,16 @@ def get_user_avatar(backend, details, response, social_user, uid,\
  
     if url:
         avatar = urlopen(url).read()
-        path = os.path.join(os.path.join(MEDIA_ROOT,'avatars'), user.slug + '.jpg')
+        from django.core.files.images import get_image_dimensions
+        w, h = get_image_dimensions(avatar)
+        if not avatar.content_type in ["png","jpg","jpeg","gif","bmp"]:
+            return # bad file format
+        path = os.path.join(os.path.join(MEDIA_ROOT,'avatars'), user.slug + '.' + avatar.content_type)
         fout = open(path, "wb") #filepath is where to save the image
+        
         fout.write(avatar)
         fout.close()
-        user.avatar = MEDIA_URL + 'avatars/' + user.slug + '.jpg'
+        user.avatar.url = MEDIA_URL + 'avatars/' + user.slug + '.' + avatar.content_type
+        user.avatar.width = w
+        user.avatar.height = h
         user.save()

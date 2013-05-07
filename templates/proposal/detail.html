@@ -33,7 +33,7 @@
 
 {% block title %}{% include "title.html" with subtitle=proposal.title %}{% endblock %}
 
-{% block description %}User {{ proposal.creator }} made a proposal for the program of the Pirate Party: '{{ proposal.title }}'. Join the discussion and vote. Get opinionated! Everybody is free to step in and join the democratic process of the party. Share your expertise and make the Pirate Party a better party.{% endblock %}
+{% block description %}{% if proposal.creator %}User {{ proposal.creator }} made a proposal for the program of the Pirate Party:{% else %}A proposal has been made for the program of the Pirate Party:{% endif %} '{{ proposal.title }}'. Join the discussion and vote. Get opinionated! Everybody is free to step in and join the democratic process of the party. Share your expertise and make the Pirate Party a better party.{% endblock %}
 
 {% block extrastyle %}
     <link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
