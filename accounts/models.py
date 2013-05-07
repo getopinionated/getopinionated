@@ -5,13 +5,22 @@ from libs.sorl.thumbnail import ImageField
 from django import forms
 from getopinionated.settings import MEDIA_ROOT
 
+class CustomUserManager(UserManager):
+    def create_user(self, username, *args, **kwargs):
+        user = super(CustomUserManager, self).create_user(username, *args, **kwargs)
+        user.slug = slugify(self.username)
+        user.save()
+        return user
+
 class CustomUser(User):
     slug = models.SlugField(unique=True)
     karma = models.IntegerField(default=0)
     avatar = ImageField(upload_to='avatars/')
     
+    REQUIRED_FIELDS = ['username']
+    
     # Use UserManager to get the create_user method, etc.
-    objects = UserManager()
+    objects = CustomUserManager()
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.username)
