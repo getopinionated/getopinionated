@@ -1,8 +1,7 @@
 {% load i18n %}
 {% load encrypt_email %}
 {% load call_with_args %}
-{% load macros %}
-{% loadmacros "common/comma.html" %}
+
 
 <!DOCTYPE html>
 <html>
@@ -40,10 +39,7 @@
                 <li><a href="{% url socialauth_begin "eID" %}"><img src="{{STATIC_URL}}images/eid-24.png" alt="e-ID" /></a></li>
                 <li><a href="{% url profile-update %}">Profile</a></li>
                 <li><a href="{% url user-logout %}?next={{request.path|urlencode}}">Logout</a></li>
-                <li class="right">(logged in as {{user.display_name}} using 
-                {% for network in user.social_auth.all %}
-                	{{ network.provider }}{% usemacro comma %}
-                {% endfor %})</li>
+                <li class="right">(logged in as {{user.display_name}})</li>
             {% endif %}
         </ul>
     </nav>
