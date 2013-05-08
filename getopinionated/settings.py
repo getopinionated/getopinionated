@@ -140,8 +140,7 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.facebook.FacebookBackend',
     'social_auth.backends.google.GoogleOAuth2Backend',
     'social_auth.backends.contrib.linkedin.LinkedinBackend',
-    'social_auth.backends.contrib.github.GithubBackend',
-    'social_auth.backends.OpenIDBackend',
+    'accounts.eid.EIDBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -269,6 +268,8 @@ LINKEDIN_CONSUMER_SECRET     = ''
 GOOGLE_OAUTH2_CLIENT_ID      = ''
 GOOGLE_OAUTH2_CLIENT_SECRET  = ''
 
+E_ID_OPENID_URL = 'https://www.e-contract.be/eid-idp/endpoints/openid/auth'
+
 LOGIN_URL          = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/accounts/profile/'
 LOGIN_ERROR_URL    = '/accounts/login-error/'
@@ -289,6 +290,7 @@ SOCIAL_AUTH_SLUGIFY_USERNAMES = True
 SOCIAL_AUTH_SESSION_EXPIRATION = False
 
 SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
+
 
 #####################################################################################
 # Import local settings

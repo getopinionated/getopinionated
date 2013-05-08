@@ -21,5 +21,8 @@ sudo pip install fabric
 sudo pip install easy_install
 sudo easy_install django-social-auth
 
+#install open-id
+sudo apt-get install python-openid
+
 #set up cron to update everything every 5 minutes
 
