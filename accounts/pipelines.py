@@ -22,12 +22,10 @@ def get_user_avatar(backend, details, response, social_user, uid,\
         from PIL import Image as ImageObj
         from cStringIO import StringIO
         image = ImageObj.open(StringIO(imagedata))
-        w, h = image.size
-        if not image.format.lower() in ["png","jpg","jpeg","gif","bmp"]:
+        f = image.format.lower() 
+        if not f in ["png","jpg","jpeg","gif","bmp"]:
             return # bad file format
-        path = os.path.join(os.path.join(MEDIA_ROOT,'avatars'), user.slug + '.' + image.format)
+        path = os.path.join(os.path.join(MEDIA_ROOT,'avatars'), user.slug + '.' + f)
         image.save(path)
-        user.avatar = 'avatars/' + user.slug + '.' + image.format
-        #user.avatar.width = w
-        #user.avatar.height = h
+        user.avatar = 'avatars/' + user.slug + '.' + f
         user.save()
