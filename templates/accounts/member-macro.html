@@ -31,7 +31,7 @@
 			<div title="{{when}}" class="user-box-action">{{what}} {{when|shorttime}}</div>
 		    {% thumbnail postinguser.avatar "32x32" crop="center" as im %}
 				<div class="user-box-avatar">
-			    	<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+			    	<img src="{{ im.url }}">
 			    </div>
 		    {% empty %}
 			{% endthumbnail %}
@@ -58,7 +58,7 @@
 	<div class="user-info">
 	    {% thumbnail user.avatar "32x32" crop="center" as im %}
 			<div class="user-box-avatar">
-		    	<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+		    	<img src="{{ im.url }}">
 		    </div>
 	    {% empty %}
 		{% endthumbnail %}
