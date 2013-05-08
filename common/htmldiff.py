@@ -27,7 +27,7 @@ def htmlEncode(s, esc=cgi.escape):
 commentRE = re.compile('<!--.*?-->', re.S)
 tagRE = re.compile('<script.*?>.*?</script>|<.*?>', re.S)
 headRE = re.compile('<\s*head\s*>', re.S | re.I)
-wsRE = re.compile('^([ \n\r\t]|&nbsp;)+$')
+wsRE = re.compile('^([ \n\r\t]|&nbsp;|<br />|<b>|</b>|<i>|</i>|<u>|</u>)+$')
 stopwords = ['I', 'a', 'about', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'have', 'how', 'in', 'is', 'it', 'of', 'on', 'or', 'that', 'the', 'this', 'to', 'was', 'what', 'when', 'where', 'who', 'will', 'with']
 
 # Note: Just returning false here gives a generally more accurate,
@@ -252,6 +252,54 @@ def simplehtmldiff(source1, source2):
         '-[<b>]+[<i>]<i> Hello -[world! ]-[</b>]+[you! ]+[</i>]</i> '
     """
     h = SimpleHTMLMatcher(source1, source2)
+    return h.htmlDiff()
+
+
+class NDiffMatcher(HTMLMatcher):
+    newline = '\n'
+    
+    def htmlDiff(self, addStylesheet=False):
+        opcodes = self.get_opcodes()
+        a = self.a
+        b = self.b
+        out = StringIO()
+        
+        for tag, i1, i2, j1, j2 in opcodes:
+            if tag == 'equal':
+                for item in a[i1:i2]:
+                    out.write("  "+item + NDiffMatcher.newline)
+            if tag == 'delete':
+                self.textDelete(a[i1:i2], out)
+            if tag == 'insert':
+                self.textInsert(b[j1:j2], out)
+            if tag == 'replace':
+                if (self.isInvisibleChange(a[i1:i2], b[j1:j2])):
+                    for item in b[j1:j2]:
+                        out.write("  "+item + NDiffMatcher.newline)
+                else:
+                    self.textDelete(a[i1:i2], out)
+                    self.textInsert(b[j1:j2], out)
+        html = out.getvalue()
+        out.close()
+        return html
+
+    def textDelete(self, lst, out):
+        for item in lst:
+            out.write("- "+item+NDiffMatcher.newline)
+    
+    def textInsert(self, lst, out):
+        for item in lst:
+            out.write("+ "+item+NDiffMatcher.newline)
+    
+
+def ndiffhtmldiff(source1, source2):
+    """
+    Simpler form of htmldiff; used for intern representation
+        >>> print ndiffhtmldiff('test1', 'test2')
+        - test1
+        + test2
+    """
+    h = NDiffMatcher(source1, source2)
     return h.htmlDiff()
 
 class TextMatcher(HTMLMatcher):

@@ -76,6 +76,7 @@ class Diff(models.Model):
     NORMAL = 2
     COMPLIANT = 3
     VERYCOMPLIANT = 4
+    FULLYAUTOMATIC = 5
 
     def __unicode__(self):
         nchanges = len([l for l in self.text_representation.split('\n') if l.startswith('+') or l.startswith('-')])
@@ -85,7 +86,8 @@ class Diff(models.Model):
     def generateDiff(originaltext, derivedtext):
         originaltext = FullDocument.cleanText(originaltext)
         derivedtext = FullDocument.cleanText(derivedtext)
-        diff = difflib.ndiff(originaltext.splitlines(1), derivedtext.splitlines(1))
+        from common.htmldiff import ndiffhtmldiff
+        diff = ndiffhtmldiff(originaltext, derivedtext)
         return Diff( text_representation=''.join(diff) )
     
     def getOriginalText(self):
@@ -103,6 +105,11 @@ class Diff(models.Model):
     def getNDiff(self):
         return self.text_representation
     
+    
+    
+    #TODO: we need a better way to deal with replacements.
+    # That is, deletions followed by insertions.
+    
     def applyDiffOnThisDiff(self, new_diff, safety=VERYSAFE):
         difflines = new_diff.text_representation.__str__().splitlines(1)
         newlines = self.text_representation.__str__().splitlines(1)
@@ -118,21 +125,32 @@ class Diff(models.Model):
                     if safety == self.VERYSAFE:
                         raise Exception('Conflicting removal')
                     else:
-                        pass #TODO
+                        #Actually they agree on removing the same line, not a problem
+                        pass
                 elif newlines[index].startswith('+ '):
                     if safety == self.VERYSAFE:
                         raise Exception('Conflicting removal with addition (very rare)')
                     else:
-                        pass #TODO
+                        #I want to remove a line, and somebody added it (again?)
+                        #Probably I still want to remove it, so remove it
+                        del newlines[index]
                 elif newlines[index].startswith('  '):
                     del newlines[index]
+                else:
+                    raise Exception('Bad start of a line in the new diff')
             elif diffline.startswith('+ '):
                 if newlines[index].startswith('+ '):
                     if safety == self.VERYSAFE:
                         raise Exception('Conflicting addition with another addition')
                     else:
-                        pass #TODO
-                else:
+                        #Actually they agree on adding the same line, not a problem
+                        pass
+                elif newlines[index].startswith('- '):
                     index+=1
                     newlines.insert(index,'  %s'%diffline[2:])
+                elif newlines[index].startswith('  '):
+                    index+=1
+                    newlines.insert(index,'  %s'%diffline[2:])
+                else:
+                    raise Exception('Bad start of a line in the new diff')
         return Diff(text_representation = ''.join(newlines))
