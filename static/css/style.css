@@ -138,13 +138,14 @@ section#content > header #header-title {
     width: 100%;
     font-family: "Dosis ExtraBold"; 
 	font-size: 100px;
+	line-height: 100px;
     padding-left: 50px;
 }
 
 section#content > header a {
 	color: inherit!important;
 	font-weight: normal!important;
-	text-decoration: none!important; 
+	text-decoration: none!important;
 }
 
 /* nav menu */
