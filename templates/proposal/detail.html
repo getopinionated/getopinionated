@@ -50,7 +50,7 @@
                 <span class="title">{{ proposal.title }}</span>
             </h1>
         </header>
-        {% usemacro sharingbuttons request.build_absolute_uri proposal.title "This interesting proposal for the program of the Pirate Party has been made on getOpinionated. Help us make the program of the Pirate Party a better program." %}
+        {% usemacro sharingbuttons request.build_absolute_uri proposal.title "This proposal for the Pirate Party program has been made on getOpinionated. Help us make the program of the Pirate Party a better program." %}
         <div class="diff">{{ proposal.diff|diffrender }}</div>
         <div class="motivation">
             <span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>

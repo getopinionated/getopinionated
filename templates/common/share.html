@@ -7,8 +7,8 @@
   src="{{STATIC_URL}}images/gplus-16.png" alt="Share on Google+"/></a>
 {% endmacro %}
 
-{% macro twitter url text%}
-<a href="https://twitter.com/intent/tweet?text={{text}}&url={{url}}" onclick="javascript:window.open(this.href,
+{% macro twitter url title%}
+<a href="https://twitter.com/intent/tweet?text={{title}}&url={{url}}" onclick="javascript:window.open(this.href,
   '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><img
   src="{{STATIC_URL}}images/twitter-16.png" alt="Share on Twitter"/></a>
 {% endmacro %}
@@ -27,7 +27,7 @@
 
 {% macro sharingbuttons url title text %}
 {% usemacro facebook url %}
-{% usemacro twitter url text %}
+{% usemacro twitter url title %}
 {% usemacro googleplus url %}
 {% usemacro linkedin url title text %}
 {% endmacro %}
