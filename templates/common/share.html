@@ -1,0 +1,33 @@
+{% load macros %}
+
+
+{% macro googleplus url %}
+<a href="https://plus.google.com/share?url={{url}}" onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><img
+  src="{{STATIC_URL}}images/gplus-16.png" alt="Share on Google+"/></a>
+{% endmacro %}
+
+{% macro twitter url text%}
+<a href="https://twitter.com/intent/tweet?text={{text}}: {{url}}&url={{url}}" onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><img
+  src="{{STATIC_URL}}images/twitter-16.png" alt="Share on Twitter"/></a>
+{% endmacro %}
+
+{% macro facebook url%}
+<a href="https://www.facebook.com/sharer/sharer.php?u={{url}}" onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><img
+  src="{{STATIC_URL}}images/facebook-16.png" alt="Share on Facebook"/></a>
+{% endmacro %}
+
+{% macro linkedin url title text%}
+<a href="http://www.linkedin.com/shareArticle?mini=true&url={{url}}&title={{title}}&summary={{text}} {{url}}" onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><img
+  src="{{STATIC_URL}}images/linkedin-16.png" alt="Share on LinkedIn"/></a>
+{% endmacro %}
+
+{% macro sharingbuttons url title text %}
+{% usemacro facebook url %}
+{% usemacro twitter url title %}
+{% usemacro googleplus url %}
+{% usemacro linkedin url title text %}
+{% endmacro %}
