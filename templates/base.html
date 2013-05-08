@@ -1,5 +1,9 @@
 {% load i18n %}
 {% load encrypt_email %}
+{% load call_with_args %}
+{% load macros %}
+{% loadmacros "common/comma.html" %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,7 +27,7 @@
                 <li><a href="{% url socialauth_begin "twitter" %}"><img src="{{STATIC_URL}}images/twitter-24.png" alt="twitter" /></a></li>
                 <li><a href="{% url socialauth_begin "google-oauth2" %}"><img src="{{STATIC_URL}}images/google-24.png" alt="google" /></a></li>
                 <li><a href="{% url socialauth_begin "linkedin" %}"><img src="{{STATIC_URL}}images/linkedin-24.png" alt="linkedin" /></a></li>
-                <li><a href="{% url socialauth_begin "eID" %}"><img src="{{STATIC_URL}}images/eID-32.png" alt="e-ID" /></a></li>
+                <li><a href="{% url socialauth_begin "eID" %}"><img src="{{STATIC_URL}}images/eid-24.png" alt="e-ID" /></a></li>
                 <li><a href="{% url user-register %}">Register</a></li>
             {% endif %}
             {% block menu %} {% endblock %}
@@ -33,9 +37,13 @@
                 <li><a href="{% url socialauth_begin "twitter" %}"><img src="{{STATIC_URL}}images/twitter-24.png" alt="twitter" /></a></li>
                 <li><a href="{% url socialauth_begin "google-oauth2" %}"><img src="{{STATIC_URL}}images/google-24.png" alt="google" /></a></li>
                 <li><a href="{% url socialauth_begin "linkedin" %}"><img src="{{STATIC_URL}}images/linkedin-24.png" alt="linkedin" /></a></li>
+                <li><a href="{% url socialauth_begin "eID" %}"><img src="{{STATIC_URL}}images/eid-24.png" alt="e-ID" /></a></li>
                 <li><a href="{% url profile-update %}">Profile</a></li>
                 <li><a href="{% url user-logout %}?next={{request.path|urlencode}}">Logout</a></li>
-                <li class="right">(logged in as {{user.display_name}})</li>
+                <li class="right">(logged in as {{user.display_name}} using 
+                {% for network in user.social_auth.all %}
+                	{{ network.provider }}{% usemacro comma %}
+                {% endfor %})</li>
             {% endif %}
         </ul>
     </nav>
