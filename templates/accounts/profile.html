@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% load filters %}
 {% load macros %}
+{% loadmacros "common/comma.html" %}
 {% loadmacros "proposal/proposal-macro.html" %}
 {% load thumbnail %}
+{% load humanize %}
 
 {% block title %}{% include "title.html" with subtitle=member.display_name subtitle2="'s profile" %}{% endblock %}
 
@@ -12,15 +14,44 @@
 
 {% block content %}
 
-	<h1>{{member.display_name}}'s Proposals</h1>
-	{% thumbnail member.avatar "128x128" crop="center" as im %}
-		<div class="profile-picture">
-	    	<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
-	    </div>
-    {% empty %}
-	{% endthumbnail %}
+	<h1>{{member.display_name}}</h1>
+	<div class="gravatar">
+		{% thumbnail member.avatar "128x128" crop="center" as im %}
+			<div class="profile-picture">
+		    	<img src="{{ im.url }}">
+		    </div>
+	    {% empty %}
+		{% endthumbnail %}
+		<div class="karma">
+			<span>{{member.karma}}</span>
+			karma
+		</div>
+	</div>
+	<div class="data">
+		<table>
+			<tbody>
+				<tr>
+					<th>visits</th>
+					<td>member for</td>
+					<td>{{member.member_since|timesince}}</td>
+				</tr>
+				<tr>
+					<th></th>
+					<td>last login</td>
+					<td>{{member.last_login|timesince}}</td>
+				</tr>
+			</tbody>
+			<tbody>
+				<tr>
+					<th>Stats</th>
+					<td>Profile views</td>
+					<td>{{member.profile_views}}</td>
+				</tr>
+		</table>
+	</div>
 	
     {% if proposal_list %}
+    	<h1>{{member.display_name}}'s proposals</h1>
         <ul>
         {% for proposal in proposal_list %}
         	<li>
@@ -31,5 +62,32 @@
     {% else %}
         <p>{{member.display_name}} made no proposals.</p>
     {% endif %}
+
+	{% if comment_list %}
+    	<h1>{{member.display_name}}'s comments</h1>
+        <ul>
+        {% for proposal in proposal_list %}
+        	<li>
+        		{% usemacro proposal-for-list proposal %}
+        	</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>{{member.display_name}} made no proposals.</p>
+    {% endif %}
+
+	{% if tag_list %}
+    	<h1>{{member.display_name}}'s comments</h1>
+        <ul>
+        {% for proposal in proposal_list %}
+        	<li>
+        		{% usemacro proposal-for-list proposal %}
+        	</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>{{member.display_name}} made no proposals.</p>
+    {% endif %}
+
 
 {% endblock %}

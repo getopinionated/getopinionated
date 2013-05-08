@@ -37,7 +37,8 @@
                 <li><a href="{% url socialauth_begin "google-oauth2" %}"><img src="{{STATIC_URL}}images/google-24.png" alt="google" /></a></li>
                 <li><a href="{% url socialauth_begin "linkedin" %}"><img src="{{STATIC_URL}}images/linkedin-24.png" alt="linkedin" /></a></li>
                 <li><a href="{% url socialauth_begin "eID" %}"><img src="{{STATIC_URL}}images/eid-24.png" alt="e-ID" /></a></li>
-                <li><a href="{% url profile-update %}">Profile</a></li>
+                <li><a href="{% url user-profile user.slug %}">Profile</a></li>
+                <li><a href="{% url profile-update %}">Account</a></li>
                 <li><a href="{% url user-logout %}?next={{request.path|urlencode}}">Logout</a></li>
                 <li class="right">(logged in as {{user.display_name}})</li>
             {% endif %}
