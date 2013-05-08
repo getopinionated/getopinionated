@@ -48,9 +48,11 @@
             <h1>
                 <span class="updownvote">{% usemacro updownvote proposal %}</span>
                 <span class="title">{{ proposal.title }}</span>
+                <span class="share">
+                	{% usemacro sharingbuttons request.build_absolute_uri proposal.title "This interesting proposal for the program of the Pirate Party has been made on getOpinionated. Help us make the program a better program." %}
+        		</span>
             </h1>
         </header>
-        {% usemacro sharingbuttons request.build_absolute_uri proposal.title "This interesting proposal for the program of the Pirate Party has been made on getOpinionated. Help us make the program a better program." %}
         <div class="diff">{{ proposal.diff|diffrender }}</div>
         <div class="motivation">
             <span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>

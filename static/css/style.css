@@ -437,3 +437,41 @@ form td {
     vertical-align: bottom;
 }
 
+.sharing{
+    vertical-align: middle;
+    font-weight: bold;
+    color: #444;
+    font-size: 24px;
+    line-height: 24px;
+    height: 24px;
+}
+
+.sharing img{
+	vertical-align: middle;
+}
+
+.minisharing{
+    vertical-align: middle;
+    font-weight: bold;
+    color: #444;
+    font-size: 16px;
+    line-height: 16px;
+    heigh: 16px;
+}
+
+.minisharing img{
+	vertical-align: middle;
+}
+
+.maxisharing{
+    vertical-align: middle;
+    font-weight: bold;
+    color: #444;
+    font-size: 32px;
+    height: 32px;
+    line-height: 32px;
+}
+
+.maxisharing img{
+	vertical-align: middle;
+}
