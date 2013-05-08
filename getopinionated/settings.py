@@ -109,6 +109,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 INSTALLED_APPS = (
+    'accounts',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -122,7 +123,6 @@ INSTALLED_APPS = (
     'django.contrib.redirects',
     'django.contrib.flatpages',
     'common',
-    'accounts',
 	'proposing',
     'document',
     'django.contrib.humanize',

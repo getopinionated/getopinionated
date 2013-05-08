@@ -19,7 +19,6 @@ sudo pip install fabric
 
 #install social-auth
 sudo pip install easy_install
-sudo easy_install django-social-auth
 
 #install open-id
 sudo apt-get install python-openid
