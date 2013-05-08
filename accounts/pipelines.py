@@ -23,8 +23,8 @@ def get_user_avatar(backend, details, response, social_user, uid,\
         from cStringIO import StringIO
         image = ImageObj.open(StringIO(imagedata))
         w, h = image.size
-        ##if not image.format in ["png","jpg","jpeg","gif","bmp"]:
-        #    return # bad file format
+        if not image.format in ["png","jpg","jpeg","gif","bmp"]:
+            return # bad file format
         #path = os.path.join(os.path.join(MEDIA_ROOT,'avatars'), user.slug + '.jpg')
         #image.save(path)
         #user.avatar = MEDIA_URL + 'avatars/' + user.slug + '.jpg'
