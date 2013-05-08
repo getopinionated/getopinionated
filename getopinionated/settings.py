@@ -97,7 +97,6 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 	os.path.join(SITE_ROOT, 'templates'),
-    os.path.join(SITE_ROOT, 'libs/share/templates'),
     os.path.join(SITE_ROOT, 'libs/debug_toolbar/templates')
 )
 
@@ -127,7 +126,6 @@ INSTALLED_APPS = (
     'document',
     'django.contrib.humanize',
     'libs.sorl.thumbnail',
-    'libs.share',
     'libs.debug_toolbar',
     'social_auth',
     # external apps
