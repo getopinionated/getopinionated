@@ -52,6 +52,7 @@ STATIC_URL = '/static/'
 # Additional locations of static files
 STATICFILES_DIRS = (
     os.path.join(SITE_ROOT, 'static'),
+    os.path.join(SITE_ROOT, 'libs/debug_toolbar/static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -81,6 +82,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'common.middleware.SSLRedirect',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'django.middleware.cache.UpdateCacheMiddleware',
     # "django.middleware.cache.FetchFromCacheMiddleware",
 )
@@ -95,7 +97,8 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 	os.path.join(SITE_ROOT, 'templates'),
-    os.path.join(SITE_ROOT, 'libs/share/templates')
+    os.path.join(SITE_ROOT, 'libs/share/templates'),
+    os.path.join(SITE_ROOT, 'libs/debug_toolbar/templates')
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -125,6 +128,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'libs.sorl.thumbnail',
     'libs.share',
+    'libs.debug_toolbar',
     'social_auth',
     # external apps
     'south'
@@ -201,8 +205,11 @@ from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
 TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     'django.core.context_processors.request',
 )
- 
 
+#####################################################################################
+# Mail settings
+#####################################################################################
+ 
 # favour django-mailer but fall back to django.core.mail
 if "mailer" in INSTALLED_APPS:
     from mailer import send_mail
@@ -211,6 +218,38 @@ else:
 
 MAILER_LOCKFILE = os.path.join(SITE_ROOT, 'send_mail.lock')
 MAILER_PAUSE_SEND = False
+
+#####################################################################################
+# Debug toobar settings
+#####################################################################################
+DEBUG_TOOLBAR_PANELS = (
+    'debug_toolbar.panels.version.VersionDebugPanel',
+    'debug_toolbar.panels.timer.TimerDebugPanel',
+    'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
+    'debug_toolbar.panels.headers.HeaderDebugPanel',
+    'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
+    'debug_toolbar.panels.template.TemplateDebugPanel',
+    'debug_toolbar.panels.sql.SQLDebugPanel',
+    'debug_toolbar.panels.signals.SignalDebugPanel',
+    'debug_toolbar.panels.logger.LoggingPanel',
+)
+
+def custom_show_toolbar(request):
+    return True  # Always show toolbar, for example purposes only.
+
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS': False,
+    'EXTRA_SIGNALS': [],
+    'HIDE_DJANGO_SQL': False,
+    'TAG': 'body',
+    'ENABLE_STACKTRACES' : True,
+}
+
+INTERNAL_IPS = ('127.0.0.1',)
+
+#####################################################################################
+# Social auth settings
+#####################################################################################
 
 SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.social.social_auth_user',
@@ -235,6 +274,7 @@ LOGIN_URL          = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/accounts/profile/'
 LOGIN_ERROR_URL    = '/accounts/login-error/'
 
+
 #SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/another-login-url/'
 
 #SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'
@@ -246,7 +286,8 @@ SOCIAL_AUTH_BACKEND_ERROR_URL = '/accounts/new-error-url/'
 
 #TODO: fix if needed?
 SOCIAL_AUTH_USER_MODEL = 'accounts.CustomUser'
-
+SOCIAL_AUTH_SLUGIFY_USERNAMES = True
+SOCIAL_AUTH_SESSION_EXPIRATION = False
 
 SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
 

@@ -34,8 +34,7 @@
 			    	<img src="{{ im.url }}">
 			    </div>
 		    {% empty %}
-		    what? {{ postinguser.avatar }}
-			{% endthumbnail %}
+		    {% endthumbnail %}
 			<div class="user-box-name">
 		    	<a href="{% url user-profile postinguser.slug %}">
 		    		{{postinguser.display_name}}
@@ -62,8 +61,7 @@
 		    	<img src="{{ im.url }}">
 		    </div>
 	    {% empty %}
-	    what? {{ postinguser.avatar }}
-		{% endthumbnail %}
+	    {% endthumbnail %}
 		<div class="user-box-name">
 	    	<a href="{% url user-profile user.slug %}">
 	    		{{user.display_name}}
