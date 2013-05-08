@@ -13,6 +13,12 @@ article.proposal header .updownvote {
     background-color: #777;
 }
 
+article.proposal header .share {
+	float:right;
+	vertical-align: top;
+    text-align: right;
+}
+
 article.proposal .comment .updownvote {
     font-size: 9px;
     background-color: #aaa;
