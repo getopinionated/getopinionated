@@ -287,6 +287,7 @@ SOCIAL_AUTH_BACKEND_ERROR_URL = '/accounts/new-error-url/'
 #TODO: fix if needed?
 SOCIAL_AUTH_USER_MODEL = 'accounts.CustomUser'
 SOCIAL_AUTH_SLUGIFY_USERNAMES = True
+SOCIAL_AUTH_UUID_LENGTH = 4 #random characters added when username already exists
 SOCIAL_AUTH_SESSION_EXPIRATION = False
 
 SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
