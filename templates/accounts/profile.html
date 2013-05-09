@@ -3,6 +3,7 @@
 {% load macros %}
 {% loadmacros "common/comma.html" %}
 {% loadmacros "proposal/proposal-macro.html" %}
+{% loadmacros "proposal/tag-macro.html" %}
 {% load thumbnail %}
 {% load humanize %}
 
@@ -50,44 +51,79 @@
 		</table>
 	</div>
 	
-    {% if proposal_list %}
-    	<h1>{{member.display_name}}'s proposals</h1>
-        <ul>
-        {% for proposal in proposal_list %}
-        	<li>
-        		{% usemacro proposal-for-list proposal %}
-        	</li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>{{member.display_name}} made no proposals.</p>
-    {% endif %}
-
-	{% if comment_list %}
-    	<h1>{{member.display_name}}'s comments</h1>
-        <ul>
-        {% for proposal in proposal_list %}
-        	<li>
-        		{% usemacro proposal-for-list proposal %}
-        	</li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>{{member.display_name}} made no proposals.</p>
-    {% endif %}
-
-	{% if tag_list %}
-    	<h1>{{member.display_name}}'s comments</h1>
-        <ul>
-        {% for proposal in proposal_list %}
-        	<li>
-        		{% usemacro proposal-for-list proposal %}
-        	</li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>{{member.display_name}} made no proposals.</p>
-    {% endif %}
-
+	{% block data %}
+	    {% if proposal_list %}
+	    	<div class="profile-proposal-list">
+		    	<h1>{{member.display_name}}'s proposals</h1>
+		        <ul>
+		        {% for proposal in proposal_list %}
+		        	<li>
+		        		{% usemacro proposal-for-list proposal %}
+		        	</li>
+		        {% endfor %}
+		        </ul>
+	        </div>
+	    {% else %}
+	        <p>{{member.display_name}} made no proposals.</p>
+	    {% endif %}
+	
+		{% if comment_list %}
+			<div class="profile-comment-list">
+		    	<h1>{{member.display_name}}'s comments</h1>
+		    	{% for comment in comment_list %}
+		        <table>
+		        	<tr>
+		        		<th>{{comment.upvote_score}}</th>
+		        		<td>{{comment.proposal.title}}</td>
+		        	</tr>
+		        </table>
+		        {% endfor %}
+	        </div>
+	    {% else %}
+	    {% endif %}
+	
+		{% if tag_list %}
+	    	<div class="tag-list">
+		    	<h1>{{member.display_name}}'s tags</h1>
+		        {% for tag in tag_list %}
+		        	<span>{{tag.1}} &#x2a2f; {% usemacro tag-small tag.0 %}{% usemacro comma %}</span>
+		        {% endfor %}
+	        </div>
+	    {% else %}
+	    {% endif %}
+	    
+	
+		{% if vote_list %}
+	    	<div class="vote-list">
+		    	<h1>{{member.display_name}}'s votes</h1>
+		        {% for vote in vote_list %}
+		        	<table>
+			        	<tr>
+			        		<th>{{vote.value}}</th>
+			        		<td>{{vote.numvotes}} votes</td>
+			        		<td>{{vote.proposal.title}}</td>
+			        	</tr>
+			        </table>
+		        {% endfor %}
+	        </div>
+	    {% else %}
+	    {% endif %}
+	
+	    
+		{% if proxy_list %}
+			<div class="proxy-list">
+		    	<h1>{{member.display_name}}'s votes through proxies</h1>
+		        {% for proxy in proxy_list %}
+		        	<table>
+			        	<tr>
+			        		<th>{{proxy.value}}</th>
+			        		<td>{{proxy.proposal.title}}</td>
+			        	</tr>
+			        </table>
+		        {% endfor %}
+	        </div>
+	    {% else %}
+	    {% endif %}
+	{% endblock %}
 
 {% endblock %}
