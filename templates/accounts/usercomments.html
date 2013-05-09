@@ -1,0 +1,22 @@
+{% extends "accounts/profile.html" %}
+{% load macros %}
+{% loadmacros "proposal/proposal-macro.html" %}
+
+{% block data %}
+	{% if comment_list %}
+		<div class="profile-comment-list">
+	    	<h1>{{member.display_name}}'s comments</h1>
+	    	{% for comment in comment_list %}
+	        <table>
+	        	<tr>
+	        		<th>{{comment.upvote_score}}</th>
+	        		<td>{{comment.proposal.title}}</td>
+	        	</tr>
+	        </table>
+	        {% endfor %}
+	        <a href="{% url user-comments member.slug %}">See all comments</a>
+        </div>
+    {% else %}
+    	<p>{{member.display_name}} made no comments.</p>
+    {% endif %}
+{% endblock %}

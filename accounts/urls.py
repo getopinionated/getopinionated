@@ -15,7 +15,7 @@ urlpatterns = patterns('accounts.views',
     url(r'^user/(?P<userslug>[-\w]+)/comments$', usercomments, name='user-comments'),
     url(r'^user/(?P<userslug>[-\w]+)/votes$', uservotes, name='user-votes'),
     url(r'^user/(?P<userslug>[-\w]+)/proxies$', userproxies, name='user-proxies'),
-    url(r'^user/(?P<userslug>[-\w]+)/proxies$', usertags, name='user-tags'),
+    url(r'^user/(?P<userslug>[-\w]+)/tags$', usertags, name='user-tags'),
     url(r'^user/(?P<userslug>[-\w]+)/proxy-votes$', userproxyvotes, name='user-proxy-votes'),
     
     url(r'^passwordreset/$', passwordreset, name='password-reset'),

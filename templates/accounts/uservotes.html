@@ -1,0 +1,23 @@
+{% extends "accounts/profile.html" %}
+{% load macros %}
+{% loadmacros "proposal/proposal-macro.html" %}
+
+{% block data %}
+	{% if vote_list %}
+    	<div class="profile-vote-list">
+	    	<h1>{{member.display_name}}'s votes</h1>
+	        {% for vote in vote_list %}
+	        	<table>
+		        	<tr>
+		        		<th>{{vote.value}}</th>
+		        		<td>{{vote.numvotes}} votes</td>
+		        		<td>{{vote.proposal.title}}</td>
+		        	</tr>
+		        </table>
+	        {% endfor %}
+	        <a href="{% url user-votes member.slug %}">See all votes</a>
+        </div>
+    {% else %}
+    	<p>{{member.display_name}} hasn't voted yet.</p>
+    {% endif %}
+{% endblock %}

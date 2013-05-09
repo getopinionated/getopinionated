@@ -72,7 +72,7 @@ def usercomments(request, userslug):
     member = get_object_or_404(CustomUser, slug=userslug)
     member.addView()
     
-    return render(request, 'accounts/profile.html', {
+    return render(request, 'accounts/usercomments.html', {
         'member': member,
         'comment_list': getusercomments(member),    
     })
@@ -82,7 +82,7 @@ def usertags(request, userslug):
     member = get_object_or_404(CustomUser, slug=userslug)
     member.addView()
     
-    return render(request, 'accounts/profile.html', {
+    return render(request, 'accounts/usertags.html', {
         'member': member,
         'tag_list': getusertags(member),    
     })
@@ -92,7 +92,7 @@ def uservotes(request, userslug):
     member = get_object_or_404(CustomUser, slug=userslug)
     member.addView()
     
-    return render(request, 'accounts/profile.html', {
+    return render(request, 'accounts/uservotes.html', {
         'member': member,
         'vote_list': getuservotes(member),    
     })
@@ -102,7 +102,7 @@ def userproxyvotes(request, userslug):
     member = get_object_or_404(CustomUser, slug=userslug)
     member.addView()
     
-    return render(request, 'accounts/profile.html', {
+    return render(request, 'accounts/userproxyvotes.html', {
         'member': member,
         'proxy_vote_list': getuserproxyvotes(member),
     })
@@ -112,7 +112,7 @@ def userproxies(request, userslug):
     member = get_object_or_404(CustomUser, slug=userslug)
     member.addView()
     
-    return render(request, 'accounts/profile.html', {
+    return render(request, 'accounts/userproxies.html', {
         'member': member,
         'proxy_list': getuserproxies(member),    
     })
