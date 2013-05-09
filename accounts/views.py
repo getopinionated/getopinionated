@@ -10,19 +10,33 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 
 from common.shortcuts import render_to_response
-from proposing.models import Proposal
+from proposing.models import Proposal, Comment, ProxyProposalVote, Tag
 from decorators import not_logged_in
 from forms import CustomUserCreationForm, ProfileUpdateForm, EmailAuthenticationForm
 from models import CustomUser
+from django.db.models.aggregates import Count
 
 def userprofile(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
     member.addView()
     proposal_list = Proposal.objects.filter(creator=member)
+    comment_list = Comment.objects.filter(creator=member)
+    vote_list = ProxyProposalVote.objects.filter(user=member,voted_self=True)
+    proxy_list = ProxyProposalVote.objects.filter(user=member,voted_self=False)
+    
+    prop_list = (proposal_list.all() | 
+                 Proposal.objects.filter(comments__creator=member)).distinct()
+    tag_id_list = prop_list.values('tags').annotate(count=Count('tags')).distinct().order_by('-count')
+    tag_list = [(Tag.objects.get(pk=item['tags']), item['count']) for item in tag_id_list]
+        
     return render(request, 'accounts/profile.html', {
         'member': member,
-        'proposal_list': proposal_list
+        'proposal_list': proposal_list,
+        'comment_list': comment_list,
+        'tag_list': tag_list,
+        'vote_list': vote_list,
+        'proxy_list': proxy_list,        
     })
 
 @not_logged_in
