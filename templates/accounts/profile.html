@@ -62,6 +62,7 @@
 		        	</li>
 		        {% endfor %}
 		        </ul>
+		        <a href="{% url user-proposals member.slug %}">See all proposals</a>
 	        </div>
 	    {% else %}
 	        <p>{{member.display_name}} made no proposals.</p>
@@ -78,23 +79,25 @@
 		        	</tr>
 		        </table>
 		        {% endfor %}
+		        <a href="{% url user-comments member.slug %}">See all comments</a>
 	        </div>
 	    {% else %}
 	    {% endif %}
 	
 		{% if tag_list %}
-	    	<div class="tag-list">
+	    	<div class="profile-tag-list">
 		    	<h1>{{member.display_name}}'s tags</h1>
 		        {% for tag in tag_list %}
 		        	<span>{{tag.1}} &#x2a2f; {% usemacro tag-small tag.0 %}{% usemacro comma %}</span>
 		        {% endfor %}
+		        <a href="{% url user-tags member.slug %}">See all tags</a>
 	        </div>
 	    {% else %}
 	    {% endif %}
 	    
 	
 		{% if vote_list %}
-	    	<div class="vote-list">
+	    	<div class="profile-vote-list">
 		    	<h1>{{member.display_name}}'s votes</h1>
 		        {% for vote in vote_list %}
 		        	<table>
@@ -105,15 +108,16 @@
 			        	</tr>
 			        </table>
 		        {% endfor %}
+		        <a href="{% url user-votes member.slug %}">See all votes</a>
 	        </div>
 	    {% else %}
 	    {% endif %}
 	
 	    
 		{% if proxy_list %}
-			<div class="proxy-list">
+			<div class="profile-proxy-vote-list">
 		    	<h1>{{member.display_name}}'s votes through proxies</h1>
-		        {% for proxy in proxy_list %}
+		        {% for proxy in proxy_vote_list %}
 		        	<table>
 			        	<tr>
 			        		<th>{{proxy.value}}</th>
@@ -121,6 +125,7 @@
 			        	</tr>
 			        </table>
 		        {% endfor %}
+		        <a href="{% url user-proxy-votes member.slug %}">See all votes the user made through proxies</a>
 	        </div>
 	    {% else %}
 	    {% endif %}

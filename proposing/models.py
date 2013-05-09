@@ -129,6 +129,7 @@ class Proposal(VotablePost):
     def number_of_comments(self):
         return self.comments.count()
 
+    @property
     def finishedVoting(self):
         return self.voting_stage == 'APPROVED' or self.voting_stage == 'REJECTED'
 
