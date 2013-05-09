@@ -1,0 +1,22 @@
+{% extends "accounts/profile.html" %}
+{% load macros %}
+{% loadmacros "proposal/proposal-macro.html" %}
+
+{% block data %}
+	{% if proxy_vote_list %}
+		<div class="profile-proxy-vote-list">
+	    	<h1>{{member.display_name}}'s votes through proxies</h1>
+	        {% for proxy in proxy_vote_list %}
+	        	<table>
+		        	<tr>
+		        		<th>{{proxy.value}}</th>
+		        		<td>{{proxy.proposal.title}}</td>
+		        	</tr>
+		        </table>
+	        {% endfor %}
+	        <a href="{% url user-proxy-votes member.slug %}">See all votes the user made through proxies</a>
+        </div>
+    {% else %}
+    	<p>{{member.display_name}} hasn't voted through proxies.</p>
+    {% endif %}
+{% endblock %}
