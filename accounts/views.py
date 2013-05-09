@@ -10,33 +10,111 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 
 from common.shortcuts import render_to_response
-from proposing.models import Proposal, Comment, ProxyProposalVote, Tag
+from proposing.models import Proposal, Comment, ProxyProposalVote, Tag, Proxy
 from decorators import not_logged_in
 from forms import CustomUserCreationForm, ProfileUpdateForm, EmailAuthenticationForm
 from models import CustomUser
 from django.db.models.aggregates import Count
 
+def getuserproposals(member):
+    return Proposal.objects.filter(creator=member)
+     
+def getusercomments(member):
+    return Comment.objects.filter(creator=member)
+
+def getuserproxies(member):
+    return Proxy.objects.filter(delegating=member).values('delegates').distinct()
+
+def getuservotes(member):
+    return ProxyProposalVote.objects.filter(user=member,voted_self=True)
+
+def getuserproxyvotes(member):
+    return ProxyProposalVote.objects.filter(user=member,voted_self=False)
+
+def getparticipatedproposals(member):
+    return (Proposal.objects.filter(creator=member) | 
+                 Proposal.objects.filter(comments__creator=member) | 
+                 Proposal.objects.filter(proposal_votes__user=member).exclude(voting_stage='VOTING') # don't leak votings in progress
+                 ).distinct()
+
+def getusertags(member):
+    tag_id_list = getparticipatedproposals(member).values('tags').annotate(count=Count('tags')).distinct().order_by('-count')
+    return [(Tag.objects.get(pk=item['tags']), item['count']) for item in tag_id_list]
+    
 def userprofile(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
     member.addView()
-    proposal_list = Proposal.objects.filter(creator=member)
-    comment_list = Comment.objects.filter(creator=member)
-    vote_list = ProxyProposalVote.objects.filter(user=member,voted_self=True)
-    proxy_list = ProxyProposalVote.objects.filter(user=member,voted_self=False)
     
-    prop_list = (proposal_list.all() | 
-                 Proposal.objects.filter(comments__creator=member)).distinct()
-    tag_id_list = prop_list.values('tags').annotate(count=Count('tags')).distinct().order_by('-count')
-    tag_list = [(Tag.objects.get(pk=item['tags']), item['count']) for item in tag_id_list]
-        
     return render(request, 'accounts/profile.html', {
         'member': member,
-        'proposal_list': proposal_list,
-        'comment_list': comment_list,
-        'tag_list': tag_list,
-        'vote_list': vote_list,
-        'proxy_list': proxy_list,        
+        'proposal_list': getuserproposals(member),
+        'comment_list': getusercomments(member),
+        'tag_list': getusertags(member),
+        'vote_list': getuservotes(member),
+        'proxy_list': getuserproxies(member),    
+        'proxy_vote_list': getuserproxyvotes(member),
+    })
+
+
+def userproposals(request, userslug):
+    # Initialize the form either fresh or with the appropriate POST data as the instance
+    member = get_object_or_404(CustomUser, slug=userslug)
+    member.addView()
+    
+    return render(request, 'accounts/userproposals.html', {
+        'member': member,
+        'proposal_list': getuserproposals(member)    
+    })
+
+def usercomments(request, userslug):
+    # Initialize the form either fresh or with the appropriate POST data as the instance
+    member = get_object_or_404(CustomUser, slug=userslug)
+    member.addView()
+    
+    return render(request, 'accounts/profile.html', {
+        'member': member,
+        'comment_list': getusercomments(member),    
+    })
+
+def usertags(request, userslug):
+    # Initialize the form either fresh or with the appropriate POST data as the instance
+    member = get_object_or_404(CustomUser, slug=userslug)
+    member.addView()
+    
+    return render(request, 'accounts/profile.html', {
+        'member': member,
+        'tag_list': getusertags(member),    
+    })
+
+def uservotes(request, userslug):
+    # Initialize the form either fresh or with the appropriate POST data as the instance
+    member = get_object_or_404(CustomUser, slug=userslug)
+    member.addView()
+    
+    return render(request, 'accounts/profile.html', {
+        'member': member,
+        'vote_list': getuservotes(member),    
+    })
+
+def userproxyvotes(request, userslug):
+    # Initialize the form either fresh or with the appropriate POST data as the instance
+    member = get_object_or_404(CustomUser, slug=userslug)
+    member.addView()
+    
+    return render(request, 'accounts/profile.html', {
+        'member': member,
+        'proxy_vote_list': getuserproxyvotes(member),
+    })
+
+def userproxies(request, userslug):
+    # Initialize the form either fresh or with the appropriate POST data as the instance
+    member = get_object_or_404(CustomUser, slug=userslug)
+    member.addView()
+    
+    return render(request, 'accounts/profile.html', {
+        'member': member,
+        'proxy_list': getuserproxies(member),    
     })
 
 @not_logged_in
