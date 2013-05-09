@@ -4,6 +4,7 @@ from django.template.defaultfilters import slugify
 from libs.sorl.thumbnail import ImageField
 from django import forms
 from getopinionated.settings import MEDIA_ROOT
+from django.utils.timezone import now
 
 class CustomUserManager(UserManager):
     def create_user(self, username, *args, **kwargs):
@@ -16,6 +17,8 @@ class CustomUser(User):
     slug = models.SlugField(unique=True)
     karma = models.IntegerField(default=0)
     avatar = ImageField(upload_to='avatars/')
+    member_since = models.DateTimeField(default=now())
+    profile_views = models.IntegerField(default=0)
     
     REQUIRED_FIELDS = ['username']
     
@@ -52,3 +55,13 @@ class CustomUser(User):
             if w > 750 or h > 750:
                 raise forms.ValidationError(u'That image is too big. The image needs to be 700x700px (or less).')
         return image
+    
+    def addView(self):
+        self.profile_views += 1
+        self.save()
+    
+    def canVote(self):
+        if 'eID' in self.social_auth.all.values('provider'):
+            return True
+        return False
+    

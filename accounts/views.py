@@ -18,6 +18,7 @@ from models import CustomUser
 def userprofile(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
+    member.addView()
     proposal_list = Proposal.objects.filter(creator=member)
     return render(request, 'accounts/profile.html', {
         'member': member,
