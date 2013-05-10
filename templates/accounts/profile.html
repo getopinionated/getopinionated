@@ -16,41 +16,43 @@
 {% block content %}
 
 	<h1>{{member.display_name}}</h1>
-	<div class="gravatar">
-		{% thumbnail member.avatar "128x128" crop="center" as im %}
-			<div class="profile-picture">
-		    	<img src="{{ im.url }}">
-		    </div>
-	    {% empty %}
-		{% endthumbnail %}
-		<div class="karma">
-			<span>{{member.karma}}</span>
-			karma
+	<div class="profile-header">
+		<div class="gravatar">
+			{% thumbnail member.avatar "128x128" crop="center" as im %}
+				<div class="profile-picture">
+			    	<img src="{{ im.url }}">
+			    </div>
+		    {% empty %}
+			{% endthumbnail %}
+			<div class="karma">
+				<span>{{member.karma}}</span>
+				karma
+			</div>
+		</div>
+		<div class="table">
+			<table>
+				<tbody>
+					<tr>
+						<th>visits</th>
+						<td>member for</td>
+						<td>{{member.member_since|timesince}}</td>
+					</tr>
+					<tr>
+						<th></th>
+						<td>last login</td>
+						<td>{{member.last_login|timesince}}</td>
+					</tr>
+				</tbody>
+				<tbody>
+					<tr>
+						<th>Stats</th>
+						<td>Profile views</td>
+						<td>{{member.profile_views}}</td>
+					</tr>
+			</table>
 		</div>
 	</div>
-	<div class="data">
-		<table>
-			<tbody>
-				<tr>
-					<th>visits</th>
-					<td>member for</td>
-					<td>{{member.member_since|timesince}}</td>
-				</tr>
-				<tr>
-					<th></th>
-					<td>last login</td>
-					<td>{{member.last_login|timesince}}</td>
-				</tr>
-			</tbody>
-			<tbody>
-				<tr>
-					<th>Stats</th>
-					<td>Profile views</td>
-					<td>{{member.profile_views}}</td>
-				</tr>
-		</table>
-	</div>
-	
+		
 	{% block data %}
 	    {% if proposal_list %}
 	    	<div class="profile-proposal-list">
