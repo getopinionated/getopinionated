@@ -8,7 +8,9 @@ from common.stringify import niceBigInteger
 from document.models import Diff
 from accounts.models import CustomUser
 from django.db.models.aggregates import Sum
+import logging
 
+logger = logging.getLogger(__name__)
 
 class VotablePost(models.Model):
     """ super-model for all votable models """
@@ -17,9 +19,8 @@ class VotablePost(models.Model):
 
     @property
     def upvote_score(self):
-        num_upvotes = self.up_down_votes.filter(is_up=True).count()
-        num_downvotes = self.up_down_votes.filter(is_up=False).count()
-        return num_upvotes - num_downvotes
+        v = VotablePost.objects.filter(pk=self.pk).aggregate(Sum('up_down_votes__value'))['up_down_votes__value__sum']
+        return v if v else 0 # v is None when no votes have been cast
 
     def updownvoteFromUser(self, user):
         if not user.is_authenticated():
@@ -41,7 +42,7 @@ class VotablePost(models.Model):
             return False
         vote = self.updownvoteFromUser(user)
         if vote != None:
-            return "up" if vote.is_up else "down"
+            return "up" if vote.value==1 else "down"
         return None
 
     def canPressUpvote(self, user):
@@ -66,7 +67,7 @@ class UpDownVote(models.Model):
     user = models.ForeignKey(CustomUser, related_name="up_down_votes")
     post = models.ForeignKey(VotablePost, related_name="up_down_votes")
     date = models.DateTimeField(auto_now=True)
-    is_up = models.BooleanField("True if this is an upvote")
+    value = models.IntegerField("+1 or -1")
 
 class Tag(models.Model):
     name = models.CharField(max_length=35)
