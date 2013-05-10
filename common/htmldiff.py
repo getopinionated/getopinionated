@@ -27,7 +27,7 @@ def htmlEncode(s, esc=cgi.escape):
 commentRE = re.compile('<!--.*?-->', re.S)
 tagRE = re.compile('<script.*?>.*?</script>|<.*?>', re.S)
 headRE = re.compile('<\s*head\s*>', re.S | re.I)
-wsRE = re.compile('^([ \n\r\t]|&nbsp;|<br />|<b>|</b>|<i>|</i>|<u>|</u>)+$')
+wsRE = re.compile('^([ \n\r\t]|&nbsp;|<.*?>)+$')
 stopwords = ['I', 'a', 'about', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'have', 'how', 'in', 'is', 'it', 'of', 'on', 'or', 'that', 'the', 'this', 'to', 'was', 'what', 'when', 'where', 'who', 'will', 'with']
 
 # Note: Just returning false here gives a generally more accurate,
