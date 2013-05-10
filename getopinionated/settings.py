@@ -320,3 +320,11 @@ if DEBUG:
             raise TemplateSyntaxError(
                 "Undefined variable or unknown value for: \"%s\"" % other)
     TEMPLATE_STRING_IF_INVALID = InvalidString("%s")
+
+import logging
+#helps by logging to console
+if DEBUG:
+    logging.basicConfig(
+        level = logging.INFO,
+        format = '%(asctime)s %(levelname)s %(message)s',
+    )
