@@ -10,6 +10,9 @@ from common.forms import FocussingModelForm
 from models import CustomUser
 import libs.sorl.thumbnail.fields
 from libs.sorl.thumbnail.shortcuts import get_thumbnail
+from proposing.fields import TagChoiceField
+from proposing.models import Proxy, Tag
+from proposing.widgets import TagSelectorWidget
 
 error_messages = {
     'duplicate_username': _("A user with that username already exists."),
@@ -100,3 +103,37 @@ class ProfileUpdateForm(FocussingModelForm):
 class EmailAuthenticationForm(AuthenticationForm):
     username = forms.CharField(label=_("Email address or username"), max_length=30,
         widget=forms.TextInput(attrs={'autofocus': 'autofocus'})) # forus on page-load (html5)
+
+
+class SingleProxyForm(forms.Form):
+    
+    def __init__(self, delegating, delegate, *args, **kwargs):
+        self.user = delegating
+        self.delegate=delegate
+        super(SingleProxyForm, self).__init__(*args, **kwargs)        
+        proxies = Proxy.objects.all().filter(delegating__pk__exact=delegating.pk, delegates=delegate, isdefault=False)
+        tagset = Tag.objects.all()
+        initialtags = Tag.objects.all().filter(pk__in=proxies.values('tags'))
+        tagfield = TagChoiceField(queryset=tagset, widget=TagSelectorWidget(), initial=initialtags)
+        self.fields["profile_proxy_tags"] = tagfield
+        
+    def save(self):
+        # TODO: remove and create more intelligently, not to fuck up the proxy-form of the delegating
+        ## create diff
+        ## remove old proxies for this delegate
+        proxies = Proxy.objects.filter(delegating=self.user, delegates=self.delegate, isdefault=False)
+        for proxy in proxies:
+            proxy.delegates.remove(self.delegate)
+            if not proxy.delegates.exists():
+                proxy.delete()
+        
+        # create a single new proxy for this delegate
+        newproxy = Proxy(delegating=self.user, isdefault=False)
+        newproxy.save()
+        newproxy.delegates.add(self.delegate)
+        if 'profile_proxy_tags' in self.data.keys():
+            for tag in self.data.getlist('profile_proxy_tags'):
+                tag_object = Tag.objects.get(pk=tag)
+                newproxy.tags.add(tag_object)
+        newproxy.save()
+        return

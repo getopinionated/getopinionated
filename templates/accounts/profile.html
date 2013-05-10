@@ -11,126 +11,162 @@
 
 {% block extrastyle %}
     <link rel="stylesheet" href="{{STATIC_URL}}css/profile.css" type="text/css" charset="utf-8" />
+    <link rel="stylesheet" href="{{STATIC_URL}}css/proxy.css" type="text/css" charset="utf-8" />
+    {% if proxyform %}
+    	{{ proxyform.media }}
+    {% endif %}
 {% endblock %}
 
 {% block content %}
-
-	<h1>{{member.display_name}}</h1>
-	<div class="profile-header">
-		<div class="gravatar">
-			{% thumbnail member.avatar "128x128" crop="center" as im %}
-				<div class="profile-picture">
-			    	<img src="{{ im.url }}">
-			    </div>
-		    {% empty %}
-			{% endthumbnail %}
-			<div class="karma">
-				<span>{{member.karma}}</span>
-				karma
+	<div class="profile">
+		<h1>{{member.display_name}}</h1>
+		<div class="profile-header">
+			<div class="gravatar">
+				{% thumbnail member.avatar "128x128" crop="center" as im %}
+					<div class="profile-picture">
+				    	<img src="{{ im.url }}">
+				    </div>
+			    {% empty %}
+				{% endthumbnail %}
+				<div class="karma">
+					<span>{{member.karma}}</span>
+					karma
+				</div>
 			</div>
+			<div class="table">
+				<table>
+					<tbody>
+						<tr>
+							<th>visits</th>
+							<td>member for</td>
+							<td>{{member.member_since|timesince}}</td>
+						</tr>
+						<tr>
+							<th></th>
+							<td>last login</td>
+							<td>{{member.last_login|timesince}}</td>
+						</tr>
+					</tbody>
+					<tbody>
+						<tr>
+							<th>Stats</th>
+							<td>Profile views</td>
+							<td>{{member.profile_views}}</td>
+						</tr>
+				</table>
+			</div>
+			{% if proxyform %}
+				<form action="{{ request.build_absolute_uri }}" method="POST" class="profileproxyform">
+					{% csrf_token %}
+					I proxy my votes to {{member.display_name}} for the tags:<br /> 
+					{{proxyform.profile_proxy_tags}}
+					<input type="submit" id="submitButton" value="Save your proxies" />
+				</form>
+			{% endif %}
 		</div>
-		<div class="table">
-			<table>
-				<tbody>
-					<tr>
-						<th>visits</th>
-						<td>member for</td>
-						<td>{{member.member_since|timesince}}</td>
-					</tr>
-					<tr>
-						<th></th>
-						<td>last login</td>
-						<td>{{member.last_login|timesince}}</td>
-					</tr>
-				</tbody>
-				<tbody>
-					<tr>
-						<th>Stats</th>
-						<td>Profile views</td>
-						<td>{{member.profile_views}}</td>
-					</tr>
-			</table>
-		</div>
-	</div>
+			
+		{% block data %}
+		    {% if proposal_list %}
+		    	<div class="profile-proposal-list">
+			    	<h1>{{member.display_name}}'s proposals</h1>
+			        <ul>
+			        {% for proposal in proposal_list %}
+			        	<li>
+			        		{% usemacro proposal-for-list proposal %}
+			        	</li>
+			        {% endfor %}
+			        </ul>
+			        <a href="{% url user-proposals member.slug %}">See all proposals</a>
+		        </div>
+		    {% else %}
+		    {% endif %}
 		
-	{% block data %}
-	    {% if proposal_list %}
-	    	<div class="profile-proposal-list">
-		    	<h1>{{member.display_name}}'s proposals</h1>
-		        <ul>
-		        {% for proposal in proposal_list %}
-		        	<li>
-		        		{% usemacro proposal-for-list proposal %}
-		        	</li>
-		        {% endfor %}
-		        </ul>
-		        <a href="{% url user-proposals member.slug %}">See all proposals</a>
-	        </div>
-	    {% else %}
-	        <p>{{member.display_name}} made no proposals.</p>
-	    {% endif %}
-	
-		{% if comment_list %}
-			<div class="profile-comment-list">
-		    	<h1>{{member.display_name}}'s comments</h1>
-		    	{% for comment in comment_list %}
-		        <table>
-		        	<tr>
-		        		<th>{{comment.upvote_score}}</th>
-		        		<td>{{comment.proposal.title}}</td>
-		        	</tr>
-		        </table>
-		        {% endfor %}
+			{% if pos_comment_list or neutr_comment_list or neg_comment_list %}
+				<div class="profile-comment-list">
+			    	<h1>{{member.display_name}}'s comments</h1>
+			    	<div class="positive">
+			    		<h2>Positive</h2>
+				    	<table class="comment-list">
+					    	{% for comment in pos_comment_list %}
+					        	<tr>
+					        		<th>{{comment.upvote_score}}</th>
+					        		<td>{{comment.proposal.title}}</td>
+					        	</tr>
+					        {% endfor %}
+				        </table>
+				    </div>
+				    <div class="neutral">
+				    	<h2>Neutral</h2>
+				    	<table class="comment-list">
+					    	{% for comment in neutr_comment_list %}
+					        	<tr>
+					        		<th>{{comment.upvote_score}}</th>
+					        		<td>{{comment.proposal.title}}</td>
+					        	</tr>
+					        {% endfor %}
+				        </table>
+				    </div>
+				    <div class="negative">
+				    	<h2>Negative</h2>
+				    	<table class="comment-list">
+					    	{% for comment in neg_comment_list %}
+					        	<tr>
+					        		<th>{{comment.upvote_score}}</th>
+					        		<td>{{comment.proposal.title}}</td>
+					        	</tr>
+					        {% endfor %}
+				        </table>
+				    </div>		     
+		        </div>
 		        <a href="{% url user-comments member.slug %}">See all comments</a>
-	        </div>
-	    {% else %}
-	    {% endif %}
-	
-		{% if tag_list %}
-	    	<div class="profile-tag-list">
-		    	<h1>{{member.display_name}}'s tags</h1>
-		        {% for tag in tag_list %}
-		        	<span>{{tag.1}} &#x2a2f; {% usemacro tag-small tag.0 %}{% usemacro comma %}</span>
-		        {% endfor %}
-		        <a href="{% url user-tags member.slug %}">See all tags</a>
-	        </div>
-	    {% else %}
-	    {% endif %}
-	    
-	
-		{% if vote_list %}
-	    	<div class="profile-vote-list">
-		    	<h1>{{member.display_name}}'s votes</h1>
-		        {% for vote in vote_list %}
-		        	<table>
-			        	<tr>
-			        		<th>{{vote.value}}</th>
-			        		<td>{{vote.numvotes}} votes</td>
-			        		<td>{{vote.proposal.title}}</td>
-			        	</tr>
-			        </table>
-		        {% endfor %}
-		        <a href="{% url user-votes member.slug %}">See all votes</a>
-	        </div>
-	    {% else %}
-	    {% endif %}
-	
-	    
-		{% if proxy_vote_list %}
-			<div class="profile-proxy-vote-list">
-		    	<h1>{{member.display_name}}'s votes through proxies</h1>
-		        {% for proxy in proxy_vote_list %}
-		        	<table>
-			        	<tr>
-			        		<th>{{proxy.value}}</th>
-			        		<td>{{proxy.proposal.title}}</td>
-			        	</tr>
-			        </table>
-		        {% endfor %}
-		        <a href="{% url user-proxy-votes member.slug %}">See all votes the user made through proxies</a>
-	        </div>
-	    {% else %}
-	    {% endif %}
-	{% endblock %}
-
+		    {% else %}
+		    {% endif %}
+		
+			{% if tag_list %}
+		    	<div class="profile-tag-list">
+			    	<h1>{{member.display_name}}'s tags</h1>
+			        {% for tag in tag_list %}
+			        	<span>{{tag.1}} &#x2a2f; {% usemacro tag-small tag.0 %}{% usemacro comma %}</span>
+			        {% endfor %}
+			        <a href="{% url user-tags member.slug %}">See all tags</a>
+		        </div>
+		    {% else %}
+		    {% endif %}
+		    
+		
+			{% if vote_list %}
+		    	<div class="profile-vote-list">
+			    	<h1>{{member.display_name}}'s votes</h1>
+			        {% for vote in vote_list %}
+			        	<table>
+				        	<tr>
+				        		<th>{{vote.value}}</th>
+				        		<td>{{vote.numvotes}} votes</td>
+				        		<td>{{vote.proposal.title}}</td>
+				        	</tr>
+				        </table>
+			        {% endfor %}
+			        <a href="{% url user-votes member.slug %}">See all votes</a>
+		        </div>
+		    {% else %}
+		    {% endif %}
+		
+		    
+			{% if proxy_vote_list %}
+				<div class="profile-proxy-vote-list">
+			    	<h1>{{member.display_name}}'s votes through proxies</h1>
+			        {% for proxy in proxy_vote_list %}
+			        	<table>
+				        	<tr>
+				        		<th>{{proxy.value}}</th>
+				        		<td>{{proxy.proposal.title}}</td>
+				        	</tr>
+				        </table>
+			        {% endfor %}
+			        <a href="{% url user-proxy-votes member.slug %}">See all votes the user made through proxies</a>
+		        </div>
+		    {% else %}
+		    {% endif %}
+		{% endblock %}
+	</div>
 {% endblock %}

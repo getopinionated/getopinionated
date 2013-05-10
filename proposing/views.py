@@ -140,7 +140,7 @@ def vote(request, proposal_slug, post_id, updown):
     vote = UpDownVote(
         user = user,
         post = post,
-        is_up = (updown == 'up'),
+        value = (+1 if (updown == 'up') else -1),
     )
     vote.save()
     # redirect
