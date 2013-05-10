@@ -14,13 +14,20 @@ from proposing.models import Proposal, Comment, ProxyProposalVote, Tag, Proxy
 from decorators import not_logged_in
 from forms import CustomUserCreationForm, ProfileUpdateForm, EmailAuthenticationForm
 from models import CustomUser
-from django.db.models.aggregates import Count
+from django.db.models.aggregates import Count, Sum
+from accounts.forms import SingleProxyForm
 
 def getuserproposals(member):
     return Proposal.objects.filter(creator=member)
      
-def getusercomments(member):
-    return Comment.objects.filter(creator=member)
+def getpositiveusercomments(member):
+    return Comment.objects.filter(creator=member, color='POS').annotate(score=Sum('up_down_votes__value')).order_by('score')
+
+def getnegativeusercomments(member):
+    return Comment.objects.filter(creator=member, color='NEG').annotate(score=Sum('up_down_votes__value')).order_by('score')
+
+def getneutralusercomments(member):
+    return Comment.objects.filter(creator=member, color='NEUTR').annotate(score=Sum('up_down_votes__value')).order_by('score')
 
 def getuserproxies(member):
     return Proxy.objects.filter(delegating=member).values('delegates').distinct()
@@ -33,9 +40,9 @@ def getuserproxyvotes(member):
 
 def getparticipatedproposals(member):
     return (Proposal.objects.filter(creator=member) | 
-                 Proposal.objects.filter(comments__creator=member) | 
-                 Proposal.objects.filter(proposal_votes__user=member).exclude(voting_stage='VOTING') # don't leak votings in progress
-                 ).distinct()
+             Proposal.objects.filter(comments__creator=member) | 
+             Proposal.objects.filter(proposal_votes__user=member).exclude(voting_stage='VOTING') # don't leak votings in progress
+             ).distinct('pk')
 
 def getusertags(member):
     tag_id_list = getparticipatedproposals(member).values('tags').annotate(count=Count('tags')).distinct().order_by('-count')
@@ -46,14 +53,25 @@ def userprofile(request, userslug):
     member = get_object_or_404(CustomUser, slug=userslug)
     member.addView()
     
+    if request.user.is_authenticated() and not request.user.pk==member.pk:
+        if request.method == 'POST':
+            proxyform = SingleProxyForm(request.user, member, request.POST)
+            proxyform.save()
+        else:
+            proxyform = SingleProxyForm(request.user, member)
+    else:
+        proxyform = None
     return render(request, 'accounts/profile.html', {
         'member': member,
         'proposal_list': getuserproposals(member),
-        'comment_list': getusercomments(member),
+        'pos_comment_list': getpositiveusercomments(member),
+        'neutr_comment_list': getneutralusercomments(member),
+        'neg_comment_list': getnegativeusercomments(member),
         'tag_list': getusertags(member),
         'vote_list': getuservotes(member),
         'proxy_list': getuserproxies(member),    
         'proxy_vote_list': getuserproxyvotes(member),
+        'proxyform': proxyform
     })
 
 
@@ -74,7 +92,7 @@ def usercomments(request, userslug):
     
     return render(request, 'accounts/usercomments.html', {
         'member': member,
-        'comment_list': getusercomments(member),    
+        'comment_list': getnegativeusercomments(member),    
     })
 
 def usertags(request, userslug):

@@ -1,10 +1,22 @@
-.profile-header { 
+html, body
+{
+  height:100%;
+}
+
+.profile-header {
 	width: 100%;
 	height: 200px;
 }
 
+.profile h1 {
+	padding-top: 3ex;
+	margin-bottom: 6px;
+	border-bottom: 3px #777 solid;
+}
+
 .gravatar {
 	display: inline-block;
+	vertical-align: top;
 	height: 100%;
 	width: 200px;
 }
@@ -16,6 +28,7 @@
 
 .table {
 	display: inline-block;
+	vertical-align: top;
 }
 
 .table th{
@@ -30,4 +43,55 @@
 }
 .table tbody{
 	padding: 0px 0px 30px 0px;
+}
+
+.profileproxyform{
+	display: inline-block;
+}
+
+.comment-list th{
+	color: #333;
+}
+
+.comment-list th{
+	color: #fff;
+	background: #333;
+	height: 4ex;
+	width: 4ex;
+}
+
+.comment-list tr{
+	padding-bottom: 1ex;
+}
+
+.comment-list td{
+	padding-left: 2ex;
+	text-overflow: ellipsis;
+}
+
+.positive{
+	width: 325px;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	background: #dfd;
+	display: table-cell;
+}
+
+.neutral{
+	width: 325px;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	background: #fff;
+	display: table-cell;
+}
+
+.negative{
+	width: 325px;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	background: #fdd;
+	display: table-cell;
 }
