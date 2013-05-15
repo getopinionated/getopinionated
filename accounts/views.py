@@ -18,7 +18,7 @@ from django.db.models.aggregates import Count, Sum
 from accounts.forms import SingleProxyForm
 
 def getuserproposals(member):
-    return Proposal.objects.filter(creator=member)
+    return Proposal.objects.filter(creator=member).annotate(score=Sum('up_down_votes__value')).order_by('score')
      
 def getpositiveusercomments(member):
     return Comment.objects.filter(creator=member, color='POS').annotate(score=Sum('up_down_votes__value')).order_by('score')
