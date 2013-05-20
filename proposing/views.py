@@ -110,7 +110,7 @@ def proxy(request):
 @login_required
 def listofvoters(request, proposal_slug):
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
-    if not proposal.finishedVoting():
+    if not proposal.finishedVoting:
         raise Exception('Hacking attempt by {}'.format(request.user))
     return render(request, 'proposal/listofvoters.html', {
         'proposal': proposal,

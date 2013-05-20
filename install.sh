@@ -19,8 +19,7 @@ sudo pip install south
 #sudo pip install easy_install
 
 #install open-id
-sudo apt-get install python-openid
-sudo apt-get install python-oauth2
+sudo apt-get install python-openid python-oauth2
 
 #set up cron to update everything every 5 minutes
 
