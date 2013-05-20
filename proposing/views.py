@@ -42,9 +42,9 @@ def detail(request, proposal_slug):
                 return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
         else:
             commentform = CommentForm()
-    if proposal.voting_stage in ['APPROVED', 'REJECTED', 'EXPIRED']:
+    if request.user.is_authenticated() and proposal.voting_stage in ['APPROVED', 'REJECTED', 'EXPIRED']:
         try:
-            proxyvote = ProxyProposalVote.objects.get(user=request.user,proposal=proposal)
+            proxyvote = ProxyProposalVote.objects.get(user=request.user, proposal=proposal)
         except ProxyProposalVote.DoesNotExist:
             proxyvote = None
     else:
