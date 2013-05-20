@@ -4,10 +4,27 @@ from django.utils import timezone
 from proposing.models import Proposal, ProxyProposalVote, Proxy, Tag
 import datetime
 
+def concurrent():
+    import sys
+    import time
+    import fcntl
+    file_path = './manage.py'
+    file_handle = open(file_path, 'w')
+    try:
+        fcntl.lockf(file_handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        return False
+    
+    except IOError:
+        return True
+
 class Command(NoArgsCommand):
     help = 'Check all proposals and move the proposals which fit the conditions to the next round'
 
     def handle_noargs(self, *args, **kwargs):
+        # don't run a concurrent script twice
+        if concurrent():
+            return        
+        
         voting_cnt = 0
         finished_cnt = 0
         expired_cnt = 0
