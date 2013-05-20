@@ -116,33 +116,24 @@ nav#top ul a {
 }
 
 section#content > header {
-    max-width: 1024px;
+    width: 1024px;
     margin: 0 auto;
-    display: flex;
-    display: -webkit-flex;
-    display: -moz-flex;
 }
 
 section#content > header div {
-    display: box;
-    display: -webkit-box;
-    display: -moz-box;
+	display: inline-block;
+	vertical-align: top;
+	overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 section#content > header #header-logo {
-    box-flex: 0;
-    -webkit-box-flex: 0;
-    -moz-box-flex: 0;
+	height: 150px;
 }
 
 section#content > header #header-title {
-    box-flex: 1;
-    -webkit-box-flex: 1;
-    -moz-box-flex: 1;
-    width: 100%;
     font-family: "Dosis ExtraBold"; 
 	font-size: 100px;
-	line-height: 100px;
     padding-left: 50px;
 }
 
@@ -203,6 +194,7 @@ ul.messages li.error {
     margin: 0 auto;
     padding: 8px 0;
     color: #333;
+    width: 1024px;
 }
 
 /* main general content */
