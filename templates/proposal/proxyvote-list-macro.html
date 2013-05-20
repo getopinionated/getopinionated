@@ -1,0 +1,40 @@
+{% load macros %}
+
+{% macro proxyvote-list-macro pos_proxy_vote_list neutr_proxy_vote_list neg_proxy_vote_list %}
+    <div class="positive">
+         <h2>Positive</h2>
+         <table class="vote-list">
+             {% for vote in pos_proxy_vote_list %}
+                 <tr>
+                     <th>{{vote.value}}<p class="tiny-text">voted</p></th>
+                     <th>{{vote.numvotes}}<p class="tiny-text">votes</p></th>
+                     <td><a href="{% url proposals-detail vote.proposal.slug %}">{{vote.proposal.title}}</a></td>
+                 </tr>
+             {% endfor %}
+         </table>
+     </div>
+     <div class="neutral">
+         <h2>Neutral</h2>
+         <table class="vote-list">
+             {% for vote in neutr_proxy_vote_list %}
+                 <tr>
+                     <th>{{vote.value}}<p class="tiny-text">voted</p></th>
+                     <th>{{vote.numvotes}}<p class="tiny-text">votes</p></th>
+                     <td><a href="{% url proposals-detail vote.proposal.slug %}">{{vote.proposal.title}}</a></td>
+                 </tr>
+             {% endfor %}
+         </table>
+     </div>
+     <div class="negative">
+         <h2>Negative</h2>
+         <table class="vote-list">
+             {% for vote in neg_proxy_vote_list %}
+                 <tr>
+                     <th>{{vote.value}}<p class="tiny-text">voted</p></th>
+                     <th>{{vote.numvotes}}<p class="tiny-text">votes</p></th>
+                     <td><a href="{% url proposals-detail vote.proposal.slug %}">{{vote.proposal.title}}</a></td>
+                 </tr>
+             {% endfor %}
+         </table>
+     </div>      
+{% endmacro %}

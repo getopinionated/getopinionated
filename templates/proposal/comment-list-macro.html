@@ -1,0 +1,39 @@
+{% load macros %}
+
+{% macro comment-list-macro pos_comment_list neutr_comment_list neg_comment_list %}
+    <div class="positive">
+         <h2>Positive</h2>
+         <table class="comment-list">
+             {% for comment in pos_comment_list %}
+                 <tr>
+                     <th>{{comment.upvote_score}}<p class="tiny-text">upvote</p></th>
+                     <td><a href="{% url proposals-detail comment.proposal.slug %}">{{comment.proposal.title}}</a></td>
+                 </tr>
+             {% endfor %}
+         </table>
+     </div>
+     <div class="neutral">
+         <h2>Neutral</h2>
+         <table class="comment-list">
+             {% for comment in neutr_comment_list %}
+                 <tr>
+                     <th>{{comment.upvote_score}}<p class="tiny-text">upvote</p></th>                                    
+                     <td><a href="{% url proposals-detail comment.proposal.slug %}">{{comment.proposal.title}}</a></td>
+                 </tr>
+             {% endfor %}
+         </table>
+     </div>
+     <div class="negative">
+         <h2>Negative</h2>
+         <table class="comment-list">
+             {% for comment in neg_comment_list %}
+                 <a href="{% url proposals-detail comment.proposal.slug %}">
+                     <tr>
+                         <th>{{comment.upvote_score}}<p class="tiny-text">upvote</p></th>
+                         <td><a href="{% url proposals-detail comment.proposal.slug %}">{{comment.proposal.title}}</a></td>
+                     </tr>
+                 </a>
+             {% endfor %}
+         </table>
+     </div>
+{% endmacro %}

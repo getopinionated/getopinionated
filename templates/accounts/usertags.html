@@ -1,19 +1,15 @@
 {% extends "accounts/profile.html" %}
 {% load macros %}
-{% loadmacros "proposal/proposal-macro.html" %}
-{% loadmacros "proposal/tag-macro.html" %}
-{% loadmacros "common/comma.html" %}
+{% loadmacros "proposal/tag-list-macro.html" %}
 
 {% block data %}
 	{% if tag_list %}
-    	<div class="profile-tag-list">
-	    	<h1>{{member.display_name}}'s tags</h1>
-	        {% for tag in tag_list %}
-	        	<span>{{tag.1}} &#x2a2f; {% usemacro tag-small tag.0 %}{% usemacro comma %}</span>
-	        {% endfor %}
-	        <a href="{% url user-tags member.slug %}">See all tags</a>
+        <div class="profile-tag-list">
+            <h1>{{member.display_name}}'s tags</h1>
         </div>
+        {% usemacro tag-list-macro tag_list %}
+        <a href="{% url user-tags member.slug %}">See all tags</a>
     {% else %}
-        <p>{{member.display_name}} hasn't been involved in any tags.</p>
+    <p>{{member.display_name}} hasn't been involved in any tags.</p>
     {% endif %}
 {% endblock %}

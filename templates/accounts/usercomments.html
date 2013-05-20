@@ -1,20 +1,12 @@
 {% extends "accounts/profile.html" %}
 {% load macros %}
-{% loadmacros "proposal/proposal-macro.html" %}
+{% loadmacros "proposal/comment-list-macro.html" %}
 
 {% block data %}
-	{% if comment_list %}
-		<div class="profile-comment-list">
-	    	<h1>{{member.display_name}}'s comments</h1>
-	    	{% for comment in comment_list %}
-	        <table>
-	        	<tr>
-	        		<th>{{comment.upvote_score}}</th>
-	        		<td>{{comment.proposal.title}}</td>
-	        	</tr>
-	        </table>
-	        {% endfor %}
-	        <a href="{% url user-comments member.slug %}">See all comments</a>
+    <h1>{{member.display_name}}'s comments</h1>
+	{% if pos_comment_list or neutr_comment_list or neg_comment_list %}
+        <div class="profile-comment-list">
+            {% usemacro comment-list-macro pos_comment_list neutr_comment_list neg_comment_list %}       
         </div>
     {% else %}
     	<p>{{member.display_name}} made no comments.</p>

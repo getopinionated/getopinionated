@@ -1,21 +1,12 @@
 {% extends "accounts/profile.html" %}
 {% load macros %}
-{% loadmacros "proposal/proposal-macro.html" %}
+{% loadmacros "proposal/vote-list-macro.html" %}
 
 {% block data %}
-	{% if vote_list %}
-    	<div class="profile-vote-list">
-	    	<h1>{{member.display_name}}'s votes</h1>
-	        {% for vote in vote_list %}
-	        	<table>
-		        	<tr>
-		        		<th>{{vote.value}}</th>
-		        		<td>{{vote.numvotes}} votes</td>
-		        		<td>{{vote.proposal.title}}</td>
-		        	</tr>
-		        </table>
-	        {% endfor %}
-	        <a href="{% url user-votes member.slug %}">See all votes</a>
+	{% if pos_vote_list or neutr_vote_list or neg_vote_list %}
+        <div class="profile-vote-list">
+            <h1>{{member.display_name}}'s votes</h1>
+            {% usemacro vote-list-macro pos_vote_list neutr_vote_list neg_vote_list %}           
         </div>
     {% else %}
     	<p>{{member.display_name}} hasn't voted yet.</p>

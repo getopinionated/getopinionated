@@ -83,7 +83,7 @@ def userprofile(request, userslug):
         'pos_vote_list': getpositiveuservotes(member),
         'neutr_vote_list': getneutraluservotes(member),
         'neg_vote_list': getnegativeuservotes(member),
-        'proxy_list': getuserproxies(member),    
+        'proxy_list': getuserproxies(member),
         'pos_proxy_vote_list': getpositiveuserproxyvotes(member),
         'neutr_proxy_vote_list': getneutraluserproxyvotes(member),
         'neg_proxy_vote_list': getnegativeuserproxyvotes(member),
@@ -108,7 +108,9 @@ def usercomments(request, userslug):
     
     return render(request, 'accounts/usercomments.html', {
         'member': member,
-        'comment_list': getnegativeusercomments(member),    
+        'pos_comment_list': getpositiveusercomments(member),
+        'neutr_comment_list': getneutralusercomments(member),
+        'neg_comment_list': getnegativeusercomments(member),    
     })
 
 def usertags(request, userslug):
@@ -128,7 +130,9 @@ def uservotes(request, userslug):
     
     return render(request, 'accounts/uservotes.html', {
         'member': member,
-        'vote_list': getuservotes(member),    
+        'pos_vote_list': getpositiveuservotes(member),
+        'neutr_vote_list': getneutraluservotes(member),
+        'neg_vote_list': getnegativeuservotes(member),  
     })
 
 def userproxyvotes(request, userslug):
@@ -138,7 +142,9 @@ def userproxyvotes(request, userslug):
     
     return render(request, 'accounts/userproxyvotes.html', {
         'member': member,
-        'proxy_vote_list': getuserproxyvotes(member),
+        'pos_proxy_vote_list': getpositiveuserproxyvotes(member),
+        'neutr_proxy_vote_list': getneutraluserproxyvotes(member),
+        'neg_proxy_vote_list': getnegativeuserproxyvotes(member),
     })
 
 def userproxies(request, userslug):

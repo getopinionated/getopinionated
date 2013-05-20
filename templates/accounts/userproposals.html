@@ -1,18 +1,13 @@
 {% extends "accounts/profile.html" %}
 {% load macros %}
-{% loadmacros "proposal/proposal-macro.html" %}
+{% loadmacros "proposal/proposal-list-macro.html" %}
 
 {% block data %}
 	{% if proposal_list %}
-    	<div class="profile-proposal-list">
-	    	<h1>{{member.display_name}}'s proposals</h1>
-	        <ul>
-	        {% for proposal in proposal_list %}
-	        	<li>
-	        		{% usemacro proposal-for-list proposal %}
-	        	</li>
-	        {% endfor %}
-	        </ul>
+        <div class="profile-proposal-list">
+            <h1>{{member.display_name}}'s proposals</h1>
+            {% usemacro proposal-list-macro proposal_list %}
+            <a href="{% url user-proposals member.slug %}">See all proposals</a>
         </div>
     {% else %}
         <p>{{member.display_name}} made no proposals.</p>
