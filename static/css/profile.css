@@ -5,7 +5,6 @@ html, body
 
 .profile-header {
 	width: 100%;
-	height: 200px;
 }
 
 .profile h1 {
@@ -49,24 +48,30 @@ html, body
 	display: inline-block;
 }
 
-.comment-list th{
+.comment-list th, .vote-list th{
 	color: #333;
 }
 
-.comment-list th{
+.comment-list th, .vote-list th{
 	color: #fff;
 	background: #333;
 	height: 4ex;
 	width: 4ex;
 }
 
-.comment-list tr{
+.comment-list tr, .vote-list tr{
 	padding-bottom: 1ex;
 }
 
-.comment-list td{
+.comment-list td, .vote-list td{
 	padding-left: 2ex;
 	text-overflow: ellipsis;
+}
+
+p.tiny-text{
+    font-size: 10px;
+    text-align: center;
+    font-weight: normal;
 }
 
 .positive{

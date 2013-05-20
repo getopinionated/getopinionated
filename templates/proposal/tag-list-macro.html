@@ -1,0 +1,9 @@
+{% load macros %}
+{% loadmacros "common/comma.html" %}
+{% loadmacros "proposal/tag-macro.html" %}
+
+{% macro tag-list-macro tag_list %}
+    {% for tag in tag_list %}
+        <span>{{tag.1}} &#x2a2f; {% usemacro tag-small tag.0 %}{% usemacro comma %}</span>
+    {% endfor %}
+{% endmacro %}

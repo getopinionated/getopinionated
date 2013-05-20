@@ -1,0 +1,12 @@
+{% load macros %}
+{% loadmacros "proposal/proposal-macro.html" %}
+
+{% macro proposal-list-macro proposal_list %}
+    <ul>
+    {% for proposal in proposal_list %}
+        <li>
+            {% usemacro proposal-for-list proposal %}
+        </li>
+    {% endfor %}
+    </ul>
+{% endmacro %}

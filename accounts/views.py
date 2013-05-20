@@ -32,11 +32,23 @@ def getneutralusercomments(member):
 def getuserproxies(member):
     return Proxy.objects.filter(delegating=member).values('delegates').distinct()
 
-def getuservotes(member):
-    return ProxyProposalVote.objects.filter(user=member,voted_self=True)
+def getpositiveuservotes(member):
+    return ProxyProposalVote.objects.filter(user=member,voted_self=True).filter(value__gt=1)
 
-def getuserproxyvotes(member):
-    return ProxyProposalVote.objects.filter(user=member,voted_self=False)
+def getneutraluservotes(member):
+    return ProxyProposalVote.objects.filter(user=member,voted_self=True).exclude(value__gt=1).exclude(value__lt=-1)
+
+def getnegativeuservotes(member):
+    return ProxyProposalVote.objects.filter(user=member,voted_self=True).filter(value__lt=-1)
+
+def getpositiveuserproxyvotes(member):
+    return ProxyProposalVote.objects.filter(user=member,voted_self=False).filter(value__gt=1)
+
+def getneutraluserproxyvotes(member):
+    return ProxyProposalVote.objects.filter(user=member,voted_self=False).exclude(value__gt=1).exclude(value__lt=-1)
+
+def getnegativeuserproxyvotes(member):
+    return ProxyProposalVote.objects.filter(user=member,voted_self=False).filter(value__lt=-1)
 
 def getparticipatedproposals(member):
     return (Proposal.objects.filter(creator=member) | 
@@ -68,9 +80,13 @@ def userprofile(request, userslug):
         'neutr_comment_list': getneutralusercomments(member),
         'neg_comment_list': getnegativeusercomments(member),
         'tag_list': getusertags(member),
-        'vote_list': getuservotes(member),
+        'pos_vote_list': getpositiveuservotes(member),
+        'neutr_vote_list': getneutraluservotes(member),
+        'neg_vote_list': getnegativeuservotes(member),
         'proxy_list': getuserproxies(member),    
-        'proxy_vote_list': getuserproxyvotes(member),
+        'pos_proxy_vote_list': getpositiveuserproxyvotes(member),
+        'neutr_proxy_vote_list': getneutraluserproxyvotes(member),
+        'neg_proxy_vote_list': getnegativeuserproxyvotes(member),
         'proxyform': proxyform
     })
 

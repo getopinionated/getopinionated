@@ -1,9 +1,8 @@
 {% extends "base.html" %}
 {% load filters %}
 {% load macros %}
-{% loadmacros "common/comma.html" %}
-{% loadmacros "proposal/proposal-macro.html" %}
-{% loadmacros "proposal/tag-macro.html" %}
+{% loadmacros "proposal/tag-list-macro.html" %}
+{% loadmacros "proposal/proposal-list-macro.html" %}
 {% load thumbnail %}
 {% load humanize %}
 
@@ -65,21 +64,30 @@
 			{% endif %}
 		</div>
 			
+        
+            
 		{% block data %}
+            
+            
+            {% if tag_list %}
+                <div class="profile-tag-list">
+                    <h1>{{member.display_name}}'s tags</h1>
+                </div>
+                {% usemacro tag-list-macro tag_list %}
+                <a href="{% url user-tags member.slug %}">See all tags</a>
+            {% else %}
+            {% endif %}
+            
+            
 		    {% if proposal_list %}
 		    	<div class="profile-proposal-list">
 			    	<h1>{{member.display_name}}'s proposals</h1>
-			        <ul>
-			        {% for proposal in proposal_list %}
-			        	<li>
-			        		{% usemacro proposal-for-list proposal %}
-			        	</li>
-			        {% endfor %}
-			        </ul>
+			        {% usemacro proposal-list-macro proposal_list %}
 			        <a href="{% url user-proposals member.slug %}">See all proposals</a>
 		        </div>
 		    {% else %}
 		    {% endif %}
+		    
 		
 			{% if pos_comment_list or neutr_comment_list or neg_comment_list %}
 				<div class="profile-comment-list">
@@ -89,8 +97,8 @@
 				    	<table class="comment-list">
 					    	{% for comment in pos_comment_list %}
 					        	<tr>
-					        		<th>{{comment.upvote_score}}</th>
-					        		<td>{{comment.proposal.title}}</td>
+					        		<th>{{comment.upvote_score}}<p class="tiny-text">upvote</p></th>
+					        		<td><a href="{% url proposals-detail comment.proposal.slug %}">{{comment.proposal.title}}</a></td>
 					        	</tr>
 					        {% endfor %}
 				        </table>
@@ -99,9 +107,9 @@
 				    	<h2>Neutral</h2>
 				    	<table class="comment-list">
 					    	{% for comment in neutr_comment_list %}
-					        	<tr>
-					        		<th>{{comment.upvote_score}}</th>
-					        		<td>{{comment.proposal.title}}</td>
+					    	    <tr>
+					        		<th>{{comment.upvote_score}}<p class="tiny-text">upvote</p></th>					        		
+				        		    <td><a href="{% url proposals-detail comment.proposal.slug %}">{{comment.proposal.title}}</a></td>
 					        	</tr>
 					        {% endfor %}
 				        </table>
@@ -110,10 +118,12 @@
 				    	<h2>Negative</h2>
 				    	<table class="comment-list">
 					    	{% for comment in neg_comment_list %}
-					        	<tr>
-					        		<th>{{comment.upvote_score}}</th>
-					        		<td>{{comment.proposal.title}}</td>
-					        	</tr>
+						    	<a href="{% url proposals-detail comment.proposal.slug %}">
+						        	<tr>
+						        		<th>{{comment.upvote_score}}<p class="tiny-text">upvote</p></th>
+						        		<td><a href="{% url proposals-detail comment.proposal.slug %}">{{comment.proposal.title}}</a></td>
+						        	</tr>
+						        </a>
 					        {% endfor %}
 				        </table>
 				    </div>		     
@@ -121,52 +131,96 @@
 		        <a href="{% url user-comments member.slug %}">See all comments</a>
 		    {% else %}
 		    {% endif %}
-		
-			{% if tag_list %}
-		    	<div class="profile-tag-list">
-			    	<h1>{{member.display_name}}'s tags</h1>
-			        {% for tag in tag_list %}
-			        	<span>{{tag.1}} &#x2a2f; {% usemacro tag-small tag.0 %}{% usemacro comma %}</span>
-			        {% endfor %}
-			        <a href="{% url user-tags member.slug %}">See all tags</a>
-		        </div>
-		    {% else %}
-		    {% endif %}
 		    
 		
-			{% if vote_list %}
-		    	<div class="profile-vote-list">
+			{% if pos_vote_list or neutr_vote_list or neg_vote_list %}
+				<div class="profile-vote-list">
 			    	<h1>{{member.display_name}}'s votes</h1>
-			        {% for vote in vote_list %}
-			        	<table>
-				        	<tr>
-				        		<th>{{vote.value}}</th>
-				        		<td>{{vote.numvotes}} votes</td>
-				        		<td>{{vote.proposal.title}}</td>
-				        	</tr>
+			    	<div class="positive">
+			    		<h2>Positive</h2>
+				    	<table class="vote-list">
+					    	{% for vote in pos_vote_list %}
+					        	<tr>
+					        		<th>{{vote.value|floatformat}}<p class="tiny-text">voted</p></th>
+					        		<th>{{vote.numvotes}}<p class="tiny-text">votes</p></th>
+					        		<td><a href="{% url proposals-detail vote.proposal.slug %}">{{vote.proposal.title}}</a></td>
+					        	</tr>
+					        {% endfor %}
 				        </table>
-			        {% endfor %}
-			        <a href="{% url user-votes member.slug %}">See all votes</a>
+				    </div>
+				    <div class="neutral">
+				    	<h2>Neutral</h2>
+				    	<table class="vote-list">
+					    	{% for vote in neutr_vote_list %}
+					        	<tr>
+					        		<th>{{vote.value|floatformat}}<p class="tiny-text">voted</p></th>
+					        		<th>{{vote.numvotes}}<p class="tiny-text">votes</p></th>
+					        		<td><a href="{% url proposals-detail vote.proposal.slug %}">{{vote.proposal.title}}</a></td>
+					        	</tr>
+					        {% endfor %}
+				        </table>
+				    </div>
+				    <div class="negative">
+				    	<h2>Negative</h2>
+				    	<table class="vote-list">
+					    	{% for vote in neg_vote_list %}
+					        	<tr>
+					        		<th>{{vote.value|floatformat}}<p class="tiny-text">voted</p></th>
+					        		<th>{{vote.numvotes}}<p class="tiny-text">votes</p></th>
+					        		<td><a href="{% url proposals-detail vote.proposal.slug %}">{{vote.proposal.title}}</a></td>
+                                </tr>
+					        {% endfor %}
+				        </table>
+				    </div>		     
 		        </div>
+		        <a href="{% url user-votes member.slug %}">See all votes</a>
 		    {% else %}
 		    {% endif %}
 		
 		    
-			{% if proxy_vote_list %}
-				<div class="profile-proxy-vote-list">
-			    	<h1>{{member.display_name}}'s votes through proxies</h1>
-			        {% for proxy in proxy_vote_list %}
-			        	<table>
-				        	<tr>
-				        		<th>{{proxy.value}}</th>
-				        		<td>{{proxy.proposal.title}}</td>
-				        	</tr>
-				        </table>
-			        {% endfor %}
-			        <a href="{% url user-proxy-votes member.slug %}">See all votes the user made through proxies</a>
-		        </div>
-		    {% else %}
-		    {% endif %}
+			{% if pos_proxy_vote_list or neutr_proxy_vote_list or neg_proxy_vote_list %}
+                <div class="profile-vote-list">
+                    <h1>{{member.display_name}}'s votes through proxies</h1>
+                    <div class="positive">
+                        <h2>Positive</h2>
+                        <table class="vote-list">
+                            {% for vote in pos_proxy_vote_list %}
+                                <tr>
+                                    <th>{{vote.value}}<p class="tiny-text">voted</p></th>
+                                    <th>{{vote.numvotes}}<p class="tiny-text">votes</p></th>
+                                    <td><a href="{% url proposals-detail vote.proposal.slug %}">{{vote.proposal.title}}</a></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class="neutral">
+                        <h2>Neutral</h2>
+                        <table class="vote-list">
+                            {% for vote in neutr_proxy_vote_list %}
+                                <tr>
+                                    <th>{{vote.value}}<p class="tiny-text">voted</p></th>
+                                    <th>{{vote.numvotes}}<p class="tiny-text">votes</p></th>
+                                    <td><a href="{% url proposals-detail vote.proposal.slug %}">{{vote.proposal.title}}</a></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class="negative">
+                        <h2>Negative</h2>
+                        <table class="vote-list">
+                            {% for vote in neg_proxy_vote_list %}
+                                <tr>
+                                    <th>{{vote.value}}<p class="tiny-text">voted</p></th>
+                                    <th>{{vote.numvotes}}<p class="tiny-text">votes</p></th>
+                                    <td><a href="{% url proposals-detail vote.proposal.slug %}">{{vote.proposal.title}}</a></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>           
+                </div>
+                <a href="{% url user-votes member.slug %}">See all votes</a>
+            {% else %}
+            {% endif %}
 		{% endblock %}
 	</div>
 {% endblock %}
