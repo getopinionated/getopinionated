@@ -70,23 +70,28 @@
         
             
 		{% block data %}
-		            
             {% if tag_list %}
                 <div class="profile-tag-list">
                     <h1>{{member.display_name}}'s tags</h1>
                 </div>
-                {% usemacro tag-list-macro tag_list %}
-                <a href="{% url user-tags member.slug %}">See all tags</a>
+                {% usemacro tag-list-macro tag_list|slice:":25" %}
+                {% if tag_list.keys > 25 %}
+                    <a href="{% url user-tags member.slug %}">See all tags</a>
+                {% endif %}
             {% else %}
             {% endif %}
+            
             
             
 		    {% if proposal_list %}
 		    	<div class="profile-proposal-list">
 			    	<h1>{{member.display_name}}'s proposals</h1>
-			        {% usemacro proposal-list-macro proposal_list %}
-			        <a href="{% url user-proposals member.slug %}">See all proposals</a>
+			        {% usemacro proposal-list-macro proposal_list.all|slice:":10" %}
 		        </div>
+		        
+		        {% if proposal_list.count > 10 %}
+		            <a href="{% url user-proposals member.slug %}">See all proposals</a>
+		        {% endif %}
 		    {% else %}
 		    {% endif %}
 		    
@@ -94,9 +99,11 @@
 			{% if pos_comment_list or neutr_comment_list or neg_comment_list %}
 				<div class="profile-comment-list">
 			    	<h1>{{member.display_name}}'s comments</h1>
-			    	{% usemacro comment-list-macro pos_comment_list neutr_comment_list neg_comment_list %}	     
+			    	{% usemacro comment-list-macro pos_comment_list.all|slice:":10" neutr_comment_list.all|slice:":10" neg_comment_list.all|slice:":10" %}	     
 		        </div>
-		        <a href="{% url user-comments member.slug %}">See all comments</a>
+		        {% if pos_comment_list.count > 10 or neutr_comment_list.count > 10 or neg_comment_list.count > 10 %}
+		            <a href="{% url user-comments member.slug %}">See all comments</a>
+		        {% endif %}
 		    {% else %}
 		    {% endif %}
 		    
@@ -104,9 +111,11 @@
 			{% if pos_vote_list or neutr_vote_list or neg_vote_list %}
 				<div class="profile-vote-list">
 			    	<h1>{{member.display_name}}'s votes</h1>
-			    	{% usemacro vote-list-macro pos_vote_list neutr_vote_list neg_vote_list %}		     
+			    	{% usemacro vote-list-macro pos_vote_list.all|slice:":10" neutr_vote_list.all|slice:":10" neg_vote_list.all|slice:":10" %}		     
 		        </div>
-		        <a href="{% url user-votes member.slug %}">See all votes</a>
+		        {% if pos_vote_list.count > 10 or neutr_vote_list.count > 10 or neg_vote_list.count > 10 %}
+		            <a href="{% url user-votes member.slug %}">See all votes</a>
+		        {% endif %}
 		    {% else %}
 		    {% endif %}
 		
@@ -114,9 +123,11 @@
 			{% if pos_proxy_vote_list or neutr_proxy_vote_list or neg_proxy_vote_list %}
                 <div class="profile-vote-list">
                     <h1>{{member.display_name}}'s votes through proxies</h1>
-                    {% usemacro proxyvote-list-macro pos_proxy_vote_list neutr_proxy_vote_list neg_proxy_vote_list %}
+                    {% usemacro proxyvote-list-macro pos_proxy_vote_list.all|slice:":10" neutr_proxy_vote_list.all|slice:":10" neg_proxy_vote_list.all|slice:":10" %}
                 </div>
-                <a href="{% url user-proxy-votes member.slug %}">See all votes</a>
+                {% if pos_proxy_vote_list.count > 10 or neutr_proxy_vote_list.count > 10 or neg_proxy_vote_list.count > 10 %}
+                    <a href="{% url user-proxy-votes member.slug %}">See all votes</a>
+                {% endif %}
             {% else %}
             {% endif %}
             
