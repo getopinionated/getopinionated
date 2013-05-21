@@ -71,7 +71,7 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -82,10 +82,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'common.middleware.SSLRedirect',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'django.middleware.cache.UpdateCacheMiddleware',
     # "django.middleware.cache.FetchFromCacheMiddleware",
-)
+]
 
 ROOT_URLCONF = 'getopinionated.urls'
 
@@ -220,30 +219,35 @@ MAILER_PAUSE_SEND = False
 #####################################################################################
 # Debug toobar settings
 #####################################################################################
-DEBUG_TOOLBAR_PANELS = (
-    'debug_toolbar.panels.version.VersionDebugPanel',
-    'debug_toolbar.panels.timer.TimerDebugPanel',
-    'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
-    'debug_toolbar.panels.headers.HeaderDebugPanel',
-    'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
-    'debug_toolbar.panels.template.TemplateDebugPanel',
-    'debug_toolbar.panels.sql.SQLDebugPanel',
-    'debug_toolbar.panels.signals.SignalDebugPanel',
-    'debug_toolbar.panels.logger.LoggingPanel',
-)
+ENABLE_DJDT = False
 
-def custom_show_toolbar(request):
-    return True  # Always show toolbar, for example purposes only.
+if ENABLE_DJDT:
+    MIDDLEWARE_CLASSES.append('debug_toolbar.middleware.DebugToolbarMiddleware',)
 
-DEBUG_TOOLBAR_CONFIG = {
-    'INTERCEPT_REDIRECTS': False,
-    'EXTRA_SIGNALS': [],
-    'HIDE_DJANGO_SQL': False,
-    'TAG': 'body',
-    'ENABLE_STACKTRACES' : True,
-}
+    DEBUG_TOOLBAR_PANELS = (
+        'debug_toolbar.panels.version.VersionDebugPanel',
+        'debug_toolbar.panels.timer.TimerDebugPanel',
+        'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
+        'debug_toolbar.panels.headers.HeaderDebugPanel',
+        'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
+        'debug_toolbar.panels.template.TemplateDebugPanel',
+        'debug_toolbar.panels.sql.SQLDebugPanel',
+        'debug_toolbar.panels.signals.SignalDebugPanel',
+        'debug_toolbar.panels.logger.LoggingPanel',
+    )
 
-INTERNAL_IPS = ('127.0.0.1',)
+    def custom_show_toolbar(request):
+        return True  # Always show toolbar, for example purposes only.
+
+    DEBUG_TOOLBAR_CONFIG = {
+        'INTERCEPT_REDIRECTS': False,
+        'EXTRA_SIGNALS': [],
+        'HIDE_DJANGO_SQL': False,
+        'TAG': 'body',
+        'ENABLE_STACKTRACES' : True,
+    }
+
+    INTERNAL_IPS = ('127.0.0.1',)
 
 #####################################################################################
 # Social auth settings
