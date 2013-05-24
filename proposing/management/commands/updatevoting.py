@@ -9,12 +9,10 @@ def concurrent():
     import time
     import fcntl
     file_path = './lock'
-    return False # TMP, while awaiting for solution
     file_handle = open(file_path, 'w') # --> empties manage.py
     try:
         fcntl.lockf(file_handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        return False
-    
+        return False    
     except IOError:
         return True
 
