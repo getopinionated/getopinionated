@@ -70,7 +70,7 @@ class TimelineData:
                 proposals = [(prop.voting_date, prop) for prop in proposals]
             elif filterkeyword == 'voting_ends':
                 proposals = proposals.filter(voting_stage='VOTING')
-                proposals = [(prop.estimatedFinishDate(), prop) for prop in proposals]
+                proposals = [(prop.estimatedFinishDate, prop) for prop in proposals]
                 proposals = [(date, prop) for (date, prop) in proposals if daterange[0] <= date <= daterange[1]]
             elif filterkeyword == '':
                 continue

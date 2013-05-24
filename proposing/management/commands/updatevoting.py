@@ -9,7 +9,8 @@ def concurrent():
     import time
     import fcntl
     file_path = './manage.py'
-    file_handle = open(file_path, 'w')
+    return False # TMP, while awaiting for solution
+    file_handle = open(file_path, 'w') # --> empties manage.py
     try:
         fcntl.lockf(file_handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
         return False
@@ -26,6 +27,7 @@ class Command(NoArgsCommand):
             return        
         
         voting_cnt = 0
+        constraints_cnt = 0
         finished_cnt = 0
         expired_cnt = 0
         
@@ -39,19 +41,24 @@ class Command(NoArgsCommand):
                 proposal.voting_date = timezone.now()
                 voting_cnt +=1
                 proposal.save()
-            if proposal.shouldBeFinished():
+            elif proposal.voting_stage == 'DISCUSSION' and proposal.minimalContraintsAreMet() and not proposal.voting_date:
+                proposal.voting_date = proposal.estimatedVotingDate
+                constraints_cnt += 1
+                proposal.save()
+            elif proposal.shouldBeFinished():
                 Command.doVoteCount(proposal)
                 Command.executeProposal(proposal)
                 proposal.voting_stage = 'APPROVED' if proposal.isApproved() else 'REJECTED'
                 finished_cnt +=1
                 proposal.save()
-            if proposal.shouldExpire():
+            elif proposal.shouldExpire():
                 proposal.voting_stage = 'EXPIRED'
                 expired_cnt +=1
                 proposal.save()
         
         self.stdout.write('Successfully updated:\n')
         self.stdout.write('{} proposals to the voting phase\n'.format(voting_cnt))
+        self.stdout.write('{} proposals have met minimal constraints\n'.format(constraints_cnt))
         self.stdout.write('{} proposals to the finished phase\n'.format(finished_cnt))
         self.stdout.write('{} proposals expired\n'.format(expired_cnt))
         
