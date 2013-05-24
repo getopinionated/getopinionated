@@ -1,4 +1,7 @@
-
+.proposal-list h1 {
+    margin-bottom: 20px;
+    font-size: 1.4em;
+}
 
 article.proposal {
 }

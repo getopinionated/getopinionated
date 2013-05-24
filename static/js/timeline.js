@@ -112,7 +112,7 @@ function drawTimeline(timelineData){
     /*** proposals ***/
     var dateAdder = new DateAdder();
     var proposalHeightHelper = new ProposalHeightHelper();
-    var neededHeight = 0;
+    var neededHeight = Math.round(TIMELINE_BOTTOM_Y + TIMELINE_TOP_Y); // same margin as top
     ["left", "right"].forEach(function(key){
         var N = data[key].proposals.length;
         for(var i = 0; i < N; i++){

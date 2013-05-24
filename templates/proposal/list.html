@@ -8,17 +8,21 @@
 	<script type="text/javascript" src="{{STATIC_URL}}js/timeline.js"></script>
 	<link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
 	<script type="application/javascript">
-	    /*** data ***/
-	    var timelineData = {{timeline.toJson|safe}};
-	    $(document).ready(function(){
-	        drawTimeline(timelineData);
-	    });
+		{% if timeline %}
+		    /*** data ***/
+		    var timelineData = {{timeline.toJson|safe}};
+		    $(document).ready(function(){
+		        drawTimeline(timelineData);
+		    });
+	    {% endif %}
 	</script>
 {% endblock %}
 {% block title %}{% include "title.html" with subtitle="Proposals" %}{% endblock %}
 
 {% block beforecontent %}
-	<div class="timelinecanvaspane"><canvas id="timeline"></canvas></div>
+	{% if timeline %}
+		<div class="timelinecanvaspane"><canvas id="timeline"></canvas></div>
+    {% endif %}
 {% endblock %}
 {% block content %}
     <div class="proposal-list">
@@ -26,7 +30,14 @@
     	{% if title %}
 	    	<h1>{{ title }}</h1>
 	    {% else %}
-	    	<h1>Latest proposals</h1>
+	    	<h1>
+	    		Proposals:
+	    		<a href="{% url proposals-list "latest" %}">Latest</a>
+	    		-
+	    		<a href="{% url proposals-list "voting" %}">Voting</a>
+	    		-
+	    		<a href="{% url proposals-list "all" %}">All</a>
+    		</h1>
 		{% endif %}
 	
 	    {% if latest_proposal_list %}

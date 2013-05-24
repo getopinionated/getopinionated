@@ -14,13 +14,14 @@ from proposing.forms import ProxyForm
 
 class TimelineData:
     # settings
-    NORMAL_TIMEDELTA = 30 # days
-    GREY_TIMEDELTA = 15 # days
+    NORMAL_TIMEDELTA = 50 # days
+    GREY_TIMEDELTA = 26 # days
     CAPTION_FROM_KW = {
         'created': "proposals created on ...",
         'voting_starts': "voting starts on ....",
         'voting_started': "voting started on ....",
         'voting_ends': "voting ends on ....",
+        '': "",
     }
     # properties
     data = None
@@ -31,8 +32,12 @@ class TimelineData:
         """
         ## get global settings
         center_day = timezone.now()
-        start_day = center_day - datetime.timedelta(days=self.GREY_TIMEDELTA if left_grey else self.NORMAL_TIMEDELTA)
-        end_day = center_day + datetime.timedelta(days=self.GREY_TIMEDELTA if right_grey else self.NORMAL_TIMEDELTA)
+        if filterkeywords[1]:
+            start_day = center_day - datetime.timedelta(days=self.GREY_TIMEDELTA if left_grey else self.NORMAL_TIMEDELTA)
+            end_day = center_day + datetime.timedelta(days=self.GREY_TIMEDELTA if right_grey else self.NORMAL_TIMEDELTA)
+        else:
+            start_day = center_day - datetime.timedelta(days=self.NORMAL_TIMEDELTA + self.GREY_TIMEDELTA)
+            end_day = center_day + datetime.timedelta(days=3)
         captions = [self.CAPTION_FROM_KW[kw] for kw in filterkeywords]
         ## preliminary data structure
         self.data = {
@@ -67,8 +72,9 @@ class TimelineData:
                 proposals = proposals.filter(voting_stage='VOTING')
                 proposals = [(prop.estimatedFinishDate(), prop) for prop in proposals]
                 proposals = [(date, prop) for (date, prop) in proposals if daterange[0] <= date <= daterange[1]]
+            elif filterkeyword == '':
+                continue
             proposals = sorted(proposals)
-            print proposals
             for date, prop in proposals:
                 self.data[leftright]['proposals'].append([
                     prop.title,
@@ -85,26 +91,38 @@ class TimelineData:
         SECONDS_IN_DAY = 24*60*60
         return time.mktime(d.timetuple()) / SECONDS_IN_DAY
 
-def index(request):
-    first_5_proposals = Proposal.objects.order_by('create_date')#for debugging purposes, results should actually be paginated
+def proplist(request, list_type="latest"):
+    # TODO: pagination
+
+    if list_type == "latest":
+        proposals = Proposal.objects.filter(voting_stage='DISCUSSION').order_by('-create_date')
+        timeline = TimelineData(
+            filterkeywords = ["created", "voting_starts"],
+            proposal_generators = (proposals, proposals),
+            right_grey = True,
+        )
+    elif list_type == "voting":
+        proposals = Proposal.objects.filter(voting_stage='VOTING').order_by('-voting_date')
+        timeline = TimelineData(
+            filterkeywords = ["voting_started", "voting_ends"],
+            proposal_generators = (proposals, proposals),
+            left_grey = True,
+        )
+    elif list_type == "all":
+        proposals = Proposal.objects.order_by('-create_date')
+        timeline = TimelineData(
+            filterkeywords = ["created", ""],
+            proposal_generators = (proposals, proposals),
+            right_grey = True,
+        )
     taglist = Tag.objects.annotate(num_props=Count('proposals')).order_by('-num_props')
-    # timeline = TimelineData(
-    #     filterkeywords = ["voting_starts", "voting_ends"],
-    #     proposal_generators = (Proposal.objects, Proposal.objects),
-    #     left_grey = True,
-    # )
-    timeline = TimelineData(
-        filterkeywords = ["created", "voting_starts"],
-        proposal_generators = (Proposal.objects, Proposal.objects),
-        right_grey = True,
-    )
     return render(request, 'proposal/list.html', {
-        'latest_proposal_list': first_5_proposals,
+        'latest_proposal_list': proposals,
         'taglist': taglist,
         'timeline': timeline,
     })
 
-def tagindex(request, tag_slug):
+def tagproplist(request, tag_slug):
     tag = get_object_or_404(Tag, slug=tag_slug)
     proposals = tag.proposals.order_by('create_date')[:]#for debugging purposes, results should actually be paginated
     taglist = Tag.objects.annotate(num_props=Count('proposals')).order_by('-num_props')
