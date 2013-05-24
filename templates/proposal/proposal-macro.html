@@ -30,9 +30,6 @@
 		</div>
 	</div>
 	<div class="explanation">
-		<span class="voting-stage">
-			{{ proposal.get_voting_stage_display }}
-		</span>
 		<div class="summary">
 			<a href="{% url proposals-detail proposal.slug %}">{{ proposal.title }}</a>
 		</div>
@@ -42,6 +39,9 @@
 			</div>
 		{% endif %}
 		<br>
+		<span class="voting-stage">
+			{{ proposal.get_voting_stage_display }}
+		</span>
 		<div class="proposal-tags">
 			{% for tag in proposal.tags.all %}
 				{% usemacro tag-small tag %}
