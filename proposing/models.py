@@ -67,7 +67,7 @@ class UpDownVote(models.Model):
     user = models.ForeignKey(CustomUser, related_name="up_down_votes")
     post = models.ForeignKey(VotablePost, related_name="up_down_votes")
     date = models.DateTimeField(auto_now=True)
-    value = models.IntegerField("+1 or -1")
+    value = models.IntegerField(choices=((1, 'up'), (-1, 'down')))
 
 class Tag(models.Model):
     name = models.CharField(max_length=35)

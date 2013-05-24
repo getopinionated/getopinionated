@@ -56,7 +56,7 @@ class ProposalAdmin(admin.ModelAdmin):
             for i in xrange(15):
                 UpDownVote(user = request.user,
                 post = proposal,
-                is_up = True).save()
+                value = 1).save()
                 
     add_15_upvotes.short_description = "Add 15 upvotes"
     
