@@ -1,3 +1,5 @@
+import time, json, logging, datetime
+from django.utils import timezone
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import Context, loader
 from django.contrib.auth.decorators import login_required
@@ -10,12 +12,96 @@ from proposing.models import Tag, ProxyProposalVote
 from django.db.models import Count
 from proposing.forms import ProxyForm
 
+class TimelineData:
+    # settings
+    NORMAL_TIMEDELTA = 30 # days
+    GREY_TIMEDELTA = 15 # days
+    CAPTION_FROM_KW = {
+        'created': "proposals created on ...",
+        'voting_starts': "voting starts on ....",
+        'voting_started': "voting started on ....",
+        'voting_ends': "voting ends on ....",
+    }
+    # properties
+    data = None
+
+    def __init__(self, filterkeywords, proposal_generators, left_grey=False, right_grey=False):
+        """ filterkeywords can be one of the following:
+                (created, voting_starts, voting_started, voting_ends)
+        """
+        ## get global settings
+        center_day = timezone.now()
+        start_day = center_day - datetime.timedelta(days=self.GREY_TIMEDELTA if left_grey else self.NORMAL_TIMEDELTA)
+        end_day = center_day + datetime.timedelta(days=self.GREY_TIMEDELTA if right_grey else self.NORMAL_TIMEDELTA)
+        captions = [self.CAPTION_FROM_KW[kw] for kw in filterkeywords]
+        ## preliminary data structure
+        self.data = {
+            'start_day': int(self.datetimeToDaystamp(start_day)),
+            'center_day': self.datetimeToDaystamp(center_day),
+            'end_day': int(self.datetimeToDaystamp(end_day))+1,
+            'left': {
+                'caption': captions[0],
+                'color': '#999' if left_grey else '#000',
+                'proposals': []
+            },
+            'right': {
+                'caption': captions[1],
+                'color': '#999' if right_grey else '#000',
+                'proposals': []
+            },
+        }
+        ## fill in proposals
+        for leftright, proposals, filterkeyword, daterange in zip(['left', 'right'], \
+                proposal_generators, filterkeywords, \
+                [(start_day, center_day), (center_day, end_day)]):
+            if filterkeyword == 'created':
+                proposals = proposals.filter(create_date__range=daterange)
+                proposals = [(prop.create_date, prop) for prop in proposals]
+            elif filterkeyword == 'voting_starts':
+                proposals = proposals.filter(voting_date__range=daterange)
+                proposals = [(prop.voting_date, prop) for prop in proposals]
+            elif filterkeyword == 'voting_started':
+                proposals = proposals.filter(voting_date__range=daterange)
+                proposals = [(prop.voting_date, prop) for prop in proposals]
+            elif filterkeyword == 'voting_ends':
+                proposals = proposals.filter(voting_stage='VOTING')
+                proposals = [(prop.estimatedFinishDate(), prop) for prop in proposals]
+                proposals = [(date, prop) for (date, prop) in proposals if daterange[0] <= date <= daterange[1]]
+            proposals = sorted(proposals)
+            print proposals
+            for date, prop in proposals:
+                self.data[leftright]['proposals'].append([
+                    prop.title,
+                    reverse('proposals-detail', args=(prop.slug,)),
+                    self.datetimeToDaystamp(date),
+                    '{d.day} {d:%b}'.format(d=date), # e.g.: "24 May"
+                ])
+
+    def toJson(self):
+        return json.dumps(self.data)
+
+    @staticmethod
+    def datetimeToDaystamp(d):
+        SECONDS_IN_DAY = 24*60*60
+        return time.mktime(d.timetuple()) / SECONDS_IN_DAY
+
 def index(request):
     first_5_proposals = Proposal.objects.order_by('create_date')#for debugging purposes, results should actually be paginated
     taglist = Tag.objects.annotate(num_props=Count('proposals')).order_by('-num_props')
+    # timeline = TimelineData(
+    #     filterkeywords = ["voting_starts", "voting_ends"],
+    #     proposal_generators = (Proposal.objects, Proposal.objects),
+    #     left_grey = True,
+    # )
+    timeline = TimelineData(
+        filterkeywords = ["created", "voting_starts"],
+        proposal_generators = (Proposal.objects, Proposal.objects),
+        right_grey = True,
+    )
     return render(request, 'proposal/list.html', {
         'latest_proposal_list': first_5_proposals,
-        'taglist': taglist
+        'taglist': taglist,
+        'timeline': timeline,
     })
 
 def tagindex(request, tag_slug):

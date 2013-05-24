@@ -247,7 +247,6 @@ article.proposal .votingresults .resultchart .optionbar .caption div.small {
     font-size: 0.6em;
 }
 
-
 /***** list of voters *****/
 article.listofvoters {
     overflow: auto;
@@ -264,4 +263,10 @@ article.listofvoters .user-info {
     float: left;
     margin-right: 10px;
     margin-bottom: 10px;
+}
+
+/***** canvas timeline *****/
+.timelinecanvaspane {
+    width: 100%;
+    overflow-x: hidden;
 }
