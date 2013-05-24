@@ -8,7 +8,7 @@ def concurrent():
     import sys
     import time
     import fcntl
-    file_path = './manage.py'
+    file_path = './lock'
     return False # TMP, while awaiting for solution
     file_handle = open(file_path, 'w') # --> empties manage.py
     try:
