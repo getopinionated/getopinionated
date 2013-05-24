@@ -9,7 +9,7 @@ def concurrent():
     import time
     import fcntl
     file_path = './lock'
-    file_handle = open(file_path, 'w') # --> empties manage.py
+    file_handle = open(file_path, 'w') # --> empties this file apparently
     try:
         fcntl.lockf(file_handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
         return False    
