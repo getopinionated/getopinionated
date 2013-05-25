@@ -14,8 +14,8 @@ from proposing.forms import ProxyForm
 
 class TimelineData:
     # settings
-    NORMAL_TIMEDELTA = 50 # days
-    GREY_TIMEDELTA = 26 # days
+    NORMAL_TIMEDELTA = 40 # days
+    GREY_TIMEDELTA = 20 # days
     CAPTION_FROM_KW = {
         'created': "proposals created on ...",
         'voting_starts': "voting starts on ....",
@@ -30,6 +30,8 @@ class TimelineData:
         """ filterkeywords can be one of the following:
                 (created, voting_starts, voting_started, voting_ends)
         """
+        # TODO: truncate proposal titles
+
         ## get global settings
         center_day = timezone.now()
         if filterkeywords[1]:
