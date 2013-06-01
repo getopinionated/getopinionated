@@ -61,12 +61,17 @@
 	<div>
 		Filter on 
 		{% for tag in tags %}
-			{% if filter_tag.slug == tag.slug %}
+			{% if filter_tag and filter_tag.slug == tag.slug %}
 				<div class="tag-button" style="background-color: #333">{{ tag.name }}</div>
 			{% else %}
 				<a href="{% url proxy-index tag.slug %}"><div class="tag-button">{{ tag.name }}</div></a>
 			{% endif %}
 		{% endfor %}
+		{% if filter_tag %}
+			<a href="{% url proxy-index %}"><div class="tag-button">No filter</div></a>
+		{% else %}
+			<div class="tag-button" style="background-color: #333">No filter</div>
+		{% endif %}
 	</div>
 </div>
  {% endblock %}
