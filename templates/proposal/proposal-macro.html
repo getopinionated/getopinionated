@@ -33,11 +33,9 @@
 		<div class="summary">
 			<a href="{% url proposals-detail proposal.slug %}">{{ proposal.title }}</a>
 		</div>
-		{% if proposal.creator %}
-			<div class="creator-small">
-				<a href="{% url user-profile proposal.creator.slug %}">{% usemacro user-small proposal.creator proposal.create_date%}</a>
-			</div>
-		{% endif %}
+		<div class="creator-small">
+			{% usemacro user-small proposal.creator proposal.create_date%}
+		</div>
 		<br>
 		<span class="voting-stage">
 			{{ proposal.get_voting_stage_display }}
