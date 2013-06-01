@@ -1,5 +1,6 @@
 import time, json, logging, datetime
 from django.utils import timezone
+from django.db.models import Q
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import Context, loader
 from django.contrib.auth.decorators import login_required
@@ -98,11 +99,15 @@ class ProxyGraphData:
     dataNodes = None
     dataEdges = None
 
-    def __init__(self):
+    def __init__(self, filter_tag=None):
         nodes = set()
         ## fill in edges
         self.dataEdges = []
-        for proxy in Proxy.objects.all():
+        if not filter_tag:
+            proxies = Proxy.objects.all()
+        else:
+            proxies = Proxy.objects.filter(Q(tags__in=[filter_tag.id]) | Q(tags=None))
+        for proxy in proxies:
             nodes.add(proxy.delegating.display_name)
             for delegate in proxy.delegates.all():
                 nodes.add(delegate.display_name)
@@ -228,7 +233,8 @@ def editcomment(request, proposal_slug, comment_id):
 
 
 @login_required
-def proxy(request):
+def proxy(request, tag_slug=None):
+    tag = get_object_or_404(Tag, slug=tag_slug) if tag_slug else None
     user = request.user
 
     if request.method == 'POST':
@@ -239,7 +245,9 @@ def proxy(request):
     return render(request, 'accounts/proxy.html', {
             'user': user,
             'proxyform': proxyform,
-            'proxygraph': ProxyGraphData(),
+            'proxygraph': ProxyGraphData(tag),
+            'tags': Tag.objects.all(),
+            'filter_tag': tag,
         })
 
 

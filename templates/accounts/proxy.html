@@ -30,7 +30,7 @@
 
 {% block content %}
 <div>
-	<form action="{% url proxy-index %}" method="POST" class="proxyform">
+	<form action="{% if filter_tag %}{% url proxy-index filter_tag.slug %}{% else %}{% url proxy-index %}{% endif %}" method="POST" class="proxyform">
 	{% csrf_token %}
 	<div>
 		My vote for everything goes to {{ proxyform.main_proxy }}
@@ -51,7 +51,22 @@
 	</form>
 </div>
 <div>
-	<h2>Current proxy landscape</h2>
-	<canvas id="springyproxy" width="1024" height="600" />
+	<h2>
+		Current proxy landscape
+		{% if filter_tag %}
+			for <div class="tag-button">{{ filter_tag.name }}</div>
+		{% endif %}
+	</h2>
+	<canvas id="springyproxy" width="1024" height="600"></canvas>
+	<div>
+		Filter on 
+		{% for tag in tags %}
+			{% if filter_tag.slug == tag.slug %}
+				<div class="tag-button" style="background-color: #333">{{ tag.name }}</div>
+			{% else %}
+				<a href="{% url proxy-index tag.slug %}"><div class="tag-button">{{ tag.name }}</div></a>
+			{% endif %}
+		{% endfor %}
+	</div>
 </div>
  {% endblock %}
