@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from models import VotablePost, UpDownVote, Proposal, Comment, ProposalVote
 from forms import CommentForm, ProposalEditForm, CommentEditForm
-from proposing.models import Tag, ProxyProposalVote
+from proposing.models import Tag, ProxyProposalVote, Proxy
 from django.db.models import Count
 from proposing.forms import ProxyForm
 
@@ -92,6 +92,35 @@ class TimelineData:
     def datetimeToDaystamp(d):
         SECONDS_IN_DAY = 24*60*60
         return time.mktime(d.timetuple()) / SECONDS_IN_DAY
+
+class ProxyGraphData:
+    # properties
+    dataNodes = None
+    dataEdges = None
+
+    def __init__(self):
+        nodes = set()
+        ## fill in edges
+        self.dataEdges = []
+        for proxy in Proxy.objects.all():
+            nodes.add(proxy.delegating.display_name)
+            for delegate in proxy.delegates.all():
+                nodes.add(delegate.display_name)
+                self.dataEdges.append(r"['{}', '{}', {{color: '{}'}}]".format(
+                    proxy.delegating.display_name,
+                    delegate.display_name,
+                    '#0C3' if proxy.tags.count() else '#000',
+                ))
+
+        ## fill in nodes
+        self.dataNodes = list(nodes)
+
+    def nodesToJson(self):
+        return json.dumps({'nodes': self.dataNodes})
+
+    def edgesToArgs(self):
+        return ','.join(self.dataEdges)
+
 
 def proplist(request, list_type="latest"):
     # TODO: pagination
@@ -210,6 +239,7 @@ def proxy(request):
     return render(request, 'accounts/proxy.html', {
             'user': user,
             'proxyform': proxyform,
+            'proxygraph': ProxyGraphData(),
         })
 
 

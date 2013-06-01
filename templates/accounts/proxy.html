@@ -8,9 +8,24 @@
 
 
 {% block extrastyle %}
-  <link rel="stylesheet" href="{{STATIC_URL}}css/proxy.css" type="text/css" charset="utf-8" />
-  <script type="text/javascript" src="{{STATIC_URL}}js/proxy.js"></script>
-  {{ proxyform.media }}
+	<link rel="stylesheet" href="{{STATIC_URL}}css/proxy.css" type="text/css" charset="utf-8" />
+	<script type="text/javascript" src="{{STATIC_URL}}js/proxy.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}js/springy/springy.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}js/springy/springyui.js"></script>
+	{{ proxyform.media }}
+	<script type="application/javascript">
+		jQuery(function(){
+			var graph = new Springy.Graph();
+			var graphJSON = {{proxygraph.nodesToJson|safe}};
+
+			graph.loadJSON(graphJSON);
+			graph.addEdges({{proxygraph.edgesToArgs|safe}});
+
+			var springy = jQuery('#springyproxy').springy({
+				graph: graph
+			});
+		});
+	</script>
 {% endblock %}
 
 {% block content %}
@@ -34,5 +49,9 @@
 	<input type="button" id="addProxyButton" value="Add another proxy" />
 	<input type="submit" id="submitButton" value="Save your proxies" />
 	</form>
+</div>
+<div>
+	<h2>Current proxy landscape</h2>
+	<canvas id="springyproxy" width="1024" height="600" />
 </div>
  {% endblock %}
