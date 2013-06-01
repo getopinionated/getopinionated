@@ -97,7 +97,7 @@ def proplist(request, list_type="latest"):
     # TODO: pagination
 
     if list_type == "latest":
-        proposals = Proposal.objects.filter(voting_stage='DISCUSSION').order_by('-create_date')
+        proposals = Proposal.objects.order_by('-create_date')
         timeline = TimelineData(
             filterkeywords = ["created", "voting_starts"],
             proposal_generators = (proposals, proposals),

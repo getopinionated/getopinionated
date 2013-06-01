@@ -48,3 +48,4 @@ getopinionated/local_settings.py
 # custom files
 jsrv.py
 getopinionated.sublime-*
+lock
