@@ -83,9 +83,6 @@ class HTMLMatcher(SequenceMatcher):
         opcodes = self.get_opcodes()
         a = self.a
         b = self.b
-#        print a
-#        print b
-#        print opcodes
         out = StringIO()
         for tag, i1, i2, j1, j2 in opcodes:
             if tag == 'equal':
@@ -102,6 +99,44 @@ class HTMLMatcher(SequenceMatcher):
                 else:
                     self.textDelete(a[i1:i2], out)
                     self.textInsert(b[j1:j2], out)
+        html = out.getvalue()
+        out.close()
+        if addStylesheet:
+            html = self.addStylesheet(html, self.stylesheet())
+        return html
+
+    def htmlContextDiff(self, contextbr = '<br />', addStylesheet=False):
+        opcodes = self.get_opcodes()
+        a = self.a
+        b = self.b
+        out = StringIO()
+        context = StringIO()
+        added = False
+        for tag, i1, i2, j1, j2 in opcodes:
+            if tag == 'equal':
+                for item in a[i1:i2]:
+                    context.write(item)
+                    if contextbr in item:
+                        if added:
+                            out.write(context.getvalue())
+                        context = StringIO() #erase all
+                        added = False
+            if tag == 'delete':
+                self.textDelete(a[i1:i2], context)
+                added = True
+            if tag == 'insert':
+                self.textInsert(b[j1:j2], context)
+                added = True
+            if tag == 'replace':
+                added = True
+                if (self.isInvisibleChange(a[i1:i2], b[j1:j2])):
+                    for item in b[j1:j2]:
+                        context.write(item)
+                else:
+                    self.textDelete(a[i1:i2], context)
+                    self.textInsert(b[j1:j2], context)
+        if added:
+            out.write(context.getvalue())
         html = out.getvalue()
         out.close()
         if addStylesheet:
@@ -218,7 +253,7 @@ def htmldiff(source1, source2, addStylesheet=False):
     """
 #    h = HTMLMatcher(source1, source2)
     h = HTMLMatcher(source1, source2)
-    return h.htmlDiff(addStylesheet)
+    return h.htmlContextDiff(addStylesheet=addStylesheet)
 
 def diffFiles(f1, f2):
     source1 = open(f1).read()
