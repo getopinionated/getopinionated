@@ -106,7 +106,11 @@ class ProxyGraphData:
         if not filter_tag:
             proxies = Proxy.objects.all()
         else:
-            proxies = Proxy.objects.filter(Q(tags__in=[filter_tag.id]) | Q(tags=None))
+            #select edges with the correct tag
+            proxies = Proxy.objects.filter(tags__pk = filter_tag.pk).filter(isdefault=False)
+            #select default edges from delegating people not in the previous set
+            proxies = proxies | (Proxy.objects.filter(isdefault=True).exclude(delegating__in = proxies.values('delegating')))
+            
         for proxy in proxies:
             nodes.add(proxy.delegating.display_name)
             for delegate in proxy.delegates.all():
