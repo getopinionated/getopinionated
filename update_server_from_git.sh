@@ -10,4 +10,5 @@ then
 	git reset --hard
 	git pull
 	$HOME/webapps/getopinionated/apache2/bin/restart
+	python2.7 $HOME/webapps/getopinionated/getopinionated/manage.py collectstatic
 fi
