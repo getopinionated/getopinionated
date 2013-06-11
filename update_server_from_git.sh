@@ -9,6 +9,6 @@ then
 	git rm --cached getopinionated/local_settings.py
 	git reset --hard
 	git pull
+	python2.7 $HOME/webapps/getopinionated/getopinionated/manage.py collectstatic --noinput
 	$HOME/webapps/getopinionated/apache2/bin/restart
-	python2.7 $HOME/webapps/getopinionated/getopinionated/manage.py collectstatic
 fi
