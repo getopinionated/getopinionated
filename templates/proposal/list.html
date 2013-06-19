@@ -20,11 +20,13 @@
 {% block title %}{% include "title.html" with subtitle="Proposals" %}{% endblock %}
 
 {% block beforecontent %}
-	{% if timeline %}
-		<div class="timelinecanvaspane"><canvas id="timeline"></canvas></div>
-    {% endif %}
 {% endblock %}
 {% block content %}
+    {% if timeline %}
+        <h1>Timeline</h1>
+        <div class="timelinecanvaspane"><canvas id="timeline"></canvas></div>
+        <br />
+    {% endif %}
     <div class="proposal-list">
 
     	{% if title %}

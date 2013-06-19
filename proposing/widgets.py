@@ -24,6 +24,7 @@ class TagSelectorWidget(widgets.SelectMultiple):
         return mark_safe(u'\n'.join(output))
 
 
+
 class RichTextEditorWidget(widgets.Textarea):
 
     class Media:

@@ -52,8 +52,8 @@ function drawTimeline(timelineData){
     var center_x = data.dayToPx(data.center_day);
 
     /*** fix width and horizontal position ***/
-    //$("#timeline").offset({left:0, relativeTo: "body"});
-    canvas.width = window.innerWidth;
+    //$("#timeline").offset({left:0, relativeTo: "nav"});
+    canvas.width = 1024;//window.innerWidth;
 
     /*** background ***/
     ctx.fillStyle = BG_COL;

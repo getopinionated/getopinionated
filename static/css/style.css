@@ -105,6 +105,16 @@ nav#top ul a {
 	color: #000;
 }
 
+.timelinecanvaspane {
+	width: 100%;
+}
+
+#timeline {
+    width: 100%;
+    display: block;
+}
+
+
 /* header */
 
 .title-get {
@@ -134,6 +144,7 @@ section#content > header #header-logo {
 section#content > header #header-title {
     font-family: "Dosis ExtraBold"; 
 	font-size: 100px;
+	line-height: 150px;
     padding-left: 50px;
 }
 
@@ -471,4 +482,15 @@ form td {
 
 .maxisharing img{
 	vertical-align: middle;
+}
+
+.favorite {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle; 
+    margin: 0;
+}
+.favorite img {
+    display: inline-block;
+    margin: 0 0 0 0;
 }
