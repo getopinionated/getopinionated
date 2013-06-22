@@ -1,0 +1,9 @@
+{% load macros %}
+
+{% macro star-macro user proposal %}
+    {% if user in proposal.favorited_by %}
+    	<img src="{{STATIC_URL}}images/favorite.png" alt="" class="favoritebutton" />
+    {% else %}
+    	<img src="{{STATIC_URL}}images/nofavorite.png" alt=""  class="favoritebutton" />
+    {% endif %}
+{% endmacro %}
