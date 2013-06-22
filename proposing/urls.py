@@ -16,4 +16,5 @@ urlpatterns = patterns('',
     url(r'^p/(?P<proposal_slug>[-\w]+)/edit/(?P<comment_id>\d+)/$', views.editcomment, name='comment-edit'),
     url(r'^proxy/$', views.proxy, name='proxy-index'),
     url(r'^proxy/(?P<tag_slug>[-\w]+)$', views.proxy, name='proxy-index'),
+    url(r'^ajax/favorite/(?P<proposal_slug>[-\w]+)$', views.ajaxfavorite, name='ajax-favorite'),
 )

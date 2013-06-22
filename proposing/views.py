@@ -329,3 +329,16 @@ def proposalvote(request, proposal_slug, score):
     # redirect
     messages.success(request, "Vote successful")
     return proposal_detail_redirect
+
+@login_required
+def ajaxfavorite(request, proposal_slug):
+    proposal = get_object_or_404(Proposal, slug=proposal_slug)
+    user = request.user
+    if user in proposal.favorited_by.all(): 
+        proposal.favorited_by.remove(user)
+        proposal.save()
+        return HttpResponse(content='0', mimetype='application/javascript')
+    else:
+        proposal.favorited_by.add(user)
+        proposal.save()
+        return HttpResponse(content='1', mimetype='application/javascript')
