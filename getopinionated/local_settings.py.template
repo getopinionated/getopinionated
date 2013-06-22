@@ -19,9 +19,21 @@ DATABASES = {
     }
 }
 
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'mail.host.tld'
 EMAIL_PORT = '587'
-EMAIL_HOST_USER = '<username>@gmail.com'
-EMAIL_HOST_PASSWORD = '<gmail password>'
+EMAIL_HOST_USER = 'opinion@host.tld'
+EMAIL_HOST_PASSWORD = 'password'
 EMAIL_USE_TLS = True
 
+STATIC_ROOT = '/home/de317070/webapps/staticmedia/'
+MEDIA_ROOT = os.path.join(STATIC_ROOT, 'media')
+MEDIA_URL = '/static/media/'
+
+FACEBOOK_APP_ID              = ''
+FACEBOOK_API_SECRET          = ''
+TWITTER_CONSUMER_KEY         = ''
+TWITTER_CONSUMER_SECRET      = ''
+LINKEDIN_CONSUMER_KEY        = ''
+LINKEDIN_CONSUMER_SECRET     = ''
+GOOGLE_OAUTH2_CLIENT_ID      = '000.apps.googleusercontent.com'
+GOOGLE_OAUTH2_CLIENT_SECRET  = ''
