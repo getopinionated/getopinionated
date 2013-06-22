@@ -22,7 +22,17 @@ def runserver():
     import_local_settings()
     call_command('syncdb')
     
-    call_command('migrate')
+    for app in ['proposing','document','accounts']:
+        try:
+            call_command('schemamigration',app,auto=True)
+        except:
+            #print "schema migration failed for the app",app
+            #print "trying initial"
+            #call_command('schemamigration',app,initial=True)
+            pass
+    
+    #call_command('migrate','0001',all=True,fake=True)
+    call_command('migrate',all=True)
     
     call_command('loaddata', 'testdata.json')
     call_command('validate')
