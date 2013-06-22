@@ -116,6 +116,7 @@ class Proposal(VotablePost):
     views = models.IntegerField(default=0)
     voting_stage = models.CharField(max_length=20, choices=VOTING_STAGE, default='DISCUSSION')
     voting_date = models.DateTimeField(default=None, null=True, blank=True)
+    expire_date = models.DateTimeField(default=None, null=True, blank=True)
     proposal_type = models.ForeignKey(ProposalType)
     tags = models.ManyToManyField(Tag, related_name="proposals")
     avgProposalvoteScore = models.FloatField("score", default=0.0) 

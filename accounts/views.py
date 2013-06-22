@@ -16,6 +16,7 @@ from forms import CustomUserCreationForm, ProfileUpdateForm, EmailAuthentication
 from models import CustomUser
 from django.db.models.aggregates import Count, Sum
 from accounts.forms import SingleProxyForm
+from accounts.models import UnsubscribeCode
 
 def getuserproposals(member):
     return Proposal.objects.filter(creator=member).annotate(score=Sum('up_down_votes__value')).order_by('score')
@@ -228,4 +229,15 @@ def profileupdate(request):
 @login_required
 def userlogout(request):
     return logout(request, next_page='/')
+    
+def mailunsubscribe(request, code):
+    unsubscribecode = UnsubscribeCode.objects.get(code=code)
+    user = unsubscribecode.user
+    user.weekly_digest = False
+    user.daily_digest = False
+    user.save()
+    return render_to_response(request, 'accounts/mailunsubscribe.html', {
+        'user': user
+    })
+    
     

@@ -2,14 +2,14 @@ from django.core.management.base import BaseCommand, CommandError, NoArgsCommand
 from django.db.models import Q
 from django.utils import timezone
 from proposing.models import Proposal, ProxyProposalVote, Proxy, Tag
-import datetime
+from django.utils.timezone import datetime, timedelta
 
 def concurrent():
     import sys
     import time
     import fcntl
     file_path = './lock'
-    file_handle = open(file_path, 'w') # --> empties this file apparently
+    file_handle = open(file_path, 'w') # --> empties this file apparently on MacOS
     try:
         fcntl.lockf(file_handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
         return False    
@@ -38,20 +38,26 @@ class Command(NoArgsCommand):
                 proposal.voting_stage = 'VOTING'
                 proposal.voting_date = timezone.now()
                 voting_cnt +=1
+                proposal.mail_sent=False
                 proposal.save()
             elif proposal.voting_stage == 'DISCUSSION' and proposal.minimalContraintsAreMet() and not proposal.voting_date:
                 proposal.voting_date = proposal.estimatedVotingDate
                 constraints_cnt += 1
+                proposal.mail_sent=False
                 proposal.save()
             elif proposal.shouldBeFinished():
                 Command.doVoteCount(proposal)
                 Command.executeProposal(proposal)
+                proposal.expire_date = timezone.now()
                 proposal.voting_stage = 'APPROVED' if proposal.isApproved() else 'REJECTED'
                 finished_cnt +=1
+                proposal.mail_sent=False
                 proposal.save()
             elif proposal.shouldExpire():
+                proposal.expire_date = timezone.now()
                 proposal.voting_stage = 'EXPIRED'
                 expired_cnt +=1
+                proposal.mail_sent=False
                 proposal.save()
         
         self.stdout.write('Successfully updated:\n')

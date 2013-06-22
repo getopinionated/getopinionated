@@ -19,10 +19,10 @@ DATABASES = {
     }
 }
 
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'mail.infomaniak.ch'
 EMAIL_PORT = '587'
-EMAIL_HOST_USER = '<username>@gmail.com'
-EMAIL_HOST_PASSWORD = '<gmail password>'
+EMAIL_HOST_USER = 'opinion@pirateparty.be'
+EMAIL_HOST_PASSWORD = 'separate long shadow cloth'
 EMAIL_USE_TLS = True
 
 STATIC_ROOT = '/home/de317070/webapps/staticmedia/'
