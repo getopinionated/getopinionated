@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import Context, loader
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.contrib import messages, auth
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from models import VotablePost, UpDownVote, Proposal, Comment, ProposalVote
@@ -12,6 +12,7 @@ from forms import CommentForm, ProposalEditForm, CommentEditForm
 from proposing.models import Tag, ProxyProposalVote, Proxy
 from django.db.models import Count
 from proposing.forms import ProxyForm
+from django.contrib.auth.views import redirect_to_login
 
 class TimelineData:
     # settings
@@ -136,6 +137,9 @@ def proplist(request, list_type="latest"):
     # TODO: pagination
 
     if list_type == "following":
+        if not request.user.is_authenticated():
+            path = request.build_absolute_uri()
+            return redirect_to_login(path)
         proposals = request.user.favorites.order_by('-create_date')
         timeline = TimelineData(
             filterkeywords = ["created", "voting_starts"],
