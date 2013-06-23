@@ -24,6 +24,9 @@ class Command(LabelCommand):
         for user in CustomUser.objects.all():
             
             mail_address = user.email
+            if not mail_address:
+                continue
+            
             relevant_proposals = Proposal.objects.all()
             dt = None
             if user.daily_digest and label=='daily':
