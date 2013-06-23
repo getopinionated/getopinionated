@@ -135,7 +135,14 @@ class ProxyGraphData:
 def proplist(request, list_type="latest"):
     # TODO: pagination
 
-    if list_type == "latest":
+    if list_type == "following":
+        proposals = request.user.favorites.order_by('-create_date')
+        timeline = TimelineData(
+            filterkeywords = ["created", "voting_starts"],
+            proposal_generators = (proposals, proposals),
+            right_grey = True,
+        )
+    elif list_type == "latest":
         proposals = Proposal.objects.order_by('-create_date')
         timeline = TimelineData(
             filterkeywords = ["created", "voting_starts"],

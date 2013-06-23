@@ -34,6 +34,10 @@
 	    {% else %}
 	    	<h1>
 	    		Proposals:
+	    		{% if user.is_authenticated %}
+		    		<a href="{% url proposals-list "following" %}">Following</a>
+		    		-		    		
+	    		{% endif %}
 	    		<a href="{% url proposals-list "latest" %}">Latest</a>
 	    		-
 	    		<a href="{% url proposals-list "voting" %}">Voting</a>
