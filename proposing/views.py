@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import Context, loader
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.contrib import messages, auth
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from models import VotablePost, UpDownVote, Proposal, Comment, ProposalVote
@@ -12,6 +12,7 @@ from forms import CommentForm, ProposalEditForm, CommentEditForm
 from proposing.models import Tag, ProxyProposalVote, Proxy
 from django.db.models import Count
 from proposing.forms import ProxyForm
+from django.contrib.auth.views import redirect_to_login
 
 class TimelineData:
     # settings
@@ -135,7 +136,17 @@ class ProxyGraphData:
 def proplist(request, list_type="latest"):
     # TODO: pagination
 
-    if list_type == "latest":
+    if list_type == "following":
+        if not request.user.is_authenticated():
+            path = request.build_absolute_uri()
+            return redirect_to_login(path)
+        proposals = request.user.favorites.order_by('-create_date')
+        timeline = TimelineData(
+            filterkeywords = ["created", "voting_starts"],
+            proposal_generators = (proposals, proposals),
+            right_grey = True,
+        )
+    elif list_type == "latest":
         proposals = Proposal.objects.order_by('-create_date')
         timeline = TimelineData(
             filterkeywords = ["created", "voting_starts"],
@@ -329,3 +340,16 @@ def proposalvote(request, proposal_slug, score):
     # redirect
     messages.success(request, "Vote successful")
     return proposal_detail_redirect
+
+@login_required
+def ajaxfavorite(request, proposal_slug):
+    proposal = get_object_or_404(Proposal, slug=proposal_slug)
+    user = request.user
+    if user in proposal.favorited_by.all(): 
+        proposal.favorited_by.remove(user)
+        proposal.save()
+        return HttpResponse(content='0', mimetype='application/javascript')
+    else:
+        proposal.favorited_by.add(user)
+        proposal.save()
+        return HttpResponse(content='1', mimetype='application/javascript')

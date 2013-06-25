@@ -3,6 +3,7 @@
 {% load macros %}
 {% load filters %}
 {% loadmacros "accounts/member-macro.html" %}
+{% loadmacros "proposal/star-macro.html" %}
 {% loadmacros "common/share.html" %}
 {% loadmacros "proposal/tag-macro.html" %}
 
@@ -46,6 +47,7 @@
     <article class="proposal">
         <header class="content">
             <h1>
+                <span class="favorite">{% usemacro star-macro user proposal %}</span>
                 <span class="updownvote">{% usemacro updownvote proposal %}</span>
                 <span class="title">{{ proposal.title }}</span>
                 <span class="share">

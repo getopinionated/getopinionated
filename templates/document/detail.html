@@ -11,13 +11,13 @@
 
 {% block content %}
   <h1>{{ fulldocument.title }} version {{ fulldocument.version_roman }}</h1>
-  
+  <!--
   <div class="document">
   	{% autoescape off %}
     	{{ fulldocument.content }}
 	{% endautoescape %}
   </div>
-
+    -->
 
   <form action="{% url document-detail fulldocument.slug fulldocument.version %}" method="POST">
     {% csrf_token %}

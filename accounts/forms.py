@@ -82,12 +82,14 @@ class ProfileUpdateForm(FocussingModelForm):
     
     def __init__(self, *args, **kwargs):
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
+        self.fields["avatar"].required = False
         # make username readonly (not necessary anymore)
         # self.fields['username'].widget.attrs['readonly'] = True # text input
 
     class Meta:
         model = CustomUser
-        fields = ("username", "first_name", "last_name", "email", "avatar")
+        fields = ("username", "first_name", "last_name", "email", "avatar"
+                  ,"daily_digest","weekly_digest","send_new","send_voting","send_finished","send_favorites_and_voted")
 
 
     def clean_username(self):

@@ -20,6 +20,15 @@ class CustomUser(User):
     member_since = models.DateTimeField(default=now())
     profile_views = models.IntegerField(default=0)
     
+    daily_digest = models.BooleanField("Get a daily digest in your mailbox",default=False)
+    weekly_digest = models.BooleanField("Get a weekly digest in your mailbox",default=True)
+    
+    send_new = models.BooleanField("Get a mail for new proposals",default=False)
+    send_voting = models.BooleanField("Get a mail for proposals to vote",default=True)
+    send_finished = models.BooleanField("Get a mail for finished proposals",default=True)
+    
+    send_favorites_and_voted = models.BooleanField("But only mail my favorites",default=False)
+    
     REQUIRED_FIELDS = ['username']
     
     # Use UserManager to get the create_user method, etc.
@@ -64,4 +73,7 @@ class CustomUser(User):
         if 'eID' in self.social_auth.all.values('provider'):
             return True
         return False
-    
+
+class UnsubscribeCode(models.Model):
+    code = models.SlugField()
+    user = models.ForeignKey(CustomUser)
