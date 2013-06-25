@@ -11,10 +11,10 @@ def chdir_to_project():
 
 def import_local_settings():
     local_settings_file = "getopinionated/local_settings.py"
-    local_settings_template = "getopinionated/local_settings_template.py"
+    local_settings_template = "getopinionated/local_settings.py.template"
     if not exists(local_settings_file):
         print "Local settings not found, creating new %s" % local_settings_file
-        copy(local_settings_file, local_settings_template)
+        copy(local_settings_template, local_settings_file)
     import getopinionated.local_settings
 
 def runserver():
