@@ -11,7 +11,7 @@ def chdir_to_project():
 
 def import_local_settings():
     local_settings_file = "getopinionated/local_settings.py"
-    local_settings_template = "getopinionated/local_settings_template.py"
+    local_settings_template = "getopinionated/local_settings.py.template"
     if not exists(local_settings_file):
         print "Local settings not found, creating new %s" % local_settings_file
         #This doesn't work on my Linux, Jonas
