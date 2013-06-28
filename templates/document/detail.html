@@ -11,20 +11,21 @@
 
 {% block content %}
   <h1>{{ fulldocument.title }} version {{ fulldocument.version_roman }}</h1>
-  <!--
-  <div class="document">
-  	{% autoescape off %}
-    	{{ fulldocument.content }}
-	{% endautoescape %}
-  </div>
-    -->
+  {% if user.is_authenticated %}
+      <form action="{% url document-detail fulldocument.slug fulldocument.version %}" method="POST">
+        {% csrf_token %}
+        <table>
+          {{ form }}
+          <tr><td><input type="submit" value="submit your proposal" /></td></tr>
+        </table>
+      </form>
+  {% else %}
+      <div class="document">
+        {% autoescape off %}
+            {{ fulldocument.content }}
+        {% endautoescape %}
+      </div>
 
-  <form action="{% url document-detail fulldocument.slug fulldocument.version %}" method="POST">
-    {% csrf_token %}
-    <table>
-      {{ form }}
-      <tr><td><input type="submit" value="submit your proposal" /></td></tr>
-    </table>
-  </form>
+    {% endif %}
   
 {% endblock %}

@@ -14,7 +14,8 @@ def import_local_settings():
     local_settings_template = "getopinionated/local_settings_template.py"
     if not exists(local_settings_file):
         print "Local settings not found, creating new %s" % local_settings_file
-        copy(local_settings_file, local_settings_template)
+        #This doesn't work on my Linux, Jonas
+        #copy(local_settings_file, local_settings_template)
     import getopinionated.local_settings
 
 def runserver():
@@ -36,7 +37,7 @@ def runserver():
     call_command('validate')
     call_command('migrate',all=True)
     
-    #call_command('loaddata', 'testdata.json')
+    call_command('loaddata', 'testdata.json')
     #call_command('dumpdata', 'testdata.json')
     call_command('validate')
     
