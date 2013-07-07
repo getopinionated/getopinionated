@@ -72,7 +72,7 @@ class UpDownVote(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=35)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -110,7 +110,7 @@ class Proposal(VotablePost):
     )
     # fields
     title = models.CharField(max_length=255)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     motivation = models.TextField()
     diff = models.ForeignKey(Diff)
     views = models.IntegerField(default=0)
