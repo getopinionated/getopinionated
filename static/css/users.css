@@ -1,7 +1,7 @@
 .user-small {
 	display: inline-block;
     color: #aaf;
-    font-size: 16px;
+    font-size: 12px;
 }
 
 .user-time {
@@ -21,7 +21,7 @@
 	text-align: left;
 	display: block;
 	width: 175px;
-	height: 55px;
+	height: 75px;
 	margin: 0 0 5px 0;
 	padding: 0;
 	border: 0;
@@ -38,7 +38,11 @@
 .user-box-action {
 	display: block;
 	vertical-align: top;
-	margin: 0 0 3px 0;
+	margin: 0 0 0 0;
+	white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+    overflow: hidden;
 }
 
 .user-box-avatar {
@@ -51,10 +55,11 @@
 .user-box-name {
 	display: inline-block;
 	vertical-align: top;
-	margin: 0 0 1px 0;
+	margin: 0 0 0 0;
 }
 
 .user-box-karma {
 	display: inline-block;
 	vertical-align: top;
+	padding: 0 0 10px 0;
 }

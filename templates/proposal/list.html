@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load filters %}
 {% load macros %}
+{% loadmacros "proposal/proposal-list-macro.html" %}
 {% loadmacros "proposal/proposal-macro.html" %}
 {% loadmacros "proposal/tag-macro.html" %}
 
@@ -22,48 +23,41 @@
 {% block beforecontent %}
 {% endblock %}
 {% block content %}
+	<div class="row">
     {% if timeline %}
-        <h1>Timeline</h1>
-        <div class="timelinecanvaspane"><canvas id="timeline"></canvas></div>
-        <br />
+	    <div class="span12"><canvas id="timeline"></canvas></div>
     {% endif %}
-    <div class="proposal-list">
-
-    	{% if title %}
-	    	<h1>{{ title }}</h1>
-	    {% else %}
-	    	<h1>
-	    		Proposals:
-	    		{% if user.is_authenticated %}
-		    		<a href="{% url proposals-list "following" %}">Following</a>
-		    		-		    		
-	    		{% endif %}
-	    		<a href="{% url proposals-list "latest" %}">Latest</a>
-	    		-
-	    		<a href="{% url proposals-list "voting" %}">Voting</a>
-	    		-
-	    		<a href="{% url proposals-list "all" %}">All</a>
-    		</h1>
-		{% endif %}
-	
-	    {% if latest_proposal_list %}
-	        <ul>
-	        {% for proposal in latest_proposal_list %}
-	        	<li>
-	        		{% usemacro proposal-for-list proposal %}
-	        	</li>
-	        {% endfor %}
-	        </ul>
-	    {% else %}
-	        <p>No proposals are available.</p>
-	    {% endif %}
-	</div>
-	<div class="tag-list">
-		<h1>Most used tags</h1>
-		{% for tag in taglist %}
-			<div class="tag-item">
-				{% usemacro tag-medium tag %}
+        <div class="span9">
+			<div class="row-fluid">
+				<div class="span12">
+			    	{% if title %}
+				    	<h1>{{ title }}</h1>
+				    {% else %}
+				    	<h1>
+				    		Proposals:
+				    		{% if user.is_authenticated %}
+					    		<a href="{% url proposals-list "following" %}">Following</a>
+					    		-		    		
+				    		{% endif %}
+				    		<a href="{% url proposals-list "latest" %}">Latest</a>
+				    		-
+				    		<a href="{% url proposals-list "voting" %}">Voting</a>
+				    		-
+				    		<a href="{% url proposals-list "all" %}">All</a>
+			    		</h1>
+					{% endif %}
+				</div>
 			</div>
-		{% endfor %}
+		
+		    {% usemacro proposal-list-macro latest_proposal_list %}
+		</div>
+		<div class="span3">
+			<h1>Most used tags</h1>
+			{% for tag in taglist %}
+				<div class="tag-item">
+					{% usemacro tag-medium tag %}
+				</div>
+			{% endfor %}
+		</div>
 	</div>
 {% endblock %}

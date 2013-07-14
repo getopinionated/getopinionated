@@ -1,5 +1,8 @@
 {% extends "base.html" %}
+{% load bootstrap_toolkit %}
+
 {% block title %}{% include "title.html" with subtitle="Login" %}{% endblock %}
+
 
 {% block content %}
 
@@ -7,12 +10,10 @@
 
 <form action="{% url user-login %}" method="POST">
     {% csrf_token %}
-    <table>
-        {{ form }}
-        <input type="hidden" name="next" value="{{ next }}" />
-    </table>
-    <input type="submit" value="Login" />
-    <a href="{% url password-reset %}" style="padding-left: 40px;">Forgot password</a>
+    {{ form|as_bootstrap:"horizontal" }}
+    <input type="hidden" name="next" value="{{ next }}" />
+    <input type="submit" value="Login" class="btn"/>
+    <a href="{% url password-reset %}" class="btn">Request new password</a>
 </form>
 
 {% endblock %}

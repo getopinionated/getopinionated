@@ -54,10 +54,17 @@
 
 a {
     outline: 0;
+	text-decoration: none;
+	color: #555;
 }
 
 ul {
 	list-style-type: none;
+}
+
+.show-grid {
+	margin-top: 1px;
+	margin-bottom: 2px;
 }
 
 /* render html5 elements as block */
@@ -83,7 +90,6 @@ nav#top {
 nav#top ul {
 	list-style: none;
 	line-height: normal;
-    max-width: 1024px;
     margin: 0 auto;
 }
 
@@ -157,7 +163,6 @@ section#content > header a {
 /* nav menu */
 
 nav#menu {
-    max-width: 1024px;
     margin: 0 auto 24px;
     font-size: 16px;
     color: #777;
@@ -188,7 +193,6 @@ nav#menu ul a:hover {
 /* messages */
 
 ul.messages {
-    max-width: 1024px;
     margin: 0 auto;
 	list-style-type: none;
 	font-weight: bold;
@@ -201,28 +205,12 @@ ul.messages li.error {
 /* main */
 
 #main {
-    max-width: 1024px;
     margin: 0 auto;
     padding: 8px 0;
     color: #333;
-    width: 1024px;
 }
 
 /* main general content */
-
-#main a,
-#main a:visited
-{
-    color: #777;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-#main a:hover,
-#main a:active {
-    color: #aaa;
-
-}
 
 /* far too broad applicable. Is destroying layout from plugins, such as chosen
 #main ul li {
@@ -269,7 +257,8 @@ ul.messages li.error {
 }
 
 .mini-counts {
-	height: 28px;
+	padding-top: 10px;
+	height: 18px;
 	font-size: 130%;
 	font-weight: normal;
 	text-align: center;
@@ -287,18 +276,18 @@ ul.messages li.error {
 }
 
 .upvotescore {
-	background-color: #444;
-	color: #fff;
+	background-color: #ddd;
+	color: #555;
 }
 
 .numberofcomments {
-	background-color: #333;
-	color: #fff;
+	background-color: #ddd;
+	color: #555;
 }
 
 .views {
-	background-color: #555;
-	color: #fff;
+	background-color: #ddd;
+	color: #555;
 }
 
 .explanation {
@@ -322,12 +311,16 @@ ul.messages li.error {
 
 .summary {
 	display: inline-block;
-	margin: 0;
-	padding: 0;
+	margin: 0 0 0px 0;
+	padding: 0 0 5px 0;
 	border: 0;
 	font-size: 150%;
 	vertical-align: top;
 	background: transparent;
+	white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+    overflow: hidden;
 }
 
 .creator-small {
@@ -336,6 +329,7 @@ ul.messages li.error {
 	font-size: 100%;
 	vertical-align: baseline;
 	background: transparent;
+	font-size: 12px;
 }
 
 .creator-medium {
@@ -351,6 +345,10 @@ ul.messages li.error {
 
 .proposal-tags {
 	display: inline-block;
+	white-space: nowrap;
+    overflow: hidden;
+    vertical-align: top;
+    margin: 0 0 10px 0;
 }
 
 /* footer */
@@ -377,72 +375,6 @@ footer a:hover {
 
 footer p {
 	margin: 5px 0;
-}
-
-/* forms */
-
-form {
-    padding: 8px;
-    background-color: #eee;
-    margin: 8px 0;
-    color: #777;
-}
-
-form p {
-    margin: 0.5em 0;
-}
-
-input[type=text]:focus,
-input[type=password]:focus,
-textarea:focus {
-    background-color:#777;
-    color:#fff;
-}
-
-input[type=text],
-input[type=password]
-{
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    border-bottom: 1px solid #777;
-    padding: 4px;
-    background-color: inherit;
-}
-
-textarea {
-    border: 1px solid #777;
-    padding: 4px;
-    background-color: #f7f7f7;
-}
-
-select:active,
-form input[type=submit]:active,
-form input[type=button]:active {
-    border: 1px solid #777;
-    padding: 4px 16px;
-    background-color: #f7f7f7;
-    color: inherit;
-}
-
-select,
-form input[type=submit],
-form input[type=button] {
-    border: 1px solid #777;
-    padding: 4px 16px;
-    background-color:#777;
-    color:#fff;
-}
-
-form th {
-    color: #000;
-    font-weight: normal;
-    min-width: 150px;
-    text-align: left;
-    vertical-align: top;
-}
-form td {
-    vertical-align: bottom;
 }
 
 .sharing{
@@ -482,15 +414,4 @@ form td {
 
 .maxisharing img{
 	vertical-align: middle;
-}
-
-.favorite {
-    display: inline-block;
-    text-align: center;
-    vertical-align: middle; 
-    margin: 0;
-}
-.favorite img {
-    display: inline-block;
-    margin: 0 0 0 0;
 }

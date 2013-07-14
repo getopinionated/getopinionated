@@ -1,19 +1,39 @@
 #main h1 {
-    margin-bottom: 20px;
     font-size: 1.4em;
+    margin: 0;
+    padding: 0;
 }
 
 article.proposal {
 }
 
+title-container {
+}
+
 article.proposal header.content {
     border-bottom: 3px #777 solid;
     font-size: 2em;
+    min-height: 99px; 
+}
+
+.favorite {
+	display: inline-block;
+	left: 0;
+    bottom: 0;
+    float: left;
+}
+
+.favorite img {
+    display: inline-block;
+    margin: 20px 10px 20px 10px;
 }
 
 article.proposal header .updownvote {
     font-size: 16px;
     background-color: #777;
+    display: inline-block;
+    bottom: 0;
+    float: left;
 }
 
 article.proposal header .share {
@@ -52,9 +72,8 @@ article.proposal .title{
 }
 
 article.proposal .diff {
-    background-color: #ccc;
+    background-color: #ddd;
     padding: 4px;
-    color: #33a;
     font-family: monospace;
 }
 

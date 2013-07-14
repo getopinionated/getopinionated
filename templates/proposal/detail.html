@@ -2,6 +2,7 @@
 {% load call_with_args %}
 {% load macros %}
 {% load filters %}
+{% load bootstrap_toolkit %}
 {% loadmacros "accounts/member-macro.html" %}
 {% loadmacros "proposal/star-macro.html" %}
 {% loadmacros "common/share.html" %}
@@ -45,17 +46,25 @@
 
 {% block content %}
     <article class="proposal">
-        <header class="content">
-            <h1>
-                <span class="favorite">{% usemacro star-macro user proposal %}</span>
-                <span class="updownvote">{% usemacro updownvote proposal %}</span>
-                <span class="title">{{ proposal.title }}</span>
-                <span class="share">
-                	{% usemacro sharingbuttons request.build_absolute_uri proposal.title "This interesting proposal for the program of the Pirate Party has been made on getOpinionated. Help us make the program a better program." %}
-        		</span>
-            </h1>
-        </header>
-        <div class="diff">{{ proposal.diff|diffrender }}</div>
+    	<div class="row-fluid">
+    		<div class="span12">
+		        <header class="content">
+		            <h1>
+		            	<div class="title-container">
+			                <div class="favorite">{% usemacro star-macro user proposal %}</div>
+			                <div class="updownvote">{% usemacro updownvote proposal %}</div>
+			                <div class="share">
+			                	{% usemacro sharingbuttons request.build_absolute_uri proposal.title "This interesting proposal for the program of the Pirate Party has been made on getOpinionated. Help us make the program a better program." %}
+			        		</div>
+			                <span class="title">{{ proposal.title }}</span>			                
+			        	</div>
+		            </h1>
+		        </header>
+		    </div>
+		</div>
+		<h3>Amendment proposed</h3>
+        <div class="well">{{ proposal.diff|diffrender }}</div>
+        <h3>Motivation</h3>
         <div class="motivation">
             <span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>
             {% if proposal.edits.count %}
@@ -88,7 +97,7 @@
             {% endif %}
         </div>
         <div class="timeline">
-            <h2>Timeline</h2>
+            <h3>Timeline</h3>
             {% if proposal.voting_stage != 'EXPIRED' %}
                 <ul class="events">
                     <li>{{proposal.create_date|date:"j F"}}</li>
@@ -232,17 +241,18 @@
         </div>
         {% if commentform %}
         <div class="owncomment">
-            <h2>Write your own comment</h2>
+            <h2>Write a comment</h2>
             <form action="{% url proposals-detail proposal.slug %}" method="POST" class="commentform">
                 {% csrf_token %}
-                {{ commentform.color.errors }}
-                <p>Color: {{ commentform.color }}</p>
                 {{ commentform.motivation.errors }}
                 <p>{{ commentform.motivation }}</p>
+                {{ commentform.color.errors }}
+                <p>{{ commentform.color }}</p>
                 <p><input type="submit" value="comment" /></p>
             </form>
         </div>
         {% endif %}
+
 
     </article>
 {% endblock %}

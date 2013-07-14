@@ -124,10 +124,12 @@ INSTALLED_APPS = (
 	'proposing',
     'document',
     'django.contrib.humanize',
-    'libs.sorl.thumbnail',
-    'libs.debug_toolbar',
     'accounts',
     'social_auth',
+    # libs
+    'libs.sorl.thumbnail',
+    'libs.debug_toolbar',
+    'libs.bootstrap_toolkit',
     # external apps
     'south'
 )

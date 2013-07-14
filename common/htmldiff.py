@@ -223,14 +223,16 @@ class HTMLMatcher(SequenceMatcher):
         if tag.startswith("</"):
             return tag + '</span>'
         if tag.startswith("<br"):
-            return '<span class="tagInsert type1">&para;' + tag + '</span>'
+            #return '<span class="tagInsert type1">&para;' + tag + '</span>'
+            return '<span class="tagInsert type1">' + tag + '</span>'
         return '<span class="tagInsert">' + tag
             
     def formatDeleteTag(self, tag):
         if tag.startswith("</"):
             return tag+'</span>'
         if tag.startswith("<br"):
-            return '<span class="tagDelete type1">&para;' + tag + '</span>'
+            #return '<span class="tagDelete type1">&para;' + tag + '</span>'
+            return '<span class="tagDelete type1">' + tag + '</span>'
         return '<span class="tagDelete">'+tag
             
 

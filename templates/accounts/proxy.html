@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load filters %}
 {% load macros %}
+{% load bootstrap_toolkit %}
 {% loadmacros "accounts/member-macro.html" %}
 {% loadmacros "proposal/tag-macro.html" %}
 
@@ -30,24 +31,65 @@
 
 {% block content %}
 <div>
-	<form action="{% if filter_tag %}{% url proxy-index filter_tag.slug %}{% else %}{% url proxy-index %}{% endif %}" method="POST" class="proxyform">
+	<h2>My proxies</h2>
+	<form class="form-horizontal" action="{% if filter_tag %}{% url proxy-index filter_tag.slug %}{% else %}{% url proxy-index %}{% endif %}" method="POST" class="proxyform">
 	{% csrf_token %}
-	<div>
-		My vote for everything goes to {{ proxyform.main_proxy }}
+	<div class="control-group">
+		<label class="control-label" for="id_main_proxy">I delegate my vote to </label>
+		<div class="controls"> 
+			{{ proxyform.main_proxy }}
+		</div>
 	</div>
+	<h3>except for when</h3>
 	<div class="proxy_list">
 		<div id ="itemhidden" class="proxy_item" style="display:none">
-			I delegate my vote for the tags {{ proxyform.side_proxy_tags }} to {{ proxyform.side_proxy }}
-		</div>
-		{% for userfield, tagfield in proxyform.getDefaultFieldList %}
-			<div id="item{{ forloop.counter0 }}" class="proxy_item">
-				I delegate my vote for the tags {{ tagfield }} to {{ userfield }}
+			<div class="form-inline control-group">
+				<span class="control-label">
+					I delegate my vote
+				</span>
+				<div class="controls control-row well">
+					<div class="control-group">
+						<label for="id_side_proxy_tags" class="control-label">for the tags</label>
+						{{ proxyform.side_proxy_tags }}
+					</div>
+					<div class="control-group">
+						<label for="id_side_proxy" class="control-label">to the users</label>
+						{{ proxyform.side_proxy }}
+					</div>
+				</div>
 			</div>
+		</div>
+		
+		{% for userfield, tagfield in proxyform.getDefaultFieldList %}
+		
+			<div id ="item{{ forloop.counter0 }}" class="proxy_item">
+				<div class="form-inline control-group">
+					<span class="control-label">
+						I delegate my vote
+					</span>
+					<div class="controls control-row well">
+						<div class="control-group">
+							<label for="id_side_proxy_tags" class="control-label">for the tags</label>
+							{{ tagfield }}
+						</div>
+						<div class="control-group">
+							<label for="id_side_proxy" class="control-label">to the users</label>
+							{{ userfield }}
+						</div>
+					</div>
+				</div>
+			</div>
+			
 		{% endfor%}
 	</div>
+	
+	
+	
 	<input type="number" id="tagfieldcount" name="tagfieldcount" value="{{ proxyform.getDefaultFieldList|length }}"  style="display:none" />
-	<input type="button" id="addProxyButton" value="Add another proxy" />
-	<input type="submit" id="submitButton" value="Save your proxies" />
+	<div class="form-actions">
+		<input type="submit" id="submitButton" value="Save your proxies" class="btn btn-primary"/>
+		<input type="button" id="addProxyButton" value="Add another proxy" class="btn"/>
+	</div>
 	</form>
 </div>
 <div>
@@ -57,21 +99,25 @@
 			for <div class="tag-button">{{ filter_tag.name }}</div>
 		{% endif %}
 	</h2>
-	<canvas id="springyproxy" width="1024" height="600"></canvas>
-	<div>
-		Filter on 
-		{% for tag in tags %}
-			{% if filter_tag and filter_tag.slug == tag.slug %}
-				<div class="tag-button" style="background-color: #333">{{ tag.name }}</div>
+	<div class="row">
+		<canvas id="springyproxy" height="600" width="940" class="span12"></canvas>
+	</div>
+	<div class="row">
+		<div class="span12">
+			Filter on 
+			{% for tag in tags %}
+				{% if filter_tag and filter_tag.slug == tag.slug %}
+					<div class="tag-button" style="background-color: #333">{{ tag.name }}</div>
+				{% else %}
+					<a href="{% url proxy-index tag.slug %}"><div class="tag-button">{{ tag.name }}</div></a>
+				{% endif %}
+			{% endfor %}
+			{% if filter_tag %}
+				<a href="{% url proxy-index %}"><div class="tag-button">No filter</div></a>
 			{% else %}
-				<a href="{% url proxy-index tag.slug %}"><div class="tag-button">{{ tag.name }}</div></a>
+				<div class="tag-button" style="background-color: #333">No filter</div>
 			{% endif %}
-		{% endfor %}
-		{% if filter_tag %}
-			<a href="{% url proxy-index %}"><div class="tag-button">No filter</div></a>
-		{% else %}
-			<div class="tag-button" style="background-color: #333">No filter</div>
-		{% endif %}
+		</div>
 	</div>
 </div>
  {% endblock %}

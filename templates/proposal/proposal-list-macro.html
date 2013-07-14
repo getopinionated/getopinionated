@@ -2,11 +2,15 @@
 {% loadmacros "proposal/proposal-macro.html" %}
 
 {% macro proposal-list-macro proposal_list %}
-    <ul>
-    {% for proposal in proposal_list %}
-        <li>
-            {% usemacro proposal-for-list proposal %}
-        </li>
-    {% endfor %}
-    </ul>
+	{% if proposal_list %}
+        {% for proposal in proposal_list %}
+        	<div class="row-fluid">
+	        	<div class="span12">
+	        		{% usemacro proposal-for-list proposal %}
+	        	</div>
+	    	</div>    
+        {% endfor %}
+    {% else %}
+        <p>No such proposals available.</p>
+    {% endif %}
 {% endmacro %}

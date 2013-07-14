@@ -8,79 +8,98 @@
 <head>
     <title>{% block title %}{% include "title.html" %}{% endblock %}</title>
     <meta name="description" content="{% block description %}{% endblock %}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="{% block author %}{% endblock %}">
     <link rel="image_src" href="{% block image %}{{STATIC_URL}}images/logo.png{% endblock %}" / >
+    <link rel="stylesheet" href="{{STATIC_URL}}lib/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{STATIC_URL}}css/users.css" type="text/css" charset="utf-8" />
     <link rel="stylesheet" href="{{STATIC_URL}}css/tags.css" type="text/css" charset="utf-8" />
     <link rel="stylesheet" href="{{STATIC_URL}}css/style.css" />
     <script type="text/javascript" src="{{STATIC_URL}}js/jquery/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}lib/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}js/initajax.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}js/favorite.js"></script>
     {% block extrastyle %}{% endblock %}
     <meta charset="utf-8" />
     {% block extrahead %} {% endblock %}
 </head>
-<body>
-    <nav id="top">
-        <ul>
-            {% if not user.is_authenticated %}
-                <li><a href="{% url user-login %}?next={{request.path|urlencode}}">Login</a></li>
-                <li><a href="{% url socialauth_begin "facebook" %}"><img src="{{STATIC_URL}}images/facebook-24.png" alt="facebook" /></a></li>
-                <li><a href="{% url socialauth_begin "twitter" %}"><img src="{{STATIC_URL}}images/twitter-24.png" alt="twitter" /></a></li>
-                <li><a href="{% url socialauth_begin "google-oauth2" %}"><img src="{{STATIC_URL}}images/google-24.png" alt="google" /></a></li>
-                <li><a href="{% url socialauth_begin "linkedin" %}"><img src="{{STATIC_URL}}images/linkedin-24.png" alt="linkedin" /></a></li>
-                <li><a href="{% url socialauth_begin "eID" %}"><img src="{{STATIC_URL}}images/eid-24.png" alt="e-ID" /></a></li>
+<body
+	{% if not user.is_authenticated %}
+    style="padding-top: 60px;padding-bottom: 40px;"
+    {% endif %}
+    >
+	{% if not user.is_authenticated %}
+	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <div class="nav-collapse collapse">
+    		<ul class="nav">
                 <li><a href="{% url user-register %}">Register</a></li>
-            {% endif %}
-            {% block menu %} {% endblock %}
-            {% if user.is_authenticated %}
-                <li>Tie my account to the following social network:</li>
                 <li><a href="{% url socialauth_begin "facebook" %}"><img src="{{STATIC_URL}}images/facebook-24.png" alt="facebook" /></a></li>
                 <li><a href="{% url socialauth_begin "twitter" %}"><img src="{{STATIC_URL}}images/twitter-24.png" alt="twitter" /></a></li>
                 <li><a href="{% url socialauth_begin "google-oauth2" %}"><img src="{{STATIC_URL}}images/google-24.png" alt="google" /></a></li>
                 <li><a href="{% url socialauth_begin "linkedin" %}"><img src="{{STATIC_URL}}images/linkedin-24.png" alt="linkedin" /></a></li>
                 <li><a href="{% url socialauth_begin "eID" %}"><img src="{{STATIC_URL}}images/eid-24.png" alt="e-ID" /></a></li>
-                <li><a href="{% url user-profile user.slug %}">Profile</a></li>
-                <li><a href="{% url profile-update %}">Account</a></li>
-                <li><a href="{% url user-logout %}?next={{request.path|urlencode}}">Logout</a></li>
-                <li class="right">(logged in as {{user.display_name}})</li>
-            {% endif %}
-        </ul>
-    </nav>
+          	</ul>
+            <form class="navbar-form pull-right" action="{% url user-login %}" method="POST">
+            	{% csrf_token %}
+	            <input class="span2" name="username" type="text" placeholder="Email">
+	            <input class="span2" name="password" type="password" placeholder="Password">
+	            <input type="hidden" name="next" value="{{ request.path }}" />
+	            <button type="submit" value="Login" class="btn">Sign in</button>
+            </form>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+    {% endif %}
 
-    <section id="content">
-
-        <header>
-            <div id="header-logo"><a href="{% url home-index %}"><img src="{{STATIC_URL}}images/logo.png" alt="" /></a></div>
-            <div id="header-title"><a href="{% url home-index %}"><span class="title-get">get</span><span class="title-opinionated">Opinionated</span></a></div>
-        </header>
-        
-        <nav id="menu">
-            <ul>
-                <li><a href="{% url latest-document-detail 'the-pirate-codex' %}">Document</a></li>
-                <li><a href="{% url proposals-index %}">Proposals</a></li>
-                <li><a href="{% url proxy-index %}">Proxy</a></li>
-            </ul>
-        </nav>
-
-        {% block beforecontent %}{% endblock %}
-
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-
-        <section id="main">
-             {% block content %}{% endblock %}
-        </section>
-
-    </section>
+	
+	<div  class="container">
+	    <section id="content">
+	
+	        <header>
+	            <div id="header-logo"><a href="{% url home-index %}"><img src="{{STATIC_URL}}images/logo.png" alt="" /></a></div>
+	            <div id="header-title"><a href="{% url home-index %}"><span class="title-get">get</span><span class="title-opinionated">Up</span></a></div>
+	        </header>
+	        
+			<div class="navbar">
+	          <div class="navbar-inner">
+	            <div class="container">
+	              <ul class="nav">
+	                <li><a href="{% url latest-document-detail 'the-pirate-codex' %}">Document</a></li>
+	                <li><a href="{% url proposals-index %}">Proposals</a></li>
+	                <li><a href="{% url proxy-index %}">Proxy</a></li>
+	                {% if user.is_authenticated %}
+		                <li><a href="{% url user-profile user.slug %}">Profile</a></li>
+		                <li><a href="{% url profile-update %}">Account</a></li>
+		                <li><a href="{% url user-logout %}?next={{request.path|urlencode}}">Logout</a></li>
+			        {% endif %}
+			        {% block menu %} {% endblock %}        
+	              </ul>
+	            </div>
+	          </div>
+	        </div><!-- /.navbar -->
+	
+	        {% block beforecontent %}{% endblock %}
+	        {% if messages %}
+	        <ul class="messages">
+	            {% for message in messages %}
+	            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+	            {% endfor %}
+	        </ul>
+	        {% endif %}
+	
+	        <section id="main">
+	             {% block content %}{% endblock %}
+	        </section>
+	
+	    </section>
+	    <footer>
+	        <p>Created by the getopinionated team. Developed under the GPL license.</p>
+	    </footer>
     
-    <footer>
-        <p>Created by the getopinionated team. Developed under the GPL license.</p>
-    </footer>
+	</div>    
     {% block extrascripts %} {% endblock %}
 </body>
 </html>
