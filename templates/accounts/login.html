@@ -6,15 +6,23 @@
 
 {% block content %}
 
-<h1>Login</h1>
-
-<form action="{% url user-login %}" method="POST">
-    {% csrf_token %}
-    {{ form|as_bootstrap:"horizontal" }}
-    <input type="hidden" name="next" value="{{ next }}" />
-    <input type="submit" value="Login" class="btn"/>
-    <a href="{% url password-reset %}" class="btn">Request new password</a>
-</form>
-
+<div class="row">
+	<div class="span5">
+		<h1>Login</h1>
+		<form action="{% url user-login %}" method="POST">
+		    {% csrf_token %}
+		    {{ form|as_bootstrap:"horizontal" }}
+		    <input type="hidden" name="next" value="{{ next }}" />
+		    <input type="submit" value="Login" class="btn"/>
+		    <a href="{% url password-reset %}" class="btn">Request new password</a>
+		</form>
+	</div>
+	<div class="span2">
+		<h1>Or</h1>
+	</div>
+	<div class="span5">
+		<h1>Use external accounts</h1>
+	</div>
+</div>
 {% endblock %}
 
