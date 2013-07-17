@@ -33,7 +33,6 @@ class RichTextEditorWidget(widgets.Textarea):
                     'css/wysihtml5/bootstrap.min.css')
         }
         js = ('js/wysihtml5/wysihtml5-0.3.0.js',
-              'js/wysihtml5/bootstrap.min.js',
               'js/wysihtml5/bootstrap-wysihtml5.js')
 
     def render(self, name, value, attrs=None):
@@ -56,12 +55,10 @@ class VeryRichTextEditorWidget(widgets.Textarea):
     class Media:
         css = {
             'all': ('lib/x-editable/bootstrap-editable/css/bootstrap-editable.css',
-                    'css/wysihtml5/bootstrap-wysihtml5.css',
-                    'css/wysihtml5/bootstrap.min.css')
+                    'css/wysihtml5/bootstrap-wysihtml5.css')
         }
         js = ('lib/x-editable/bootstrap-editable/js/bootstrap-editable.js',
               'js/wysihtml5/wysihtml5-0.3.0.js',
-              'js/wysihtml5/bootstrap.min.js',
               'js/wysihtml5/bootstrap-wysihtml5.js')
         
 

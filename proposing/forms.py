@@ -23,7 +23,7 @@ class ProposalForm(forms.ModelForm):
     def __init__(self, document, *args, **kwargs):
         super(ProposalForm, self).__init__(*args, **kwargs)
         self.document = document
-        self.fields["content"] = forms.CharField(widget=VeryRichTextEditorWidget(attrs={'cols': 80, 'rows': 20}), initial=document.content)
+        self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'cols': 80, 'rows': 20}), initial=document.content)
         self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget())
         self.fields.keyOrder = ['title', 'content', 'motivation','tags', 'proposal_type']
 

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load call_with_args %}
 {% load macros %}
+{% loadmacros "proposal/proposal-form-modal-macro.html" %}
 
 {% block title %}{% include "title.html" with subtitle=fulldocument.title subtitle2=" version " subtitle3=fulldocument.version_roman %}{% endblock %}
 
@@ -10,22 +11,23 @@
 {% endblock %}
 
 {% block content %}
-  <h1>{{ fulldocument.title }} version {{ fulldocument.version_roman }}</h1>
-  {% if user.is_authenticated %}
-      <form action="{% url document-detail fulldocument.slug fulldocument.version %}" method="POST">
-        {% csrf_token %}
-        <table>
-          {{ form }}
-          <tr><td><input type="submit" value="submit your proposal" /></td></tr>
-        </table>
-      </form>
-  {% else %}
-      <div class="document">
-        {% autoescape off %}
+    <h1>{{ fulldocument.title }} version {{ fulldocument.version_roman }}</h1>
+    {% if user.is_authenticated %}
+	<div>
+	    <div style="float:right;">
+	       {% usemacro proposal-form-modal-button-macro "Amend this document" "amend"%}
+	    </div>
+	    {% autoescape off %}
             {{ fulldocument.content }}
         {% endautoescape %}
-      </div>
-
+	</div>
+	{% usemacro proposal-form-modal-macro fulldocument.content "amend"%}  
+    {% else %}
+        <div class="document">
+			{% autoescape off %}
+			    {{ fulldocument.content }}
+			{% endautoescape %}
+        </div>
     {% endif %}
   
 {% endblock %}
