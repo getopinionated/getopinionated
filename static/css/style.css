@@ -415,3 +415,19 @@ footer p {
 .maxisharing img{
 	vertical-align: middle;
 }
+
+.inverse {
+	color: #fff;
+	background: #333;
+}
+
+.table
+{
+    display: table;
+}
+
+.cell
+{
+    display: table-cell;
+    vertical-align: middle;
+}

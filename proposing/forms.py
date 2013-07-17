@@ -3,7 +3,8 @@ from common.forms import FocussingModelForm
 from common.beautifulsoup import BeautifulSoup
 from common import sanitizehtml
 from document.models import FullDocument, Diff
-from proposing.widgets import TagSelectorWidget, RichTextEditorWidget
+from proposing.widgets import TagSelectorWidget, RichTextEditorWidget,\
+    VeryRichTextEditorWidget
 from proposing.fields import TagChoiceField, UserChoiceField
 from models import VotablePost, UpDownVote, Proposal, Comment, Tag, VotablePostEdit
 from django.contrib.auth.models import User
@@ -22,7 +23,7 @@ class ProposalForm(forms.ModelForm):
     def __init__(self, document, *args, **kwargs):
         super(ProposalForm, self).__init__(*args, **kwargs)
         self.document = document
-        self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'cols': 80, 'rows': 20}), initial=document.content)
+        self.fields["content"] = forms.CharField(widget=VeryRichTextEditorWidget(attrs={'cols': 80, 'rows': 20}), initial=document.content)
         self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget())
         self.fields.keyOrder = ['title', 'content', 'motivation','tags', 'proposal_type']
 

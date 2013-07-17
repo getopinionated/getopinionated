@@ -1,16 +1,22 @@
 {% load macros %}
 
+{% macro comment-list-item comment %}
+	<div class="row-fluid table">
+	     <div class="span2 inverse text-center">
+	     	{{comment.upvote_score}}<p class="tiny-text">upvote</p>
+	     </div>
+	     <div class="span10 cell">
+	     	<a href="{% url proposals-detail comment.proposal.slug %}">{{comment.proposal.title}}</a>
+	     </div>
+	 </div>
+{% endmacro %}
+
 {% macro comment-list-macro pos_comment_list neutr_comment_list neg_comment_list %}
     <div class="positive">
          <h2>Positive</h2>
-         <table class="comment-list">
-             {% for comment in pos_comment_list %}
-                 <tr>
-                     <th>{{comment.upvote_score}}<p class="tiny-text">upvote</p></th>
-                     <td><a href="{% url proposals-detail comment.proposal.slug %}">{{comment.proposal.title}}</a></td>
-                 </tr>
-             {% endfor %}
-         </table>
+         {% for comment in pos_comment_list %}
+             {% usemacro comment-list-item comment %}
+         {% endfor %}
      </div>
      <div class="neutral">
          <h2>Neutral</h2>

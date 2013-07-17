@@ -15,10 +15,8 @@
     <link rel="stylesheet" href="{{STATIC_URL}}css/users.css" type="text/css" charset="utf-8" />
     <link rel="stylesheet" href="{{STATIC_URL}}css/tags.css" type="text/css" charset="utf-8" />
     <link rel="stylesheet" href="{{STATIC_URL}}css/style.css" />
-    <script type="text/javascript" src="{{STATIC_URL}}js/jquery/jquery-1.9.1.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}js/jquery/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}lib/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}js/initajax.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}js/favorite.js"></script>
     {% block extrastyle %}{% endblock %}
     <meta charset="utf-8" />
     {% block extrahead %} {% endblock %}
@@ -99,7 +97,11 @@
 	        <p>Created by the getopinionated team. Developed under the GPL license.</p>
 	    </footer>
     
-	</div>    
+	</div>
+	
+	<!--scripts at the end!-->
+    <script type="text/javascript" src="{{STATIC_URL}}js/initajax.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/favorite.js"></script>
     {% block extrascripts %} {% endblock %}
 </body>
 </html>

@@ -51,3 +51,37 @@ class RichTextEditorWidget(widgets.Textarea):
             "color": false  
         });</script>"""%attrs['id'])
         return mark_safe(u'\n'.join(output))
+
+class VeryRichTextEditorWidget(widgets.Textarea):
+    class Media:
+        css = {
+            'all': ('lib/x-editable/bootstrap-editable/css/bootstrap-editable.css',
+                    'css/wysihtml5/bootstrap-wysihtml5.css',
+                    'css/wysihtml5/bootstrap.min.css')
+        }
+        js = ('lib/x-editable/bootstrap-editable/js/bootstrap-editable.js',
+              'js/wysihtml5/wysihtml5-0.3.0.js',
+              'js/wysihtml5/bootstrap.min.js',
+              'js/wysihtml5/bootstrap-wysihtml5.js')
+        
+
+    def render(self, name, value, attrs=None):
+        final_attrs = self.build_attrs(attrs, name=name)
+        output = [u'<div id="username" %s>%s</div>' % (flatatt(final_attrs), value)]
+        output.append("""
+        <script type="text/javascript">
+            $.fn.editable.defaults.mode = 'inline';
+            $(document).ready(function() {
+                $('#username').editable({
+                    type: 'wysihtml5',
+                    pk: '%s',
+                    url: '/post',
+                    title: 'Enter your proposal',
+                    success: function(response, newValue) {
+                        if(response.status == 'error') return response.msg; //msg will be shown in editable form
+                    },
+                    anim: "fast"
+                });
+            });
+        </script>"""%attrs['id'])
+        return mark_safe(u'\n'.join(output))
