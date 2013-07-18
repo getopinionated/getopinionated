@@ -132,7 +132,6 @@ nav#top ul a {
 }
 
 section#content > header {
-    width: 1024px;
     margin: 0 auto;
 }
 
@@ -430,4 +429,8 @@ footer p {
 {
     display: table-cell;
     vertical-align: middle;
+}
+
+.bigmodal.fade.in {
+  top: 5%!important;
 }
