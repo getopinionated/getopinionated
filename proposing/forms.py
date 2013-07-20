@@ -17,14 +17,14 @@ import itertools
 
 
 class ProposalForm(forms.ModelForm):
-    title = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'autofocus'})) # forus on page-load (html5))
-    motivation = forms.CharField(widget=forms.Textarea(attrs={'cols': 80, 'rows': 20}))
+    title = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'autofocus','style':'width: 100%;','placeholder':"Title of the amendment"})) # forus on page-load (html5))
+    motivation = forms.CharField(widget=forms.Textarea(attrs={'style':'width: 100%;', 'rows':10,'placeholder':"Your motivation to propose this amendment. Convince the other users that this amendment is a good idea."}))
 
     def __init__(self, document, *args, **kwargs):
         super(ProposalForm, self).__init__(*args, **kwargs)
         self.document = document
-        self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'cols': 80, 'rows': 20}), initial=document.content)
-        self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget())
+        self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}), initial=document.content)
+        self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }))
         self.fields.keyOrder = ['title', 'content', 'motivation','tags', 'proposal_type']
 
     class Meta:

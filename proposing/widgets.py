@@ -20,7 +20,7 @@ class TagSelectorWidget(widgets.SelectMultiple):
         if options:
             output.append(options)
         output.append('</select>')
-        output.append('<script type="text/javascript">$("#%s").chosen();</script>'%attrs['id'])
+        output.append('<script type="text/javascript">$("#%s").chosen({width: "100%%"});</script>'%attrs['id'])
         return mark_safe(u'\n'.join(output))
 
 
@@ -37,6 +37,8 @@ class RichTextEditorWidget(widgets.Textarea):
 
     def render(self, name, value, attrs=None):
         final_attrs = self.build_attrs(attrs, name=name)
+        del final_attrs['rows']
+        del final_attrs['cols']
         output = [u'<textarea class="rich-text-widget" %s>' % flatatt(final_attrs)]
         output.append('%s'%value)
         output.append('</textarea>')

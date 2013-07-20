@@ -15,13 +15,13 @@
     {% if user.is_authenticated %}
 	<div>
 	    <div style="float:right;">
-	       {% usemacro proposal-form-modal-button-macro "Amend this document" "amend"%}
+	       {% usemacro proposal-form-modal-button-macro "Amend this document" "amend" form %}
 	    </div>
 	    {% autoescape off %}
             {{ fulldocument.content }}
         {% endautoescape %}
 	</div>
-	{% usemacro proposal-form-modal-macro fulldocument.content "amend"%}  
+	{% usemacro proposal-form-modal-macro fulldocument.content "amend" form %}  
     {% else %}
         <div class="document">
 			{% autoescape off %}
