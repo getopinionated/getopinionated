@@ -29,8 +29,7 @@ class RichTextEditorWidget(widgets.Textarea):
 
     class Media:
         css = {
-            'all': ('css/wysihtml5/bootstrap-wysihtml5.css',
-                    'css/wysihtml5/bootstrap.min.css')
+            'all': ('css/wysihtml5/bootstrap-wysihtml5.css',)#comma is important!
         }
         js = ('js/wysihtml5/wysihtml5-0.3.0.js',
               'js/wysihtml5/bootstrap-wysihtml5.js')
