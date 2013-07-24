@@ -228,39 +228,43 @@
         <h3>Comments</h3>
         <div class="comments">
             {% for comment in proposal.comments.all %}
-            <div class="comment row-fluid well" id="comment_{{ comment.id }}">
-                <div class="span1">
-                    <span class="updownvote">{% usemacro updownvote comment %}</span>
-                </div>
-                <div class="span11 {{ comment.color }}">
-                    <span class="editedby">written</span>{% usemacro user-small comment.creator comment.create_date %}
-                    {% if comment.edits.count %}
-	                    <span class="editedby">and edited by</span>
-	                    <div class="user-small">
-	                        <a href="{% url user-profile comment.lastEdit.user.slug %}">
-	                            <span class="user-name">{{comment.lastEdit.user.display_name}}</span>
-	                        </a>
-	                        <span title="{{comment.lastEdit.date}}" class="user-time">, {{comment.lastEdit.date|humantime}}</span>
-	                    </div>
-                    {% endif %}
-                    <div class="motivation">
-	                    {% if not commenteditform or commenteditform.comment_id != comment.id %}
-	                        {{ comment.motivation|linebreaks }}
-	                        {% if comment|args:user|call:"isEditableBy" %}
-		                        <div>
-		                            <a href="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" class="btn btn-mini">edit</a>
+            <div class="comment row-fluid" id="comment_{{ comment.id }}">
+                <div class="span12 well">
+                    <div class="row-fluid">
+                        <div class="span1">
+		                    <span class="updownvote">{% usemacro updownvote comment %}</span>
+		                </div>
+		                <div class="span11 {{ comment.color }}">
+		                    <span class="editedby">written</span>{% usemacro user-small comment.creator comment.create_date %}
+		                    {% if comment.edits.count %}
+		                        <span class="editedby">and edited by</span>
+		                        <div class="user-small">
+		                            <a href="{% url user-profile comment.lastEdit.user.slug %}">
+		                                <span class="user-name">{{comment.lastEdit.user.display_name}}</span>
+		                            </a>
+		                            <span title="{{comment.lastEdit.date}}" class="user-time">, {{comment.lastEdit.date|humantime}}</span>
 		                        </div>
-	                        {% endif %}
-	                    {% else %}
-	                        <table>
-	                            <form action="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" method="POST">
-	                                {{commenteditform|as_bootstrap}}
-	                                {% csrf_token %}
-                                    <input type="submit"  class="btn btn-primary" value="Edit" />
-                                    <a href="{% url proposals-detail proposal.slug %}" class="btn">cancel</a>
-	                            </form>
-	                        </table>
-	                    {% endif %}
+		                    {% endif %}
+		                    <div class="motivation">
+		                        {% if not commenteditform or commenteditform.comment_id != comment.id %}
+		                            {{ comment.motivation|linebreaks }}
+		                            {% if comment|args:user|call:"isEditableBy" %}
+		                                <div>
+		                                    <a href="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" class="btn btn-mini">edit</a>
+		                                </div>
+		                            {% endif %}
+		                        {% else %}
+		                            <table>
+		                                <form action="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" method="POST">
+		                                    {{commenteditform|as_bootstrap}}
+		                                    {% csrf_token %}
+		                                    <input type="submit"  class="btn btn-primary" value="Edit" />
+		                                    <a href="{% url proposals-detail proposal.slug %}" class="btn">cancel</a>
+		                                </form>
+		                            </table>
+		                        {% endif %}
+		                    </div>
+		                </div>                    
                     </div>
                 </div>
             </div>
