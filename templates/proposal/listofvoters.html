@@ -14,15 +14,21 @@
 {% block content %}
     <article class="listofvoters">
         <header class="content">
-            <h1>{{ proposal.title }}</h1>
+            <h1><small>On the amendment: </small>"{{ proposal.title }}"</h1>
         </header>
         {% for option, helptext in proposal.voteOptions %}
             {% if proposal|args:option|call:"numVotesOn" != 0 %}
-                <h2>Users that voted on {{option}} {% if helptext %}({{helptext}}){% endif %}</h2>
+                <h2>The following users voted {{option}} {% if helptext %}({{helptext}}){% endif %}</h2>
                 {% for vote in proposal|args:option|call:"votesOn" %}
-                    {% usemacro user-in-list vote.user %}
-                    voted for 
-                    {% for voter in vote.vote_traject.all %}{% usemacro user-micro voter %}{% usemacro comma %}{% endfor %}
+                    <div class="row-fluid">
+                        <div class="span3">
+                            {% usemacro user-in-list vote.user %}
+                        </div>
+                        <div class="span9">
+                            voted for 
+                            {% for voter in vote.vote_traject.all %}{% usemacro user-micro voter %}{% usemacro comma %}{% endfor %}
+                        </div>
+                    </div>
                 {% endfor %}
             {% endif %}
         {% endfor %}

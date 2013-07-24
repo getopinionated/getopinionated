@@ -598,3 +598,11 @@ footer p {
 .number-slider-widget .slider-selection {
     background: #0088cc;
 }
+
+.POS{
+	background: #dfd;
+}
+
+.NEG{
+    background: #fdd;
+}

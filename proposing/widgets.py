@@ -3,6 +3,8 @@ from django.forms.util import flatatt
 from django.utils.safestring import mark_safe
 from django.utils.datastructures import MultiValueDict, MergeDict
 from django.utils.encoding import force_unicode
+import random
+import string
 
 class TagSelectorWidget(widgets.SelectMultiple):
 
@@ -13,6 +15,7 @@ class TagSelectorWidget(widgets.SelectMultiple):
         js = ('js/chosen/chosen.jquery.js',)
 
     def render(self, name, selected=None, attrs=None, choices=()):
+        attrs['id'] = 'TagSelectorWidget-' + ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
         if selected is None: selected = []
         final_attrs = self.build_attrs(attrs, name=name)
         output = [u'<select multiple="multiple" class="chosen" %s>' % flatatt(final_attrs)]
@@ -32,11 +35,12 @@ class NumberSliderWidget(widgets.TextInput):
         js = ('lib/slider/js/bootstrap-slider.js',)
 
     def render(self, name, value, attrs=None):
+        attrs['id'] = 'NumberSliderWidget-' + ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
         final_attrs = self.build_attrs(attrs, name=name)
-        output = [u'<input type="text" class="number-slider-widget" value="%d" data-slider-min="0" data-slider-max="63" data-slider-step="1" id="%s" %s>' % (value,attrs['id'],flatatt(final_attrs))]
+        output = [u'<input type="number" class="number-slider-widget" value="%s" data-slider-min="0" data-slider-max="63" data-slider-step="1" id="%s" %s>' % (value,attrs['id'],flatatt(final_attrs))]
         output.append('''<script type="text/javascript">$('#%s').slider({
             selection: 'before',
-            value: %d,
+            value: %s,
             formater: function(value) {
                 return 'days to discuss before voting: '+value+ ' days';
             }
@@ -55,6 +59,7 @@ class RichTextEditorWidget(widgets.Textarea):
               'js/wysihtml5/bootstrap-wysihtml5.js')
 
     def render(self, name, value, attrs=None):
+        attrs['id'] = 'RichTextEditorWidget-' + ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
         final_attrs = self.build_attrs(attrs, name=name)
         del final_attrs['rows']
         del final_attrs['cols']

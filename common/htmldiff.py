@@ -103,7 +103,7 @@ class HTMLMatcher(SequenceMatcher):
         out.close()
         if addStylesheet:
             html = self.addStylesheet(html, self.stylesheet())
-        return html
+        return html.replace('\n', '')
 
 
     def isVisibleItem(self, item):
@@ -144,14 +144,12 @@ class HTMLMatcher(SequenceMatcher):
                                 brsincecontentadded -= 1
             if tag == 'delete':
                 self.textDelete(a[i1:i2], context)
-                if self.isVisibleItem(a[i1:i2]):
-                    brsincecontentadded = 0
-                    added = True
+                brsincecontentadded = 0
+                added = True
             if tag == 'insert':
                 self.textInsert(b[j1:j2], context)
-                if self.isVisibleItem(b[j1:j2]):
-                    brsincecontentadded = 0
-                    added = True
+                brsincecontentadded = 0
+                added = True
             if tag == 'replace':
                 brsincecontentadded = 0
                 added = True
@@ -169,7 +167,7 @@ class HTMLMatcher(SequenceMatcher):
         out.close()
         if addStylesheet:
             html = self.addStylesheet(html, self.stylesheet())
-        return html
+        return html.replace('\n', '')
 
     def isInvisibleChange(self, seq1, seq2):
         if len(seq1) != len(seq2):

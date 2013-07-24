@@ -1,9 +1,3 @@
-#main h1 {
-    font-size: 1.4em;
-    margin: 0;
-    padding: 0;
-}
-
 article.proposal {
 }
 
@@ -258,14 +252,6 @@ article.proposal .votingresults .resultchart .optionbar .caption div.small {
 /***** list of voters *****/
 article.listofvoters {
     overflow: auto;
-}
-article.listofvoters h1 {
-    color: #444;
-    margin: 0 0 20px 0;
-    font-size: 2em;
-}
-article.listofvoters h2 {
-    clear: both;
 }
 article.listofvoters .user-info {
     float: left;

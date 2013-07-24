@@ -7,6 +7,7 @@
 {% loadmacros "proposal/star-macro.html" %}
 {% loadmacros "common/share.html" %}
 {% loadmacros "proposal/tag-macro.html" %}
+{% loadmacros "proposal/proposal-form-modal-macro.html" %}
 
 {% macro updownvote votable_post %}
 	{% if votable_post|args:user|call:"canPressUpvote" %}
@@ -22,7 +23,7 @@
 		<a href="{% url posts-vote proposal.slug votable_post.id 'down' %}" class="btn btn-mini"><i class="icon-thumbs-down"></i></a>
 	{% else %}
 	    {% if votable_post|args:user|call:"hasDownvoted" %}
-            <div class="btn btn-mini btn-success" title="You already voted down"><i class="icon-thumbs-down"></i></div>
+            <div class="btn btn-mini btn-danger" title="You already voted down"><i class="icon-thumbs-down"></i></div>
         {% else %}
             <div class="btn btn-mini disabled" title="You're not allowed to vote"><i class="icon-thumbs-down"></i></div>
         {% endif %}
@@ -53,6 +54,10 @@
 {% endblock %}
 
 {% block content %}
+    {% if proposal|args:user|call:"isEditableBy" %}
+        {% usemacro proposal-form-modal-macro proposal.diff "editamendmentmodal" proposaleditform document 1 %}
+    {% endif %}
+    {% usemacro proposal-form-modal-macro proposal.diff "forkamendmentmodal" proposaleditform document 0 %}
     <article class="proposal">
     	<div class="row-fluid">
     		<div class="span12">
@@ -64,7 +69,7 @@
 			                <div class="share">
 			                	{% usemacro sharingbuttons request.build_absolute_uri proposal.title "This interesting proposal for the program of the Pirate Party has been made on getOpinionated. Help us make the program a better program." %}
 			        		</div>
-			                <span class="title">{{ proposal.title }}</span>			                
+			                <span class="title">{{ proposal.title }}</span>
 			        	</div>
 		            </h1>
 		        </header>
@@ -84,9 +89,14 @@
             </div>
         </div>
         <div class="well amendment">
-            <a href="#fullamendmentmodal" role="button" class="btn btn-primary" data-toggle="modal" style="float: right;">View full amendment</a>
-            
-               {{ proposal.diff|diffrender }}
+            <div style="float: right; margin:10px;">
+                <a href="#fullamendmentmodal" role="button" class="btn btn-primary" data-toggle="modal" style="width: 161px;">View full amendment</a><br>
+                {% if proposal|args:user|call:"isEditableBy" %}
+	               <a href="#editamendmentmodal" role="button" class="btn" data-toggle="modal" style="width: 161px;">Edit your amendment</a><br>
+	            {% endif %}
+	            <a href="#forkamendmentmodal" role="button" class="btn" data-toggle="modal" style="width: 161px;">Fork this amendment</a><br>
+            </div>
+            {{ proposal.diff|diffrender|cut:"\n" }}
         </div>
 
         <span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>
@@ -97,32 +107,12 @@
         
         
         <div class="motivation">
-            
-            {% if not proposaleditform %}
-                {{ proposal.motivation|linebreaks }}
-            	<div class="proposal-tags">
-            		{% for tag in proposal.tags.all %}
-            			{% usemacro tag-small tag %}
-            		{% endfor %}
-            	</div>
-                {% if proposal|args:user|call:"isEditableBy" %}
-                    <a href="{% url proposal-edit proposal.slug %}" class="edit">edit</a>
-                {% endif %}
-            {% else %}
-                <table>
-                    <form action="{% url proposal-edit proposal.slug %}" method="POST">
-                        {{proposaleditform}}
-                        {% csrf_token %}
-                        <tr>
-                            <td></td>
-                            <td>
-                                <input type="submit" value="Edit" />
-                                <a href="{% url proposals-detail proposal.slug %}" class="edit" style="display:inline-block;">cancel</a>
-                            </td>
-                        </tr>
-                    </form>
-                </table>
-            {% endif %}
+            {{ proposal.motivation|linebreaks }}
+        	<div class="proposal-tags">
+        		{% for tag in proposal.tags.all %}
+        			{% usemacro tag-small tag %}
+        		{% endfor %}
+        	</div>
         </div>
         <div class="timeline">
             <h3>Timeline</h3>
@@ -208,7 +198,7 @@
                 <p>
                     #votes: {{ proposal.total_proxy_proposal_votes.count }}
                 </p>
-                <p><a href="{% url proposals-listofvoters proposal.slug %}">See list of voters</a></p>
+                <p><a href="{% url proposals-listofvoters proposal.slug %}" class="btn">See list of voters</a></p>
                 <div class="resultchart">
                     <h3>Vote distribution:</h3>
                     {% for option, helptext in proposal.voteOptions %}
@@ -225,63 +215,65 @@
               </div>
             </div>
         {% endif %}
-        <h3>Comments</h3>
-        <div class="comments">
-            {% for comment in proposal.comments.all %}
-            <div class="comment row-fluid" id="comment_{{ comment.id }}">
-                <div class="span12 well">
-                    <div class="row-fluid">
-                        <div class="span1">
-		                    <span class="updownvote">{% usemacro updownvote comment %}</span>
-		                </div>
-		                <div class="span11 {{ comment.color }}">
-		                    <span class="editedby">written</span>{% usemacro user-small comment.creator comment.create_date %}
-		                    {% if comment.edits.count %}
-		                        <span class="editedby">and edited by</span>
-		                        <div class="user-small">
-		                            <a href="{% url user-profile comment.lastEdit.user.slug %}">
-		                                <span class="user-name">{{comment.lastEdit.user.display_name}}</span>
-		                            </a>
-		                            <span title="{{comment.lastEdit.date}}" class="user-time">, {{comment.lastEdit.date|humantime}}</span>
-		                        </div>
-		                    {% endif %}
-		                    <div class="motivation">
-		                        {% if not commenteditform or commenteditform.comment_id != comment.id %}
-		                            {{ comment.motivation|linebreaks }}
-		                            {% if comment|args:user|call:"isEditableBy" %}
-		                                <div>
-		                                    <a href="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" class="btn btn-mini">edit</a>
-		                                </div>
-		                            {% endif %}
-		                        {% else %}
-		                            <table>
-		                                <form action="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" method="POST">
-		                                    {{commenteditform|as_bootstrap}}
-		                                    {% csrf_token %}
-		                                    <input type="submit"  class="btn btn-primary" value="Edit" />
-		                                    <a href="{% url proposals-detail proposal.slug %}" class="btn">cancel</a>
-		                                </form>
-		                            </table>
-		                        {% endif %}
-		                    </div>
-		                </div>                    
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
+        {% if proposal.comments.all %}
+	        <h3>Comments</h3>
+	        <div class="comments">
+	            {% for comment in proposal.comments.all %}
+	            <div class="comment row-fluid" id="comment_{{ comment.id }}">
+	                <div class="span12 well {{ comment.color }}">
+	                    <div class="row-fluid">
+	                        <div class="span1">
+			                    <span class="updownvote">{% usemacro updownvote comment %}</span>
+			                </div>
+			                <div class="span11 ">
+			                    <span class="editedby">written</span>{% usemacro user-small comment.creator comment.create_date %}
+			                    {% if comment.edits.count %}
+			                        <span class="editedby">and edited by</span>
+			                        <div class="user-small">
+			                            <a href="{% url user-profile comment.lastEdit.user.slug %}">
+			                                <span class="user-name">{{comment.lastEdit.user.display_name}}</span>
+			                            </a>
+			                            <span title="{{comment.lastEdit.date}}" class="user-time">, {{comment.lastEdit.date|humantime}}</span>
+			                        </div>
+			                    {% endif %}
+			                    <div class="motivation">
+			                        {% if not commenteditform or commenteditform.comment_id != comment.id %}
+			                            {{ comment.motivation|linebreaks }}
+			                            {% if comment|args:user|call:"isEditableBy" %}
+			                                <div>
+			                                    <a href="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" class="btn btn-mini">edit</a>
+			                                </div>
+			                            {% endif %}
+			                        {% else %}
+			                            <table>
+			                                <form action="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" method="POST">
+			                                    {{commenteditform|as_bootstrap}}
+			                                    {% csrf_token %}
+			                                    <input type="submit"  class="btn btn-primary" value="Edit" />
+			                                    <a href="{% url proposals-detail proposal.slug %}" class="btn">cancel</a>
+			                                </form>
+			                            </table>
+			                        {% endif %}
+			                    </div>
+			                </div>                    
+	                    </div>
+	                </div>
+	            </div>
+	            {% endfor %}
+	        </div>
+	    {% endif %}
         {% if commentform %}
-        <div class="owncomment">
-            <h2>Write a comment</h2>
-            <form action="{% url proposals-detail proposal.slug %}" method="POST" class="commentform">
-                {% csrf_token %}
-                {{ commentform.motivation.errors }}
-                <p>{{ commentform.motivation }}</p>
-                {{ commentform.color.errors }}
-                <p>{{ commentform.color }}</p>
-                <p><input type="submit" value="comment" class="btn btn-primary"/></p>
-            </form>
-        </div>
+	        <div class="owncomment">
+	            <h2>Write a comment</h2>
+	            <form action="{% url proposals-detail proposal.slug %}" method="POST" class="commentform">
+	                {% csrf_token %}
+	                {{ commentform.motivation.errors }}
+	                <p>{{ commentform.motivation }}</p>
+	                {{ commentform.color.errors }}
+	                <p>{{ commentform.color }}</p>
+	                <p><input type="submit" value="comment" class="btn btn-primary"/></p>
+	            </form>
+	        </div>
         {% endif %}
 
 

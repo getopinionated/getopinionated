@@ -21,12 +21,22 @@ class ProposalForm(forms.ModelForm):
     motivation = forms.CharField(widget=forms.Textarea(attrs={'style':'width: 100%;', 'rows':10,'placeholder':"Your motivation to propose this amendment. Convince the other users that this amendment is a good idea."}))
 
     def __init__(self, document, *args, **kwargs):
+        if 'instance' in kwargs:
+            initial = kwargs['instance']
+        else:
+            initial = None
         super(ProposalForm, self).__init__(*args, **kwargs)
         self.document = document
-        self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}), initial=document.content)
-        self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }))
-        self.fields["discussion_time"] = forms.IntegerField(initial=14, widget=NumberSliderWidget(attrs={'style':'width: 100%;'}))
         
+        if initial:
+            self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}), initial=initial.diff.getNewText())
+            self.fields["discussion_time"] = forms.IntegerField(initial=initial.discussion_time, widget=NumberSliderWidget(attrs={'style':'width: 100%;'}))
+            self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), initial=initial.tags.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }))
+        else:
+            self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}), initial=document.content)
+            self.fields["discussion_time"] = forms.IntegerField(initial=7, widget=NumberSliderWidget(attrs={'style':'width: 100%;'}))
+            self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }))
+          
         self.fields.keyOrder = ['title', 'content', 'motivation','tags', 'discussion_time']
 
     class Meta:
@@ -35,7 +45,7 @@ class ProposalForm(forms.ModelForm):
 
     def clean_title(self):
         title = self.cleaned_data["title"]
-        if not Proposal().isValidTitle(title):
+        if not Proposal().isValidTitle(title) and not "edit" in self.data.keys():
             raise forms.ValidationError("This title has already been used")
         return title
 
@@ -46,8 +56,9 @@ class ProposalForm(forms.ModelForm):
         content = FullDocument.cleanText(content)
         
         origcont = FullDocument.cleanText(self.document.content)
-        if content == origcont:
-            raise forms.ValidationError("You should make at least one change")
+        #Actually, you don't?
+        #if content == origcont:
+        #    raise forms.ValidationError("You should make at least one change")
         return content
 
     def save(self, user, commit=True):
@@ -56,11 +67,18 @@ class ProposalForm(forms.ModelForm):
         newdiff = Diff.generateDiff(self.document.content, newcontent)
         newdiff.fulldocument = self.document
         newdiff.save()
-        
-        ## create proposal
-        newproposal = super(ProposalForm, self).save(commit=False)
+        if "edit" in self.data.keys():
+            #edit the proposal
+            newproposal = Proposal.objects.get(pk=int(self.data['edit']))
+            assert newproposal.creator.pk == user.pk, "You are editing a proposal which is not yours! %d != %d"%(newproposal.creator.pk,user.pk)
+            newproposal.title = self.cleaned_data['title']
+            newproposal.motivation = self.cleaned_data['motivation']
+        else:
+            ## create proposal
+            newproposal = super(ProposalForm, self).save(commit=False)
         newproposal.diff = newdiff
         newproposal.creator = user if user.is_authenticated() else None
+        newproposal.discussion_time = int(self.cleaned_data["discussion_time"])
         newproposal.save()#save before the many-to-manyfield gets created
         for tag in self.cleaned_data["tags"]:
             newproposal.tags.add(tag)

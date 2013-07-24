@@ -55,8 +55,8 @@ class FullDocument(models.Model):
     @staticmethod
     def cleanText(text):
         #clean carriages
-        text = text.replace('\r\n','\n')
-        text = text.replace('\r','\n')
+        text = text.replace('\n','')
+        text = text.replace('\r','')
         if not text.endswith('\n'):
             text = text + '\n'
         return text

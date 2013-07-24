@@ -11,8 +11,9 @@ from models import VotablePost, UpDownVote, Proposal, Comment, ProposalVote
 from forms import CommentForm, ProposalEditForm, CommentEditForm
 from proposing.models import Tag, ProxyProposalVote, Proxy
 from django.db.models import Count
-from proposing.forms import ProxyForm
+from proposing.forms import ProxyForm, ProposalForm
 from django.contrib.auth.views import redirect_to_login
+from document.models import FullDocument
 
 class TimelineData:
     # settings
@@ -205,27 +206,14 @@ def detail(request, proposal_slug):
             proxyvote = None
     else:
         proxyvote = None
+    proposaleditform = ProposalForm(proposal.diff.fulldocument,instance=proposal)
+    document = proposal.diff.fulldocument.getFinalVersion()
     return render(request, 'proposal/detail.html', {
         'proposal': proposal,
         'commentform': commentform,
-        'proxyvote': proxyvote
-    })
-
-def editproposal(request, proposal_slug):
-    proposal = get_object_or_404(Proposal, slug=proposal_slug)
-    if not proposal.isEditableBy(request.user):
-        return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
-    if request.method == 'POST':
-        editform = ProposalEditForm(request.POST, instance=proposal)
-        if editform.is_valid():
-            editform.save(request.user)
-            messages.success(request, 'Proposal edited')
-            return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
-    else:
-        editform = ProposalEditForm(instance=proposal)
-    return render(request, 'proposal/detail.html', {
-        'proposal': proposal,
-        'proposaleditform': editform,
+        'proxyvote': proxyvote,
+        'proposaleditform': proposaleditform,
+        'document': document
     })
 
 def editcomment(request, proposal_slug, comment_id):
@@ -242,9 +230,13 @@ def editcomment(request, proposal_slug, comment_id):
     else:
         editform = CommentEditForm(instance=comment)
     editform.comment_id = int(comment_id)
+    proposaleditform = ProposalForm(proposal.diff.fulldocument,instance=proposal)
+    document = proposal.diff.fulldocument.getFinalVersion()
     return render(request, 'proposal/detail.html', {
         'commenteditform': editform,
         'proposal': proposal,
+        'proposaleditform': proposaleditform,
+        'document': document
     })
 
 

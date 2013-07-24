@@ -52,7 +52,7 @@
         </div>
 		<div class="span9">
 		    
-            {% usemacro proposal-form-modal-macro fulldocument.content "amend" form %}
+            {% usemacro proposal-form-modal-macro fulldocument.content "amend" form fulldocument 0 %}
 		    {% if user.is_authenticated %}
 		    {% endif %}
 		    {% autoescape off %}

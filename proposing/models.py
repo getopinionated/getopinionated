@@ -204,6 +204,11 @@ class Proposal(VotablePost):
         try:
             proposal = Proposal.objects.get(slug=titleslug)
             return self.id == proposal.id
+            if self.id == proposal.id:
+                proposal = Proposal.objects.get(title=title)
+                return self.id == proposal.id
+            else:
+                return False
         except Proposal.DoesNotExist:
             return True
 
