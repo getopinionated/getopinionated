@@ -46,11 +46,17 @@ class VotablePost(models.Model):
             return "up" if vote.value==1 else "down"
         return None
 
+    def hasUpvoted(self, user):
+        return self.userHasUpdownvoted(user) == 'up'
+
+    def hasDownvoted(self, user):
+        return self.userHasUpdownvoted(user) == 'down'
+
     def canPressUpvote(self, user):
-        return self.userCanUpdownvote(user) or self.userHasUpdownvoted(user) == 'up'
+        return self.userCanUpdownvote(user) or self.userHasUpdownvoted(user) == 'down'
 
     def canPressDownvote(self, user):
-        return self.userCanUpdownvote(user) or self.userHasUpdownvoted(user) == 'down'
+        return self.userCanUpdownvote(user) or self.userHasUpdownvoted(user) == 'up'
 
     def isEditableBy(self, user):
         if not user.is_authenticated():
@@ -101,6 +107,8 @@ class ProposalType(models.Model):
 class Proposal(VotablePost):
     # settings
     QUORUM_SIZE = 1 # minimal # of proposalvotes for approvement
+    VOTING_DAYS = 7 #TODO: make this 7 more flexible
+    MINIMAL_UPVOTES_BEFORE_VOTING = 7 #TODO: make this 7 more flexible
     VOTING_STAGE = (
         ('DISCUSSION', 'Discussion'),
         ('VOTING', 'Voting'),
@@ -117,7 +125,7 @@ class Proposal(VotablePost):
     voting_stage = models.CharField(max_length=20, choices=VOTING_STAGE, default='DISCUSSION')
     voting_date = models.DateTimeField(default=None, null=True, blank=True)
     expire_date = models.DateTimeField(default=None, null=True, blank=True)
-    proposal_type = models.ForeignKey(ProposalType)
+    discussion_time = models.IntegerField(default=7)
     tags = models.ManyToManyField(Tag, related_name="proposals")
     avgProposalvoteScore = models.FloatField("score", default=0.0) 
     favorited_by = models.ManyToManyField(User, related_name="favorites")
@@ -139,38 +147,33 @@ class Proposal(VotablePost):
 
     @property
     def estimatedVotingDate(self):
-        properties = self.proposal_type
         if self.voting_stage == 'DISCUSSION':
-            nominal_date = self.create_date + datetime.timedelta(days=properties.daysUntilVotingStarts)
+            nominal_date = self.create_date + datetime.timedelta(days=self.discussion_time)
             return nominal_date if timezone.now() < nominal_date else timezone.now()
         else:
             return self.voting_date
 
     @property
     def estimatedFinishDate(self):
-        properties = self.proposal_type
-        return self.estimatedVotingDate + datetime.timedelta(days=properties.daysUntilVotingFinishes)
+        return self.estimatedVotingDate + datetime.timedelta(days=self.VOTING_DAYS) 
 
     @property
     def expirationDate(self):
         """ date the proposal expires because lack of interest """
-        properties = self.proposal_type
         if self.minimalContraintsAreMet():
             return None
-        return self.create_date + datetime.timedelta(days=properties.daysUntilVotingExpires)
+        return self.create_date + datetime.timedelta(days=self.VOTING_DAYS)
 
     def minimalContraintsAreMet(self):
         """ True if non-date constraints are met """
-        properties = self.proposal_type
-        return self.upvote_score > properties.minimalUpvotes
+        return self.upvote_score > self.MINIMAL_UPVOTES_BEFORE_VOTING
 
     def shouldStartVoting(self):
         # check relevance
         if self.voting_stage != 'DISCUSSION':
             return False
         # should start voting if start properties fullfilled
-        properties = self.proposal_type
-        shouldStartVoting = (timezone.now() > self.create_date + datetime.timedelta(days=properties.daysUntilVotingStarts)
+        shouldStartVoting = (timezone.now() > self.create_date + datetime.timedelta(days=self.discussion_time)
                             and
                             self.minimalContraintsAreMet())
         return shouldStartVoting
@@ -180,8 +183,7 @@ class Proposal(VotablePost):
         if self.voting_stage != 'VOTING':
             return False
         # should finish voting if end properties fullfilled
-        properties = self.proposal_type
-        shouldBeFinished = timezone.now() > self.voting_date + datetime.timedelta(days=properties.daysUntilVotingFinishes)
+        shouldBeFinished = timezone.now() > self.voting_date + datetime.timedelta(days=self.VOTING_DAYS)
         return shouldBeFinished
 
     def shouldExpire(self):
@@ -259,7 +261,7 @@ class Proposal(VotablePost):
             ('2', ''),
             ('3', ''),
             ('4', ''),
-            ('5', 'In favor'),
+            ('5', 'For'),
         ]
 
     def dateToPx(self, date):

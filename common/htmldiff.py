@@ -105,29 +105,55 @@ class HTMLMatcher(SequenceMatcher):
             html = self.addStylesheet(html, self.stylesheet())
         return html
 
+
+    def isVisibleItem(self, item):
+        item = re.sub('<[^<]+?>', '', ''.join(item))
+        return not not item.strip()
+    '''
+        Give a context, but also add the previous alinea and the next alinea
+    '''
     def htmlContextDiff(self, contextbr = '<br />', addStylesheet=False):
         opcodes = self.get_opcodes()
         a = self.a
         b = self.b
         out = StringIO()
         context = StringIO()
+        brsincecontentadded = 0
         added = False
+        alreadyadded = False
         for tag, i1, i2, j1, j2 in opcodes:
             if tag == 'equal':
                 for item in a[i1:i2]:
                     context.write(item)
                     if contextbr in item:
+                        brsincecontentadded += 1
                         if added:
-                            out.write(context.getvalue())
-                        context = StringIO() #erase all
-                        added = False
+                            if brsincecontentadded>=3:
+                                if alreadyadded:
+                                    out.write("(...)")
+                                out.write(context.getvalue())
+                                added = False
+                                alreadyadded = True
+                                context = StringIO()# #erase first paragraph
+                                brsincecontentadded = 0
+                        else:
+                            if brsincecontentadded>=4:
+                                store = context.getvalue()[context.getvalue().find(contextbr)+len(contextbr):]
+                                context = StringIO()# #erase first paragraph
+                                context.write(store)
+                                brsincecontentadded -= 1
             if tag == 'delete':
                 self.textDelete(a[i1:i2], context)
-                added = True
+                if self.isVisibleItem(a[i1:i2]):
+                    brsincecontentadded = 0
+                    added = True
             if tag == 'insert':
                 self.textInsert(b[j1:j2], context)
-                added = True
+                if self.isVisibleItem(b[j1:j2]):
+                    brsincecontentadded = 0
+                    added = True
             if tag == 'replace':
+                brsincecontentadded = 0
                 added = True
                 if (self.isInvisibleChange(a[i1:i2], b[j1:j2])):
                     for item in b[j1:j2]:
@@ -136,6 +162,8 @@ class HTMLMatcher(SequenceMatcher):
                     self.textDelete(a[i1:i2], context)
                     self.textInsert(b[j1:j2], context)
         if added:
+            if alreadyadded:
+                out.write("(...)")
             out.write(context.getvalue())
         html = out.getvalue()
         out.close()
@@ -195,10 +223,10 @@ class HTMLMatcher(SequenceMatcher):
 
     def stylesheet(self):
         return '''
-.insert { background-color: #aaffaa }
-.delete { background-color: #ff8888; text-decoration: line-through }
-.tagInsert { background-color: #ccffcc; color: #000 }
-.tagDelete { background-color: #ffcccc; color: #000 }
+.insert { background-color: #aaffaa; color: #000!important; }
+.delete { background-color: #ff8888; text-decoration: line-through; color: #000!important; }
+.tagInsert { background-color: #ccffcc; color: #000!important; }
+.tagDelete { background-color: #ffcccc; color: #000!important; }
 '''
 
     def addStylesheet(self, html, ss):
@@ -242,7 +270,7 @@ class NoTagHTMLMatcher(HTMLMatcher):
     def formatDeleteTag(self, tag):
         return ''
 
-def htmldiff(source1, source2, addStylesheet=False):
+def htmldiff(source1, source2, addStylesheet=False, contextonly=True):
     """
     Return the difference between two pieces of HTML
 
@@ -255,7 +283,10 @@ def htmldiff(source1, source2, addStylesheet=False):
     """
 #    h = HTMLMatcher(source1, source2)
     h = HTMLMatcher(source1, source2)
-    return h.htmlContextDiff(addStylesheet=addStylesheet)
+    if contextonly:
+        return h.htmlContextDiff(addStylesheet=addStylesheet)
+    else:
+        return h.htmlDiff(addStylesheet=addStylesheet)
 
 def diffFiles(f1, f2):
     source1 = open(f1).read()

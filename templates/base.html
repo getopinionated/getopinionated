@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="{{STATIC_URL}}css/tags.css" type="text/css" charset="utf-8" />
     <link rel="stylesheet" href="{{STATIC_URL}}css/style.css" />
 	<script type="text/javascript" src="{{STATIC_URL}}js/jquery/jquery-1.9.1.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}lib/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}lib/bootstrap/js/bootstrap.js"></script>
     {% block extrastyle %}{% endblock %}
     <meta charset="utf-8" />
     {% block extrahead %} {% endblock %}
@@ -80,16 +80,20 @@
 	        </div><!-- /.navbar -->
 	
 	        {% block beforecontent %}{% endblock %}
-	        {% if messages %}
-	        <ul class="messages">
-	            {% for message in messages %}
-	            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-	            {% endfor %}
-	        </ul>
-	        {% endif %}
+	        
 	
 	        <section id="main">
-	             {% block content %}{% endblock %}
+	           <div class="inset">
+	               {% if messages %}
+					    {% for message in messages %}
+					      <div class="alert alert-info">
+					          <button type="button" class="close" data-dismiss="alert">&times;</button>
+					          <div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
+					      </div>
+					    {% endfor %}	
+		           {% endif %}
+	               {% block content %}{% endblock %}
+	           </div>
 	        </section>
 	
 	    </section>

@@ -4,7 +4,7 @@ from common.beautifulsoup import BeautifulSoup
 from common import sanitizehtml
 from document.models import FullDocument, Diff
 from proposing.widgets import TagSelectorWidget, RichTextEditorWidget,\
-    VeryRichTextEditorWidget
+    VeryRichTextEditorWidget, NumberSliderWidget
 from proposing.fields import TagChoiceField, UserChoiceField
 from models import VotablePost, UpDownVote, Proposal, Comment, Tag, VotablePostEdit
 from django.contrib.auth.models import User
@@ -25,11 +25,13 @@ class ProposalForm(forms.ModelForm):
         self.document = document
         self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}), initial=document.content)
         self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }))
-        self.fields.keyOrder = ['title', 'content', 'motivation','tags', 'proposal_type']
+        self.fields["discussion_time"] = forms.IntegerField(initial=14, widget=NumberSliderWidget(attrs={'style':'width: 100%;'}))
+        
+        self.fields.keyOrder = ['title', 'content', 'motivation','tags', 'discussion_time']
 
     class Meta:
         model = Proposal
-        fields = ('title', 'motivation', 'proposal_type')
+        fields = ('title', 'motivation')
 
     def clean_title(self):
         title = self.cleaned_data["title"]
@@ -86,7 +88,7 @@ class VotablePostEditForm(forms.ModelForm):
 class ProposalEditForm(VotablePostEditForm):
     def __init__(self, *args, **kwargs):
         super(ProposalEditForm, self).__init__(*args, **kwargs)
-        self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget())
+        self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }))
 
     class Meta:
         model = Proposal
@@ -99,8 +101,8 @@ class CommentEditForm(VotablePostEditForm):
 
 class ProxyForm(forms.Form):
     
-    side_proxy = UserChoiceField(queryset=CustomUser.objects.all())
-    side_proxy_tags = TagChoiceField(queryset=Tag.objects.all())
+    side_proxy = UserChoiceField(queryset=CustomUser.objects.all(), widget=TagSelectorWidget(attrs={'data-placeholder':"User, user, ..." }))
+    side_proxy_tags = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'data-placeholder':"Tag, tag, ..." }))
     
     def __init__(self, user, *args, **kwargs):
         self.user = user

@@ -2216,7 +2216,7 @@
             "views": 22,
             "avgProposalvoteScore": 0.0,
             "title": "Copyright should be abolished",
-            "proposal_type": 2,
+            "discussion_time": 14,
             "voting_date": "2013-03-29T15:32:05Z",
             "favorited_by": [],
             "tags": [
@@ -2237,7 +2237,7 @@
             "views": 32,
             "avgProposalvoteScore": 1.8333333333333333,
             "title": "Protect the environment",
-            "proposal_type": 2,
+            "discussion_time": 2,
             "voting_date": "2013-03-29T15:32:05Z",
             "favorited_by": [],
             "tags": [
@@ -2257,7 +2257,7 @@
             "views": 12,
             "avgProposalvoteScore": -2.269230769230769,
             "title": "Stop tax avoidance",
-            "proposal_type": 2,
+            "discussion_time": 2,
             "voting_date": "2013-04-16T19:41:07.573Z",
             "favorited_by": [],
             "tags": [
@@ -2277,7 +2277,7 @@
             "views": 24,
             "avgProposalvoteScore": -1.5454545454545454,
             "title": "Healthcare is unconditional",
-            "proposal_type": 2,
+            "discussion_time": 2,
             "voting_date": "2013-05-03T20:03:33.799Z",
             "favorited_by": [],
             "tags": [
@@ -2297,7 +2297,7 @@
             "views": 12,
             "avgProposalvoteScore": 0.0,
             "title": "Spelling: focus -> fokus",
-            "proposal_type": 1,
+            "discussion_time": 1,
             "voting_date": null,
             "favorited_by": [],
             "tags": [
@@ -2317,7 +2317,7 @@
             "views": 11,
             "avgProposalvoteScore": 0.0,
             "title": "ddd",
-            "proposal_type": 2,
+            "discussion_time": 2,
             "voting_date": "2013-05-24T21:59:05.703Z",
             "favorited_by": [],
             "tags": [
@@ -2338,7 +2338,7 @@
             "views": 15,
             "avgProposalvoteScore": 0.0,
             "title": "Teaching",
-            "proposal_type": 1,
+            "discussion_time": 1,
             "voting_date": "2013-05-24T21:59:05.749Z",
             "favorited_by": [],
             "tags": [
@@ -2358,7 +2358,7 @@
             "views": 5,
             "avgProposalvoteScore": 0.0,
             "title": "fuck democracy",
-            "proposal_type": 2,
+            "discussion_time": 2,
             "voting_date": "2013-05-24T21:59:05.779Z",
             "favorited_by": [],
             "tags": [
@@ -2379,7 +2379,7 @@
             "views": 4,
             "avgProposalvoteScore": 0.0,
             "title": "iuohzrohdjk",
-            "proposal_type": 2,
+            "discussion_time": 2,
             "voting_date": "2013-05-24T21:59:05.807Z",
             "favorited_by": [],
             "tags": [
@@ -2399,7 +2399,7 @@
             "views": 5,
             "avgProposalvoteScore": 0.0,
             "title": "lsdkfjldk",
-            "proposal_type": 1,
+            "discussion_time": 1,
             "voting_date": "2013-05-24T21:59:05.839Z",
             "favorited_by": [],
             "tags": [
@@ -2419,7 +2419,7 @@
             "views": 6,
             "avgProposalvoteScore": 0.0,
             "title": "Gewoon iets dat ik er bij wil",
-            "proposal_type": 2,
+            "discussion_time": 2,
             "voting_date": "2013-05-24T21:59:05.870Z",
             "favorited_by": [],
             "tags": [
@@ -2439,7 +2439,7 @@
             "views": 1,
             "avgProposalvoteScore": 0.0,
             "title": "It is may 25th today",
-            "proposal_type": 2,
+            "discussion_time": 2,
             "voting_date": "2013-06-22T22:23:50.581Z",
             "favorited_by": [],
             "tags": [
@@ -2459,7 +2459,7 @@
             "views": 3,
             "avgProposalvoteScore": 0.0,
             "title": "Unpopular proposal",
-            "proposal_type": 2,
+            "discussion_time": 2,
             "voting_date": null,
             "favorited_by": [
                 2

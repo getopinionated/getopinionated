@@ -524,14 +524,13 @@
       dimension = this.dimension()
       scroll = $.camelCase(['scroll', dimension].join('-'))
       actives = this.$parent && this.$parent.find('> .accordion-group > .in')
-
+      
       if (actives && actives.length) {
         hasData = actives.data('collapse')
         if (hasData && hasData.transitioning) return
         actives.collapse('hide')
         hasData || actives.data('collapse', null)
       }
-
       this.$element[dimension](0)
       this.transition('addClass', $.Event('show'), 'shown')
       $.support.transition && this.$element[dimension](this.$element[0][scroll])
@@ -564,13 +563,12 @@
         , complete = function () {
             if (startEvent.type == 'show') that.reset()
             that.transitioning = 0
-            that.$element.trigger(completeEvent)
+            that.$element.triggerHandler(completeEvent)
           }
 
-      this.$element.trigger(startEvent)
+      this.$element.triggerHandler(startEvent)
 
       if (startEvent.isDefaultPrevented()) return
-
       this.transitioning = 1
 
       this.$element[method]('in')
@@ -597,6 +595,7 @@
       var $this = $(this)
         , data = $this.data('collapse')
         , options = $.extend({}, $.fn.collapse.defaults, $this.data(), typeof option == 'object' && option)
+        
       if (!data) $this.data('collapse', (data = new Collapse(this, options)))
       if (typeof option == 'string') data[option]()
     })
@@ -1574,12 +1573,12 @@
 
         this.offsets = $([])
         this.targets = $([])
-
+        
         $targets = this.$body
           .find(this.selector)
           .map(function () {
             var $el = $(this)
-              , href = $el.data('target') || $el.attr('href')
+              , href = $el.attr('href') || $el.data('target') 
               , $href = /^#\w/.test(href) && $(href)
             return ( $href
               && $href.length
@@ -1590,6 +1589,7 @@
             self.offsets.push(this[0])
             self.targets.push(this[1])
           })
+          
       }
 
     , process: function () {
@@ -1600,7 +1600,6 @@
           , targets = this.targets
           , activeTarget = this.activeTarget
           , i
-
         if (scrollTop >= maxScroll) {
           return activeTarget != (i = targets.last()[0])
             && this.activate ( i )
@@ -1619,7 +1618,7 @@
           , selector
 
         this.activeTarget = target
-
+        
         $(this.selector)
           .parent('.active')
           .removeClass('active')
@@ -1635,8 +1634,7 @@
         if (active.parent('.dropdown-menu').length)  {
           active = active.closest('li.dropdown').addClass('active')
         }
-
-        active.trigger('activate')
+        active.triggerHandler('activate')
       }
 
   }

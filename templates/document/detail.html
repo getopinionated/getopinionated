@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load call_with_args %}
 {% load macros %}
+{% load filters %}
+
 {% loadmacros "proposal/proposal-form-modal-macro.html" %}
 
 {% block title %}{% include "title.html" with subtitle=fulldocument.title subtitle2=" version " subtitle3=fulldocument.version_roman %}{% endblock %}
@@ -11,23 +13,84 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{ fulldocument.title }} version {{ fulldocument.version_roman }}</h1>
-    {% if user.is_authenticated %}
-	<div>
-	    <div style="float:right;">
-	       {% usemacro proposal-form-modal-button-macro "Amend this document" "amend" form %}
-	    </div>
-	    {% autoescape off %}
-            {{ fulldocument.content }}
-        {% endautoescape %}
-	</div>
-	{% usemacro proposal-form-modal-macro fulldocument.content "amend" form %}  
-    {% else %}
-        <div class="document">
-			{% autoescape off %}
-			    {{ fulldocument.content }}
-			{% endautoescape %}
+    
+    <div class="row-fluid">
+        <div class="span3" id="navparent">
+            <h4 id="title">{{ fulldocument.title }} version&nbsp;{{ fulldocument.version_roman }}</h4>
+            <div class="nav leftnav" data-spy="affix" data-offset-top="265">
+	            {% usemacro proposal-form-modal-button-macro "Amend this document" "amend" form %}
+	            <ul class="accordion" id="level1">
+	                {% for el1 in fulldocument.getTableOfContents %}
+	                    <li class="accordion-group level1">
+	                        <a href="#h{{forloop.counter}}" data-target="#acc{{forloop.counter}}" class="accordion-heading accordion-toggle" data-toggle="collapse" data-parent="#level1"><i class="icon-chevron-right"></i>{{el1.0}}</a>
+		                    <div id="acc{{forloop.counter}}" class="accordion-body collapse">
+		                       <div class="accordion-inner nav-accordion-inner">
+		                           <ul class="accordion nav-accordion" id="level1-{{forloop.counter}}">
+		                               {% for el2 in el1.1 %}
+		                                   <li class="accordion-group level2">
+		                                       <a href="#h{{forloop.parentloop.counter}}-{{forloop.counter}}"  data-target="#acc{{forloop.parentloop.counter}}-{{forloop.counter}}" class="accordion-toggle" data-toggle="collapse" data-parent="#level1-{{forloop.parentloop.counter}}"><i class="icon-chevron-right"></i>{{el2.0}}</a>
+		                                       <div id="acc{{forloop.parentloop.counter}}-{{forloop.counter}}" class="accordion-body collapse">
+						                           <div class="accordion-inner nav-accordion-inner">
+						                               <ul class="accordion nav-accordion" id="level1-{{forloop.parentloop.counter}}-{{forloop.counter}}">
+						                                   {% for el3 in el2.1 %}
+					                                           <li class="level3">
+					                                               <a href="#h{{forloop.parentloop.parentloop.counter}}-{{forloop.parentloop.counter}}-{{forloop.counter}}" class="accordion-toggle">{{el3}}</a>
+					                                           </li>
+						                                   {% endfor %}
+						                               </ul>
+						                            </div>
+						                        </div>
+		                                   </li>
+		                               {% endfor %}
+		                           </ul>
+		                        </div>
+		                    </div>
+	                    </li>
+		            {% endfor %}
+	            </ul>
+            </div>
         </div>
-    {% endif %}
+		<div class="span9">
+		    
+            {% usemacro proposal-form-modal-macro fulldocument.content "amend" form %}
+		    {% if user.is_authenticated %}
+		    {% endif %}
+		    {% autoescape off %}
+		        <div id="textcontent">
+		          {{ fulldocument.content|numberheaders }}
+		        </div>
+	        {% endautoescape %}
+		</div>
+	</div>
+    
   
+{% endblock %}
+
+{% block extrascripts %}
+    <script type="text/javascript">
+        $( document ).ready(function () {
+            $('body').scrollspy();
+            $(".accordion li").on('activate', function(event) {
+                var active=$(this);
+                if(active.closest('.level1>.collapse')){
+                    target = active.closest('.level1>.collapse');
+                    target.collapse("show");
+				    target.closest('.accordion').find('> .accordion-group.level1 > .in').not(target).collapse("hide");
+				    if(active.closest('.level2>.collapse')){
+				        target = active.closest('.level2>.collapse');
+	                    target.collapse("show");
+                        target.closest('.accordion').find('> .accordion-group.level2 > .in').not(target).collapse("hide");
+				    }
+				}
+			});
+			$(".collapse").on("shown",function(event){
+		        var coll=$(this);
+		        coll.siblings("a").children("i").addClass("rotated");
+		    });
+		    $(".collapse").on("hidden",function(event){
+                var coll=$(this);
+                coll.siblings("a").children("i").removeClass("rotated");
+            });
+        });
+    </script>
 {% endblock %}

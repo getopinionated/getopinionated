@@ -2,7 +2,7 @@ from models import FullDocument, Diff
 from django.contrib import admin
 
 class FullDocumentAdmin(admin.ModelAdmin):
-    list_display = ('title', 'create_date', 'version')
+    list_display = ('title', 'create_date', 'version','getTableOfContents',)
     prepopulated_fields = {'slug': ('title',)}
 
 class DiffAdmin(admin.ModelAdmin):

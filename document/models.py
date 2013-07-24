@@ -6,6 +6,7 @@ from django.template.defaultfilters import slugify
 
 from common.stringify import int_to_roman
 import difflib
+import re
 
 
 class FullDocument(models.Model):
@@ -64,6 +65,35 @@ class FullDocument(models.Model):
     def version_roman(self):
         return int_to_roman(self.version)
 
+    def getTableOfContents(self):
+        s = "%s"%self.content
+        result = []
+        loc = 0
+        pattern1 = re.compile("<h1>(.*?)</h1>")
+        pattern2 = re.compile("<h2>(.*?)</h2>")
+        pattern3 = re.compile("<h3>(.*?)</h3>")
+        res = []
+        while 0<=s.find('<h1>',loc):
+            title1 = pattern1.search(s,loc).group(1)
+            loc = 9+len(title1)+s.find('<h1>',loc)
+            l1 = []
+            
+            while 0<=s.find('<h2>',loc) and \
+                    (s.find('<h2>',loc) < s.find('<h1>',loc) or -1==s.find('<h1>',loc)):
+                title2 = pattern2.search(s,loc).group(1)
+                loc = 9+len(title2)+s.find('<h2>',loc)
+                l2 = []
+                
+                while 0<=s.find('<h3>',loc) and \
+                        (s.find('<h3>',loc) < s.find('<h2>',loc) or -1==s.find('<h2>',loc)) and \
+                        (s.find('<h3>',loc) < s.find('<h1>',loc) or -1==s.find('<h1>',loc)):
+                    title3 = pattern3.search(s,loc).group(1)
+                    loc = 9+len(title3)+s.find('<h3>',loc)
+                    l2.append( title3 )
+                
+                l1.append((title2,l2))
+            res.append((title1,l1))
+        return res
 
 class Diff(models.Model):
     """ contains a diff between two versions of a document. Is the content of a proposal """

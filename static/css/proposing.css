@@ -78,8 +78,9 @@ article.proposal .diff {
 }
 
 article.proposal .motivation {
-    margin: 8px 0 48px;
+    margin: 8px 0 8px;
 }
+
 article.proposal .motivation label {
     display: none;
 }
@@ -110,11 +111,9 @@ article.proposal a.edit:hover {
 }
 
 article.proposal .comment .editedby {
-    font-size: 16px;
-    margin-left: 40px;
+    font-size: 12px;
 }
 article.proposal .comment .motivation {
-    padding-left: 48px;
     font-size: 12px;
 }
 

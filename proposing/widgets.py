@@ -23,6 +23,26 @@ class TagSelectorWidget(widgets.SelectMultiple):
         output.append('<script type="text/javascript">$("#%s").chosen({width: "100%%"});</script>'%attrs['id'])
         return mark_safe(u'\n'.join(output))
 
+class NumberSliderWidget(widgets.TextInput):
+
+    class Media:
+        css = {
+            'all': ('lib/slider/css/slider.css',)
+        }
+        js = ('lib/slider/js/bootstrap-slider.js',)
+
+    def render(self, name, value, attrs=None):
+        final_attrs = self.build_attrs(attrs, name=name)
+        output = [u'<input type="text" class="number-slider-widget" value="%d" data-slider-min="0" data-slider-max="63" data-slider-step="1" id="%s" %s>' % (value,attrs['id'],flatatt(final_attrs))]
+        output.append('''<script type="text/javascript">$('#%s').slider({
+            selection: 'before',
+            value: %d,
+            formater: function(value) {
+                return 'days to discuss before voting: '+value+ ' days';
+            }
+        });</script>'''% (attrs['id'],value))
+        return mark_safe(u'\n'.join(output))
+
 
 
 class RichTextEditorWidget(widgets.Textarea):

@@ -55,12 +55,14 @@ html, body
 .comment-list th, .vote-list th{
 	color: #fff;
 	background: #333;
-	height: 4ex;
-	width: 4ex;
+	height: 6ex;
+	width: 6ex;
+	padding-top: 3px;
 }
 
 .comment-list tr, .vote-list tr{
-	padding-bottom: 1ex;
+	padding-bottom: 3px;
+	margin-bottom: 2px;
 }
 
 .comment-list td, .vote-list td{

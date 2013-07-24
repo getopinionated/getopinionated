@@ -42,13 +42,11 @@ class VoteCountTestCase(TestCase):
             p.save()
             self.proxies.append(p)
         
-        t = ProposalType()
-        t.save()
         doc = FullDocument()
         doc.save()
         diff = Diff(fulldocument=doc)
         diff.save()
-        self.proposal = Proposal(title="Test", diff=diff, proposal_type=t)
+        self.proposal = Proposal(title="Test", diff=diff)
         self.proposal.save()
     
     def setupVotes(self,tupples):

@@ -10,26 +10,34 @@
 
 {% macro updownvote votable_post %}
 	{% if votable_post|args:user|call:"canPressUpvote" %}
-		<a href="{% url posts-vote proposal.slug votable_post.id 'up' %}">+</a>
+		<a href="{% url posts-vote proposal.slug votable_post.id 'up' %}" class="btn btn-mini"><i class="icon-thumbs-up"></i></a>
 	{% else %}
-		+
+	    {% if votable_post|args:user|call:"hasUpvoted" %}
+           <div class="btn btn-mini btn-success" title="You already voted up"><i class="icon-thumbs-up"></i></div>
+		{% else %}
+		    <div class="btn btn-mini disabled" title="You're not allowed to vote"><i class="icon-thumbs-up"></i></div>
+		{% endif %}
 	{% endif %}
-	 /
 	{% if votable_post|args:user|call:"canPressDownvote" %}
-		<a href="{% url posts-vote proposal.slug votable_post.id 'down' %}">-</a>
+		<a href="{% url posts-vote proposal.slug votable_post.id 'down' %}" class="btn btn-mini"><i class="icon-thumbs-down"></i></a>
 	{% else %}
-		-
+	    {% if votable_post|args:user|call:"hasDownvoted" %}
+            <div class="btn btn-mini btn-success" title="You already voted down"><i class="icon-thumbs-down"></i></div>
+        {% else %}
+            <div class="btn btn-mini disabled" title="You're not allowed to vote"><i class="icon-thumbs-down"></i></div>
+        {% endif %}
 	{% endif %}
 	<br/>
 	<span class="score">
 		{{ votable_post.upvote_score|smallint }}
 	</span>
 {% endmacro %}
+
 {% macro date_with_help date %}
     {% if proposal.minimalContraintsAreMet %}
         {{date|date:"j F"}}
     {% else %}
-        <acronym title="This proposal needs {{proposal.proposal_type.minimalUpvotes}} upvotes before voting is started. The date ({{date|date:"j F"}}) is an estimate.&#10;&#10;Proposal might expire on {{proposal.expirationDate|date:"j F"}} if the required number of upvotes is not met.">({{date|date:"j F"}})</acronym>
+        <acronym title="This proposal needs {{proposal.MINIMAL_UPVOTES_BEFORE_VOTING}} upvotes before voting is started. The date ({{date|date:"j F"}}) is an estimate.&#10;&#10;Proposal might expire on {{proposal.expirationDate|date:"j F"}} if the required number of upvotes is not met.">({{date|date:"j F"}})</acronym>
     {% endif %}
 {% endmacro %}
 
@@ -62,14 +70,34 @@
 		        </header>
 		    </div>
 		</div>
-		<h3>Amendment proposed</h3>
-        <div class="well">{{ proposal.diff|diffrender }}</div>
-        <h3>Motivation</h3>
+		<h3>The Amendment</h3>
+		<div id="fullamendmentmodal" class="modal hide fade">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>The full amendment</h3>
+            </div>
+            <div class="modal-body">
+                {{ proposal.diff|fulldiffrender }}
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</a>
+            </div>
+        </div>
+        <div class="well amendment">
+            <a href="#fullamendmentmodal" role="button" class="btn btn-primary" data-toggle="modal" style="float: right;">View full amendment</a>
+            
+               {{ proposal.diff|diffrender }}
+        </div>
+
+        <span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>
+        {% if proposal.edits.count %}
+            <span class="creator-medium">{% usemacro user-medium proposal.lastEdit.user proposal.lastEdit.date "edited" %}</span>
+        {% endif %}
+        <h3>The Motivation</h3>
+        
+        
         <div class="motivation">
-            <span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>
-            {% if proposal.edits.count %}
-            	<span class="creator-medium">{% usemacro user-medium proposal.lastEdit.user proposal.lastEdit.date "edited" %}</span>
-            {% endif %}
+            
             {% if not proposaleditform %}
                 {{ proposal.motivation|linebreaks }}
             	<div class="proposal-tags">
@@ -197,44 +225,46 @@
               </div>
             </div>
         {% endif %}
+        <h3>Comments</h3>
         <div class="comments">
             {% for comment in proposal.comments.all %}
-            <div class="comment" id="comment_{{ comment.id }}">
-                <h2 class="{{ comment.color }}">
+            <div class="comment row-fluid well" id="comment_{{ comment.id }}">
+                <div class="span1">
                     <span class="updownvote">{% usemacro updownvote comment %}</span>
-                    <span class="title">Comment</span>
-                    {% usemacro user-small comment.creator comment.create_date %}
+                </div>
+                <div class="span11 {{ comment.color }}">
+                    <span class="editedby">written</span>{% usemacro user-small comment.creator comment.create_date %}
                     {% if comment.edits.count %}
-                        <span class="editedby">edited by</span>
-                        <div class="user-small">
-                            <a href="{% url user-profile comment.lastEdit.user.slug %}">
-                                <span class="user-name">{{comment.lastEdit.user.display_name}}</span>
-                            </a>
-                            <span title="{{comment.lastEdit.date}}" class="user-time">, {{comment.lastEdit.date|humantime}}</span>
-                        </div>
+	                    <span class="editedby">and edited by</span>
+	                    <div class="user-small">
+	                        <a href="{% url user-profile comment.lastEdit.user.slug %}">
+	                            <span class="user-name">{{comment.lastEdit.user.display_name}}</span>
+	                        </a>
+	                        <span title="{{comment.lastEdit.date}}" class="user-time">, {{comment.lastEdit.date|humantime}}</span>
+	                    </div>
                     {% endif %}
-                </h2>
-                <div class="motivation">
-                    {% if not commenteditform or commenteditform.comment_id != comment.id %}
-                        {{ comment.motivation|linebreaks }}
-                        {% if comment|args:user|call:"isEditableBy" %}
-                            <a href="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" class="edit">edit</a>
-                        {% endif %}
-                    {% else %}
-                        <table>
-                            <form action="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" method="POST">
-                                {{commenteditform}}
-                                {% csrf_token %}
-                                <tr>
-                                    <td></td>
-                                    <td>
-                                        <input type="submit" value="Edit" />
-                                        <a href="{% url proposals-detail proposal.slug %}" class="edit" style="display:inline-block;">cancel</a>
-                                    </td>
-                                </tr>
-                            </form>
-                        </table>
-                    {% endif %}
+                    <div class="motivation">
+	                    {% if not commenteditform or commenteditform.comment_id != comment.id %}
+	                        {{ comment.motivation|linebreaks }}
+	                        {% if comment|args:user|call:"isEditableBy" %}
+	                            <a href="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" class="edit">edit</a>
+	                        {% endif %}
+	                    {% else %}
+	                        <table>
+	                            <form action="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" method="POST">
+	                                {{commenteditform}}
+	                                {% csrf_token %}
+	                                <tr>
+	                                    <td></td>
+	                                    <td>
+	                                        <input type="submit" value="Edit" />
+	                                        <a href="{% url proposals-detail proposal.slug %}" class="edit" style="display:inline-block;">cancel</a>
+	                                    </td>
+	                                </tr>
+	                            </form>
+	                        </table>
+	                    {% endif %}
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -248,7 +278,7 @@
                 <p>{{ commentform.motivation }}</p>
                 {{ commentform.color.errors }}
                 <p>{{ commentform.color }}</p>
-                <p><input type="submit" value="comment" /></p>
+                <p><input type="submit" value="comment" class="btn btn-primary"/></p>
             </form>
         </div>
         {% endif %}
