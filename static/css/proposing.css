@@ -97,19 +97,6 @@ article.proposal .motivation .chzn-container * {
     border: 0 ! important;
 }
 
-article.proposal a.edit {
-    font-size: 14px;
-    display: block;
-    color: #bbb!important;
-}
-article.proposal a.edit:active,
-article.proposal a.edit:visited {
-    color: #bbb!important;
-}
-article.proposal a.edit:hover {
-    color: #888!important;
-}
-
 article.proposal .comment .editedby {
     font-size: 12px;
 }

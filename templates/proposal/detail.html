@@ -247,20 +247,17 @@
 	                    {% if not commenteditform or commenteditform.comment_id != comment.id %}
 	                        {{ comment.motivation|linebreaks }}
 	                        {% if comment|args:user|call:"isEditableBy" %}
-	                            <a href="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" class="edit">edit</a>
+		                        <div>
+		                            <a href="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" class="btn btn-mini">edit</a>
+		                        </div>
 	                        {% endif %}
 	                    {% else %}
 	                        <table>
 	                            <form action="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" method="POST">
-	                                {{commenteditform}}
+	                                {{commenteditform|as_bootstrap}}
 	                                {% csrf_token %}
-	                                <tr>
-	                                    <td></td>
-	                                    <td>
-	                                        <input type="submit" value="Edit" />
-	                                        <a href="{% url proposals-detail proposal.slug %}" class="edit" style="display:inline-block;">cancel</a>
-	                                    </td>
-	                                </tr>
+                                    <input type="submit"  class="btn btn-primary" value="Edit" />
+                                    <a href="{% url proposals-detail proposal.slug %}" class="btn">cancel</a>
 	                            </form>
 	                        </table>
 	                    {% endif %}
