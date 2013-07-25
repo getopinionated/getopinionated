@@ -121,11 +121,11 @@ class Diff(models.Model):
         return Diff( text_representation=''.join(diff) )
     
     def getOriginalText(self):
-        lines = self.text_representation.__unicode__().splitlines(1)
+        lines = self.text_representation.splitlines(1)
         return ''.join([line[2:] for line in lines if line.startswith('- ') or line.startswith('  ')]) 
     
     def getNewText(self):
-        lines = self.text_representation.__unicode__().splitlines(1)
+        lines = self.text_representation.splitlines(1)
         return ''.join([line[2:] for line in lines if line.startswith('+ ') or line.startswith('  ')])
     
     def getUnifiedDiff(self): #room for optimization
