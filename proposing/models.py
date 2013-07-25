@@ -3,7 +3,7 @@ import datetime
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
-from django.template.defaultfilters import slugify
+from common.templatetags.filters import slugify
 from common.stringify import niceBigInteger
 from document.models import Diff
 from accounts.models import CustomUser

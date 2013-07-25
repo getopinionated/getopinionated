@@ -1,4 +1,4 @@
-from django.template.defaultfilters import slugify
+from common.templatetags.filters import slugify
 from django.template.loader import render_to_string
 from debug_toolbar.middleware import DebugToolbarMiddleware
 

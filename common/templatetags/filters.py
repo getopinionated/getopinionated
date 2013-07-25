@@ -65,4 +65,17 @@ def numberheaders(s):
             s = s[:el[0]] + ' id="h%s-%s-%s"'%(el[2],el[3],el[4]) + s[el[0]:]
     return s
 
-
+def slugify(value):
+    """
+    Normalizes string, converts to lowercase, removes non-alpha characters,
+    and converts spaces to hyphens.
+    """
+    import unicodedata
+    v=value
+    value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore')
+    value = unicode(re.sub('[^\w\s-]', '', value).strip().lower())
+    value = re.sub('[-\s]+', '-', value)
+    value = mark_safe(value)
+    if value == '':
+        value = mark_safe(''.join([str(ord(c)) for c in v.encode('utf-8')]))
+    return value

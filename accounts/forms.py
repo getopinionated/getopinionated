@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.forms import AuthenticationForm
-from django.template.defaultfilters import slugify
+from common.templatetags.filters import slugify
 
 from common.stringify import int_to_roman
 from common.forms import FocussingModelForm

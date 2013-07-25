@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User, UserManager
-from django.template.defaultfilters import slugify
+from common.templatetags.filters import slugify
 from libs.sorl.thumbnail import ImageField
 from django import forms
 from getopinionated.settings import MEDIA_ROOT

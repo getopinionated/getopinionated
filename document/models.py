@@ -2,7 +2,7 @@ from django.http import Http404
 from django.db import models
 from django.utils import timezone
 from django.db.models import Max
-from django.template.defaultfilters import slugify
+from common.templatetags.filters import slugify
 
 from common.stringify import int_to_roman
 import difflib

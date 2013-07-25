@@ -54,7 +54,6 @@ class ProposalForm(forms.ModelForm):
                 
         content = sanitizehtml.sanitizeHtml(content)
         content = FullDocument.cleanText(content)
-        
         origcont = FullDocument.cleanText(self.document.content)
         #Actually, you don't?
         #if content == origcont:

@@ -4,6 +4,7 @@ from beautifulsoup import BeautifulSoup, Comment
 
 
 def sanitizeHtml(value, base_url=None):
+    value = value.replace('<div>','').replace('</div>','').replace('<p>','').replace('</p>','').replace('<span>','').replace('</span>','')
     rjs = r'[\s]*(&#x.{1,7})?'.join(list('javascript:'))
     rvb = r'[\s]*(&#x.{1,7})?'.join(list('vbscript:'))
     re_scripts = re.compile('(%s)|(%s)' % (rjs, rvb), re.IGNORECASE)
