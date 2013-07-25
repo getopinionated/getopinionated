@@ -26,6 +26,18 @@ class TagSelectorWidget(widgets.SelectMultiple):
         output.append('<script type="text/javascript">$("#%s").chosen({width: "100%%"});</script>'%attrs['id'])
         return mark_safe(u'\n'.join(output))
 
+class EmptyTagSelectorWidget(TagSelectorWidget):
+    def render(self, name, selected=None, attrs=None, choices=()):
+        attrs['id'] = 'TagSelectorWidget-' + ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
+        if selected is None: selected = []
+        final_attrs = self.build_attrs(attrs, name=name)
+        output = [u'<select multiple="multiple" class="chosen" %s>' % flatatt(final_attrs)]
+        options = self.render_options(choices, selected)
+        if options:
+            output.append(options)
+        output.append('</select>')
+        return mark_safe(u'\n'.join(output))
+
 class NumberSliderWidget(widgets.TextInput):
 
     class Media:

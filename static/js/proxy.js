@@ -14,8 +14,7 @@ $(document).ready(function(){
 			$(this).attr('name',currentname+''+count);
 		});
 		$("#tagfieldcount").val(""+(count+1));
-		//$("#item"+count+">div>div>div>select").css("border", "3px double red");
-		$("#item"+count+">div>div>div>select").chosen({no_results_text: "No results matched"});
+		$("#item"+count+">div>div>div>select").chosen({no_results_text: "No results matched",width: "100%%"});
 		count += 1;
 	});
 	

@@ -4,7 +4,7 @@ from common.beautifulsoup import BeautifulSoup
 from common import sanitizehtml
 from document.models import FullDocument, Diff
 from proposing.widgets import TagSelectorWidget, RichTextEditorWidget,\
-    VeryRichTextEditorWidget, NumberSliderWidget
+    VeryRichTextEditorWidget, NumberSliderWidget, EmptyTagSelectorWidget
 from proposing.fields import TagChoiceField, UserChoiceField
 from models import VotablePost, UpDownVote, Proposal, Comment, Tag, VotablePostEdit
 from django.contrib.auth.models import User
@@ -119,8 +119,8 @@ class CommentEditForm(VotablePostEditForm):
 
 class ProxyForm(forms.Form):
     
-    side_proxy = UserChoiceField(queryset=CustomUser.objects.all(), widget=TagSelectorWidget(attrs={'data-placeholder':"User, user, ..." }))
-    side_proxy_tags = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'data-placeholder':"Tag, tag, ..." }))
+    side_proxy = UserChoiceField(queryset=CustomUser.objects.all(), widget=EmptyTagSelectorWidget(attrs={'data-placeholder':"User, user, ..." }))
+    side_proxy_tags = TagChoiceField(queryset=Tag.objects.all(), widget=EmptyTagSelectorWidget(attrs={'data-placeholder':"Tag, tag, ..." }))
     
     def __init__(self, user, *args, **kwargs):
         self.user = user
