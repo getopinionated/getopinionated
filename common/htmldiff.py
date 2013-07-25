@@ -15,10 +15,7 @@ Better results if you use mxTidy first.  The output is HTML.
 
 from difflib import SequenceMatcher
 import re
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
+from StringIO import StringIO
 import cgi
 
 def htmlEncode(s, esc=cgi.escape):
