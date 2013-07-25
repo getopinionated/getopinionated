@@ -9,6 +9,8 @@ import os
 #TODO: this is called on every login, this might be a little too much?
 def get_user_avatar(backend, details, response, social_user, uid,\
                     user, *args, **kwargs):
+    if user.avatar:
+        return
     url = None
     if backend.__class__ == FacebookBackend:
         url = "http://graph.facebook.com/%s/picture?type=large" % response['id']
