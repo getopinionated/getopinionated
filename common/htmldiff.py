@@ -218,8 +218,8 @@ class HTMLMatcher(SequenceMatcher):
 
     def stylesheet(self):
         return '''
-.insert { background-color: #aaffaa; color: #000!important; }
-.delete { background-color: #ff8888; text-decoration: line-through; color: #000!important; }
+.insert { background-color: #bfb; color: #000!important; }
+.delete { background-color: #fbb; text-decoration: line-through; color: #000!important; }
 .tagInsert { background-color: #ccffcc; color: #000!important; }
 .tagDelete { background-color: #ffcccc; color: #000!important; }
 '''
