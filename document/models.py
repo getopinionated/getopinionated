@@ -28,9 +28,14 @@ class FullDocument(models.Model):
         super(FullDocument, self).save(*args, **kwargs)
 
     def applyDiff(self, diff):
-        originalText = diff.getOriginalText()
+        originalText = FullDocument.cleanText(diff.getOriginalText())
         mytext = FullDocument.cleanText(self.content.__str__())
-        if originalText != mytext:
+        if originalText.strip() != mytext.strip():
+            #print "####################################################"
+            #print originalText.encode("hex")
+            #print "####################################################"
+            #print mytext.encode("hex")
+            #print "####################################################"
             raise Exception("This diff doesn't apply to this document!")
         newcontent = diff.getNewText()
         newcontent = FullDocument.cleanText(newcontent)
@@ -140,16 +145,16 @@ class Diff(models.Model):
     #TODO: we need a better way to deal with replacements.
     # That is, deletions followed by insertions.
     
-    def applyDiffOnThisDiff(self, new_diff, safety=VERYSAFE):
+    def applyDiffOnThisDiff(self, new_diff, safety=SAFE):
         difflines = new_diff.text_representation.__str__().splitlines(1)
         newlines = self.text_representation.__str__().splitlines(1)
         index = 0
         for diffline in difflines:
             if diffline.startswith('  '):
-                while newlines[index][2:]!=diffline[2:]:
+                while newlines[index][1:]!=diffline[1:]:
                     index+=1
             elif diffline.startswith('- '):
-                while newlines[index][2:]!=diffline[2:]:
+                while newlines[index][1:]!=diffline[1:]:
                     index+=1
                 if newlines[index].startswith('- '):
                     if safety == self.VERYSAFE:

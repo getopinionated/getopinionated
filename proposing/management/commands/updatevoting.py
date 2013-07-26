@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.utils import timezone
 from proposing.models import Proposal, ProxyProposalVote, Proxy, Tag
 from django.utils.timezone import datetime, timedelta
+import traceback
 
 def concurrent():
     import sys
@@ -67,11 +68,11 @@ class Command(NoArgsCommand):
         self.stdout.write('{} proposals expired\n'.format(expired_cnt))
         
     @staticmethod
-    def executeProposal(proposal):
-        if proposal.isApproved():
+    def executeProposal(prop):
+        if prop.isApproved():
             ## apply this diff
             try:
-                proposal.diff.fulldocument.getFinalVersion().applyDiff(proposal.diff)
+                prop.diff.fulldocument.getFinalVersion().applyDiff(prop.diff)
             except Exception as e:
                 print "Error applying diff to final version: ", e
                 # TODO: catch this in nice way
@@ -80,12 +81,17 @@ class Command(NoArgsCommand):
                     ~Q(voting_stage='APPROVED'),
                     ~Q(voting_stage='REJECTED'),
                     ~Q(voting_stage='EXPIRED'),
-                    ~Q(pk=proposal.pk),
+                    ~Q(pk=prop.pk),
                 ):
                 try:
-                    proposal.diff.applyDiffOnThisDiff(proposal.diff)
+                    newdiff = proposal.diff.applyDiffOnThisDiff(prop.diff)
+                    newdiff.fulldocument = prop.diff.fulldocument.getFinalVersion()
+                    newdiff.save()
+                    proposal.diff = newdiff
+                    proposal.save()
                 except Exception as e:
                     print "Error applying diff to other diffs: ", e
+                    print traceback.format_exc()
                     # TODO: catch this in nice way
         else:
             return
