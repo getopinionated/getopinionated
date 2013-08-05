@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from models import VotablePost, UpDownVote, Proposal, Comment, ProposalVote
 from forms import CommentForm, ProposalEditForm, CommentEditForm
-from proposing.models import Tag, ProxyProposalVote, Proxy
+from proposing.models import Tag, ProxyProposalVote, Proxy, VotablePost
 from django.db.models import Count
 from proposing.forms import ProxyForm, ProposalForm
 from django.contrib.auth.views import redirect_to_login
@@ -345,3 +345,43 @@ def ajaxfavorite(request, proposal_slug):
         proposal.favorited_by.add(user)
         proposal.save()
         return HttpResponse(content='1', mimetype='application/javascript')
+
+@login_required
+def ajaxendorse(request, proposal_slug):
+    proposal = get_object_or_404(Proposal, slug=proposal_slug)
+    user = request.user
+    if proposal.userHasUpdownvoted(user) != None:
+        vote = proposal.updownvoteFromUser(user)
+        vote.delete()
+        return HttpResponse(content=proposal.upvote_score, mimetype='application/javascript')
+    # check if upvote is allowed
+    if not proposal.userCanUpdownvote(user):
+        return HttpResponse(content=proposal.upvote_score, mimetype='application/javascript')
+    # create updownvote
+    vote = UpDownVote(
+        user = user,
+        post = proposal,
+        value = 1,
+    )
+    vote.save()
+    return HttpResponse(content=proposal.upvote_score, mimetype='application/javascript')
+
+
+@login_required
+def ajaxupdownvote(request, post_id, updown):
+    post = get_object_or_404(VotablePost, pk=post_id)
+    user = request.user
+    if post.userHasUpdownvoted(user) != None:
+        vote = post.updownvoteFromUser(user)
+        vote.delete()
+    # check if upvote is allowed
+    if not post.userCanUpdownvote(user):
+        return HttpResponse(content=post.upvote_score, mimetype='application/javascript')
+    # create updownvote
+    vote = UpDownVote(
+        user = user,
+        post = post,
+        value = (-1 if updown=="down" else 1),
+    )
+    vote.save()
+    return HttpResponse(content=post.upvote_score, mimetype='application/javascript')

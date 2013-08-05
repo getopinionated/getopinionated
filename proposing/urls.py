@@ -16,4 +16,6 @@ urlpatterns = patterns('',
     url(r'^proxy/$', views.proxy, name='proxy-index'),
     url(r'^proxy/(?P<tag_slug>[-\w]+)$', views.proxy, name='proxy-index'),
     url(r'^ajax/favorite/(?P<proposal_slug>[-\w]+)$', views.ajaxfavorite, name='ajax-favorite'),
+    url(r'^ajax/endorse/(?P<proposal_slug>[-\w]+)$', views.ajaxendorse, name='ajax-endorse'),
+    url(r'^ajax/updownvote/(?P<post_id>[-\w]+)/(?P<updown>[-\w]+)$', views.ajaxupdownvote, name='ajax-updownvote'),
 )

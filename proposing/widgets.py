@@ -49,7 +49,7 @@ class NumberSliderWidget(widgets.TextInput):
     def render(self, name, value, attrs=None):
         attrs['id'] = 'NumberSliderWidget-' + ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
         final_attrs = self.build_attrs(attrs, name=name)
-        output = [u'<input type="number" class="number-slider-widget" value="%s" data-slider-min="0" data-slider-max="63" data-slider-step="1" id="%s" %s>' % (value,attrs['id'],flatatt(final_attrs))]
+        output = [u'<input type="number" class="number-slider-widget" value="%s" data-slider-min="1" data-slider-max="63" data-slider-step="1" id="%s" %s>' % (value,attrs['id'],flatatt(final_attrs))]
         output.append('''<script type="text/javascript">$('#%s').slider({
             selection: 'before',
             value: %s,

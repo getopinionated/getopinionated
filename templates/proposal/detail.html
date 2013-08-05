@@ -3,6 +3,7 @@
 {% load macros %}
 {% load filters %}
 {% load bootstrap_toolkit %}
+{% load humanize %}
 {% loadmacros "accounts/member-macro.html" %}
 {% loadmacros "proposal/star-macro.html" %}
 {% loadmacros "common/share.html" %}
@@ -10,26 +11,27 @@
 {% loadmacros "proposal/proposal-form-modal-macro.html" %}
 
 {% macro updownvote votable_post %}
-	{% if votable_post|args:user|call:"canPressUpvote" %}
-		<a href="{% url posts-vote proposal.slug votable_post.id 'up' %}" class="btn btn-mini"><i class="icon-thumbs-up"></i></a>
-	{% else %}
-	    {% if votable_post|args:user|call:"hasUpvoted" %}
-           <div class="btn btn-mini btn-success" title="You already voted up"><i class="icon-thumbs-up"></i></div>
-		{% else %}
-		    <div class="btn btn-mini disabled" title="You're not allowed to vote"><i class="icon-thumbs-up"></i></div>
-		{% endif %}
-	{% endif %}
-	{% if votable_post|args:user|call:"canPressDownvote" %}
-		<a href="{% url posts-vote proposal.slug votable_post.id 'down' %}" class="btn btn-mini"><i class="icon-thumbs-down"></i></a>
-	{% else %}
-	    {% if votable_post|args:user|call:"hasDownvoted" %}
-            <div class="btn btn-mini btn-danger" title="You already voted down"><i class="icon-thumbs-down"></i></div>
-        {% else %}
-            <div class="btn btn-mini disabled" title="You're not allowed to vote"><i class="icon-thumbs-down"></i></div>
+	{% if votable_post|args:user|call:"canPressUpvote" or votable_post|args:user|call:"hasUpvoted" %}
+		<div class="btn btn-mini
+		{% if votable_post|args:user|call:"hasUpvoted" %}
+          btn-success
         {% endif %}
+        " id="upvote-{{votable_post.pk}}" onclick="upvote_send( '{{votable_post.pk}}' )"><i class="icon-thumbs-up"></i></div>
+	{% else %}
+	    <div class="btn btn-mini disabled" title="You're not allowed to vote"><i class="icon-thumbs-up"></i></div>
 	{% endif %}
+	
+	{% if votable_post|args:user|call:"canPressDownvote" or votable_post|args:user|call:"hasDownvoted" %}
+		<div class="btn btn-mini
+		{% if votable_post|args:user|call:"hasDownvoted" %}
+		  btn-danger
+		{% endif %}
+		" id="downvote-{{votable_post.pk}}" onclick="downvote_send( '{{votable_post.pk}}' )"><i class="icon-thumbs-down"></i></div>
+	{% else %}
+        <div class="btn btn-mini disabled" title="You're not allowed to vote"><i class="icon-thumbs-down"></i></div>
+    {% endif %}
 	<br/>
-	<span class="score">
+	<span class="score" id="updownvote-score-{{votable_post.pk}}">
 		{{ votable_post.upvote_score|smallint }}
 	</span>
 {% endmacro %}
@@ -54,10 +56,12 @@
 {% endblock %}
 
 {% block content %}
-    {% if proposal|args:user|call:"isEditableBy" %}
-        {% usemacro proposal-form-modal-macro proposal.diff "editamendmentmodal" proposaleditform document 1 %}
+    {% if user.is_authenticated %}
+	    {% if proposal|args:user|call:"isEditableBy" %}
+	        {% usemacro proposal-form-modal-macro proposal.diff "editamendmentmodal" proposaleditform document 1 %}
+	    {% endif %}
+	    {% usemacro proposal-form-modal-macro proposal.diff "forkamendmentmodal" proposaleditform document 0 %}
     {% endif %}
-    {% usemacro proposal-form-modal-macro proposal.diff "forkamendmentmodal" proposaleditform document 0 %}
     <article class="proposal">
     	<div class="row-fluid">
     		<div class="span12">
@@ -65,7 +69,22 @@
 		            <h1>
 		            	<div class="title-container">
 			                <div class="favorite">{% usemacro star-macro user proposal %}</div>
-			                <div class="updownvote">{% usemacro updownvote proposal %}</div>
+			                <div class="updownvote" id="updownvote-proposal">
+				                {% if proposal|args:user|call:"canPressUpvote" %}
+							        <div href="{% url posts-vote proposal.slug proposal.id 'up' %}" id="endorse-{{proposal.slug}}" class="btn btn-mini" onclick="endorse_send( '{{proposal.slug}}' )">Endorse</div>
+							    {% else %}
+							        {% if proposal|args:user|call:"hasUpvoted" %}
+							           <div href="{% url posts-vote proposal.slug proposal.id 'up' %}" id="endorse-{{proposal.slug}}" class="btn btn-mini btn-success" onclick="endorse_send( '{{proposal.slug}}' )">Endorse</div>
+							        {% else %}
+							            <div class="btn btn-mini disabled" title="You're not allowed to vote">Endorse</div>
+							        {% endif %}
+							    {% endif %}
+							    <br/>
+							    <span class="score" id="endorse-score">
+							        {{ proposal.upvote_score|smallint }}
+							    </span>
+						    </div>
+						    
 			                <div class="share">
 			                	{% usemacro sharingbuttons request.build_absolute_uri proposal.title "This interesting proposal for the program of the Pirate Party has been made on getOpinionated. Help us make the program a better program." %}
 			        		</div>
@@ -91,10 +110,12 @@
         <div class="well amendment">
             <div style="float: right; margin:10px;">
                 <a href="#fullamendmentmodal" role="button" class="btn btn-primary btn-inverse" data-toggle="modal" style="width: 161px;">View full amendment</a><br>
-                {% if proposal|args:user|call:"isEditableBy" %}
-	               <a href="#editamendmentmodal" role="button" class="btn" data-toggle="modal" style="width: 161px;">Edit your amendment</a><br>
+                {% if user.is_authenticated %}
+	                {% if proposal|args:user|call:"isEditableBy" %}
+		               <a href="#editamendmentmodal" role="button" class="btn" data-toggle="modal" style="width: 161px;">Edit your amendment</a><br>
+		            {% endif %}
+		            <a href="#forkamendmentmodal" role="button" class="btn" data-toggle="modal" style="width: 161px;">Fork this amendment</a><br>
 	            {% endif %}
-	            <a href="#forkamendmentmodal" role="button" class="btn" data-toggle="modal" style="width: 161px;">Fork this amendment</a><br>
             </div>
             {{ proposal.diff|diffrender|cut:"\n" }}
         </div>
@@ -278,4 +299,22 @@
 
 
     </article>
+{% endblock %}
+
+{% block extrascripts %}
+    {% if proposal.voting_stage == 'DISCUSSION' %}
+	    <script type="text/javascript">
+	        $( document ).ready(function () {
+	            $('#updownvote-proposal').popover({
+	                animation: true,
+	                html: false,
+	                placement: "bottom",
+	                trigger: "hover",
+	                title: "Endorsement",
+	                content: "This proposals needs {% if 0 < proposal.upvotesNeededBeforeVoting %}{{proposal.upvotesNeededBeforeVoting}}{% else %}no{% endif %} more endorsements before it will be voted. The deadline was set for {{proposal.expirationDate|naturaltime}}.",
+	                container: 'article'
+	            });
+	        });
+	    </script>
+    {% endif %}
 {% endblock %}

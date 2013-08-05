@@ -108,7 +108,7 @@ class Proposal(VotablePost):
     # settings
     QUORUM_SIZE = 1 # minimal # of proposalvotes for approvement
     VOTING_DAYS = 7 #TODO: make this 7 more flexible
-    MINIMAL_UPVOTES_BEFORE_VOTING = 7 #TODO: make this 7 more flexible
+    MINIMAL_UPVOTES_BEFORE_VOTING = 3 #TODO: make this 7 more flexible
     VOTING_STAGE = (
         ('DISCUSSION', 'Discussion'),
         ('VOTING', 'Voting'),
@@ -162,12 +162,18 @@ class Proposal(VotablePost):
         """ date the proposal expires because lack of interest """
         if self.minimalContraintsAreMet():
             return None
-        return self.create_date + datetime.timedelta(days=self.VOTING_DAYS)
+        return self.create_date + datetime.timedelta(days=self.discussion_time)
 
     def minimalContraintsAreMet(self):
         """ True if non-date constraints are met """
         return self.upvote_score > self.MINIMAL_UPVOTES_BEFORE_VOTING
 
+    @property
+    def upvotesNeededBeforeVoting(self):
+        """ True if non-date constraints are met """
+        missing = self.MINIMAL_UPVOTES_BEFORE_VOTING - self.upvote_score 
+        return missing if missing >= 0 else 0
+    
     def shouldStartVoting(self):
         # check relevance
         if self.voting_stage != 'DISCUSSION':
