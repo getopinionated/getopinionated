@@ -4,7 +4,9 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
 import settings
+import views
 import proposing.views
+
 from getopinionated.settings import MEDIA_ROOT
 
 admin.autodiscover()
@@ -19,5 +21,6 @@ urlpatterns = patterns('',
 	url(r'^tag/(?P<tag_slug>[-\w]+)/$', proposing.views.tagproplist, name='tag-index'),
 	(r'^media/(?P<path>.*)$', 'django.views.static.serve',{'document_root': MEDIA_ROOT, }),
 	url(r'', include('social_auth.urls')),
+	url(r'home', views.home, name='home'),
 )
 
