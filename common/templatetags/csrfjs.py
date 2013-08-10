@@ -1,11 +1,10 @@
 import re, random
 from django import template
 from django.utils.safestring import mark_safe
-from django.template.defaulttags import CsrfTokenNode
 
 register = template.Library()
 
-class CsrfJsTokenNode(CsrfTokenNode):
+class CsrfJsTokenNode(template.Node):
     def render(self, context):
         csrf_token = context.get('csrf_token', None)
         if csrf_token:
