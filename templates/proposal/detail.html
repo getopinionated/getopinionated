@@ -4,7 +4,6 @@
 {% load filters %}
 {% load bootstrap_toolkit %}
 {% load humanize %}
-{% load settings_value %}
 {% loadmacros "accounts/member-macro.html" %}
 {% loadmacros "proposal/star-macro.html" %}
 {% loadmacros "common/share.html" %}
@@ -41,7 +40,7 @@
     {% if proposal.minimalContraintsAreMet %}
         {{date|date:"j F"}}
     {% else %}
-        <acronym title="This proposal needs {% settings_value "MIN_NUM_ENDORSEMENTS_BEFORE_VOTING" %} upvotes before voting is started. The date ({{date|date:"j F"}}) is an estimate.&#10;&#10;Proposal might expire on {{proposal.expirationDate|date:"j F"}} if the required number of upvotes is not met.">({{date|date:"j F"}})</acronym>
+        <acronym title="This proposal needs {{ settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING }} upvotes before voting is started. The date ({{date|date:"j F"}}) is an estimate.&#10;&#10;Proposal might expire on {{proposal.expirationDate|date:"j F"}} if the required number of upvotes is not met.">({{date|date:"j F"}})</acronym>
     {% endif %}
 {% endmacro %}
 
@@ -86,7 +85,7 @@
                                 </span>
                                 {% if not proposal.minimalNumEndorsementsIsMet %}
                                     <span>
-                                        / {% settings_value "MIN_NUM_ENDORSEMENTS_BEFORE_VOTING" %}
+                                        / {{settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING}}
                                     </span>
                                 {% endif %}
 						    </div>
@@ -218,8 +217,8 @@
                 {% endif %}
                 <p>
                     #voters: {{ proposal.proposal_votes.count }}
-                    {% if proposal.proposal_votes.count < proposal.quorum_size %}
-                        <span style="color: red">(did not reach <acronym title="minimal number of voters">quorum</acronym> of {{proposal.quorum_size}} people)</span>
+                    {% if proposal.proposal_votes.count < settings.QUORUM_SIZE %}
+                        <span style="color: red">(did not reach <acronym title="minimal number of voters">quorum</acronym> of {{settings.QUORUM_SIZE}} people)</span>
                     {% endif %}
                 </p>
                 <p>

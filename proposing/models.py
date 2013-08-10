@@ -245,10 +245,6 @@ class Proposal(VotablePost):
     def userHasProposalvotedOn(self, user, option):
         return self.userHasProposalvoted(user) == int(option)
 
-    @property
-    def quorum_size(self):
-        return settings.QUORUM_SIZE
-
     def isApproved(self):
         # QUESTION: should quorum be number of voters of number of votes (c.f.r. liquid democracy, one person can have many votes)
         # Quorum is always number of voters, not number of votes. A quorum is needed to avoid under-the-radar-behaviour.
