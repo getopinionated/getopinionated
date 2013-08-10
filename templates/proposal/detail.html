@@ -71,10 +71,10 @@
 			                <div class="favorite">{% usemacro star-macro user proposal %}</div>
 			                <div class="updownvote" id="updownvote-proposal">
 				                {% if proposal|args:user|call:"canPressUpvote" %}
-							        <div href="{% url posts-vote proposal.slug proposal.id 'up' %}" id="endorse-{{proposal.slug}}" class="btn btn-mini" onclick="endorse_send( '{{proposal.slug}}' )">Endorse</div>
+							        <div id="endorse-{{proposal.slug}}" class="btn btn-mini" onclick="endorse_send( '{{proposal.slug}}' )">Endorse</div>
 							    {% else %}
 							        {% if proposal|args:user|call:"hasUpvoted" %}
-							           <div href="{% url posts-vote proposal.slug proposal.id 'up' %}" id="endorse-{{proposal.slug}}" class="btn btn-mini btn-success" onclick="endorse_send( '{{proposal.slug}}' )">Endorse</div>
+							           <div id="endorse-{{proposal.slug}}" class="btn btn-mini btn-success" onclick="endorse_send( '{{proposal.slug}}' )">Endorse</div>
 							        {% else %}
 							            <div class="btn btn-mini disabled" title="You're not allowed to vote">Endorse</div>
 							        {% endif %}

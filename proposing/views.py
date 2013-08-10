@@ -270,37 +270,6 @@ def listofvoters(request, proposal_slug):
     })
 
 @login_required
-def vote(request, proposal_slug, post_id, updown):
-    # get vars
-    post = get_object_or_404(VotablePost, pk=post_id)
-    user = request.user
-    proposal_detail_redirect = HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
-    assert updown in ['up', 'down'], 'illegal updown value'
-    # check if upvote can be undone
-    if post.userHasUpdownvoted(user) != None:
-        if post.userHasUpdownvoted(user) != updown:
-            vote = post.updownvoteFromUser(user)
-            vote.delete()
-            messages.success(request, "Vote removed successfully")
-        else:
-            messages.error(request, "You already voted on this post")
-        return proposal_detail_redirect
-    # check if upvote is allowed
-    if not post.userCanUpdownvote(user):
-        messages.error(request, "You can't vote on this post")
-        return proposal_detail_redirect
-    # create updownvote
-    vote = UpDownVote(
-        user = user,
-        post = post,
-        value = (+1 if (updown == 'up') else -1),
-    )
-    vote.save()
-    # redirect
-    messages.success(request, "Vote successful")
-    return proposal_detail_redirect
-
-@login_required
 def proposalvote(request, proposal_slug, score):
     # get vars
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
