@@ -4,7 +4,6 @@
 {% load filters %}
 {% load bootstrap_toolkit %}
 {% load humanize %}
-{% load settings_value %}
 {% loadmacros "accounts/member-macro.html" %}
 {% loadmacros "proposal/star-macro.html" %}
 {% loadmacros "common/share.html" %}
@@ -85,7 +84,8 @@
                                     {{ proposal.upvote_score|smallint }}
                                 </span>
                                 {% if not proposal.minimalNumEndorsementsIsMet %}
-                                    <span>{% settings_value "MINIMAL_UPVOTES_BEFORE_VOTING" %}
+                                    <span>
+                                        / {{settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING}} 
                                     </span>
                                 {% endif %}
 						    </div>
