@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.http import HttpResponseRedirect, get_host
+from django.http import HttpResponseRedirect
 import re
 
 SSL = 'SSL'
@@ -35,9 +35,9 @@ class SSLRedirect:
     def _redirect(self, request, secure):
         protocol = secure and "https" or "http"
         if secure:
-            host = getattr(settings, 'SSL_HOST', get_host(request))
+            host = getattr(settings, 'SSL_HOST', request.get_host())
         else:
-            host = getattr(settings, 'HTTP_HOST', get_host(request))
+            host = getattr(settings, 'HTTP_HOST', request.get_host())
         newurl = "%s://%s%s" % (protocol,host,request.get_full_path())
         if settings.DEBUG and request.method == 'POST':
             raise RuntimeError, \

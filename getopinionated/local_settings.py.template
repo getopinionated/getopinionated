@@ -29,6 +29,7 @@ STATIC_ROOT = '/home/de317070/webapps/staticmedia/'
 MEDIA_ROOT = os.path.join(STATIC_ROOT, 'media')
 MEDIA_URL = '/static/media/'
 
+SECRET_KEY = 'xxx'
 FACEBOOK_APP_ID              = ''
 FACEBOOK_API_SECRET          = ''
 TWITTER_CONSUMER_KEY         = ''
