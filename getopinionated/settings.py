@@ -304,7 +304,7 @@ SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
 #####################################################################################
 # GetOpinionated-specific settings
 #####################################################################################
-ANONYMOUS_PROPOSALS = False
+ANONYMOUS_PROPOSALS = True
 ANONYMOUS_COMMENTS = True # NOT USED YET (TODO)
 
 #####################################################################################
