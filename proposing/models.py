@@ -105,9 +105,6 @@ class ProposalType(models.Model):
         return self.name
 
 class Proposal(VotablePost):
-    QUORUM_SIZE = 1 # minimal # of proposalvotes for approvement
-    VOTING_DAYS = 7 #TODO: make this 7 more flexible
-    MINIMAL_UPVOTES_BEFORE_VOTING = settings.MINIMAL_UPVOTES_BEFORE_VOTING
     # constants
     VOTING_STAGE = (
         ('DISCUSSION', 'Discussion'),
@@ -155,7 +152,7 @@ class Proposal(VotablePost):
 
     @property
     def estimatedFinishDate(self):
-        return self.estimatedVotingDate + datetime.timedelta(days=self.VOTING_DAYS) 
+        return self.estimatedVotingDate + datetime.timedelta(days=settings.VOTING_DAYS) 
 
     @property
     def expirationDate(self):
@@ -165,7 +162,7 @@ class Proposal(VotablePost):
         return self.create_date + datetime.timedelta(days=self.discussion_time)
 
     def minimalNumEndorsementsIsMet(self):
-        return self.upvote_score >= self.MINIMAL_UPVOTES_BEFORE_VOTING
+        return self.upvote_score >= settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING
 
     def minimalContraintsAreMet(self):
         """ True if non-date constraints are met """
@@ -174,7 +171,7 @@ class Proposal(VotablePost):
     @property
     def upvotesNeededBeforeVoting(self):
         """ True if non-date constraints are met """
-        missing = self.MINIMAL_UPVOTES_BEFORE_VOTING - self.upvote_score 
+        missing = settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING - self.upvote_score 
         return missing if missing >= 0 else 0
     
     def shouldStartVoting(self):
@@ -192,7 +189,7 @@ class Proposal(VotablePost):
         if self.voting_stage != 'VOTING':
             return False
         # should finish voting if end properties fullfilled
-        shouldBeFinished = timezone.now() > self.voting_date + datetime.timedelta(days=self.VOTING_DAYS)
+        shouldBeFinished = timezone.now() > self.voting_date + datetime.timedelta(days=settings.VOTING_DAYS)
         return shouldBeFinished
 
     def shouldExpire(self):
@@ -248,10 +245,14 @@ class Proposal(VotablePost):
     def userHasProposalvotedOn(self, user, option):
         return self.userHasProposalvoted(user) == int(option)
 
+    @property
+    def quorum_size(self):
+        return settings.QUORUM_SIZE
+
     def isApproved(self):
         # QUESTION: should quorum be number of voters of number of votes (c.f.r. liquid democracy, one person can have many votes)
         # Quorum is always number of voters, not number of votes. A quorum is needed to avoid under-the-radar-behaviour.
-        return self.avgProposalvoteScore > 0 and self.proposal_votes.count() >= self.QUORUM_SIZE
+        return self.avgProposalvoteScore > 0 and self.proposal_votes.count() >= settings.QUORUM_SIZE
     
     def commentsAllowed(self):
         return self.voting_stage == 'DISCUSSION'
@@ -333,7 +334,7 @@ class Proposal(VotablePost):
         return self.total_proxy_proposal_votes.filter(value = vote_value, voted_self=True)
 
 class Comment(VotablePost):
-    # settings
+    # constants
     COMMENT_COLORS = (
         ('POS', 'positive'),
         ('NEUTR', 'neutral'),

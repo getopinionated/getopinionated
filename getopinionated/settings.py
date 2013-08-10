@@ -302,11 +302,15 @@ SOCIAL_AUTH_SESSION_EXPIRATION = False
 SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
 
 #####################################################################################
-# GetOpinionated-specific settings
+# GetOpinionated-specific default settings
 #####################################################################################
+## anonymous user settings
 ANONYMOUS_PROPOSALS = True # allow anonymous proposals if True
 ANONYMOUS_COMMENTS = True # allow anonymous comments if True
-MINIMAL_UPVOTES_BEFORE_VOTING = 3
+## proposal settings
+MIN_NUM_ENDORSEMENTS_BEFORE_VOTING = 3
+QUORUM_SIZE = 1 # minimal # of proposalvotes for approvement
+VOTING_DAYS = 7
 
 #####################################################################################
 # Import local settings
