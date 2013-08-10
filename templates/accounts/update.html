@@ -4,8 +4,26 @@
 
 {% block content %}
 
+<h1>Tie your account to all your social services.</br><small>So you don't accidently create multiple accounts on this site.</small></h1>
+<div class="row-fluid">
+	<div class="span1">
+	   <a href="{% url socialauth_begin "facebook" %}"><img src="{{STATIC_URL}}images/facebook-32.png" alt="facebook" /></a>
+	</div>
+	<div class="span1">
+       <a href="{% url socialauth_begin "twitter" %}"><img src="{{STATIC_URL}}images/twitter-32.png" alt="twitter" /></a>
+    </div>
+    <div class="span1">
+       <a href="{% url socialauth_begin "google-oauth2" %}"><img src="{{STATIC_URL}}images/google-32.png" alt="google" /></a>
+    </div>
+    <div class="span1">
+       <a href="{% url socialauth_begin "linkedin" %}"><img src="{{STATIC_URL}}images/linkedin-32.png" alt="linkedin" /></a>
+    </div>
+    <div class="span1">
+       <a href="{% url socialauth_begin "eID" %}"><img src="{{STATIC_URL}}images/eid-32.png" alt="e-ID" /></a>
+    </div>
+</div>
+</br>
 <h1>Update account</h1>
-
 <form class="form-horizontal" action="{% url profile-update %}" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ profileform|as_bootstrap:"horizontal" }}
@@ -14,6 +32,7 @@
     </p>
 </form>
 
+<h1>Update password</h1>
 <form class="form-horizontal" action="{% url profile-update %}" method="POST">
     {% csrf_token %}
     {{ passwordform|as_bootstrap:"horizontal" }}
