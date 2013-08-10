@@ -1,5 +1,4 @@
 {% load i18n %}
-{% load encrypt_email %}
 {% load call_with_args %}
 
 
@@ -40,7 +39,7 @@
                 <li><a href="{% url socialauth_begin "eID" %}"><img src="{{STATIC_URL}}images/eid-24.png" alt="e-ID" /></a></li>
           	</ul>
             <form class="navbar-form pull-right" action="{% url user-login %}" method="POST">
-            	{% csrf_token %}
+            	{% csrf_js_token %}
 	            <input class="span2" name="username" type="text" placeholder="Email">
 	            <input class="span2" name="password" type="password" placeholder="Password">
 	            <input type="hidden" name="next" value="{{ request.path }}" />
@@ -106,7 +105,7 @@
 	
 	<!--scripts at the end!-->
     <script type="text/javascript" src="{{STATIC_URL}}js/initajax.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}js/favorite.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/proposal.js"></script>
     {% block extrascripts %} {% endblock %}
 </body>
 </html>

@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 from accounts.models import CustomUser, UnsubscribeCode
 from django.utils import timezone
-from django.utils.timezone import datetime, timedelta
+from django.utils.timezone import datetime, timedelta, now
 import random
 from django.core.mail import send_mail
 from smtplib import SMTPRecipientsRefused
@@ -35,10 +35,12 @@ class Command(LabelCommand):
                 dt = 7
             if dt is None:
                 continue
-            relevant_proposals = relevant_proposals.filter(voting_date__gte=datetime.now()-timedelta(days=dt),
-                                                           voting_date__lte=datetime.now()) | \
-                                 relevant_proposals.filter(expire_date__gte=datetime.now()-timedelta(days=dt),
-                                                           expire_date__lte=datetime.now())
+            relevant_proposals = relevant_proposals.filter(voting_date__gte=timezone.now()-timedelta(days=dt),
+                                                           voting_date__lte=timezone.now()) | \
+                                 relevant_proposals.filter(expire_date__gte=timezone.now()-timedelta(days=dt),
+                                                           expire_date__lte=timezone.now()) | \
+                                 relevant_proposals.filter(create_date__gte=timezone.now()-timedelta(days=dt),
+                                                           create_date__lte=timezone.now())
             
             if user.send_new:
                 new_proposals = relevant_proposals.filter(voting_stage='DISCUSSION')
@@ -77,6 +79,7 @@ class Command(LabelCommand):
             print "mail sent to:",mail_address
             
             try:
+                #pass
                 send_mail('GetOpinionated', text, 'opinion@pirateparty.be',[mail_address], fail_silently=False)
             except SMTPRecipientsRefused:
                 print "refused"

@@ -33,7 +33,7 @@
 <div>
 	<h2>My proxies</h2>
 	<form class="form-horizontal" action="{% if filter_tag %}{% url proxy-index filter_tag.slug %}{% else %}{% url proxy-index %}{% endif %}" method="POST" class="proxyform">
-	{% csrf_token %}
+	{% csrf_js_token %}
 	<div class="control-group">
 		<label class="control-label" for="id_main_proxy">I delegate my vote to </label>
 		<div class="controls"> 

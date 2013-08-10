@@ -11,7 +11,7 @@
 	  <form class="modal-form" action="{% url document-detail document.slug document.version %}" method="POST">
         
 	      <div class="modal-body" style="position:absolute;top: 49px; bottom: 58px;right: 0;left: 0;max-height:none;height:auto;">
-	         {% csrf_token %}
+	         {% csrf_js_token %}
 	         {% if edit %}
 	             <input type="hidden" name="edit" value="{{form.instance.pk}}">
 	         {% endif %}
@@ -50,12 +50,31 @@
 {% endmacro %}
 
 {% macro proposal-form-modal-button-macro buttontext label form %}
-    <a href="#{{label}}" role="button" class="btn" data-toggle="modal" style="width: 161px;">{{buttontext}}</a>
-    {% if form.errors %}
+    <a href="#{{label}}" role="button" class="btn" data-toggle="modal" style="width: 161px;"
+        {% if not form %}disabled{% endif %} id="modal_form_{{label}}">
+        {{buttontext}}
+    </a>
+    {% if form %}
+        {% if form.errors %}
+            <script type="text/javascript">
+                $( document ).ready(function () {
+                    $('#{{label}}').modal('show');
+                });            
+            </script>
+        {% endif %}
+    {% else %}
+        <!-- if form is not accessible -->
         <script type="text/javascript">
             $( document ).ready(function () {
-                $('#{{label}}').modal('show');
-            });            
+                $('#modal_form_{{label}}').popover({
+                    animation: true,
+                    html: false,
+                    placement: "bottom",
+                    trigger: "hover",
+                    title: "You can't {{buttontext|lower}}",
+                    content: "To {{buttontext|lower}}, please login"
+                });
+            });
         </script>
     {% endif %}
 {% endmacro %}

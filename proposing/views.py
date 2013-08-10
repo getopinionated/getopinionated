@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages, auth
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
+from django.conf import settings
 from models import VotablePost, UpDownVote, Proposal, Comment, ProposalVote
 from forms import CommentForm, ProposalEditForm, CommentEditForm
 from proposing.models import Tag, ProxyProposalVote, Proxy, VotablePost
@@ -190,7 +191,7 @@ def detail(request, proposal_slug):
     commentform = None
     proposal.addView()
 
-    if proposal.commentsAllowed():
+    if proposal.commentsAllowed() and (request.user.is_authenticated() or settings.ANONYMOUS_COMMENTS):
         if request.method == 'POST':
             commentform = CommentForm(request.POST)
             if commentform.is_valid():

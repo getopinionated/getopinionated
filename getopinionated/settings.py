@@ -6,6 +6,9 @@ from os.path import dirname
 SITE_ROOT = dirname(dirname(os.path.realpath(__file__)))
 sys.path.insert(0, os.path.join(SITE_ROOT, 'libs'))
 
+#####################################################################################
+# Django settings
+#####################################################################################
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be avilable on all operating systems.
@@ -298,6 +301,12 @@ SOCIAL_AUTH_SESSION_EXPIRATION = False
 
 SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
 
+#####################################################################################
+# GetOpinionated-specific settings
+#####################################################################################
+ANONYMOUS_PROPOSALS = True # allow anonymous proposals if True
+ANONYMOUS_COMMENTS = True # allow anonymous comments if True
+MINIMAL_UPVOTES_BEFORE_VOTING = 3
 
 #####################################################################################
 # Import local settings

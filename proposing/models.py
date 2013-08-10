@@ -1,15 +1,15 @@
 from __future__ import division
-import datetime
+import datetime, logging
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+from django.db.models.aggregates import Sum
+from django.contrib.auth.models import User
+from django.conf import settings
 from common.templatetags.filters import slugify
 from common.stringify import niceBigInteger
 from document.models import Diff
 from accounts.models import CustomUser
-from django.db.models.aggregates import Sum
-from django.contrib.auth.models import User
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -105,10 +105,10 @@ class ProposalType(models.Model):
         return self.name
 
 class Proposal(VotablePost):
-    # settings
     QUORUM_SIZE = 1 # minimal # of proposalvotes for approvement
     VOTING_DAYS = 7 #TODO: make this 7 more flexible
-    MINIMAL_UPVOTES_BEFORE_VOTING = 3 #TODO: make this 7 more flexible
+    MINIMAL_UPVOTES_BEFORE_VOTING = settings.MINIMAL_UPVOTES_BEFORE_VOTING
+    # constants
     VOTING_STAGE = (
         ('DISCUSSION', 'Discussion'),
         ('VOTING', 'Voting'),
@@ -164,9 +164,12 @@ class Proposal(VotablePost):
             return None
         return self.create_date + datetime.timedelta(days=self.discussion_time)
 
+    def minimalNumEndorsementsIsMet(self):
+        return self.upvote_score >= self.MINIMAL_UPVOTES_BEFORE_VOTING
+
     def minimalContraintsAreMet(self):
         """ True if non-date constraints are met """
-        return self.upvote_score > self.MINIMAL_UPVOTES_BEFORE_VOTING
+        return self.minimalNumEndorsementsIsMet()
 
     @property
     def upvotesNeededBeforeVoting(self):
