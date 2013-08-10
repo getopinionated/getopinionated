@@ -45,4 +45,3 @@ class SSLRedirect:
            Please structure your views so that redirects only occur during GETs."""
 
         return HttpResponseRedirect(newurl)
-

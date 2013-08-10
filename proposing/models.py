@@ -105,6 +105,9 @@ class ProposalType(models.Model):
         return self.name
 
 class Proposal(VotablePost):
+    QUORUM_SIZE = 1 # minimal # of proposalvotes for approvement
+    VOTING_DAYS = 7 #TODO: make this 7 more flexible
+    MINIMAL_UPVOTES_BEFORE_VOTING = settings.MINIMAL_UPVOTES_BEFORE_VOTING
     # constants
     VOTING_STAGE = (
         ('DISCUSSION', 'Discussion'),
@@ -162,7 +165,11 @@ class Proposal(VotablePost):
         return self.create_date + datetime.timedelta(days=self.discussion_time)
 
     def minimalNumEndorsementsIsMet(self):
+<<<<<<< HEAD
+        return self.upvote_score >= self.MINIMAL_UPVOTES_BEFORE_VOTING
+=======
         return self.upvote_score >= settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING
+>>>>>>> ce9ce77aeb06289700eec9fbd3062ffe86a227f1
 
     def minimalContraintsAreMet(self):
         """ True if non-date constraints are met """
