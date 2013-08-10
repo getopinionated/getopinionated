@@ -1,4 +1,4 @@
-from django.conf import settings 
+from django.conf import settings
 from django.contrib.auth.backends import ModelBackend
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
@@ -27,22 +27,22 @@ class CustomUserModelBackend(ModelBackend):
                 raise ImproperlyConfigured('Could not get custom user model')
         return self._user_class
 
-class EmailModelBackend(object): 
-    def authenticate(self, username=None, password=None): 
-        try: 
+class EmailModelBackend(object):
+    def authenticate(self, username=None, password=None):
+        try:
             user = CustomUser.objects.get(email=username)
-            if user.check_password(password): 
-                return user 
+            if user.check_password(password):
+                return user
         except CustomUser.DoesNotExist:
-            try: 
+            try:
                 user = CustomUser.objects.get(username=username)
-                if user.check_password(password): 
+                if user.check_password(password):
                     return user
             except CustomUser.DoesNotExist:
                 return None
 
-    def get_user(self, user_id): 
-        try: 
+    def get_user(self, user_id):
+        try:
             return CustomUser.objects.get(pk=user_id)
         except CustomUser.DoesNotExist:
             return None

@@ -9,7 +9,7 @@
 
 {% block extrastyle %}
   <link rel="stylesheet" href="{{STATIC_URL}}css/document.css" type="text/css" charset="utf-8" />
-  {{ form.media }}
+  {% if form %}{{ form.media }}{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -18,9 +18,7 @@
         <div class="span3" id="navparent">
             <h4 id="title">{{ fulldocument.title }} version&nbsp;{{ fulldocument.version_roman }}</h4>
             <div class="nav leftnav" data-spy="affix" data-offset-top="265">
-	            {% if user.is_authenticated %}
-		            {% usemacro proposal-form-modal-button-macro "Amend this document" "amend" form %}
-                {% endif %}
+	            {% usemacro proposal-form-modal-button-macro "Amend this document" "amend" form %}
 	            <ul class="accordion" id="level1">
 	                {% for el1 in fulldocument.getTableOfContents %}
 	                    <li class="accordion-group level1">
@@ -53,7 +51,7 @@
             </div>
         </div>
 		<div class="span9">
-		    {% if user.is_authenticated %}
+		    {% if form %}
                 {% usemacro proposal-form-modal-macro fulldocument.content "amend" form fulldocument 0 %}
 		    {% endif %}
 		    {% autoescape off %}
