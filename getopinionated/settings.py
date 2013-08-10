@@ -102,12 +102,14 @@ TEMPLATE_DIRS = (
     os.path.join(SITE_ROOT, 'libs/debug_toolbar/templates')
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = (
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
+TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     'django.core.context_processors.request',
     'social_auth.context_processors.social_auth_by_name_backends',
     'social_auth.context_processors.social_auth_backends',
     'social_auth.context_processors.social_auth_by_type_backends',
-    'social_auth.context_processors.social_auth_login_redirect'
+    'social_auth.context_processors.social_auth_login_redirect',
+    'common.context_processors.add_settings_to_context'
 )
 
 INSTALLED_APPS = (
@@ -201,12 +203,6 @@ LOGGING = {
 
 # default url after login (used in contrib.auth)
 LOGIN_REDIRECT_URL = '/'
-
-# gets access to 'request' variable in templates
-from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
-TEMPLATE_CONTEXT_PROCESSORS = TCP + (
-    'django.core.context_processors.request',
-)
 
 #####################################################################################
 # Mail settings
@@ -302,11 +298,15 @@ SOCIAL_AUTH_SESSION_EXPIRATION = False
 SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
 
 #####################################################################################
-# GetOpinionated-specific settings
+# GetOpinionated-specific default settings
 #####################################################################################
+## anonymous user settings
 ANONYMOUS_PROPOSALS = True # allow anonymous proposals if True
 ANONYMOUS_COMMENTS = True # allow anonymous comments if True
-MINIMAL_UPVOTES_BEFORE_VOTING = 3
+## proposal settings
+MIN_NUM_ENDORSEMENTS_BEFORE_VOTING = 3
+QUORUM_SIZE = 1 # minimal # of proposalvotes for approvement
+VOTING_DAYS = 7
 
 #####################################################################################
 # Import local settings
