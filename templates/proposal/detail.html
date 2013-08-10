@@ -322,4 +322,17 @@
 	        });
 	    </script>
     {% endif %}
+    <script type="text/javascript">
+        $( document ).ready(function () {
+            $('.amendment').popover({
+                animation: true,
+                html: true,
+                placement: "left",
+                trigger: "hover",
+                title: "Legend",
+                content: '<span class="delete">The amendment wants to remove this text from the document,</span><br/><span class="insert">the amendment wants to add this text to the document</span><br/>and this is context and is not voted with this amendment.',
+                container: '.amendment'
+            });
+        });
+    </script>
 {% endblock %}
