@@ -304,8 +304,8 @@ SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
 #####################################################################################
 # GetOpinionated-specific settings
 #####################################################################################
-ANONYMOUS_PROPOSALS = True
-ANONYMOUS_COMMENTS = True # NOT USED YET (TODO)
+ANONYMOUS_PROPOSALS = True # allow anonymous proposals if True
+ANONYMOUS_COMMENTS = True # allow anonymous comments if True
 
 #####################################################################################
 # Import local settings
