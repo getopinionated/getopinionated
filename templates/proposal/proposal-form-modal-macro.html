@@ -11,7 +11,7 @@
 	  <form class="modal-form" action="{% url document-detail document.slug document.version %}" method="POST">
         
 	      <div class="modal-body" style="position:absolute;top: 49px; bottom: 58px;right: 0;left: 0;max-height:none;height:auto;">
-	         {% csrf_token %}
+	         {% csrf_js_token %}
 	         {% if edit %}
 	             <input type="hidden" name="edit" value="{{form.instance.pk}}">
 	         {% endif %}

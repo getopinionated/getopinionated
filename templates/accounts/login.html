@@ -10,7 +10,7 @@
 	<div class="span4 offset1">
 		<h1>Log in</h1>
 		<form action="{% url user-login %}" method="POST">
-		    {% csrf_token %}
+		    {% csrf_js_token %}
 		    {{ form|as_bootstrap:"horizontal" }}
 		    <input type="hidden" name="next" value="{{ next }}" />
 		    <input type="submit" value="Login" class="btn"/>

@@ -269,7 +269,7 @@
 			                            <table>
 			                                <form action="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" method="POST">
 			                                    {{commenteditform|as_bootstrap}}
-			                                    {% csrf_token %}
+			                                    {% csrf_js_token %}
 			                                    <input type="submit"  class="btn btn-primary" value="Edit" />
 			                                    <a href="{% url proposals-detail proposal.slug %}" class="btn">cancel</a>
 			                                </form>
@@ -287,7 +287,7 @@
 	        <div class="owncomment">
 	            <h2>Write a comment</h2>
 	            <form action="{% url proposals-detail proposal.slug %}" method="POST" class="commentform">
-	                {% csrf_token %}
+	                {% csrf_js_token %}
 	                {{ commentform.motivation.errors }}
 	                <p>{{ commentform.motivation }}</p>
 	                {{ commentform.color.errors }}

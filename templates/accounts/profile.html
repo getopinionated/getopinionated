@@ -59,7 +59,7 @@
 			</div>
 			{% if proxyform %}
 				<form action="{{ request.build_absolute_uri }}" method="POST" class="profileproxyform">
-					{% csrf_token %}
+					{% csrf_js_token %}
 					I proxy my votes to {{member.display_name}} for the tags:<br /> 
 					{{proxyform.profile_proxy_tags}}
 					<input type="submit" id="submitButton" value="Save your proxies" />

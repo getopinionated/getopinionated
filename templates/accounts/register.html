@@ -6,7 +6,7 @@
 <h1>Register</h1>
 
 <form action="{% url user-register %}" method="POST">
-    {% csrf_token %}
+    {% csrf_js_token %}
     <table>
         {{ form }}
     </table>
