@@ -32,12 +32,12 @@
         <div class="container">
           <div class="nav-collapse collapse">
     		<ul class="nav">
-                <li><a href="{% url user-register %}">Register</a></li>
-                <li><a href="{% url socialauth_begin "facebook" %}"><img src="{{STATIC_URL}}images/facebook-24.png" alt="facebook" /></a></li>
-                <li><a href="{% url socialauth_begin "twitter" %}"><img src="{{STATIC_URL}}images/twitter-24.png" alt="twitter" /></a></li>
-                <li><a href="{% url socialauth_begin "google-oauth2" %}"><img src="{{STATIC_URL}}images/google-24.png" alt="google" /></a></li>
-                <li><a href="{% url socialauth_begin "linkedin" %}"><img src="{{STATIC_URL}}images/linkedin-24.png" alt="linkedin" /></a></li>
-                <li><a href="{% url socialauth_begin "eID" %}"><img src="{{STATIC_URL}}images/eid-24.png" alt="e-ID" /></a></li>
+                <li><a href="{% url user-register %}?next={{ request.get_full_path }}">Register</a></li>
+                <li><a href="{% url socialauth_begin "facebook" %}?next={{ request.get_full_path }}"><img src="{{STATIC_URL}}images/facebook-24.png" alt="facebook" /></a></li>
+                <li><a href="{% url socialauth_begin "twitter" %}?next={{ request.get_full_path }}"><img src="{{STATIC_URL}}images/twitter-24.png" alt="twitter" /></a></li>
+                <li><a href="{% url socialauth_begin "google-oauth2" %}?next={{ request.get_full_path }}"><img src="{{STATIC_URL}}images/google-24.png" alt="google" /></a></li>
+                <li><a href="{% url socialauth_begin "linkedin" %}?next={{ request.get_full_path }}"><img src="{{STATIC_URL}}images/linkedin-24.png" alt="linkedin" /></a></li>
+                <li><a href="{% url socialauth_begin "eID" %}?next={{ request.get_full_path }}"><img src="{{STATIC_URL}}images/eid-24.png" alt="e-ID" /></a></li>
           	</ul>
             <form class="navbar-form pull-right" action="{% url user-login %}" method="POST">
             	{% csrf_js_token %}
