@@ -23,7 +23,7 @@ class CustomUser(User):
     daily_digest = models.BooleanField("Get a daily digest in your mailbox",default=False)
     weekly_digest = models.BooleanField("Get a weekly digest in your mailbox",default=True)
     
-    send_new = models.BooleanField("Get a mail for new proposals",default=False)
+    send_new = models.BooleanField("Get a mail for new proposals",default=True)
     send_voting = models.BooleanField("Get a mail for proposals to vote",default=True)
     send_finished = models.BooleanField("Get a mail for finished proposals",default=True)
     
