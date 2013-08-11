@@ -189,7 +189,7 @@
                 <div id="vote_messages"></div>
                 <div class="votebuttons">
                     {% for option, helptext in proposal.voteOptions %}
-                        <div onclick="proposalvote_send('{{proposal.slug}}', '{{option}}')"
+                        <div onclick="proposalvote_send('{{proposal.slug}}', '{{option}}'{% if not user.is_authenticated %}, '{% url user-login %}?next={{request.path|urlencode}}'{% endif %})"
                             id="votebutton_{{option}}" class="btn
                                 {% if proposal|args:user|args:option|call:"userHasProposalvotedOn" %}
                                     btn-primary

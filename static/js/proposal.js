@@ -41,7 +41,18 @@ function updownvote_send(pk, updown) {
 	});
 }
 
-function proposalvote_send(proposalslug, score) {
+function proposalvote_send(proposalslug, score, login_link) {
+	// special case: not logged in
+	if(login_link) {
+		$("#vote_messages").html(
+			'<div class="alert alert-error">\
+			    <button type="button" class="close" data-dismiss="alert">&times;</button>\
+			    <div>You have to be logged in to vote. <a href="{}">Click here to log in</a>.</div>\
+			</div>'.format(login_link)
+		);
+		return;
+	}
+	// regular case: logged in
 	var clickedButtonId = "votebutton_"+score;
 	var clickedButton = $('#' + clickedButtonId);
 	var otherButtons = $(".votebuttons div.btn:not(#{})".format(clickedButtonId));
