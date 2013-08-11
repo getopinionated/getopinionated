@@ -92,12 +92,9 @@
 		</div>
 		</form>
 	{% endif %}
-	<div>
+	<div id="landscape">
 		<h2>
-			Current proxy landscape
-			{% if filter_tag %}
-				for <div class="tag-button">{{ filter_tag.name }}</div>
-			{% endif %}
+			Current proxy landscape {% usemacro tag-small-disabled filter_tag %}
 		</h2>
 		<div class="row">
 			<canvas id="springyproxy" height="600" width="940" class="span12"></canvas>
@@ -107,15 +104,15 @@
 				Filter on 
 				{% for tag in tags %}
 					{% if filter_tag and filter_tag.slug == tag.slug %}
-						<div class="tag-button" style="background-color: #333">{{ tag.name }}</div>
+						{% usemacro tag-small-disabled tag %}
 					{% else %}
-						<a href="{% url proxy-index tag.slug %}"><div class="tag-button">{{ tag.name }}</div></a>
+						{% usemacro tag-small-proxy tag %}
 					{% endif %}
 				{% endfor %}
-				{% if filter_tag %}
-					<a href="{% url proxy-index %}"><div class="tag-button">No filter</div></a>
+				{% if not filter_tag %}
+					{% usemacro tag-small-disabled '' %}
 				{% else %}
-					<div class="tag-button" style="background-color: #333">No filter</div>
+					{% usemacro tag-small-proxy '' %}
 				{% endif %}
 			</div>
 		</div>

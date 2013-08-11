@@ -1,11 +1,25 @@
 {% load macros %}
 
 {% macro tag-small tag %}
-	<a href="{% url tag-index tag.slug %}">
-		<div class="label label-info">
-			{{ tag.name }}
-		</div>
-	</a>
+    <a href="{% url tag-index tag.slug %}">
+        <div class="label label-info">
+            {{ tag.name }}
+        </div>
+    </a>
+{% endmacro %}
+
+{% macro tag-small-proxy tag %}
+    <a href="{% if tag %}{% url proxy-index tag.slug %}{% else %}{% url proxy-index %}{% endif %}#landscape">
+        <div class="label label-info">
+            {% if tag %}{{ tag.name }}{% else %}No filter{% endif %}
+        </div>
+    </a>
+{% endmacro %}
+
+{% macro tag-small-disabled tag %}
+    <div class="label">
+        {% if tag %}{{ tag.name }}{% else %}No filter{% endif %}
+    </div>
 {% endmacro %}
 
 {% macro tag-medium tag %}
