@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from django.contrib.auth import authenticate
-from django.contrib.auth.views import login, logout
+from django.contrib.auth.views import login, logout, auth_login
 from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -189,7 +189,7 @@ def userregister(request):
             user = form.save()
             new_user = authenticate(username=user.username,
                                     password=request.POST['password1'])
-            login(request, new_user)
+            auth_login(request, new_user)
             messages.success(request, 'Registration complete')
             return HttpResponseRedirect(reverse('profile-update'))
     else:

@@ -1,16 +1,41 @@
 {% extends "base.html" %}
+
+{% load bootstrap_toolkit %}
 {% block title %}{% include "title.html" with subtitle="Register" %}{% endblock %}
 
 {% block content %}
-
-<h1>Register</h1>
-
-<form action="{% url user-register %}" method="POST">
-    {% csrf_js_token %}
-    <table>
-        {{ form }}
-    </table>
-    <input type="submit" value="Register" />
-</form>
-
+    <div class="row-fluid">
+	    <div class="span4 offset1">
+	        <h1>Register</h1>
+	        <form action="{% url user-register %}" method="POST">
+	            {% csrf_js_token %}
+	            {{ form|as_bootstrap:"horizontal" }}
+	            <input type="submit" value="Register" class="btn"/>
+	        </form>
+	    </div>
+	    <div class="span4 offset2 text-center">
+	        <h1>Use external accounts</h1>
+	        <div class="row-fluid">
+	            <div class="span4 text-center">
+	                <a href="{% url socialauth_begin "facebook" %}"><img src="{{STATIC_URL}}images/facebook-32.png" alt="facebook" /><br/>facebook</a>
+	            </div>
+	            <div class="span4 offset4 text-center">
+	                <a href="{% url socialauth_begin "twitter" %}"><img src="{{STATIC_URL}}images/twitter-32.png" alt="twitter" /><br/>twitter</a>
+	            </div>
+	        </div>
+	        <div class="row-fluid">
+	            <div class="span4 offset4 text-center">
+	                <a href="{% url socialauth_begin "google-oauth2" %}"><img src="{{STATIC_URL}}images/google-32.png" alt="google" /><br/>google</a>
+	            </div>
+	        </div>
+	        <div class="row-fluid">
+	            <div class="span4 text-center">
+	                <a href="{% url socialauth_begin "linkedin" %}"><img src="{{STATIC_URL}}images/linkedin-32.png" alt="linkedin" /><br/>linkedin</a>
+	            </div>
+	            <div class="span4 offset4 text-center">
+	                <a href="{% url socialauth_begin "eID" %}"><img src="{{STATIC_URL}}images/eid-32.png" alt="e-ID" /><br/>Belgium e-ID</a>
+	            </div>
+	        </div>      
+	    </div>
+    </div>
 {% endblock %}
