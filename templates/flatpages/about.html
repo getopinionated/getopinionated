@@ -6,7 +6,11 @@
 	<div class="jumbotron">
 		<h1>Get Opinionated!</h1>
 		<p class="lead">and help write the Pirate Party Political Programme</p>
-		<a class="btn btn-large btn-primary" href="{% url user-register %}">Starting Today!</a>
+		{% if user.is_authenticated %}
+		    <a class="btn btn-large btn-primary" href="/document/the-pirate-codex">Starting Today!</a>
+		{% else %}
+		    <a class="btn btn-large btn-primary" href="{% url user-register %}">Register!</a>
+		{% endif %}
 	</div>
 	
 	<div class="row-fluid">
@@ -35,12 +39,13 @@
 	    
 	    <div class="span4">
 	        <h2>GetOpinionated is a platform</h2>
-	        <p>Getopinionated is the platform which the Pirate Party Belgium uses to create its programme, in parallel to the development of the programme at the General Assemblies.</p>
+	        <p>Getopinionated is the platform which the Pirate Party Belgium uses to create its programme, in parallel to the development of the programme at the General Assemblies. A General Assembly allows certain kinds of people to jump in and help, this website is for another group of people. We do all this effort for your opinion, because we want everybody involved.</p>
+	        <p><a class="btn" href="#because">View details &raquo;</a></p>
 	    </div>
 	    <div class="span4">
-            <h2>As easy as possible</h2>
-            <p>We tried to make the entire process as easy as possible. The tool is not to be used by experts only, but by real people. We want as many people as possible to help out, and that's why we have put an extreme effort in making everything as simple as possible.</p>
-            <p><a class="btn" href="#process">View details &raquo;</a></p>
+            <h2>Streamlined</h2>
+            <p>We tried to make the entire process as easy as possible. We know not everybody has a Phd in politicology. That's why we streamlined the process and ask only the minimal of extra information, other than your actual idea. All to make adding your idea into our programme easier.</p>
+            <p><a class="btn" href="#help">View details &raquo;</a></p>
         </div>
         <div class="span4">
 	        <h2>Political Programme</h2>
@@ -49,7 +54,7 @@
 	    </div>
 	</div>
 
-    <div class="jumbotron">
+    <div class="jumbotron" id="because">
         <h1>Because!</h1>
         <p class="lead">we want everybody involved</p>
     </div>
@@ -68,7 +73,7 @@
         </div>
     </div>
 
-    <div class="jumbotron">
+    <div class="jumbotron" id="help">
         <h1>Help out!</h1>
         <p class="lead">because this time, you actually can</p>
     </div>
@@ -128,7 +133,7 @@
         <div class="span4">
             <h2>To Multiple People</h2>
             <p> You can even give multiple people your vote for a subject. If only one of them votes, he gets your complete vote. If more of them vote, they all share your vote equally. So you never have to fear your vote will get wasted. If you trust enough people with your vote, it will be used for the good cause.</p>
-            <p><a class="btn" href="/proposals/proxy/">Set up your proxies &raquo;</a></p>
+            <p><a class="btn" href="{% url proxy-index %}">Set up your proxies &raquo;</a></p>
         </div>
     </div>
 
