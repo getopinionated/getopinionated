@@ -8,7 +8,7 @@ function favorite_send(slug) {
 	}else{
 		document.getElementById("favorite-"+slug).src=favim;
 	}
-	$.post("/proposals/ajax/favorite/"+slug, function(data) {
+	$.post("/proposals/ajax/favorite/{}/".format(slug), function(data) {
 		if(data == "0"){
 			document.getElementById("favorite-"+slug).src=nofavim;
 		}else{
@@ -24,7 +24,7 @@ function endorse_send(slug) {
 	}else{
 		document.getElementById("endorse-"+slug).className += " btn-success";
 	}
-	$.post("/proposals/ajax/endorse/"+slug, function(data) {
+	$.post("/proposals/ajax/endorse/{}/".format(slug), function(data) {
 		document.getElementById("endorse-score").innerHTML=data;
 	});
 }
@@ -34,7 +34,7 @@ function upvote_send(pk) {
 		document.getElementById("downvote-"+pk).className = document.getElementById("downvote-"+pk).className.replace(/\bbtn-danger\b/,'');
 		document.getElementById("upvote-"+pk).className += " btn-success";
 	}
-	$.post("/proposals/ajax/updownvote/"+pk+"/up", function(data) {
+	$.post("/proposals/ajax/updownvote/{}/up/".format(pk), function(data) {
 		document.getElementById("updownvote-score-"+pk).innerHTML=data;
 	});
 }
@@ -45,7 +45,7 @@ function downvote_send(pk) {
 		document.getElementById("upvote-"+pk).className = document.getElementById("upvote-"+pk).className.replace(/\bbtn-success\b/,'');
 		document.getElementById("downvote-"+pk).className += " btn-danger";
 	}
-	$.post("/proposals/ajax/updownvote/"+pk+"/down", function(data) {
+	$.post("/proposals/ajax/updownvote/{}/down/".format(pk), function(data) {
 		document.getElementById("updownvote-score-"+pk).innerHTML=data;
 	});
 }
