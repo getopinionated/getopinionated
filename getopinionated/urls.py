@@ -14,13 +14,13 @@ admin.autodiscover()
 urlpatterns = patterns('',
 	(r'^admin/', include(admin.site.urls)),
 	# (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
-    url(r'^$', proposing.views.proplist, name="home-index"),
+    url(r'^$', views.home, name="home-index"),
     (r'^accounts/', include('accounts.urls')),
 	(r'^proposals/', include('proposing.urls')),
 	(r'^document/', include('document.urls')),
 	url(r'^tag/(?P<tag_slug>[-\w]+)/$', proposing.views.tagproplist, name='tag-index'),
 	(r'^media/(?P<path>.*)$', 'django.views.static.serve',{'document_root': MEDIA_ROOT, }),
 	url(r'', include('social_auth.urls')),
-	url(r'home', views.home, name='home'),
+	url(r'about', views.about, name='about'),
 )
 
