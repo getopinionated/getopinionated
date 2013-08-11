@@ -265,8 +265,6 @@ def proxy(request, tag_slug=None):
             'filter_tag': tag,
         })
 
-
-
 @login_required
 def listofvoters(request, proposal_slug):
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
