@@ -16,7 +16,7 @@
 		{% if votable_post|args:user|call:"hasUpvoted" %}
           btn-success
         {% endif %}
-        " id="upvote-{{votable_post.pk}}" onclick="upvote_send( '{{votable_post.pk}}' )"><i class="icon-thumbs-up"></i></div>
+        " id="upvote-{{votable_post.pk}}" onclick="updownvote_send( '{{votable_post.pk}}', 'up' )"><i class="icon-thumbs-up"></i></div>
 	{% else %}
 	    <div class="btn btn-mini disabled" title="You're not allowed to vote"><i class="icon-thumbs-up"></i></div>
 	{% endif %}
@@ -26,7 +26,7 @@
 		{% if votable_post|args:user|call:"hasDownvoted" %}
 		  btn-danger
 		{% endif %}
-		" id="downvote-{{votable_post.pk}}" onclick="downvote_send( '{{votable_post.pk}}' )"><i class="icon-thumbs-down"></i></div>
+		" id="downvote-{{votable_post.pk}}" onclick="updownvote_send( '{{votable_post.pk}}', 'down' )"><i class="icon-thumbs-down"></i></div>
 	{% else %}
         <div class="btn btn-mini disabled" title="You're not allowed to vote"><i class="icon-thumbs-down"></i></div>
     {% endif %}
