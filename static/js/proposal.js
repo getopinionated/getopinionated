@@ -40,3 +40,25 @@ function updownvote_send(pk, updown) {
 		$("#updownvote-score-"+pk).html(data);
 	});
 }
+
+function proposalvote_send(proposalslug, score) {
+	var clickedButtonId = "votebutton_"+score;
+	var clickedButton = $('#' + clickedButtonId);
+	var otherButtons = $(".votebuttons div.btn:not(#{})".format(clickedButtonId));
+	otherButtons.removeClass('btn-primary');
+	otherButtons.addClass('btn-info');
+	clickedButton.toggleClass('btn-primary');
+	clickedButton.toggleClass('btn-info');
+	$.post("/proposals/ajax/vote/{}/{}/".format(proposalslug, score), function(data) {
+		var dataLines = data.split('\n');
+		var msgtype = dataLines[0];
+		var message = dataLines[1];
+		var alert_class = (msgtype == 'success') ? 'alert-success' : 'alert-error';
+		$("#vote_messages").html(
+			'<div class="alert {}">\
+			    <button type="button" class="close" data-dismiss="alert">&times;</button>\
+			    <div>{}</div>\
+			</div>'.format(alert_class, message)
+		);
+	})
+}

@@ -276,51 +276,17 @@ def listofvoters(request, proposal_slug):
     })
 
 @login_required
-def proposalvote(request, proposal_slug, score):
-    # get vars
-    proposal = get_object_or_404(Proposal, slug=proposal_slug)
-    user = request.user
-    proposal_detail_redirect = HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
-    # check legality of vote
-    assert score in dict(Proposal.voteOptions()).keys(), 'illegal vote'
-    votevalue = int(float(score))
-    # check if vote is in progress
-    if proposal.voting_stage != 'VOTING':
-        messages.error(request, "Vote is not in progress")
-        return proposal_detail_redirect
-    # check if user is cancelling vote
-    if proposal.userHasProposalvoted(user) == votevalue:
-        vote = proposal.proposalvoteFromUser(user)
-        vote.delete()
-        messages.success(request, "Vote removed")
-        return proposal_detail_redirect
-    # remove the previous vote of the user
-    if proposal.userHasProposalvoted(user) != None:
-        vote = proposal.proposalvoteFromUser(user)
-        vote.delete()
-    # create ProposalVote
-    vote = ProposalVote(
-        user = user,
-        proposal = proposal,
-        value = votevalue,
-    )
-    vote.save()
-    # redirect
-    messages.success(request, "Vote successful")
-    return proposal_detail_redirect
-
-@login_required
 def ajaxfavorite(request, proposal_slug):
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
     user = request.user
     if user in proposal.favorited_by.all(): 
         proposal.favorited_by.remove(user)
         proposal.save()
-        return HttpResponse(content='0', mimetype='application/javascript')
+        return HttpResponse(content='0', mimetype='text/plain')
     else:
         proposal.favorited_by.add(user)
         proposal.save()
-        return HttpResponse(content='1', mimetype='application/javascript')
+        return HttpResponse(content='1', mimetype='text/plain')
 
 @login_required
 def ajaxendorse(request, proposal_slug):
@@ -329,10 +295,10 @@ def ajaxendorse(request, proposal_slug):
     if proposal.userHasUpdownvoted(user) != None:
         vote = proposal.updownvoteFromUser(user)
         vote.delete()
-        return HttpResponse(content=proposal.upvote_score, mimetype='application/javascript')
+        return HttpResponse(content=proposal.upvote_score, mimetype='text/plain')
     # check if upvote is allowed
     if not proposal.userCanUpdownvote(user):
-        return HttpResponse(content=proposal.upvote_score, mimetype='application/javascript')
+        return HttpResponse(content=proposal.upvote_score, mimetype='text/plain')
     # create updownvote
     vote = UpDownVote(
         user = user,
@@ -340,7 +306,7 @@ def ajaxendorse(request, proposal_slug):
         value = 1,
     )
     vote.save()
-    return HttpResponse(content=proposal.upvote_score, mimetype='application/javascript')
+    return HttpResponse(content=proposal.upvote_score, mimetype='text/plain')
 
 
 @login_required
@@ -359,7 +325,7 @@ def ajaxupdownvote(request, post_id, updown):
     else:
         # check if upvote is allowed
         if not post.userCanUpdownvote(user):
-            return HttpResponse(content=post.upvote_score, mimetype='application/javascript')
+            return HttpResponse(content=post.upvote_score, mimetype='text/plain')
         # create updownvote
         vote = UpDownVote(
             user = user,
@@ -367,4 +333,37 @@ def ajaxupdownvote(request, post_id, updown):
             value = (-1 if updown=="down" else 1),
         )
         vote.save()
-    return HttpResponse(content=post.upvote_score, mimetype='application/javascript')
+    return HttpResponse(content=post.upvote_score, mimetype='text/plain')
+
+@login_required
+def ajaxproposalvote(request, proposal_slug, score):
+    # get vars
+    proposal = get_object_or_404(Proposal, slug=proposal_slug)
+    user = request.user
+    ajax_response = lambda msgtype, message: HttpResponse("{}\n{}".format(msgtype, message), mimetype='text/plain')
+    # check legality of vote
+    assert score in dict(Proposal.voteOptions()).keys(), 'illegal vote'
+    votevalue = int(float(score))
+    # check if vote is in progress
+    if proposal.voting_stage != 'VOTING':
+        return ajax_response(msgtype='error', message="Error: vote is no longer in progress")
+    # check if user is cancelling vote
+    if proposal.userHasProposalvoted(user) == votevalue:
+        ## cancel vote
+        vote = proposal.proposalvoteFromUser(user)
+        vote.delete()
+        return ajax_response(msgtype='success', message="Your vote was removed")
+    else:
+        ## remove existing and cast new vote
+        # remove the previous vote of the user
+        if proposal.userHasProposalvoted(user) != None:
+            vote = proposal.proposalvoteFromUser(user)
+            vote.delete()
+        # create ProposalVote
+        vote = ProposalVote(
+            user = user,
+            proposal = proposal,
+            value = votevalue,
+        )
+        vote.save()
+        return ajax_response(msgtype='success', message="Your vote was cast successfully")
