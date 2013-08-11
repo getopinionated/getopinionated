@@ -34,8 +34,7 @@ function updownvote_send(pk, updown) {
 	var otherButton = (updown == 'down') ? $("#upvote-"+pk) : $("#downvote-"+pk);
 	var clickedClass = (updown == 'up') ? "btn-success" : "btn-danger";
 	var otherClass = (updown == 'down') ? "btn-success" : "btn-danger";
-	// clickedButton.toggleClass(clickedClass); // TODO: ability to cancel updownovte
-	clickedButton.addClass(clickedClass);
+	clickedButton.toggleClass(clickedClass);
 	otherButton.removeClass(otherClass);
 	$.post("/proposals/ajax/updownvote/{}/{}/".format(pk, updown), function(data) {
 		$("#updownvote-score-"+pk).html(data);

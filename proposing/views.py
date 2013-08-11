@@ -347,17 +347,24 @@ def ajaxendorse(request, proposal_slug):
 def ajaxupdownvote(request, post_id, updown):
     post = get_object_or_404(VotablePost, pk=post_id)
     user = request.user
-    if post.userHasUpdownvoted(user) != None:
+    previous_vote = post.userHasUpdownvoted(user)
+    ## user has already voted: remove it
+    if previous_vote != None:
         vote = post.updownvoteFromUser(user)
         vote.delete()
-    # check if upvote is allowed
-    if not post.userCanUpdownvote(user):
-        return HttpResponse(content=post.upvote_score, mimetype='application/javascript')
-    # create updownvote
-    vote = UpDownVote(
-        user = user,
-        post = post,
-        value = (-1 if updown=="down" else 1),
-    )
-    vote.save()
+    ## requested updownvote on previous_vote ==> cancels vote
+    if previous_vote == updown:
+        pass
+    ## cast new vote
+    else:
+        # check if upvote is allowed
+        if not post.userCanUpdownvote(user):
+            return HttpResponse(content=post.upvote_score, mimetype='application/javascript')
+        # create updownvote
+        vote = UpDownVote(
+            user = user,
+            post = post,
+            value = (-1 if updown=="down" else 1),
+        )
+        vote.save()
     return HttpResponse(content=post.upvote_score, mimetype='application/javascript')
