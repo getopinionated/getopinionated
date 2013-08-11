@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import Context, loader
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.contrib import messages, auth
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
@@ -276,6 +277,7 @@ def listofvoters(request, proposal_slug):
     })
 
 @login_required
+@require_POST # CSRF is only checked on HTTP post
 def ajaxfavorite(request, proposal_slug):
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
     user = request.user
@@ -289,6 +291,7 @@ def ajaxfavorite(request, proposal_slug):
         return HttpResponse(content='1', mimetype='text/plain')
 
 @login_required
+@require_POST # CSRF is only checked on HTTP post
 def ajaxendorse(request, proposal_slug):
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
     user = request.user
@@ -310,6 +313,7 @@ def ajaxendorse(request, proposal_slug):
 
 
 @login_required
+@require_POST # CSRF is only checked on HTTP post
 def ajaxupdownvote(request, post_id, updown):
     post = get_object_or_404(VotablePost, pk=post_id)
     user = request.user
@@ -336,6 +340,7 @@ def ajaxupdownvote(request, post_id, updown):
     return HttpResponse(content=post.upvote_score, mimetype='text/plain')
 
 @login_required
+@require_POST # CSRF is only checked on HTTP post
 def ajaxproposalvote(request, proposal_slug, score):
     # get vars
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
