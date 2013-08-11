@@ -212,6 +212,7 @@ def detail(request, proposal_slug):
     document = proposal.diff.fulldocument.getFinalVersion()
     return render(request, 'proposal/detail.html', {
         'proposal': proposal,
+        'comments': sorted(proposal.comments.all(), key=lambda c: -c.upvote_score),
         'commentform': commentform,
         'proxyvote': proxyvote,
         'proposaleditform': proposaleditform,

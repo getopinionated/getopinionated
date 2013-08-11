@@ -241,10 +241,10 @@
               </div>
             </div>
         {% endif %}
-        {% if proposal.comments.all %}
+        {% if comments %}
 	        <h3>Comments</h3>
 	        <div class="comments">
-	            {% for comment in proposal.comments.all %}
+	            {% for comment in comments %}
 	            <div class="comment row-fluid" id="comment_{{ comment.id }}">
 	                <div class="span12 well {{ comment.color }}">
 	                    <div class="row-fluid">
