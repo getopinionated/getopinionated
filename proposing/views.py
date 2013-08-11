@@ -241,23 +241,29 @@ def editcomment(request, proposal_slug, comment_id):
     })
 
 
-@login_required
 def proxy(request, tag_slug=None):
     tag = get_object_or_404(Tag, slug=tag_slug) if tag_slug else None
     user = request.user
-
-    if request.method == 'POST':
-        proxyform = ProxyForm(user, request.POST)
-        proxyform.save()
-
-    proxyform = ProxyForm(user)
-    return render(request, 'accounts/proxy.html', {
-            'user': user,
-            'proxyform': proxyform,
+    if user.is_authenticated():
+        if request.method == 'POST':
+            proxyform = ProxyForm(user, request.POST)
+            proxyform.save()
+    
+        proxyform = ProxyForm(user)
+        return render(request, 'accounts/proxy.html', {
+                'user': user,
+                'proxyform': proxyform,
+                'proxygraph': ProxyGraphData(tag),
+                'tags': Tag.objects.all(),
+                'filter_tag': tag,
+            })
+    else:
+        return render(request, 'accounts/proxy.html', {
             'proxygraph': ProxyGraphData(tag),
             'tags': Tag.objects.all(),
             'filter_tag': tag,
         })
+
 
 
 @login_required

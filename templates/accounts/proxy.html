@@ -13,7 +13,7 @@
 	<script type="text/javascript" src="{{STATIC_URL}}js/proxy.js"></script>
 	<script type="text/javascript" src="{{STATIC_URL}}js/springy/springy.js"></script>
 	<script type="text/javascript" src="{{STATIC_URL}}js/springy/springyui.js"></script>
-	{{ proxyform.media }}
+	{% if proxyform %}{{ proxyform.media }}{% endif %}
 	<script type="application/javascript">
 		jQuery(function(){
 			var graph = new Springy.Graph();
@@ -30,39 +30,19 @@
 {% endblock %}
 
 {% block content %}
-<div>
-	<h2>My proxies</h2>
-	<form class="form-horizontal" action="{% if filter_tag %}{% url proxy-index filter_tag.slug %}{% else %}{% url proxy-index %}{% endif %}" method="POST" class="proxyform">
-	{% csrf_js_token %}
-	<div class="control-group">
-		<label class="control-label" for="id_main_proxy">I delegate my vote to </label>
-		<div class="controls"> 
-			{{ proxyform.main_proxy }}
-		</div>
-	</div>
-	<h3>except for when</h3>
-	<div class="proxy_list">
-		<div id ="itemhidden" class="proxy_item" style="display:none">
-			<div class="form-inline control-group">
-				<span class="control-label">
-					I delegate my vote
-				</span>
-				<div class="controls control-row well">
-					<div class="control-group">
-						<label for="id_side_proxy_tags" class="control-label">for the tags</label>
-						{{ proxyform.side_proxy_tags }}
-					</div>
-					<div class="control-group">
-						<label for="id_side_proxy" class="control-label">to the users</label>
-						{{ proxyform.side_proxy }}
-					</div>
-				</div>
+	{% if proxyform %}
+    	<h2>My proxies</h2>
+		<form class="form-horizontal" action="{% if filter_tag %}{% url proxy-index filter_tag.slug %}{% else %}{% url proxy-index %}{% endif %}" method="POST" class="proxyform">
+		{% csrf_js_token %}
+		<div class="control-group">
+			<label class="control-label" for="id_main_proxy">I delegate my vote to </label>
+			<div class="controls"> 
+				{{ proxyform.main_proxy }}
 			</div>
 		</div>
-		
-		{% for userfield, tagfield in proxyform.getDefaultFieldList %}
-		
-			<div id ="item{{ forloop.counter0 }}" class="proxy_item">
+		<h3>except for when</h3>
+		<div class="proxy_list">
+			<div id ="itemhidden" class="proxy_item" style="display:none">
 				<div class="form-inline control-group">
 					<span class="control-label">
 						I delegate my vote
@@ -70,54 +50,74 @@
 					<div class="controls control-row well">
 						<div class="control-group">
 							<label for="id_side_proxy_tags" class="control-label">for the tags</label>
-							{{ tagfield }}
+							{{ proxyform.side_proxy_tags }}
 						</div>
 						<div class="control-group">
 							<label for="id_side_proxy" class="control-label">to the users</label>
-							{{ userfield }}
+							{{ proxyform.side_proxy }}
 						</div>
 					</div>
 				</div>
 			</div>
 			
-		{% endfor%}
-	</div>
-	
-	
-	
-	<input type="number" id="tagfieldcount" name="tagfieldcount" value="{{ proxyform.getDefaultFieldList|length }}"  style="display:none" />
-	<div class="form-actions">
-		<input type="submit" id="submitButton" value="Save your proxies" class="btn btn-primary"/>
-		<input type="button" id="addProxyButton" value="Add another proxy" class="btn"/>
-	</div>
-	</form>
-</div>
-<div>
-	<h2>
-		Current proxy landscape
-		{% if filter_tag %}
-			for <div class="tag-button">{{ filter_tag.name }}</div>
-		{% endif %}
-	</h2>
-	<div class="row">
-		<canvas id="springyproxy" height="600" width="940" class="span12"></canvas>
-	</div>
-	<div class="row">
-		<div class="span12">
-			Filter on 
-			{% for tag in tags %}
-				{% if filter_tag and filter_tag.slug == tag.slug %}
-					<div class="tag-button" style="background-color: #333">{{ tag.name }}</div>
-				{% else %}
-					<a href="{% url proxy-index tag.slug %}"><div class="tag-button">{{ tag.name }}</div></a>
-				{% endif %}
-			{% endfor %}
+			{% for userfield, tagfield in proxyform.getDefaultFieldList %}
+			
+				<div id ="item{{ forloop.counter0 }}" class="proxy_item">
+					<div class="form-inline control-group">
+						<span class="control-label">
+							I delegate my vote
+						</span>
+						<div class="controls control-row well">
+							<div class="control-group">
+								<label for="id_side_proxy_tags" class="control-label">for the tags</label>
+								{{ tagfield }}
+							</div>
+							<div class="control-group">
+								<label for="id_side_proxy" class="control-label">to the users</label>
+								{{ userfield }}
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			{% endfor%}
+		</div>
+		
+		
+		
+		<input type="number" id="tagfieldcount" name="tagfieldcount" value="{{ proxyform.getDefaultFieldList|length }}"  style="display:none" />
+		<div class="form-actions">
+			<input type="submit" id="submitButton" value="Save your proxies" class="btn btn-primary"/>
+			<input type="button" id="addProxyButton" value="Add another proxy" class="btn"/>
+		</div>
+		</form>
+	{% endif %}
+	<div>
+		<h2>
+			Current proxy landscape
 			{% if filter_tag %}
-				<a href="{% url proxy-index %}"><div class="tag-button">No filter</div></a>
-			{% else %}
-				<div class="tag-button" style="background-color: #333">No filter</div>
+				for <div class="tag-button">{{ filter_tag.name }}</div>
 			{% endif %}
+		</h2>
+		<div class="row">
+			<canvas id="springyproxy" height="600" width="940" class="span12"></canvas>
+		</div>
+		<div class="row">
+			<div class="span12">
+				Filter on 
+				{% for tag in tags %}
+					{% if filter_tag and filter_tag.slug == tag.slug %}
+						<div class="tag-button" style="background-color: #333">{{ tag.name }}</div>
+					{% else %}
+						<a href="{% url proxy-index tag.slug %}"><div class="tag-button">{{ tag.name }}</div></a>
+					{% endif %}
+				{% endfor %}
+				{% if filter_tag %}
+					<a href="{% url proxy-index %}"><div class="tag-button">No filter</div></a>
+				{% else %}
+					<div class="tag-button" style="background-color: #333">No filter</div>
+				{% endif %}
+			</div>
 		</div>
 	</div>
-</div>
  {% endblock %}
