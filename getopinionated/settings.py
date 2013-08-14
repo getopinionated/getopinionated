@@ -135,6 +135,8 @@ INSTALLED_APPS = (
     'libs.sorl.thumbnail',
     'libs.debug_toolbar',
     'libs.bootstrap_toolkit',
+    # main app
+    'getopinionated'
 )
 ENABLE_SOUTH = False
 
