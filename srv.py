@@ -2,7 +2,7 @@
 
 from os import environ, chdir
 from os.path import exists, dirname
-from shutil import copy
+from shutil import copyfile
 from django.core.management import call_command
 
 def chdir_to_project():
@@ -15,12 +15,12 @@ def import_local_settings():
     if not exists(local_settings_file):
         print "Local settings not found, creating new %s" % local_settings_file
         #This doesn't work on my Linux, Jonas
-        #copy(local_settings_file, local_settings_template)
+        copyfile(local_settings_template, local_settings_file)
     import getopinionated.local_settings
 
 def runserver():
-    chdir_to_project()
     import_local_settings()
+    chdir_to_project()
     call_command('syncdb')
     call_command('migrate',auto=True,all=True)#migrate apps which already have migrations, such as social_auth
 
