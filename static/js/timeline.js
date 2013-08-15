@@ -327,8 +327,13 @@ function Links() {
     }
     /*** check if a link has been clicked ***/
     this.onClick = function(event) {
+        console.log(event.ctrlKey);
         if (this.hoverLink) {
-            window.location = this.hoverLink.url;
+            if(event.ctrlKey) {
+                window.open(this.hoverLink.url, '_blank');
+            } else {
+                window.location = this.hoverLink.url;
+            } 
         }
     }
 }
