@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import Context, loader
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.contrib import messages, auth
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
@@ -211,6 +212,7 @@ def detail(request, proposal_slug):
     document = proposal.diff.fulldocument.getFinalVersion()
     return render(request, 'proposal/detail.html', {
         'proposal': proposal,
+        'comments': sorted(proposal.comments.all(), key=lambda c: -c.upvote_score),
         'commentform': commentform,
         'proxyvote': proxyvote,
         'proposaleditform': proposaleditform,
@@ -264,8 +266,6 @@ def proxy(request, tag_slug=None):
             'filter_tag': tag,
         })
 
-
-
 @login_required
 def listofvoters(request, proposal_slug):
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
@@ -276,63 +276,31 @@ def listofvoters(request, proposal_slug):
     })
 
 @login_required
-def proposalvote(request, proposal_slug, score):
-    # get vars
-    proposal = get_object_or_404(Proposal, slug=proposal_slug)
-    user = request.user
-    proposal_detail_redirect = HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
-    # check legality of vote
-    assert score in dict(Proposal.voteOptions()).keys(), 'illegal vote'
-    votevalue = int(float(score))
-    # check if vote is in progress
-    if proposal.voting_stage != 'VOTING':
-        messages.error(request, "Vote is not in progress")
-        return proposal_detail_redirect
-    # check if user is cancelling vote
-    if proposal.userHasProposalvoted(user) == votevalue:
-        vote = proposal.proposalvoteFromUser(user)
-        vote.delete()
-        messages.success(request, "Vote removed")
-        return proposal_detail_redirect
-    # remove the previous vote of the user
-    if proposal.userHasProposalvoted(user) != None:
-        vote = proposal.proposalvoteFromUser(user)
-        vote.delete()
-    # create ProposalVote
-    vote = ProposalVote(
-        user = user,
-        proposal = proposal,
-        value = votevalue,
-    )
-    vote.save()
-    # redirect
-    messages.success(request, "Vote successful")
-    return proposal_detail_redirect
-
-@login_required
+@require_POST # CSRF is only checked on HTTP post
 def ajaxfavorite(request, proposal_slug):
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
     user = request.user
     if user in proposal.favorited_by.all(): 
         proposal.favorited_by.remove(user)
         proposal.save()
-        return HttpResponse(content='0', mimetype='application/javascript')
+        return HttpResponse(content='0', mimetype='text/plain')
     else:
         proposal.favorited_by.add(user)
         proposal.save()
-        return HttpResponse(content='1', mimetype='application/javascript')
+        return HttpResponse(content='1', mimetype='text/plain')
 
 @login_required
+@require_POST # CSRF is only checked on HTTP post
 def ajaxendorse(request, proposal_slug):
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
     user = request.user
     if proposal.userHasUpdownvoted(user) != None:
         vote = proposal.updownvoteFromUser(user)
         vote.delete()
-        return HttpResponse(content=proposal.upvote_score, mimetype='application/javascript')
+        return HttpResponse(content=proposal.upvote_score, mimetype='text/plain')
     # check if upvote is allowed
     if not proposal.userCanUpdownvote(user):
-        return HttpResponse(content=proposal.upvote_score, mimetype='application/javascript')
+        return HttpResponse(content=proposal.upvote_score, mimetype='text/plain')
     # create updownvote
     vote = UpDownVote(
         user = user,
@@ -340,24 +308,66 @@ def ajaxendorse(request, proposal_slug):
         value = 1,
     )
     vote.save()
-    return HttpResponse(content=proposal.upvote_score, mimetype='application/javascript')
+    return HttpResponse(content=proposal.upvote_score, mimetype='text/plain')
 
 
 @login_required
+@require_POST # CSRF is only checked on HTTP post
 def ajaxupdownvote(request, post_id, updown):
     post = get_object_or_404(VotablePost, pk=post_id)
     user = request.user
-    if post.userHasUpdownvoted(user) != None:
+    previous_vote = post.userHasUpdownvoted(user)
+    ## user has already voted: remove it
+    if previous_vote != None:
         vote = post.updownvoteFromUser(user)
         vote.delete()
-    # check if upvote is allowed
-    if not post.userCanUpdownvote(user):
-        return HttpResponse(content=post.upvote_score, mimetype='application/javascript')
-    # create updownvote
-    vote = UpDownVote(
-        user = user,
-        post = post,
-        value = (-1 if updown=="down" else 1),
-    )
-    vote.save()
-    return HttpResponse(content=post.upvote_score, mimetype='application/javascript')
+    ## requested updownvote on previous_vote ==> cancels vote
+    if previous_vote == updown:
+        pass
+    ## cast new vote
+    else:
+        # check if upvote is allowed
+        if not post.userCanUpdownvote(user):
+            return HttpResponse(content=post.upvote_score, mimetype='text/plain')
+        # create updownvote
+        vote = UpDownVote(
+            user = user,
+            post = post,
+            value = (-1 if updown=="down" else 1),
+        )
+        vote.save()
+    return HttpResponse(content=post.upvote_score, mimetype='text/plain')
+
+@login_required
+@require_POST # CSRF is only checked on HTTP post
+def ajaxproposalvote(request, proposal_slug, score):
+    # get vars
+    proposal = get_object_or_404(Proposal, slug=proposal_slug)
+    user = request.user
+    ajax_response = lambda msgtype, message: HttpResponse("{}\n{}".format(msgtype, message), mimetype='text/plain')
+    # check legality of vote
+    assert score in dict(Proposal.voteOptions()).keys(), 'illegal vote'
+    votevalue = int(float(score))
+    # check if vote is in progress
+    if proposal.voting_stage != 'VOTING':
+        return ajax_response(msgtype='error', message="Error: vote is no longer in progress")
+    # check if user is cancelling vote
+    if proposal.userHasProposalvoted(user) == votevalue:
+        ## cancel vote
+        vote = proposal.proposalvoteFromUser(user)
+        vote.delete()
+        return ajax_response(msgtype='success', message="Your vote was removed")
+    else:
+        ## remove existing and cast new vote
+        # remove the previous vote of the user
+        if proposal.userHasProposalvoted(user) != None:
+            vote = proposal.proposalvoteFromUser(user)
+            vote.delete()
+        # create ProposalVote
+        vote = ProposalVote(
+            user = user,
+            proposal = proposal,
+            value = votevalue,
+        )
+        vote.save()
+        return ajax_response(msgtype='success', message="Your vote was cast successfully")

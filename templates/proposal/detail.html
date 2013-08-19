@@ -16,7 +16,7 @@
 		{% if votable_post|args:user|call:"hasUpvoted" %}
           btn-success
         {% endif %}
-        " id="upvote-{{votable_post.pk}}" onclick="upvote_send( '{{votable_post.pk}}' )"><i class="icon-thumbs-up"></i></div>
+        " id="upvote-{{votable_post.pk}}" onclick="updownvote_send('{{votable_post.pk}}', 'up')"><i class="icon-thumbs-up"></i></div>
 	{% else %}
 	    <div class="btn btn-mini disabled" title="You're not allowed to vote"><i class="icon-thumbs-up"></i></div>
 	{% endif %}
@@ -26,7 +26,7 @@
 		{% if votable_post|args:user|call:"hasDownvoted" %}
 		  btn-danger
 		{% endif %}
-		" id="downvote-{{votable_post.pk}}" onclick="downvote_send( '{{votable_post.pk}}' )"><i class="icon-thumbs-down"></i></div>
+		" id="downvote-{{votable_post.pk}}" onclick="updownvote_send('{{votable_post.pk}}', 'down')"><i class="icon-thumbs-down"></i></div>
 	{% else %}
         <div class="btn btn-mini disabled" title="You're not allowed to vote"><i class="icon-thumbs-down"></i></div>
     {% endif %}
@@ -71,10 +71,10 @@
 			                <div class="favorite">{% usemacro star-macro user proposal %}</div>
 			                <div class="updownvote" id="updownvote-proposal">
 				                {% if proposal|args:user|call:"canPressUpvote" %}
-							        <div id="endorse-{{proposal.slug}}" class="btn btn-mini" onclick="endorse_send( '{{proposal.slug}}' )">Endorse</div>
+							        <div id="endorse-{{proposal.slug}}" class="btn btn-mini" onclick="endorse_send('{{proposal.slug}}')">Endorse</div>
 							    {% else %}
 							        {% if proposal|args:user|call:"hasUpvoted" %}
-							           <div id="endorse-{{proposal.slug}}" class="btn btn-mini btn-success" onclick="endorse_send( '{{proposal.slug}}' )">Endorse</div>
+							           <div id="endorse-{{proposal.slug}}" class="btn btn-mini btn-success" onclick="endorse_send('{{proposal.slug}}')">Endorse</div>
 							        {% else %}
 							            <div class="btn btn-mini disabled" title="You're not allowed to vote">Endorse</div>
 							        {% endif %}
@@ -186,19 +186,19 @@
                 {% else %}
                     <h2>Change your vote:</h2>
                 {% endif %}
+                <div id="vote_messages"></div>
                 <div class="votebuttons">
                     {% for option, helptext in proposal.voteOptions %}
-                        {% if proposal|args:user|args:option|call:"userHasProposalvotedOn" %}
-                            <a href="{% url proposal-vote proposal.slug option %}" class="voted">
-                                <div>{{option}}</div>
-                                <div class="small">{% if helptext %}{{helptext}}{% else %}&nbsp;{% endif %}</div>
-                            </a>
-                        {% else %}
-                            <a href="{% url proposal-vote proposal.slug option %}">
-                                <div>{{option}}</div>
-                                <div class="small">{% if helptext %}{{helptext}}{% else %}&nbsp;{% endif %}</div>
-                            </a>
-                        {% endif %}
+                        <div onclick="proposalvote_send('{{proposal.slug}}', '{{option}}'{% if not user.is_authenticated %}, '{% url user-login %}?next={{request.path|urlencode}}'{% endif %})"
+                            id="votebutton_{{option}}" class="btn
+                                {% if proposal|args:user|args:option|call:"userHasProposalvotedOn" %}
+                                    btn-primary
+                                {% else %}
+                                    btn-info
+                                {% endif %}" >
+                            <div>{{option}}</div>
+                            <div class="small">{% if helptext %}{{helptext}}{% else %}&nbsp;{% endif %}</div>
+                        </div>
                     {% endfor %}
               </div>
             </div>
@@ -241,10 +241,10 @@
               </div>
             </div>
         {% endif %}
-        {% if proposal.comments.all %}
+        {% if comments %}
 	        <h3>Comments</h3>
 	        <div class="comments">
-	            {% for comment in proposal.comments.all %}
+	            {% for comment in comments %}
 	            <div class="comment row-fluid" id="comment_{{ comment.id }}">
 	                <div class="span12 well {{ comment.color }}">
 	                    <div class="row-fluid">

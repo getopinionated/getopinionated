@@ -111,16 +111,6 @@ nav#top ul a {
 	color: #000;
 }
 
-.timelinecanvaspane {
-	width: 100%;
-}
-
-#timeline {
-    width: 100%;
-    display: block;
-}
-
-
 /* header */
 
 .title-get {
@@ -623,4 +613,7 @@ footer p {
 .jumbotron .btn {
   font-size: 21px;
   padding: 14px 24px;
+}
+.amendment ul{
+  list-style-type: disc;
 }
