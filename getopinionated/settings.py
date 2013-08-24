@@ -135,9 +135,10 @@ INSTALLED_APPS = (
     'libs.sorl.thumbnail',
     'libs.debug_toolbar',
     'libs.bootstrap_toolkit',
-    # external apps
-    'south'
+    # main app
+    'getopinionated'
 )
+ENABLE_SOUTH = False
 
 AUTHENTICATION_BACKENDS = (
     'accounts.backend.EmailModelBackend',
@@ -323,6 +324,9 @@ except ImportError:
 
 TEMPLATE_DEBUG = DEBUG
 MANAGERS = ADMINS
+
+if ENABLE_SOUTH:
+    INSTALLED_APPS = INSTALLED_APPS + ('south',) # use south on online databases
 
 # easier template debugging (http://stackoverflow.com/questions/4300442/show-undefined-variable-errors-in-templates)
 if DEBUG:

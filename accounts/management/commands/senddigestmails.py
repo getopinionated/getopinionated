@@ -65,7 +65,7 @@ class Command(LabelCommand):
             if not new_proposals and not voting_proposals and not finished_proposals:
                 continue #no need to send a mail if there's nothing in it
             
-            unsubscribecode = UnsubscribeCode(user=user, code=random.SystemRandom().getrandbits(256))
+            unsubscribecode = UnsubscribeCode(user=user, code=random.SystemRandom().getrandbits(64))
             unsubscribecode.save()
             text = render_to_string('mails/digestmail.html', dictionary={
                                 'new_proposals':new_proposals,

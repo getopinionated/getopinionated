@@ -261,9 +261,3 @@ article.listofvoters .user-info {
     margin-right: 10px;
     margin-bottom: 10px;
 }
-
-/***** canvas timeline *****/
-.timelinecanvaspane {
-    width: 100%;
-    overflow-x: hidden;
-}

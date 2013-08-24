@@ -41,19 +41,19 @@ var ctx = null;
 var canvas = null;
 var interpretedTimelineData = null;
 function drawTimeline(timelineData){
+    /*** fix canvas width ***/
+    var jCanvas = $('#timeline');
+    canvas = jCanvas[0];
+    canvas.width = jCanvas.parent().width();
+    
     /*** init vars ***/
     if(interpretedTimelineData == null) {
         interpretedTimelineData = new DataInterpeter(timelineData);
-        canvas = $('#timeline')[0];
         ctx = canvas.getContext("2d");
         links = new Links();
     }
     var data = interpretedTimelineData;
     var center_x = data.dayToPx(data.center_day);
-
-    /*** fix width and horizontal position ***/
-    //$("#timeline").offset({left:0, relativeTo: "nav"});
-    canvas.width = 1024;//window.innerWidth;
 
     /*** background ***/
     ctx.fillStyle = BG_COL;
@@ -161,8 +161,8 @@ function drawTimeline(timelineData){
 
     // redraw with right height
     if(canvas.height != neededHeight) {
-        canvas.height = neededHeight;
-        return drawTimeline(timelineData, true);
+       canvas.height = neededHeight;
+       return drawTimeline(timelineData);
     }
 
     // add mouse listeners
@@ -327,8 +327,13 @@ function Links() {
     }
     /*** check if a link has been clicked ***/
     this.onClick = function(event) {
+        console.log(event.ctrlKey);
         if (this.hoverLink) {
-            window.location = this.hoverLink.url;
+            if(event.ctrlKey) {
+                window.open(this.hoverLink.url, '_blank');
+            } else {
+                window.location = this.hoverLink.url;
+            } 
         }
     }
 }
