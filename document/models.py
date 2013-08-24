@@ -72,6 +72,7 @@ class FullDocument(models.Model):
 
     def getTableOfContents(self):
         s = "%s"%self.content
+        s = s.replace("\n","")
         result = []
         loc = 0
         pattern1 = re.compile("<h1>(.*?)</h1>")
