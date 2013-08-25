@@ -282,7 +282,34 @@
 			                        {% endif %}
 			                    </div>
 			                </div>
-	                    </div>
+                        </div>
+                        <!-- comment replies -->
+                        {% for commentreply in comment.replies.all %}
+                            <div class="row">
+                                <div class="span11 offset1 commentreply">
+                                    {{ commentreply.motivation }} -- {% usemacro user-small commentreply.creator commentreply.create_date %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <!-- add comment reply -->
+                        <div class="add_comment_reply">
+                            <small class="add_comment_reply_link">
+                                <a href="" class="muted">add reply</a>
+                            </small>
+                            <div class="add_comment_reply_form" style="display:none;">
+                                <form action="{% url new-commentreply proposal.slug comment.id %}#comment_{{comment.id}}" method="POST" style="margin:0;">
+                                    {% csrf_js_token %}
+                                    <div class="row">
+                                        <div class="span9 offset1">
+                                            <textarea class="input-block-level" name="motivation" rows="1"></textarea>
+                                        </div>
+                                        <div class="span2">
+                                            <input type="submit" class="btn btn-primary" value="Add reply" />
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
 	                </div>
 	            </div>
 	            {% endfor %}
@@ -332,6 +359,16 @@
                 title: "Legend",
                 content: '<span class="delete">The amendment wants to remove this text from the document,</span><br/><span class="insert">the amendment wants to add this text to the document</span><br/>and this is context and is not voted with this amendment.',
                 container: '.amendment'
+            });
+            /** add comment reply code **/
+            $(".add_comment_reply_link a").click(function(e){
+                var containerDiv = $(this).parents('.add_comment_reply');
+                // toggle hidden state of this link
+                containerDiv.find(".add_comment_reply_link").toggle();
+                // toggle hidden state of next .add_comment_reply_form element
+                containerDiv.find(".add_comment_reply_form").toggle();
+                // prevent <a> link to do anything
+                e.preventDefault();
             });
         });
     </script>

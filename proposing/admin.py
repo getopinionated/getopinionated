@@ -1,4 +1,4 @@
-from models import Proposal, Comment, UpDownVote, ProposalVote, ProposalType
+from models import Proposal, Comment, CommentReply, UpDownVote, ProposalVote, ProposalType
 from django.contrib import admin
 from proposing.models import Tag, Proxy, ProxyProposalVote
 
@@ -30,6 +30,11 @@ class ProxyProposalVoteAdmin(admin.ModelAdmin):
     
 class ProposalTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'daysUntilVotingStarts', 'minimalUpvotes', 'daysUntilVotingFinishes')
+
+class CommentReplyInline(admin.TabularInline):
+    model = CommentReply
+    fk_name = 'comment'
+    extra = 1
 
 class CommentInline(admin.TabularInline):
     model = Comment
@@ -69,7 +74,13 @@ class ProposalAdmin(admin.ModelAdmin):
                 
     add_15_proposalvotes.short_description = "Add 15 proposal votes"
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['proposal', 'creator', 'create_date', 'upvote_score']
+    inlines = [CommentReplyInline]
+    list_filter = ['create_date']
+
 admin.site.register(Proposal, ProposalAdmin)
+admin.site.register(Comment, CommentAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Proxy, ProxyAdmin)
 admin.site.register(ProposalType, ProposalTypeAdmin)

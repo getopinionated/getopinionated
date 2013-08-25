@@ -253,6 +253,9 @@ class Proposal(VotablePost):
     def commentsAllowed(self):
         return self.voting_stage == 'DISCUSSION'
 
+    def commentsAllowedBy(self, user):
+        return self.commentsAllowed() and (user.is_authenticated() or settings.ANONYMOUS_COMMENTS)
+
     def isEditableBy(self, user):
         if not super(Proposal, self).isEditableBy(user):
             return False
@@ -348,6 +351,19 @@ class Comment(VotablePost):
         if not super(Comment, self).isEditableBy(user):
             return False
         return self.proposal in ['DISCUSSION']
+
+class CommentReply(VotablePost):
+    # fields
+    comment = models.ForeignKey(Comment, related_name="replies")
+    motivation = models.TextField()
+
+    def __unicode__(self):
+        return "Reply to comment on {}".format(self.comment.proposal)
+
+    def isEditableBy(self, user):
+        if not super(CommentReply, self).isEditableBy(user):
+            return False
+        return self.comment.proposal in ['DISCUSSION']
 
 class ProposalVote(models.Model):
     user = models.ForeignKey(CustomUser, related_name="proposal_votes")

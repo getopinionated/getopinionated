@@ -6,7 +6,7 @@ from document.models import FullDocument, Diff
 from proposing.widgets import TagSelectorWidget, RichTextEditorWidget,\
     VeryRichTextEditorWidget, NumberSliderWidget, EmptyTagSelectorWidget
 from proposing.fields import TagChoiceField, UserChoiceField
-from models import VotablePost, UpDownVote, Proposal, Comment, Tag, VotablePostEdit
+from models import VotablePost, UpDownVote, Proposal, Comment, CommentReply, Tag, VotablePostEdit
 from django.contrib.auth.models import User
 from accounts.models import CustomUser
 from django.forms.widgets import SelectMultiple
@@ -96,6 +96,18 @@ class CommentForm(forms.ModelForm):
         new_comment.save()
         return new_comment
 
+class CommentReplyForm(forms.ModelForm):
+    class Meta:
+        model = CommentReply
+        fields = ('motivation',)
+
+    def save(self, comment, user, commit=True):
+        new_comment_reply = super(CommentReplyForm, self).save(commit=False)
+        new_comment_reply.comment = comment
+        new_comment_reply.creator = user if user.is_authenticated() else None
+        new_comment_reply.save()
+        return new_comment_reply
+
 class VotablePostEditForm(forms.ModelForm):
     def save(self, user, commit=True):
         votable_post = super(VotablePostEditForm, self).save(commit=commit)
@@ -116,8 +128,12 @@ class CommentEditForm(VotablePostEditForm):
         model = Comment
         fields = ('motivation', 'color',)
 
+class CommentReplyEditForm(VotablePostEditForm):
+    class Meta:
+        model = CommentReply
+        fields = ('motivation', )
+
 class ProxyForm(forms.Form):
-    
     side_proxy = UserChoiceField(queryset=CustomUser.objects.all(), widget=EmptyTagSelectorWidget(attrs={'data-placeholder':"User, user, ..." }))
     side_proxy_tags = TagChoiceField(queryset=Tag.objects.all(), widget=EmptyTagSelectorWidget(attrs={'data-placeholder':"Tag, tag, ..." }))
     
