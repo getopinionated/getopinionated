@@ -38,6 +38,11 @@ def fulldiffrender(diff):
 def nicejoin(l):
     return l[:-1].join(",").append(" and ").append(l[-1])
 
+    
+@register.filter(name='percent')
+def percent(f):
+    return "%.1f"%(f*100)
+
 
 @register.filter(name='numberheaders')
 def numberheaders(s):
@@ -72,7 +77,7 @@ def slugify(value):
     """
     import unicodedata
     v=value
-    value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore')
+    value = unicodedata.normalize('NFKD', unicode(value)).encode('ascii', 'ignore')
     value = unicode(re.sub('[^\w\s-]', '', value).strip().lower())
     value = re.sub('[-\s]+', '-', value)
     value = mark_safe(value)

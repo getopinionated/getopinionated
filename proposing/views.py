@@ -9,9 +9,9 @@ from django.contrib import messages, auth
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
-from models import VotablePost, UpDownVote, Proposal, Comment, CommentReply, ProposalVote
-from forms import CommentForm, CommentReplyForm, ProposalEditForm, CommentEditForm, CommentReplyEditForm
-from proposing.models import Tag, ProxyProposalVote, Proxy, VotablePost
+from models import VotablePost, UpDownVote, Proposal, Comment, ProposalVote
+from forms import CommentForm, CommentReplyForm, ProposalEditForm, CommentEditForm
+from proposing.models import Tag, ProxyProposalVote, Proxy, VotablePost, FinalProposalVote
 from django.db.models import Count
 from proposing.forms import ProxyForm, ProposalForm
 from django.contrib.auth.views import redirect_to_login
@@ -203,8 +203,8 @@ def detail(request, proposal_slug):
             commentform = CommentForm()
     if request.user.is_authenticated() and proposal.voting_stage in ['APPROVED', 'REJECTED', 'EXPIRED']:
         try:
-            proxyvote = ProxyProposalVote.objects.get(user=request.user, proposal=proposal)
-        except ProxyProposalVote.DoesNotExist:
+            proxyvote = FinalProposalVote.objects.get(user=request.user, proposal=proposal)
+        except FinalProposalVote.DoesNotExist:
             proxyvote = None
     else:
         proxyvote = None

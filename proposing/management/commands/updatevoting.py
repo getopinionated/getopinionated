@@ -1,9 +1,15 @@
 from django.core.management.base import BaseCommand, CommandError, NoArgsCommand
 from django.db.models import Q
 from django.utils import timezone
-from proposing.models import Proposal, ProxyProposalVote, Proxy, Tag
+from proposing.models import Proposal, ProxyProposalVote, Proxy, Tag, FinalProposalVote
 from django.utils.timezone import datetime, timedelta
 import traceback
+from scipy.sparse.linalg import spsolve
+from scipy.sparse import csr_matrix, csc_matrix,identity
+import scipy.sparse.linalg
+import numpy
+import itertools
+from accounts.models import CustomUser
 
 def concurrent():
     import sys
@@ -23,7 +29,7 @@ class Command(NoArgsCommand):
     def handle_noargs(self, *args, **kwargs):
         # don't run a concurrent script twice
         if concurrent():
-            return        
+            return
         
         voting_cnt = 0
         constraints_cnt = 0
@@ -101,60 +107,103 @@ class Command(NoArgsCommand):
         
         # deleta all previous results (safety, this method may be called twice, even though it shouldn't)
         ProxyProposalVote.objects.filter(proposal=proposal).delete()
-        
+        FinalProposalVote.objects.filter(proposal=proposal).delete()
         # set up graph, doing as few queries as possible
         voters = proposal.proposal_votes.values('user')
         #exclude proxies from people who voted themselves
         proxies = Proxy.objects.exclude(delegating__in = voters).all()      
         #select edges with the correct tag
-        validproxies = proxies.exclude(tags__in = Tag.objects.exclude(pk__in=proposal.tags.values('pk'))).filter(isdefault=False)
+        validproxies = proxies.filter(tags__in = proposal.tags.all()).filter(isdefault=False)
         #select default edges from delegating people not in the previous set
         validproxies = validproxies | (proxies.filter(isdefault=True).exclude(delegating__in = validproxies.values('delegating')))
         
         validproxies = list(validproxies)
         votes = list(proposal.proposal_votes.all())
+        voters = list(CustomUser.objects.filter(id__in=voters).all())
         
+        if len(votes)==0:
+            #no votes have been cast, no counting to do
+            return
         #TODO: check for users having made 2 votes, this seriously breaks the algorithm, other than not
         #      being democratic at all
         
+        '''first, set up a list of all relevant users of which the vote will actually count'''
+        # backpropagation from the users who actually voted
+        users = list(voters) #copy this list
         
-        proxiecount = {} #to keep track in how many votes proxies result
-        voterqueue = {}
-        for vote in votes:
-            mainvoter = vote.user
-            voterqueue[vote] = [mainvoter]
-            #following can be sped up. Sort lists before comparing elementwise
-            i=0
-            while i<len(voterqueue[vote]):
-                voter = voterqueue[vote][i]
-                i += 1
-                if proxiecount.has_key(voter):
-                    proxiecount[voter] += 1
-                else:
-                    proxiecount[voter] = 1
-                for proxy in validproxies:
-                    if (voter in proxy.delegates.all()) and (proxy.delegating not in voterqueue[vote]):
-                        voterqueue[vote].append(proxy.delegating)
-                        
+        usertoidmap = {}
+        for i,u in enumerate(users):
+            usertoidmap[u.pk] = i
         
-        total = 0
-        for vote in votes:
-            numvotes = 0.0
-            actualvote = ProxyProposalVote.objects.get_or_create(user=vote.user, proposal=proposal, value=vote.value, voted_self=True)[0]
-            for voter in voterqueue[vote]:
-                numvotes += 1.0 / float(proxiecount[voter])
-                actualvote.vote_traject.add(voter)
-                if voter!=vote.user:
-                    proxyvote = ProxyProposalVote.objects.get_or_create(user=voter, proposal=proposal)[0]
-                    proxyvote.vote_traject.add(vote.user)
-                    proxyvote.value += float(vote.value) / float(proxiecount[voter])
-                    proxyvote.numvotes = proxiecount[voter]
-                    proxyvote.save()
-            actualvote.numvotes = numvotes
-            actualvote.save()
-            total += numvotes * vote.value
+        edges = set([])
         
-        if total == 0.0:
-            return 0
-        average = total / len(proxiecount.keys())
-        proposal.avgProposalvoteScore = average
+        fromcount = [0]*len(users)
+        i = 0
+        while i<len(users):
+            current = users[i]
+            for proxy in validproxies:
+                if current in proxy.delegates.all():
+                    delegating = proxy.delegating
+                    if delegating not in users:
+                        usertoidmap[delegating.pk] = len(users)
+                        users.append(delegating)
+                        fromcount.append(0)
+                    f = usertoidmap[delegating.pk]
+                    #print f,"->",i
+                    if f!=i: #no self-referring edges
+                        edge = (f, i) # edge from a to b
+                        edges.add(edge)
+                        fromcount[f] += 1
+            i += 1
+        
+        #print "In this test, there are",len(users),"users voting"
+        '''next, convert this graph to a (sparse) system'''
+        # This is where the magic happens. I will write down some day why this actually works.
+        # In short, of a square matrix A, the following is true:
+        # inv(I-A) = I + A + A^2 + A^3 + A^4 + ... if the right hand side converges
+        
+        system = identity(len(users), format='lil')#build matrix in lil format
+        for edge in edges:
+            system[edge[1],edge[0]] = -1.0/fromcount[edge[0]] #startnode splits his vote in equal parts
+        
+        system = system.tocsc()#convert to csc for the inverse
+        #print "=========before========="
+        #print system.todense()
+        '''solve this sparse system'''
+        if len(users)>1:
+            system = scipy.sparse.linalg.inv(system)
+        #print "=========after========="
+        #print system.todense()
+        '''Now count all the votes and store the data in the respective models'''
+        
+        mapidvotes = {}
+        for v in votes:
+            mapidvotes[usertoidmap[v.user.pk]] = v.value
+        
+        finalvotes = [0]*len(users)
+        numvotes = [0]*len(users)
+        cx = system.tocoo()    #convert to coo for efficient looping
+        for touserid,fromuserid,vote in itertools.izip(cx.row, cx.col, cx.data):
+            touserid, fromuserid = int(touserid), int(fromuserid)            
+            if touserid in mapidvotes:
+                finalvotes[fromuserid] += vote*mapidvotes[touserid]
+            numvotes[touserid] += vote
+            ppv = ProxyProposalVote(user_voting = users[touserid], user_proxied = users[fromuserid], proposal=proposal, numvotes=vote)
+            ppv.save()
+        
+        totalresult = 0
+        totalvotes = 0
+        for id,fv in enumerate(finalvotes):
+            actual = (users[id] in voters)
+            fpv = FinalProposalVote(user = users[id], proposal=proposal, numvotes=numvotes[id], value=finalvotes[id], voted_self=actual)
+            fpv.save()
+            #print users[id].slug,"voted",finalvotes[id],"with",numvotes[id],"votes"
+            if actual:
+                #
+                totalresult += numvotes[id] * finalvotes[id]
+                totalvotes += numvotes[id]
+        
+        proposal.avgProposalvoteScore = totalresult/totalvotes
+        proposal.save()
+        
+        

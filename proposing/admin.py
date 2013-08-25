@@ -1,6 +1,6 @@
 from models import Proposal, Comment, CommentReply, UpDownVote, ProposalVote, ProposalType
 from django.contrib import admin
-from proposing.models import Tag, Proxy, ProxyProposalVote
+from proposing.models import Tag, Proxy, ProxyProposalVote, FinalProposalVote
 
 class TagAdmin(admin.ModelAdmin):
     model = Tag
@@ -25,8 +25,13 @@ class ProxyAdmin(admin.ModelAdmin):
 class ProposalVoteAdmin(admin.ModelAdmin):
     list_display = ('user','proposal','date','value')
 
-class ProxyProposalVoteAdmin(admin.ModelAdmin):
+class FinalProposalVoteAdmin(admin.ModelAdmin):
     list_display = ('user','numvotes','voted_self','value','proposal')
+
+
+class ProxyProposalVoteAdmin(admin.ModelAdmin):
+    list_display = ('user_voting','user_proxied','proposal','numvotes')
+    
     
 class ProposalTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'daysUntilVotingStarts', 'minimalUpvotes', 'daysUntilVotingFinishes')
@@ -53,7 +58,7 @@ class ProposalAdmin(admin.ModelAdmin):
     list_display = ['title', 'voting_stage', 'discussion_time', 'creator', 'create_date', 'upvote_score', 'number_of_comments', 'views', ]
     inlines = [CommentInline, UpDownVoteInline, ProposalVoteInline]
     list_filter = ['create_date']
-    actions = ['add_15_upvotes','add_15_proposalvotes']
+    actions = ['add_15_upvotes','add_15_proposalvotes','recount_votes']
     prepopulated_fields = {'slug': ('title',)}
 
     def add_15_upvotes(self, request, queryset):
@@ -74,6 +79,13 @@ class ProposalAdmin(admin.ModelAdmin):
                 
     add_15_proposalvotes.short_description = "Add 15 proposal votes"
 
+    def recount_votes(self, request, queryset):
+        for proposal in queryset:
+            proposal.voting_stage = 'VOTING'
+            proposal.save()
+                
+    recount_votes.short_description = "Recount votes"
+
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['proposal', 'creator', 'create_date', 'upvote_score']
     inlines = [CommentReplyInline]
@@ -85,4 +97,5 @@ admin.site.register(Tag, TagAdmin)
 admin.site.register(Proxy, ProxyAdmin)
 admin.site.register(ProposalType, ProposalTypeAdmin)
 admin.site.register(ProposalVote, ProposalVoteAdmin)
+admin.site.register(FinalProposalVote, FinalProposalVoteAdmin)
 admin.site.register(ProxyProposalVote, ProxyProposalVoteAdmin)

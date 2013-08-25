@@ -9,6 +9,7 @@
 {% loadmacros "common/share.html" %}
 {% loadmacros "proposal/tag-macro.html" %}
 {% loadmacros "proposal/proposal-form-modal-macro.html" %}
+{% loadmacros "common/comma.html" %}
 
 {% macro updownvote votable_post %}
 	{% if votable_post|args:user|call:"canPressUpvote" or votable_post|args:user|call:"hasUpvoted" %}
@@ -209,9 +210,9 @@
                 {% if proxyvote != None %}
                     <p>You voted '{{ proxyvote.value|floatformat:"-2" }}'
                     {% if proxyvote.voted_self %}
-                    	with {{ proxyvote.numvotes }} votes.
+                    	with {{ proxyvote.numvotes|floatformat:"-2" }} votes.
                     {% else %}
-                    	through {{ proxyvote.numvotes }} proxies.
+                    	{% for vote in proxyvote.getProxyProposalVoteEndNodes %}through {% usemacro user-micro vote.user_voting %}{% if vote.numvotes < 1.0 %}({{ vote.numvotes|percent }}%){% endif %} who voted {{ vote.getVoteOfVotingUser.value }}{% usemacro comma %}{% endfor %}.
                     {% endif %}
                     </p>
                 {% endif %}
@@ -222,7 +223,7 @@
                     {% endif %}
                 </p>
                 <p>
-                    #votes: {{ proposal.total_proxy_proposal_votes.count }}
+                    #votes: {{ proposal.final_proxy_proposal_votes.count }}
                 </p>
                 <p><a href="{% url proposals-listofvoters proposal.slug %}" class="btn">See list of voters</a></p>
                 <div class="resultchart">
