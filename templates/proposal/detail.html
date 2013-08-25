@@ -21,7 +21,7 @@
 	{% else %}
 	    <div class="btn btn-mini disabled" title="You're not allowed to vote"><i class="icon-thumbs-up"></i></div>
 	{% endif %}
-	
+
 	{% if votable_post|args:user|call:"canPressDownvote" or votable_post|args:user|call:"hasDownvoted" %}
 		<div class="btn btn-mini
 		{% if votable_post|args:user|call:"hasDownvoted" %}
@@ -53,7 +53,7 @@
     <link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
     {% if proposaleditform %}
         {{ proposaleditform.media }}
-    {% endif %}     
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -86,11 +86,11 @@
                                 </span>
                                 {% if not proposal.minimalNumEndorsementsIsMet %}
                                     <span>
-                                        / {{settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING}} 
+                                        / {{settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING}}
                                     </span>
                                 {% endif %}
 						    </div>
-						    
+
 			                <div class="share">
 			                	{% usemacro sharingbuttons request.build_absolute_uri proposal.title "This interesting proposal for the program of the Pirate Party has been made on getOpinionated. Help us make the program a better program." %}
 			        		</div>
@@ -131,8 +131,8 @@
             <span class="creator-medium">{% usemacro user-medium proposal.lastEdit.user proposal.lastEdit.date "edited" %}</span>
         {% endif %}
         <h3>The Motivation</h3>
-        
-        
+
+
         <div class="motivation">
             {{ proposal.motivation|linebreaks }}
         	<div class="proposal-tags">
@@ -213,7 +213,7 @@
                     	with {{ proxyvote.numvotes|floatformat:"-2" }} votes.
                     {% else %}
                     	{% for vote in proxyvote.getProxyProposalVoteEndNodes %}through {% usemacro user-micro vote.user_voting %}{% if vote.numvotes < 1.0 %}({{ vote.numvotes|percent }}%){% endif %} who voted {{ vote.getVoteOfVotingUser.value }}{% usemacro comma %}{% endfor %}.
-                    {% endif %}             
+                    {% endif %}
                     </p>
                 {% endif %}
                 <p>
@@ -282,8 +282,35 @@
 			                            </table>
 			                        {% endif %}
 			                    </div>
-			                </div>                    
-	                    </div>
+			                </div>
+                        </div>
+                        <!-- comment replies -->
+                        {% for commentreply in comment.replies.all %}
+                            <div class="row">
+                                <div class="span11 offset1 commentreply">
+                                    {{ commentreply.motivation }} -- {% usemacro user-small commentreply.creator commentreply.create_date %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <!-- add comment reply -->
+                        <div class="add_comment_reply">
+                            <small class="add_comment_reply_link">
+                                <a href="" class="muted">add reply</a>
+                            </small>
+                            <div class="add_comment_reply_form" style="display:none;">
+                                <form action="{% url new-commentreply proposal.slug comment.id %}#comment_{{comment.id}}" method="POST" style="margin:0;">
+                                    {% csrf_js_token %}
+                                    <div class="row">
+                                        <div class="span9 offset1">
+                                            <textarea class="input-block-level" name="motivation" rows="1"></textarea>
+                                        </div>
+                                        <div class="span2">
+                                            <input type="submit" class="btn btn-primary" value="Add reply" />
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
 	                </div>
 	            </div>
 	            {% endfor %}
@@ -333,6 +360,16 @@
                 title: "Legend",
                 content: '<span class="delete">The amendment wants to remove this text from the document,</span><br/><span class="insert">the amendment wants to add this text to the document</span><br/>and this is context and is not voted with this amendment.',
                 container: '.amendment'
+            });
+            /** add comment reply code **/
+            $(".add_comment_reply_link a").click(function(e){
+                var containerDiv = $(this).parents('.add_comment_reply');
+                // toggle hidden state of this link
+                containerDiv.find(".add_comment_reply_link").toggle();
+                // toggle hidden state of next .add_comment_reply_form element
+                containerDiv.find(".add_comment_reply_form").toggle();
+                // prevent <a> link to do anything
+                e.preventDefault();
             });
         });
     </script>

@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from models import VotablePost, UpDownVote, Proposal, Comment, ProposalVote
-from forms import CommentForm, ProposalEditForm, CommentEditForm
+from forms import CommentForm, CommentReplyForm, ProposalEditForm, CommentEditForm
 from proposing.models import Tag, ProxyProposalVote, Proxy, VotablePost, FinalProposalVote
 from django.db.models import Count
 from proposing.forms import ProxyForm, ProposalForm
@@ -192,7 +192,7 @@ def detail(request, proposal_slug):
     commentform = None
     proposal.addView()
 
-    if proposal.commentsAllowed() and (request.user.is_authenticated() or settings.ANONYMOUS_COMMENTS):
+    if proposal.commentsAllowedBy(request.user):
         if request.method == 'POST':
             commentform = CommentForm(request.POST)
             if commentform.is_valid():
@@ -216,13 +216,16 @@ def detail(request, proposal_slug):
         'commentform': commentform,
         'proxyvote': proxyvote,
         'proposaleditform': proposaleditform,
-        'document': document
+        'document': document,
+        'commentreplyform': CommentReplyForm() if proposal.commentsAllowedBy(request.user) else None,
     })
 
 def editcomment(request, proposal_slug, comment_id):
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
     comment = get_object_or_404(Comment, id=comment_id)
+    assert comment.proposal == proposal
     if not comment.isEditableBy(request.user):
+        messages.error(request, 'This comment is not editable')
         return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
     if request.method == 'POST':
         editform = CommentEditForm(request.POST, instance=comment)
@@ -242,6 +245,38 @@ def editcomment(request, proposal_slug, comment_id):
         'document': document
     })
 
+def newcommentreply(request, proposal_slug, comment_id):
+    """ Note: all error checking is done by javascript. Therefore,
+        all invalid input is due to hack or system error."""
+    ## get vars
+    proposal = get_object_or_404(Proposal, slug=proposal_slug)
+    comment = get_object_or_404(Comment, id=comment_id)
+    assert comment.proposal == proposal
+    ## check if user is allowed to make new CommentReply (same policy as Comment)
+    if not proposal.commentsAllowedBy(request.user):
+        messages.error(request, 'Making comment replies is not allowed')
+        return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
+    ## all HTTP requests should be of type post on this view
+    assert request.method == 'POST'
+    ## get form
+    commentform = CommentReplyForm(request.POST)
+    assert commentform.is_valid() # see note above
+    ## get form
+    commentform.save(comment, request.user)
+    messages.success(request, 'Comment reply added')
+    return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
+
+def editcommentreply(request, proposal_slug, commentreply_id):
+    #### TODO: implement
+    pass
+    #""" Note: all error checking is done by javascript. Therefore,
+    #    all invalid input is due to hack or system error."""
+    ### get vars
+    #proposal = get_object_or_404(Proposal, slug=proposal_slug)
+    #commentreply = get_object_or_404(CommentReply, id=commentreply_id)
+    #comment = commentreply.comment
+    #assert comment.proposal == proposal
+    #raise NotImplementedError()
 
 def proxy(request, tag_slug=None):
     tag = get_object_or_404(Tag, slug=tag_slug) if tag_slug else None

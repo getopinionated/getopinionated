@@ -261,3 +261,10 @@ article.listofvoters .user-info {
     margin-right: 10px;
     margin-bottom: 10px;
 }
+
+/***** commentreply *****/
+.commentreply {
+    border-top: 1px solid;
+    border-color: #ccc;
+    padding-left: 30px;
+}
