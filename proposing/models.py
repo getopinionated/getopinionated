@@ -256,7 +256,7 @@ class Proposal(VotablePost):
     def isEditableBy(self, user):
         if not super(Proposal, self).isEditableBy(user):
             return False
-        return self.voting_stage == 'DISCUSSION'
+        return self.proposal in ['DISCUSSION']
 
     @staticmethod
     def voteOptions():
@@ -347,8 +347,7 @@ class Comment(VotablePost):
     def isEditableBy(self, user):
         if not super(Comment, self).isEditableBy(user):
             return False
-        return self.proposal.voting_stage == 'DISCUSSION' \
-            or self.proposal.voting_stage == 'VOTING'
+        return self.proposal in ['DISCUSSION']
 
 class ProposalVote(models.Model):
     user = models.ForeignKey(CustomUser, related_name="proposal_votes")
