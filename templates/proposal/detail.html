@@ -308,6 +308,7 @@
                                         </div>
                                     </div>
                                 </form>
+                                <div class="muted feedback"></div>
                             </div>
                         </div>
 	                </div>
@@ -370,6 +371,34 @@
                 // prevent <a> link to do anything
                 e.preventDefault();
             });
+            function validate_reply_form_textarea(elem) {
+                // get vars
+                var MIN_LENGTH = 15;
+                var MAX_LENGTH = 500;
+                var content = $(elem).val();
+                // get feedback
+                var feedback = "";
+                var valid = false;
+                if(content.length < MIN_LENGTH)
+                    feedback = "Enter at least {} characters".format(MIN_LENGTH);
+                else if(content.length > MAX_LENGTH)
+                    feedback = "Too long by {} characters".format(content.length - MAX_LENGTH);
+                else {
+                    feedback = "{} characters left".format(MAX_LENGTH - content.length);
+                    valid = true;
+                }
+                $(elem).parents(".add_comment_reply").find(".feedback").html(feedback);
+                // update button
+                $(elem).parents(".add_comment_reply").find("input[type=submit]").prop('disabled', !valid);
+                return valid;
+            }
+            $(".add_comment_reply_form textarea" ).bind('input propertychange', function() {
+                validate_reply_form_textarea(this);
+            });
+            $(".add_comment_reply_form").submit(function() {
+                elem = $(this).find('textarea');
+                return validate_reply_form_textarea(elem);
+            }).submit();
         });
     </script>
 {% endblock %}
