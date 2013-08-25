@@ -125,7 +125,7 @@ class Proposal(VotablePost):
     discussion_time = models.IntegerField(default=7)
     tags = models.ManyToManyField(Tag, related_name="proposals")
     avgProposalvoteScore = models.FloatField("score", default=0.0) 
-    favorited_by = models.ManyToManyField(User, related_name="favorites")
+    favorited_by = models.ManyToManyField(User, related_name="favorites", null=True)
 
     def __unicode__(self):
         return self.title
@@ -314,7 +314,7 @@ class Proposal(VotablePost):
         return self.dateToPx(self.expirationDate.date())
 
     def numVotesOn(self, vote_value):
-        a = self.total_proxy_proposal_votes.filter(value = vote_value, voted_self=True).aggregate(Sum('numvotes'))
+        a = self.final_proxy_proposal_votes.filter(value = vote_value, voted_self=True).aggregate(Sum('numvotes'))
         return a['numvotes__sum'] or 0
     
     def numVotesToPx(self, vote_value):
@@ -327,7 +327,7 @@ class Proposal(VotablePost):
         return fraction * BAR_HEIGHT
 
     def votesOn(self, vote_value):
-        return self.total_proxy_proposal_votes.filter(value = vote_value, voted_self=True)
+        return self.final_proxy_proposal_votes.filter(value = vote_value, voted_self=True)
 
 class Comment(VotablePost):
     # constants
@@ -347,23 +347,57 @@ class Comment(VotablePost):
     def isEditableBy(self, user):
         if not super(Comment, self).isEditableBy(user):
             return False
-        return self.proposal.voting_stage == 'DISCUSSION' \
-            or self.proposal.voting_stage == 'VOTING'
+        return self.proposal in ['DISCUSSION']
 
+"""
+    This contains what the user entered on the website for his vote
+"""
 class ProposalVote(models.Model):
     user = models.ForeignKey(CustomUser, related_name="proposal_votes")
     proposal = models.ForeignKey(Proposal, related_name="proposal_votes")
     date = models.DateTimeField(auto_now=True)
     value = models.IntegerField("The value of the vote")
 
+"""
+    This contains where everybodies votes came from 
+            and went to
+            in effect, it is the voting matrix
+            note that if the user_voting did not actually vote, the numvotes need to be interpreted as the number of votes "flowing through" this user, which is an upperbound to what the user would really have if he actually voted.
+"""
 class ProxyProposalVote(models.Model):
-    user = models.ForeignKey(CustomUser, related_name="total_proxy_proposal_votes")
-    proposal = models.ForeignKey(Proposal, related_name="total_proxy_proposal_votes")
-    value = models.FloatField("The value of the vote", default=0.0)
-    vote_traject = models.ManyToManyField(CustomUser)
-    voted_self = models.BooleanField(default=False)
+    user_voting = models.ForeignKey(CustomUser, related_name="proxy_proposal_votes")
+    user_proxied = models.ForeignKey(CustomUser, related_name="proxied_proposal_votes")
+    proposal = models.ForeignKey(Proposal, related_name="proxy_proposal_votes")
     numvotes = models.FloatField(default=0)
+    
+    @property
+    def getUpperBound(self):
+        if numvotes>1.0:
+            return 1.0
+        return numvotes
 
+    @property
+    def getVoteOfVotingUser(self):
+        return FinalProposalVote.objects.get(proposal=self.proposal, user=self.user_voting)
+
+"""
+    This contains who voted what eventually after counting
+"""
+
+class FinalProposalVote(models.Model):
+    user = models.ForeignKey(CustomUser, related_name="final_proxy_proposal_votes")
+    proposal = models.ForeignKey(Proposal, related_name="final_proxy_proposal_votes")
+    numvotes = models.FloatField(default=0)
+    value = models.FloatField(default=0)
+    voted_self = models.BooleanField() #False if this vote actually went to other people
+
+    @property
+    def getProxyProposalVoteSources(self):
+        return ProxyProposalVote.objects.filter(proposal=self.proposal, user_voting=self.user).all()
+ 
+    @property
+    def getProxyProposalVoteEndNodes(self):
+        return ProxyProposalVote.objects.filter(proposal=self.proposal, user_proxied=self.user, user_voting__in=self.proposal.proposal_votes.values("user")).all()
 '''
     object containing the issued proxies for the voting system
 '''

@@ -38,6 +38,11 @@ def fulldiffrender(diff):
 def nicejoin(l):
     return l[:-1].join(",").append(" and ").append(l[-1])
 
+    
+@register.filter(name='percent')
+def percent(f):
+    return "%.1f"%(f*100)
+
 
 @register.filter(name='numberheaders')
 def numberheaders(s):

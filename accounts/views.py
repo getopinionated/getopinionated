@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 
 from common.shortcuts import render_to_response
-from proposing.models import Proposal, Comment, ProxyProposalVote, Tag, Proxy
+from proposing.models import Proposal, Comment, FinalProposalVote, Tag, Proxy
 from decorators import not_logged_in
 from forms import CustomUserCreationForm, ProfileUpdateForm, EmailAuthenticationForm
 from models import CustomUser
@@ -34,22 +34,22 @@ def getuserproxies(member):
     return Proxy.objects.filter(delegating=member).values('delegates').distinct()
 
 def getpositiveuservotes(member):
-    return ProxyProposalVote.objects.filter(user=member,voted_self=True).filter(value__gt=1)
+    return FinalProposalVote.objects.filter(user=member,voted_self=True).filter(value__gt=1)
 
 def getneutraluservotes(member):
-    return ProxyProposalVote.objects.filter(user=member,voted_self=True).exclude(value__gt=1).exclude(value__lt=-1)
+    return FinalProposalVote.objects.filter(user=member,voted_self=True).exclude(value__gt=1).exclude(value__lt=-1)
 
 def getnegativeuservotes(member):
-    return ProxyProposalVote.objects.filter(user=member,voted_self=True).filter(value__lt=-1)
+    return FinalProposalVote.objects.filter(user=member,voted_self=True).filter(value__lt=-1)
 
 def getpositiveuserproxyvotes(member):
-    return ProxyProposalVote.objects.filter(user=member,voted_self=False).filter(value__gt=1)
+    return FinalProposalVote.objects.filter(user=member,voted_self=False).filter(value__gt=1)
 
 def getneutraluserproxyvotes(member):
-    return ProxyProposalVote.objects.filter(user=member,voted_self=False).exclude(value__gt=1).exclude(value__lt=-1)
+    return FinalProposalVote.objects.filter(user=member,voted_self=False).exclude(value__gt=1).exclude(value__lt=-1)
 
 def getnegativeuserproxyvotes(member):
-    return ProxyProposalVote.objects.filter(user=member,voted_self=False).filter(value__lt=-1)
+    return FinalProposalVote.objects.filter(user=member,voted_self=False).filter(value__lt=-1)
 
 def getparticipatedproposals(member):
     return (Proposal.objects.filter(creator=member) | 

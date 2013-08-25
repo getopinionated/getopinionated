@@ -12,24 +12,27 @@ from proposing.management.commands.updatevoting import Command
 
 class VoteCountTestCase(TestCase):
     def setUp(self):
-        numusers = 10
+        numusers = 20
         self.users = []
         for i in xrange(numusers):
-            u = CustomUser(username="U%d"%i)
+            u = CustomUser(username=u"U%d"%i)
             u.save()
             self.users.append(u)
         
         numtags = 10
         self.tags = []
         for i in xrange(numtags):
-            t = Tag(name="T%d"%i)
+            t = Tag(name=u"T%d"%i)
             t.save()
             self.tags.append(t)
         
         tupples = [(0,[],[1,2,3,4],True),
-                   (0,[0],[1,2,3,4],False),
-                   (1,[0,1],[2],False),
-                   (2,[],[3,4],True),
+                   (1,[],[2,3,4],True),
+                   (2,[],[1,3,4],True),
+                   (3,[],[5,6],True),
+                   (4,[],[7,8],True),
+                   (5,[],[9],True),
+                   (7,[],[10],True),
                    ]
         self.proxies = []
         for tupple in tupples:
@@ -66,14 +69,14 @@ class VoteCountTestCase(TestCase):
         self.assertEqual(self.proposal.avgProposalvoteScore, 1.0)
     
     def testVote3(self):
-        self.setupVotes([(0,1),(1,0)])
+        self.setupVotes([(10,1),(9,0)])
         Command.doVoteCount(self.proposal)
         self.assertEqual(self.proposal.avgProposalvoteScore, 0.5)
         
     def testVote4(self):
         self.setupVotes([(0,-1),(1,1)])
         Command.doVoteCount(self.proposal)
-        self.assertEqual(self.proposal.avgProposalvoteScore, 0.0)
+        self.assertEqual(self.proposal.avgProposalvoteScore, 1.0/3.0)
     
     def testVote5(self):
         self.setupVotes([])
@@ -86,66 +89,8 @@ class VoteCountTestCase(TestCase):
         self.assertEqual(self.proposal.avgProposalvoteScore, 1.0)       
 
     def testVote7(self):
-        self.setupVotes([(0,0),(3,3)])
+        self.setupVotes([(0,0),(3,4)])
         self.proposal.tags.add(self.tags[1])
         Command.doVoteCount(self.proposal)
-        self.assertEqual(self.proposal.avgProposalvoteScore, 2.0)       
+        self.assertEqual(self.proposal.avgProposalvoteScore, 3.0)       
 
-'''
-class ProposalViewTests(TestCase):
-    def test_index_view_with_no_polls(self):
-        """
-        If no polls exist, an appropriate message should be displayed.
-        """
-        response = self.client.get(reverse('proposal:index'))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "No proposals are available.")
-        self.assertQuerysetEqual(response.context['latest_proposal_list'], [])
-
-    def test_index_view_with_a_past_poll(self):
-        """
-        Polls with a pub_date in the past should be displayed on the index page.
-        """
-        create_proposal(title="Past proposal.", extra_days=-30)
-        response = self.client.get(reverse('proposal:index'))
-        self.assertQuerysetEqual(
-            response.context['latest_proposal_list'],
-            ['<Proposal: Past proposal.>']
-        )
-
-    def test_index_view_with_a_future_poll(self):
-        """
-        Polls with a pub_date in the future should not be displayed on the
-        index page.
-        """
-        create_proposal(title="Future proposal.", extra_days=30)
-        response = self.client.get(reverse('proposal:index'))
-        self.assertContains(response, "No proposals are available.", status_code=200)
-        self.assertQuerysetEqual(response.context['latest_proposal_list'], [])
-
-    def test_index_view_with_future_poll_and_past_poll(self):
-        """
-        Even if both past and future polls exist, only past polls should be
-        displayed.
-        """
-        create_proposal(title="Past proposal.", extra_days=-30)
-        create_proposal(title="Future proposal.", extra_days=30)
-        response = self.client.get(reverse('proposal:index'))
-        self.assertQuerysetEqual(
-            response.context['latest_proposal_list'],
-            ['<Proposal: Past proposal.>']
-        )
-
-    def test_index_view_with_two_past_polls(self):
-        """
-        The polls index page may display multiple polls.
-        """
-        create_proposal(title="Past proposal 1.", extra_days=-30)
-        create_proposal(title="Past proposal 2.", extra_days=-5)
-        response = self.client.get(reverse('proposal:index'))
-        self.assertQuerysetEqual(
-            response.context['latest_proposal_list'],
-             ['<Proposal: Past proposal 2.>', '<Proposal: Past proposal 1.>']
-        )
-        
-'''
