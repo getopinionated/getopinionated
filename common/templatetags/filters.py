@@ -72,7 +72,7 @@ def slugify(value):
     """
     import unicodedata
     v=value
-    value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore')
+    value = unicodedata.normalize('NFKD', unicode(value)).encode('ascii', 'ignore')
     value = unicode(re.sub('[^\w\s-]', '', value).strip().lower())
     value = re.sub('[-\s]+', '-', value)
     value = mark_safe(value)
