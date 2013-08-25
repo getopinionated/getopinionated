@@ -48,3 +48,4 @@ getopinionated/local_settings.py
 jsrv.py
 getopinionated.sublime-*
 lock
+/database.sqlite3.backup

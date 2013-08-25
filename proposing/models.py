@@ -256,7 +256,7 @@ class Proposal(VotablePost):
     def isEditableBy(self, user):
         if not super(Proposal, self).isEditableBy(user):
             return False
-        return self.voting_stage == 'DISCUSSION'
+        return self.proposal in ['DISCUSSION']
 
     @staticmethod
     def voteOptions():
