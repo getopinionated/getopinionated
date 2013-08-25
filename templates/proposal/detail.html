@@ -20,7 +20,7 @@
 	{% else %}
 	    <div class="btn btn-mini disabled" title="You're not allowed to vote"><i class="icon-thumbs-up"></i></div>
 	{% endif %}
-	
+
 	{% if votable_post|args:user|call:"canPressDownvote" or votable_post|args:user|call:"hasDownvoted" %}
 		<div class="btn btn-mini
 		{% if votable_post|args:user|call:"hasDownvoted" %}
@@ -52,7 +52,7 @@
     <link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
     {% if proposaleditform %}
         {{ proposaleditform.media }}
-    {% endif %}     
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -85,11 +85,11 @@
                                 </span>
                                 {% if not proposal.minimalNumEndorsementsIsMet %}
                                     <span>
-                                        / {{settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING}} 
+                                        / {{settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING}}
                                     </span>
                                 {% endif %}
 						    </div>
-						    
+
 			                <div class="share">
 			                	{% usemacro sharingbuttons request.build_absolute_uri proposal.title "This interesting proposal for the program of the Pirate Party has been made on getOpinionated. Help us make the program a better program." %}
 			        		</div>
@@ -130,8 +130,8 @@
             <span class="creator-medium">{% usemacro user-medium proposal.lastEdit.user proposal.lastEdit.date "edited" %}</span>
         {% endif %}
         <h3>The Motivation</h3>
-        
-        
+
+
         <div class="motivation">
             {{ proposal.motivation|linebreaks }}
         	<div class="proposal-tags">
@@ -212,7 +212,7 @@
                     	with {{ proxyvote.numvotes }} votes.
                     {% else %}
                     	through {{ proxyvote.numvotes }} proxies.
-                    {% endif %}             
+                    {% endif %}
                     </p>
                 {% endif %}
                 <p>
@@ -281,7 +281,7 @@
 			                            </table>
 			                        {% endif %}
 			                    </div>
-			                </div>                    
+			                </div>
 	                    </div>
 	                </div>
 	            </div>
