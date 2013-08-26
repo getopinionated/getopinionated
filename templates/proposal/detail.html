@@ -374,9 +374,9 @@
             });
             function validate_reply_form_textarea(elem) {
                 // get vars
-                var MIN_LENGTH = 15;
-                var MAX_LENGTH = 500;
-                var content = $(elem).val();
+                var MIN_LENGTH = {{settings.COMMENTREPLY_MIN_LENGTH}}
+                var MAX_LENGTH = {{settings.COMMENTREPLY_MAX_LENGTH}}
+                var content = $.trim($(elem).val());
                 // get feedback
                 var feedback = "";
                 var valid = false;
@@ -395,6 +395,12 @@
             }
             $(".add_comment_reply_form textarea" ).bind('input propertychange', function() {
                 validate_reply_form_textarea(this);
+            }).keydown(function(e) {
+                // inhibit newlines in textarea
+                if(e.keyCode == 13){
+                    e.preventDefault();
+                    //$(this).parents('form').submit(); // Submit form it belongs to
+                }
             });
             $(".add_comment_reply_form").submit(function() {
                 elem = $(this).find('textarea');

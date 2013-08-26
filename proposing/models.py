@@ -1,5 +1,6 @@
 from __future__ import division
 import datetime, logging
+from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
@@ -355,7 +356,10 @@ class Comment(VotablePost):
 class CommentReply(VotablePost):
     # fields
     comment = models.ForeignKey(Comment, related_name="replies")
-    motivation = models.TextField()
+    motivation = models.TextField(validators=[
+        MinLengthValidator(settings.COMMENTREPLY_MIN_LENGTH),
+        MaxLengthValidator(settings.COMMENTREPLY_MAX_LENGTH),
+    ])
 
     def __unicode__(self):
         return "Reply to comment on {}".format(self.comment.proposal)
