@@ -260,7 +260,7 @@ class Proposal(VotablePost):
     def isEditableBy(self, user):
         if not super(Proposal, self).isEditableBy(user):
             return False
-        return self.proposal in ['DISCUSSION']
+        return self.voting_stage in ['DISCUSSION']
 
     @staticmethod
     def voteOptions():
@@ -351,7 +351,7 @@ class Comment(VotablePost):
     def isEditableBy(self, user):
         if not super(Comment, self).isEditableBy(user):
             return False
-        return self.proposal in ['DISCUSSION']
+        return self.proposal.voting_stage in ['DISCUSSION']
 
 class CommentReply(VotablePost):
     # fields
@@ -367,7 +367,7 @@ class CommentReply(VotablePost):
     def isEditableBy(self, user):
         if not super(CommentReply, self).isEditableBy(user):
             return False
-        return self.comment.proposal in ['DISCUSSION']
+        return self.comment.proposal.voting_stage in ['DISCUSSION']
 
 """
     This contains what the user entered on the website for his vote
