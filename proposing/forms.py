@@ -114,14 +114,11 @@ class VotablePostEditForm(forms.ModelForm):
         VotablePostEdit(user=user, post=votable_post).save()
         return votable_post
 
-class ProposalEditForm(VotablePostEditForm):
-    def __init__(self, *args, **kwargs):
-        super(ProposalEditForm, self).__init__(*args, **kwargs)
-        self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }))
-
-    class Meta:
-        model = Proposal
-        fields = ('motivation', 'tags',)
+class ProposalEditForm(ProposalForm):
+    def save(self, user, commit=True):
+        votable_post = super(ProposalEditForm, self).save(user, commit=commit)
+        VotablePostEdit(user=user, post=votable_post).save()
+        return votable_post
 
 class CommentEditForm(VotablePostEditForm):
     class Meta:

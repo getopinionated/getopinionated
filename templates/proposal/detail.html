@@ -268,7 +268,9 @@
 			                            {{ comment.motivation|linebreaks }}
 			                            {% if comment|args:user|call:"isEditableBy" %}
 			                                <div>
-			                                    <a href="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" class="btn btn-mini">edit</a>
+			                                    <a href="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" class="btn btn-mini">
+                                                    <i class="icon-pencil"></i> edit
+                                                </a>
 			                                </div>
 			                            {% endif %}
 			                        {% else %}
@@ -288,7 +290,13 @@
                         {% for commentreply in comment.replies.all %}
                             <div class="row">
                                 <div class="span11 offset1 commentreply">
-                                    {{ commentreply.motivation }} -- {% usemacro user-small commentreply.creator commentreply.create_date %}
+                                    {{ commentreply.motivation }}
+                                    -- {% usemacro user-small commentreply.creator commentreply.create_date %}
+                                    {% if commentreply|args:user|call:"isEditableBy" %}
+                                        <!--<a class="btn btn-mini" href="#"><i class="icon-pencil"></i></a>-->
+                                    {% elif commentreply.edits.count %}
+                                        <i class="icon-pencil"></i>
+                                    {% endif %}
                                 </div>
                             </div>
                         {% endfor %}

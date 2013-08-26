@@ -208,7 +208,7 @@ def detail(request, proposal_slug):
             proxyvote = None
     else:
         proxyvote = None
-    proposaleditform = ProposalForm(proposal.diff.fulldocument,instance=proposal)
+    proposaleditform = ProposalEditForm(proposal.diff.fulldocument,instance=proposal)
     document = proposal.diff.fulldocument.getFinalVersion()
     return render(request, 'proposal/detail.html', {
         'proposal': proposal,
@@ -236,7 +236,7 @@ def editcomment(request, proposal_slug, comment_id):
     else:
         editform = CommentEditForm(instance=comment)
     editform.comment_id = int(comment_id)
-    proposaleditform = ProposalForm(proposal.diff.fulldocument,instance=proposal)
+    proposaleditform = ProposalEditForm(proposal.diff.fulldocument,instance=proposal)
     document = proposal.diff.fulldocument.getFinalVersion()
     return render(request, 'proposal/detail.html', {
         'commenteditform': editform,

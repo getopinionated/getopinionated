@@ -1,4 +1,4 @@
-from models import Proposal, Comment, CommentReply, UpDownVote, ProposalVote, ProposalType
+from models import Proposal, Comment, CommentReply, UpDownVote, ProposalVote, ProposalType, VotablePostEdit
 from django.contrib import admin
 from proposing.models import Tag, Proxy, ProxyProposalVote, FinalProposalVote
 
@@ -54,9 +54,14 @@ class ProposalVoteInline(admin.TabularInline):
     model = ProposalVote
     extra = 3
 
+class VotablePostEditInline(admin.TabularInline):
+    model = VotablePostEdit
+    fk_name = 'post'
+    extra = 0
+
 class ProposalAdmin(admin.ModelAdmin):
     list_display = ['title', 'voting_stage', 'discussion_time', 'creator', 'create_date', 'upvote_score', 'number_of_comments', 'views', ]
-    inlines = [CommentInline, UpDownVoteInline, ProposalVoteInline]
+    inlines = [CommentInline, UpDownVoteInline, ProposalVoteInline, VotablePostEditInline]
     list_filter = ['create_date']
     actions = ['add_15_upvotes','add_15_proposalvotes','recount_votes']
     prepopulated_fields = {'slug': ('title',)}
@@ -88,7 +93,7 @@ class ProposalAdmin(admin.ModelAdmin):
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['proposal', 'creator', 'create_date', 'upvote_score']
-    inlines = [CommentReplyInline]
+    inlines = [CommentReplyInline, VotablePostEditInline]
     list_filter = ['create_date']
 
 admin.site.register(Proposal, ProposalAdmin)
@@ -99,3 +104,4 @@ admin.site.register(ProposalType, ProposalTypeAdmin)
 admin.site.register(ProposalVote, ProposalVoteAdmin)
 admin.site.register(FinalProposalVote, FinalProposalVoteAdmin)
 admin.site.register(ProxyProposalVote, ProxyProposalVoteAdmin)
+admin.site.register(VotablePostEdit, admin.ModelAdmin)
