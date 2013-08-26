@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from models import VotablePost, UpDownVote, Proposal, Comment, ProposalVote
-from forms import CommentForm, CommentReplyForm, ProposalEditForm, CommentEditForm
+from forms import CommentForm, CommentReplyForm, CommentEditForm
 from proposing.models import Tag, ProxyProposalVote, Proxy, VotablePost, FinalProposalVote
 from django.db.models import Count
 from proposing.forms import ProxyForm, ProposalForm
@@ -208,7 +208,7 @@ def detail(request, proposal_slug):
             proxyvote = None
     else:
         proxyvote = None
-    proposaleditform = ProposalEditForm(proposal.diff.fulldocument,instance=proposal)
+    proposaleditform = ProposalForm(proposal.diff.fulldocument,instance=proposal)
     document = proposal.diff.fulldocument.getFinalVersion()
     return render(request, 'proposal/detail.html', {
         'proposal': proposal,
@@ -236,7 +236,7 @@ def editcomment(request, proposal_slug, comment_id):
     else:
         editform = CommentEditForm(instance=comment)
     editform.comment_id = int(comment_id)
-    proposaleditform = ProposalEditForm(proposal.diff.fulldocument,instance=proposal)
+    proposaleditform = ProposalForm(proposal.diff.fulldocument,instance=proposal)
     document = proposal.diff.fulldocument.getFinalVersion()
     return render(request, 'proposal/detail.html', {
         'commenteditform': editform,

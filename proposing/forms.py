@@ -67,9 +67,9 @@ class ProposalForm(forms.ModelForm):
         newdiff.fulldocument = self.document
         newdiff.save()
         if "edit" in self.data.keys():
-            #edit the proposal
+            ## edit the proposal
             newproposal = Proposal.objects.get(pk=int(self.data['edit']))
-            assert newproposal.creator.pk == user.pk, "You are editing a proposal which is not yours! %d != %d"%(newproposal.creator.pk,user.pk)
+            assert newproposal.isEditableBy(user), "You are not allowed to edit this proposal"
             newproposal.title = self.cleaned_data['title']
             newproposal.motivation = self.cleaned_data['motivation']
         else:
@@ -82,6 +82,9 @@ class ProposalForm(forms.ModelForm):
         for tag in self.cleaned_data["tags"]:
             newproposal.tags.add(tag)
         newproposal.save()
+        ## add VotablePostEdit in case of edit
+        if "edit" in self.data.keys():
+            VotablePostEdit(user=user, post=newproposal).save()
         return newproposal
 
 class CommentForm(forms.ModelForm):
@@ -111,12 +114,6 @@ class CommentReplyForm(forms.ModelForm):
 class VotablePostEditForm(forms.ModelForm):
     def save(self, user, commit=True):
         votable_post = super(VotablePostEditForm, self).save(commit=commit)
-        VotablePostEdit(user=user, post=votable_post).save()
-        return votable_post
-
-class ProposalEditForm(ProposalForm):
-    def save(self, user, commit=True):
-        votable_post = super(ProposalEditForm, self).save(user, commit=commit)
         VotablePostEdit(user=user, post=votable_post).save()
         return votable_post
 
