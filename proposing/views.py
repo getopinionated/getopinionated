@@ -187,13 +187,32 @@ def tagproplist(request, tag_slug):
         'title': "Latest proposals on %s" % tag.name.lower()
     })
 
-def detail(request, proposal_slug):
+def detail(request, proposal_slug, edit_comment_id=-1):
+    ## get vars
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
     commentform = None
+    commenteditform = None
     proposal.addView()
 
-    if proposal.commentsAllowedBy(request.user):
+    ## handle all POST-requests
+    if edit_comment_id != -1: ## create comment edit form
+        comment_to_edit = get_object_or_404(Comment, pk=edit_comment_id)
+        assert comment_to_edit.proposal == proposal
+        if not comment_to_edit.isEditableBy(request.user):
+            messages.error(request, 'This comment is not editable')
+            return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
         if request.method == 'POST':
+            commenteditform = CommentEditForm(request.POST, instance=comment_to_edit)
+            if commenteditform.is_valid():
+                commenteditform.save(request.user)
+                messages.success(request, 'Comment edited')
+                return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
+        else:
+            commenteditform = CommentEditForm(instance=comment_to_edit)
+        commenteditform.comment_id = int(edit_comment_id)
+
+    elif proposal.commentsAllowedBy(request.user): ## create new comment form
+        if request.method == 'POST': # POST data is for new comment form unless edit_comment_id != -1
             commentform = CommentForm(request.POST)
             if commentform.is_valid():
                 commentform.save(proposal, request.user)
@@ -201,6 +220,8 @@ def detail(request, proposal_slug):
                 return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
         else:
             commentform = CommentForm()
+
+    ## get proxyvote (Jens: how does this work?)
     if request.user.is_authenticated() and proposal.voting_stage in ['APPROVED', 'REJECTED', 'EXPIRED']:
         try:
             proxyvote = FinalProposalVote.objects.get(user=request.user, proposal=proposal)
@@ -208,8 +229,12 @@ def detail(request, proposal_slug):
             proxyvote = None
     else:
         proxyvote = None
+
+    ## get proposal edit form
     proposaleditform = ProposalForm(proposal.diff.fulldocument,instance=proposal)
     document = proposal.diff.fulldocument.getFinalVersion()
+
+    ## return
     return render(request, 'proposal/detail.html', {
         'proposal': proposal,
         'comments': sorted(proposal.comments.all(), key=lambda c: -c.upvote_score),
@@ -218,31 +243,7 @@ def detail(request, proposal_slug):
         'proposaleditform': proposaleditform,
         'document': document,
         'commentreplyform': CommentReplyForm() if proposal.commentsAllowedBy(request.user) else None,
-    })
-
-def editcomment(request, proposal_slug, comment_id):
-    proposal = get_object_or_404(Proposal, slug=proposal_slug)
-    comment = get_object_or_404(Comment, id=comment_id)
-    assert comment.proposal == proposal
-    if not comment.isEditableBy(request.user):
-        messages.error(request, 'This comment is not editable')
-        return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
-    if request.method == 'POST':
-        editform = CommentEditForm(request.POST, instance=comment)
-        if editform.is_valid():
-            editform.save(request.user)
-            messages.success(request, 'Comment edited')
-            return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
-    else:
-        editform = CommentEditForm(instance=comment)
-    editform.comment_id = int(comment_id)
-    proposaleditform = ProposalForm(proposal.diff.fulldocument,instance=proposal)
-    document = proposal.diff.fulldocument.getFinalVersion()
-    return render(request, 'proposal/detail.html', {
-        'commenteditform': editform,
-        'proposal': proposal,
-        'proposaleditform': proposaleditform,
-        'document': document
+        'commenteditform': commenteditform,
     })
 
 def newcommentreply(request, proposal_slug, comment_id):
