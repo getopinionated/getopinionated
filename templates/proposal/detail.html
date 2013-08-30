@@ -316,7 +316,7 @@
                                         {% if commentreply|args:user|call:"isEditableBy" %}
                                             <a class="btn btn-mini" href="{% url commentreply-edit proposal.slug commentreply.id %}#comment_{{comment.id}}"><i class="icon-pencil"></i></a>
                                         {% elif commentreply.edits.count %}
-                                            <i class="icon-pencil"></i>
+                                            <i class="icon-pencil commentreply_edited_icon" title="{{commentreply.edits.count}} edit{{commentreply.edits.count|pluralize}}, last one {{commentreply.lastEdit.date|shorttime}} by {{commentreply.lastEdit.user}}"></i>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -385,7 +385,7 @@
                 content: '<span class="delete">The amendment wants to remove this text from the document,</span><br/><span class="insert">the amendment wants to add this text to the document</span><br/>and this is context and is not voted with this amendment.',
                 container: '.amendment'
             });
-            /** add comment reply code **/
+            /*** add comment reply code ***/
             $(".add_comment_reply_link a").click(function(e){
                 var containerDiv = $(this).parents('.add_comment_reply');
                 // toggle hidden state of this link
@@ -430,6 +430,18 @@
             $(".comment_reply_form").submit(function() {
                 elem = $(this).find('textarea');
                 return validate_reply_form_textarea(elem);
+            });
+            /*** show how many edits there were ***/
+            $('.commentreply_edited_icon').each(function(){
+                var title = $(this).attr('title');
+                $(this).attr('title', '');
+                $(this).popover({
+                    animation: true,
+                    html: false,
+                    placement: "bottom",
+                    trigger: "hover",
+                    content: title
+                });
             });
         });
     </script>
