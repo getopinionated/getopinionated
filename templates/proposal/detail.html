@@ -58,7 +58,12 @@
                 <textarea class="input-block-level" name="motivation" rows="1">{% if form.motivation.value %}{{form.motivation.value}}{% endif %}</textarea>
             </div>
             <div class="span2">
-                <input type="submit" class="btn btn-primary" value="{% if form == commentreplyeditform %}Edit reply{% else %}Add reply{% endif %}" />
+                <input type="submit" class="btn btn-primary btn-small" value="{% if form == commentreplyeditform %}Edit reply{% else %}Add reply{% endif %}" />
+                {% if form == commentreplyeditform %}
+                    <a href="{% url proposals-detail proposal.slug %}#comment_{{comment.id}}" class="btn btn-small">Cancel</a>
+                {% else %}
+                    <a href="#" class="btn btn-small add_reply_toggle_button">Cancel</a>
+                {% endif %}
             </div>
             <div class="span11 offset1 muted feedback"></div>
         </div>
@@ -307,34 +312,36 @@
 			                </div>
                         </div>
                         <!-- comment replies -->
-                        {% for commentreply in comment.replies.all %}
-                            {% if not commentreplyeditform or commentreplyeditform.instance.id != commentreply.id %}
-                                <div class="row">
-                                    <div class="span11 offset1 commentreply">
-                                        {{ commentreply.motivation }}
-                                        -- {% usemacro user-small commentreply.creator commentreply.create_date %}
-                                        {% if commentreply|args:user|call:"isEditableBy" %}
-                                            <a class="btn btn-mini" href="{% url commentreply-edit proposal.slug commentreply.id %}#comment_{{comment.id}}"><i class="icon-pencil"></i></a>
-                                        {% elif commentreply.edits.count %}
-                                            <i class="icon-pencil commentreply_edited_icon" popover_title="{{commentreply.edits.count}} edit{{commentreply.edits.count|pluralize}}, last one {{commentreply.lastEdit.date|shorttime}} by {{commentreply.lastEdit.user}}"></i>
-                                        {% endif %}
+                        <div class="comment_replies">
+                            {% for commentreply in comment.replies.all %}
+                                {% if not commentreplyeditform or commentreplyeditform.instance.id != commentreply.id %}
+                                    <div class="row">
+                                        <div class="span11 offset1 commentreply">
+                                            {{ commentreply.motivation }}
+                                            -- {% usemacro user-small commentreply.creator commentreply.create_date %}
+                                            {% if commentreply|args:user|call:"isEditableBy" %}
+                                                <a class="btn btn-mini" href="{% url commentreply-edit proposal.slug commentreply.id %}#comment_{{comment.id}}"><i class="icon-pencil"></i></a>
+                                            {% elif commentreply.edits.count %}
+                                                <i class="icon-pencil commentreply_edited_icon" popover_title="{{commentreply.edits.count}} edit{{commentreply.edits.count|pluralize}}, last one {{commentreply.lastEdit.date|shorttime}} by {{commentreply.lastEdit.user}}"></i>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    {% usemacro commentreply_form_generator commentreplyeditform comment %}            
+                                {% endif %}
+                            {% endfor %}
+                            <!-- add comment reply -->
+                            {% if commentreplyform %}
+                                <div class="add_comment_reply">
+                                    <small class="add_comment_reply_link">
+                                        <a href="" class="muted add_reply_toggle_button">add reply</a>
+                                    </small>
+                                    <div class="comment_reply_form_container" style="display:none;">
+                                        {% usemacro commentreply_form_generator commentreplyform comment %}
                                     </div>
                                 </div>
-                            {% else %}
-                                {% usemacro commentreply_form_generator commentreplyeditform comment %}            
                             {% endif %}
-                        {% endfor %}
-                        <!-- add comment reply -->
-                        {% if commentreplyform %}
-                            <div class="add_comment_reply">
-                                <small class="add_comment_reply_link">
-                                    <a href="" class="muted">add reply</a>
-                                </small>
-                                <div class="comment_reply_form_container" style="display:none;">
-                                    {% usemacro commentreply_form_generator commentreplyform comment %}
-                                </div>
-                            </div>
-                        {% endif %}
+                        </div>
 	                </div>
 	            </div>
 	            {% endfor %}
@@ -386,7 +393,7 @@
                 container: '.amendment'
             });
             /*** add comment reply code ***/
-            $(".add_comment_reply_link a").click(function(e){
+            $(".add_reply_toggle_button").click(function(e){
                 var containerDiv = $(this).parents('.add_comment_reply');
                 // toggle hidden state of this link
                 containerDiv.find(".add_comment_reply_link").toggle();
