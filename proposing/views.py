@@ -1,21 +1,19 @@
 import time, json, logging, datetime
 from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import Context, loader
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
 from django.contrib import messages, auth
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
+from django.views.decorators.http import require_POST
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
-from models import VotablePost, UpDownVote, Proposal, Comment, ProposalVote
-from forms import CommentForm, CommentReplyForm, CommentEditForm
 from proposing.models import Tag, ProxyProposalVote, Proxy, VotablePost, FinalProposalVote
-from django.db.models import Count
-from proposing.forms import ProxyForm, ProposalForm
-from django.contrib.auth.views import redirect_to_login
 from document.models import FullDocument
+from forms import CommentForm, CommentReplyForm, CommentEditForm, CommentReplyEditForm, ProxyForm, ProposalForm
+from models import VotablePost, UpDownVote, Proposal, Comment, CommentReply, ProposalVote
 
 class TimelineData:
     # settings
@@ -187,11 +185,11 @@ def tagproplist(request, tag_slug):
         'title': "Latest proposals on %s" % tag.name.lower()
     })
 
-def detail(request, proposal_slug, edit_comment_id=-1):
+def detail(request, proposal_slug, edit_comment_id=-1, edit_commentreply_id=-1):
     ## get vars
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
     commentform = None
-    commenteditform = None
+    commenteditform, commentreplyeditform = None, None
     proposal.addView()
 
     ## handle all POST-requests
@@ -209,7 +207,21 @@ def detail(request, proposal_slug, edit_comment_id=-1):
                 return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
         else:
             commenteditform = CommentEditForm(instance=comment_to_edit)
-        commenteditform.comment_id = int(edit_comment_id)
+
+    elif edit_commentreply_id != -1: ## create commentreply edit form
+        commentreply_to_edit = get_object_or_404(CommentReply, pk=edit_commentreply_id)
+        assert commentreply_to_edit.comment.proposal == proposal
+        if not commentreply_to_edit.isEditableBy(request.user):
+            messages.error(request, 'This comment reply is not editable')
+            return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
+        if request.method == 'POST':
+            commentreplyeditform = CommentReplyEditForm(request.POST, instance=commentreply_to_edit)
+            if commentreplyeditform.is_valid():
+                commentreplyeditform.save(request.user)
+                messages.success(request, 'Comment reply edited')
+                return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
+        else:
+            commentreplyeditform = CommentReplyEditForm(instance=commentreply_to_edit)
 
     elif proposal.commentsAllowedBy(request.user): ## create new comment form
         if request.method == 'POST': # POST data is for new comment form unless edit_comment_id != -1
@@ -242,8 +254,9 @@ def detail(request, proposal_slug, edit_comment_id=-1):
         'proxyvote': proxyvote,
         'proposaleditform': proposaleditform,
         'document': document,
-        'commentreplyform': CommentReplyForm() if proposal.commentsAllowedBy(request.user) else None,
+        'commentreplyform': CommentReplyForm() if commentform else None,
         'commenteditform': commenteditform,
+        'commentreplyeditform': commentreplyeditform,
     })
 
 def newcommentreply(request, proposal_slug, comment_id):
@@ -266,18 +279,6 @@ def newcommentreply(request, proposal_slug, comment_id):
     commentform.save(comment, request.user)
     messages.success(request, 'Comment reply added')
     return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
-
-def editcommentreply(request, proposal_slug, commentreply_id):
-    #### TODO: implement
-    pass
-    #""" Note: all error checking is done by javascript. Therefore,
-    #    all invalid input is due to hack or system error."""
-    ### get vars
-    #proposal = get_object_or_404(Proposal, slug=proposal_slug)
-    #commentreply = get_object_or_404(CommentReply, id=commentreply_id)
-    #comment = commentreply.comment
-    #assert comment.proposal == proposal
-    #raise NotImplementedError()
 
 def proxy(request, tag_slug=None):
     tag = get_object_or_404(Tag, slug=tag_slug) if tag_slug else None
