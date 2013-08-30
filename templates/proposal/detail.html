@@ -316,7 +316,7 @@
                                         {% if commentreply|args:user|call:"isEditableBy" %}
                                             <a class="btn btn-mini" href="{% url commentreply-edit proposal.slug commentreply.id %}#comment_{{comment.id}}"><i class="icon-pencil"></i></a>
                                         {% elif commentreply.edits.count %}
-                                            <i class="icon-pencil commentreply_edited_icon" title="{{commentreply.edits.count}} edit{{commentreply.edits.count|pluralize}}, last one {{commentreply.lastEdit.date|shorttime}} by {{commentreply.lastEdit.user}}"></i>
+                                            <i class="icon-pencil commentreply_edited_icon" popover_title="{{commentreply.edits.count}} edit{{commentreply.edits.count|pluralize}}, last one {{commentreply.lastEdit.date|shorttime}} by {{commentreply.lastEdit.user}}"></i>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -433,14 +433,12 @@
             });
             /*** show how many edits there were ***/
             $('.commentreply_edited_icon').each(function(){
-                var title = $(this).attr('title');
-                $(this).attr('title', '');
                 $(this).popover({
                     animation: true,
                     html: false,
                     placement: "bottom",
                     trigger: "hover",
-                    content: title
+                    content: $(this).attr('popover_title')
                 });
             });
         });
