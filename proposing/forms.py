@@ -6,7 +6,7 @@ from document.models import FullDocument, Diff
 from proposing.widgets import TagSelectorWidget, RichTextEditorWidget,\
     VeryRichTextEditorWidget, NumberSliderWidget, EmptyTagSelectorWidget
 from proposing.fields import TagChoiceField, UserChoiceField
-from models import VotablePost, UpDownVote, Proposal, Comment, CommentReply, Tag, VotablePostEdit
+from models import VotablePost, UpDownVote, Proposal, AmendmentProposal, Comment, CommentReply, Tag, VotablePostEdit
 from django.contrib.auth.models import User
 from accounts.models import CustomUser
 from django.forms.widgets import SelectMultiple
@@ -16,7 +16,7 @@ from proposing.models import Proxy
 import itertools
 
 
-class ProposalForm(forms.ModelForm):
+class AmendmentProposalForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'autofocus','style':'width: 100%;','placeholder':"Title of the amendment"})) # forus on page-load (html5))
     motivation = forms.CharField(widget=forms.Textarea(attrs={'style':'width: 100%;', 'rows':10,'placeholder':"Your motivation to propose this amendment. Convince the other users that this amendment is a good idea."}))
 
@@ -25,7 +25,7 @@ class ProposalForm(forms.ModelForm):
             initial = kwargs['instance']
         else:
             initial = None
-        super(ProposalForm, self).__init__(*args, **kwargs)
+        super(AmendmentProposalForm, self).__init__(*args, **kwargs)
         self.document = document
         
         if initial:
@@ -40,12 +40,12 @@ class ProposalForm(forms.ModelForm):
         self.fields.keyOrder = ['title', 'content', 'motivation','tags', 'discussion_time']
 
     class Meta:
-        model = Proposal
+        model = AmendmentProposal
         fields = ('title', 'motivation')
 
     def clean_title(self):
         title = self.cleaned_data["title"]
-        if not Proposal().isValidTitle(title) and not "edit" in self.data.keys():
+        if not AmendmentProposal().isValidTitle(title) and not "edit" in self.data.keys():
             raise forms.ValidationError("This title has already been used")
         return title
 
@@ -68,13 +68,13 @@ class ProposalForm(forms.ModelForm):
         newdiff.save()
         if "edit" in self.data.keys():
             ## edit the proposal
-            newproposal = Proposal.objects.get(pk=int(self.data['edit']))
+            newproposal = AmendmentProposal.objects.get(pk=int(self.data['edit']))
             assert newproposal.isEditableBy(user), "You are not allowed to edit this proposal"
             newproposal.title = self.cleaned_data['title']
             newproposal.motivation = self.cleaned_data['motivation']
         else:
             ## create proposal
-            newproposal = super(ProposalForm, self).save(commit=False)
+            newproposal = super(AmendmentProposalForm, self).save(commit=False)
         newproposal.diff = newdiff
         newproposal.creator = user if user.is_authenticated() else None
         newproposal.discussion_time = int(self.cleaned_data["discussion_time"])

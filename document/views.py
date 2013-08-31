@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from common.shortcuts import render_to_response
-from proposing.forms import ProposalForm
+from proposing.forms import AmendmentProposalForm
 from proposing.models import Tag
 from models import FullDocument
 
@@ -20,18 +20,18 @@ def documentView(request, document_slug, document_version=None):
         ## create new proposal form
         if request.user.is_authenticated() or settings.ANONYMOUS_PROPOSALS:
             if request.method == 'POST':
-                form = ProposalForm(fulldocument, request.POST)
+                form = AmendmentProposalForm(fulldocument, request.POST)
                 if form.is_valid():
                     proposal = form.save(user = request.user)
                     messages.success(request, 'Proposal created')
                     return HttpResponseRedirect(reverse('proposals-detail', args=(proposal.slug, )))
             else:
-                form = ProposalForm(fulldocument)
+                form = AmendmentProposalForm(fulldocument)
     else:
         ## edit proposal form
-        # Note: proposal.isEditableBy(user) is checked ProposalForm.save()
+        # Note: proposal.isEditableBy(user) is checked AmendmentProposalForm.save()
         assert request.method == 'POST', "the empty edit form is not created on this page"
-        form = ProposalForm(fulldocument, request.POST)
+        form = AmendmentProposalForm(fulldocument, request.POST)
         if form.is_valid():
             proposal = form.save(user = request.user)
             messages.success(request, 'Proposal edited')

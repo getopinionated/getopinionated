@@ -12,8 +12,8 @@ from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from proposing.models import Tag, ProxyProposalVote, Proxy, VotablePost, FinalProposalVote
 from document.models import FullDocument
-from forms import CommentForm, CommentReplyForm, CommentEditForm, CommentReplyEditForm, ProxyForm, ProposalForm
-from models import VotablePost, UpDownVote, Proposal, Comment, CommentReply, ProposalVote
+from forms import CommentForm, CommentReplyForm, CommentEditForm, CommentReplyEditForm, ProxyForm, AmendmentProposalForm
+from models import VotablePost, UpDownVote, Proposal, Comment, CommentReply, ProposalVote, AmendmentProposal
 
 class TimelineData:
     # settings
@@ -187,7 +187,7 @@ def tagproplist(request, tag_slug):
 
 def detail(request, proposal_slug, edit_comment_id=-1, edit_commentreply_id=-1):
     ## get vars
-    proposal = get_object_or_404(Proposal, slug=proposal_slug)
+    proposal = get_object_or_404(AmendmentProposal, slug=proposal_slug)
     commentform = None
     commenteditform, commentreplyeditform = None, None
     proposal.addView()
@@ -243,8 +243,8 @@ def detail(request, proposal_slug, edit_comment_id=-1, edit_commentreply_id=-1):
         proxyvote = None
 
     ## get proposal edit form
-    proposaleditform = ProposalForm(proposal.diff.fulldocument, instance=proposal)
-    document = proposal.diff.fulldocument.getFinalVersion()
+    proposaleditform = AmendmentProposalForm(proposal.diff.fulldocument, instance=proposal)
+    document = proposal.diff.fulldocument.getFinalVersion() if proposal.proposaltype == 'amendment' else None
 
     ## return
     return render(request, 'proposal/detail.html', {

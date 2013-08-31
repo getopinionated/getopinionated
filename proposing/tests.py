@@ -3,7 +3,7 @@ import datetime
 from django.utils import timezone
 from django.test import TestCase
 
-from proposing.models import Proposal,Proxy,ProposalVote, Tag, ProposalType
+from proposing.models import Proposal,Proxy,ProposalVote, Tag
 from django.core.urlresolvers import reverse
 from accounts.models import CustomUser
 from django.contrib.auth.models import User

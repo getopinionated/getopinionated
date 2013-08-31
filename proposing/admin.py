@@ -1,4 +1,4 @@
-from models import Proposal, Comment, CommentReply, UpDownVote, ProposalVote, ProposalType, VotablePostEdit
+from models import Proposal, Comment, CommentReply, UpDownVote, ProposalVote, VotablePostEdit, AmendmentProposal, PositionProposal
 from django.contrib import admin
 from proposing.models import Tag, Proxy, ProxyProposalVote, FinalProposalVote
 
@@ -33,9 +33,6 @@ class ProxyProposalVoteAdmin(admin.ModelAdmin):
     list_display = ('user_voting','user_proxied','proposal','numvotes')
     
     
-class ProposalTypeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'daysUntilVotingStarts', 'minimalUpvotes', 'daysUntilVotingFinishes')
-
 class CommentReplyInline(admin.TabularInline):
     model = CommentReply
     fk_name = 'comment'
@@ -96,11 +93,11 @@ class CommentAdmin(admin.ModelAdmin):
     inlines = [CommentReplyInline, VotablePostEditInline]
     list_filter = ['create_date']
 
-admin.site.register(Proposal, ProposalAdmin)
+admin.site.register(AmendmentProposal, ProposalAdmin)
+admin.site.register(PositionProposal, ProposalAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Proxy, ProxyAdmin)
-admin.site.register(ProposalType, ProposalTypeAdmin)
 admin.site.register(ProposalVote, ProposalVoteAdmin)
 admin.site.register(FinalProposalVote, FinalProposalVoteAdmin)
 admin.site.register(ProxyProposalVote, ProxyProposalVoteAdmin)

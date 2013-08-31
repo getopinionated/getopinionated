@@ -95,16 +95,6 @@ class VotablePostEdit(models.Model):
     post = models.ForeignKey(VotablePost, related_name="edits")
     date = models.DateTimeField(auto_now=True)
 
-class ProposalType(models.Model):
-    name = models.CharField(max_length=255)
-    daysUntilVotingStarts = models.IntegerField("Days until voting starts", default=7)
-    minimalUpvotes = models.IntegerField("Minimal upvotes", default=3)
-    daysUntilVotingFinishes = models.IntegerField("Days until voting finishes", default=7)
-    daysUntilVotingExpires = models.IntegerField("Days until proposal expires", default=60, help_text="Starts from proposal creation date, expiration is due to lack of interest.")
-
-    def __unicode__(self):
-        return self.name
-
 class Proposal(VotablePost):
     # constants
     VOTING_STAGE = (
