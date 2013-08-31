@@ -24,15 +24,11 @@ class ProposalForm(forms.ModelForm):
         ### add content, discussion_time and tags fields
         self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}),
             initial=self._get_initial_content())
-        if not self.is_edit:
-            self.fields["discussion_time"] = forms.IntegerField(widget=NumberSliderWidget(attrs={'style':'width: 100%;'}),
-                initial=7)
-            self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }))
-        else:
-            self.fields["discussion_time"] = forms.IntegerField(widget=NumberSliderWidget(attrs={'style':'width: 100%;'}),
-                initial=self.instance.discussion_time)
-            self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }),
-                initial=self.instance.tags.all())
+        self.fields["discussion_time"] = forms.IntegerField(widget=NumberSliderWidget(attrs={'style':'width: 100%;'}),
+            initial=self.instance.discussion_time self.is_edit else 7)
+        self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }),
+            initial=self.instance.tags.all() if self.is_edit else None)
+        if self.is_edit:
             self.fields["edit"] = forms.CharField(widget=forms.HiddenInput(), initial=self.instance.pk)
 
     def _get_initial_content(self):
