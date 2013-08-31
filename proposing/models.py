@@ -208,21 +208,14 @@ class Proposal(VotablePost):
         super(Proposal, self).save(*args, **kwargs)
 
     def isValidTitle(self, title):
-        """ Check if slug derived from title already exists,
-            the title is then automatically also unique.
+        """ Check:
+                * if the title already exists (case insensitive)
+                * if the slug derived from title already exists,
             Keeps into account possibility of already existing object.
         """
-        titleslug = slugify(title)
-        try:
-            proposal = Proposal.objects.get(slug=titleslug)
-            return self.id == proposal.id
-            if self.id == proposal.id:
-                proposal = Proposal.objects.get(title=title)
-                return self.id == proposal.id
-            else:
-                return False
-        except Proposal.DoesNotExist:
-            return True
+        is_empty_or_self = lambda queryset: queryset.count() == 0 or queryset[0].pk == self.pk
+        return is_empty_or_self(Proposal.objects.filter(title__iexact=title)) \
+            and is_empty_or_self(Proposal.objects.filter(slug=slugify(title)))
 
     def addView(self):
         self.views += 1
