@@ -21,7 +21,8 @@ class ProposalForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.is_edit = 'instance' in kwargs and kwargs['instance'] != None
         super(ProposalForm, self).__init__(*args, **kwargs)
-        ### add content, discussion_time and tags fields
+        ### add title, content, discussion_time and tags fields
+        self.fields["title"] = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'autofocus','style':'width: 100%;'}))
         self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}),
             initial=self._get_initial_content())
         self.fields["discussion_time"] = forms.IntegerField(widget=NumberSliderWidget(attrs={'style':'width: 100%;'}),
@@ -43,6 +44,12 @@ class ProposalForm(forms.ModelForm):
         content = FullDocument.cleanText(content)
         return content
 
+    def clean_title(self):
+        title = self.cleaned_data["title"].strip()
+        if not self.instance.isValidTitle(title):
+            raise forms.ValidationError("This title has already been used")
+        return title
+
     def save(self, user, commit=True):
         proposal = super(ProposalForm, self).save(commit=False)
         if not self.is_edit:
@@ -63,12 +70,13 @@ class ProposalForm(forms.ModelForm):
         return proposal
 
 class AmendmentProposalForm(ProposalForm):
-    title = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'autofocus','style':'width: 100%;','placeholder':"Title of the amendment"})) # forus on page-load (html5))
     motivation = forms.CharField(widget=forms.Textarea(attrs={'style':'width: 100%;', 'rows':10,'placeholder':"Your motivation to propose this amendment. Convince the other users that this amendment is a good idea."}))
 
     def __init__(self, document, *args, **kwargs):
         self.document = document
         super(AmendmentProposalForm, self).__init__(*args, **kwargs)
+        ## add placeholders for shared fields
+        self.fields['title'].widget.attrs['placeholder'] = "Title of the amendment"
 
     class Meta:
         model = AmendmentProposal
@@ -76,12 +84,6 @@ class AmendmentProposalForm(ProposalForm):
 
     def _get_initial_content(self):
         return self.instance.diff.getNewText() if self.is_edit else self.document.content
-
-    def clean_title(self):
-        title = self.cleaned_data["title"]
-        if not AmendmentProposal().isValidTitle(title) and not self.is_edit:
-            raise forms.ValidationError("This title has already been used")
-        return title
 
     def clean_content(self):
         content = super(AmendmentProposalForm, self).clean_content()
@@ -92,44 +94,36 @@ class AmendmentProposalForm(ProposalForm):
         #   raise forms.ValidationError("You should make at least one change")
         return content
 
-    def _additional_save_operations(self, proposal):
+    def _additional_save_operations(self, amendmentproposal):
         ## create diff
         content = FullDocument.cleanText(self.cleaned_data["content"])
         newdiff = Diff.generateDiff(self.document.content, content)
         newdiff.fulldocument = self.document
         newdiff.save()
-        ## add diff to proposal
-        proposal.diff = newdiff
-        return proposal
+        ## add diff to amendmentproposal
+        amendmentproposal.diff = newdiff
+        return amendmentproposal
 
 class PositionProposalForm(ProposalForm, FocussingModelForm):
-    pass
-    # def __init__(self, *args, **kwargs):
-    #     initial = kwargs['instance'] if 'instance' in kwargs else None
-    #     super(PositionProposalForm, self).__init__(*args, **kwargs)
-    #     self.document = document
-        
-    #     if initial:
-    #         self.fields["position_text"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}), initial=initial.position_text)
-    #         self.fields["discussion_time"] = forms.IntegerField(initial=initial.discussion_time, widget=NumberSliderWidget(attrs={'style':'width: 100%;'}))
-    #         self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), initial=initial.tags.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }))
-    #     else:
-    #         self.fields["position_text"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}), initial=document.content)
-    #         self.fields["discussion_time"] = forms.IntegerField(initial=7, widget=NumberSliderWidget(attrs={'style':'width: 100%;'}))
-    #         self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }))
-          
-    #     self.fields.keyOrder = ['title', 'position_text', 'motivation','tags', 'discussion_time']
+    title = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'autofocus','style':'width: 100%;','placeholder':"Title of the position"})) # forus on page-load (html5))
 
+    def __init__(self, *args, **kwargs):
+        super(PositionProposalForm, self).__init__(*args, **kwargs)
+        ## add placeholders for shared fields
+        self.fields['title'].widget.attrs['placeholder'] = "Title of the amendment"
+        self.fields['content'].widget.attrs['placeholder'] = "Position and motivation"
 
-    # class Meta:
-    #     model = PositionProposal
-    #     fields = ('title', 'position_text',)
+    class Meta:
+        model = PositionProposal
+        fields = ('title',)
 
-    # def save(self, proposal, user, commit=True):
-    #     new_post = super(PositionProposalForm, self).save(commit=False)
-    #     new_post.creator = user if user.is_authenticated() else None
-    #     new_post.save()
-    #     return new_post
+    def _get_initial_content(self):
+        return self.instance.position_text
+
+    def _additional_save_operations(self, positionproposal):
+        ## add position_text to positionproposal
+        positionproposal.position_text = self.cleaned_data["content"]
+        return positionproposal
 
 class CommentForm(forms.ModelForm):
     class Meta:
