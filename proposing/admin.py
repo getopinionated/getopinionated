@@ -28,10 +28,8 @@ class ProposalVoteAdmin(admin.ModelAdmin):
 class FinalProposalVoteAdmin(admin.ModelAdmin):
     list_display = ('user','numvotes','voted_self','value','proposal')
 
-
 class ProxyProposalVoteAdmin(admin.ModelAdmin):
     list_display = ('user_voting','user_proxied','proposal','numvotes')
-    
     
 class CommentReplyInline(admin.TabularInline):
     model = CommentReply
