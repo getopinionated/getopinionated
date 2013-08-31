@@ -84,9 +84,9 @@
 {% block content %}
     {% if user.is_authenticated and proposal.proposaltype == 'amendment' %}
 	    {% if proposal|args:user|call:"isEditableBy" %}
-	        {% usemacro proposal-form-modal-macro proposal.diff "editamendmentmodal" proposaleditform document 1 %}
+	        {% usemacro proposal-form-modal-macro proposal.diff "editamendmentmodal" proposaleditform document %}
 	    {% endif %}
-	    {% usemacro proposal-form-modal-macro proposal.diff "forkamendmentmodal" proposaleditform document 0 %}
+	    {% usemacro proposal-form-modal-macro proposal.diff "forkamendmentmodal" proposaleditform document %}
     {% endif %}
     <article class="proposal">
     	<div class="row-fluid">

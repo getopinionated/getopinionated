@@ -33,6 +33,7 @@ class ProposalForm(forms.ModelForm):
                 initial=self.instance.discussion_time)
             self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }),
                 initial=self.instance.tags.all())
+            self.fields["edit"] = forms.CharField(widget=forms.HiddenInput(), initial=self.instance.pk)
 
     def _get_initial_content(self):
         raise NotImplementedError()
