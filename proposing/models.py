@@ -117,8 +117,6 @@ class Proposal(VotablePost):
     # fields
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
-    motivation = models.TextField()
-    diff = models.ForeignKey(Diff)
     views = models.IntegerField(default=0)
     voting_stage = models.CharField(max_length=20, choices=VOTING_STAGE, default='DISCUSSION')
     voting_date = models.DateTimeField(default=None, null=True, blank=True)
@@ -130,6 +128,10 @@ class Proposal(VotablePost):
 
     def __unicode__(self):
         return self.title
+
+    @property
+    def proposaltype(self):
+        raise NotImplementedError()
 
     @property
     def totalvotescore(self):
@@ -218,10 +220,6 @@ class Proposal(VotablePost):
                 return False
         except Proposal.DoesNotExist:
             return True
-
-    @property
-    def diffWithContext(self):
-        return self.diff.getNDiff()
 
     def addView(self):
         self.views += 1
@@ -332,6 +330,25 @@ class Proposal(VotablePost):
 
     def votesOn(self, vote_value):
         return self.final_proxy_proposal_votes.filter(value = vote_value, voted_self=True)
+
+class DocumentProposal(Proposal):
+    motivation = models.TextField()
+    diff = models.ForeignKey(Diff)
+
+    @property
+    def diffWithContext(self):
+        return self.diff.getNDiff()
+
+    @property
+    def proposaltype(self):
+        return "document"
+
+class PositionProposal(Proposal):
+    position_text = models.TextField()
+
+    @property
+    def proposaltype(self):
+        return "position"
 
 class Comment(VotablePost):
     # constants

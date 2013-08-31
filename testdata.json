@@ -1557,9 +1557,169 @@
     },
     {
         "pk": 1,
+        "model": "proposing.documentproposal",
+        "fields": {
+            "favorited_by": [],
+            "diff": 1,
+            "motivation": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\r\n\r\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "tags": [
+                1,
+                2
+            ]
+        }
+    },
+    {
+        "pk": 3,
+        "model": "proposing.documentproposal",
+        "fields": {
+            "favorited_by": [],
+            "diff": 2,
+            "motivation": "The environment subject was missing.",
+            "tags": [
+                5
+            ]
+        }
+    },
+    {
+        "pk": 5,
+        "model": "proposing.documentproposal",
+        "fields": {
+            "favorited_by": [],
+            "diff": 3,
+            "motivation": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nam cursus. Morbi ut mi. Nullam enim leo, egestas id, condimentum at, laoreet mattis, massa. Sed eleifend nonummy diam. Praesent mauris ante, elementum et, bibendum at, posuere sit amet, nibh. Duis tincidunt lectus quis dui viverra vestibulum. Suspendisse vulputate aliquam dui. Nulla elementum dui ut augue. Aliquam vehicula mi at mauris. Maecenas placerat, nisl at consequat rhoncus, sem nunc gravida justo, quis eleifend arcu velit quis lacus. Morbi magna magna, tincidunt a, mattis non, imperdiet vitae, tellus. Sed odio est, auctor ac, sollicitudin in, consequat vitae, orci. Fusce id felis. Vivamus sollicitudin metus eget eros.\r\n\r\nPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In posuere felis nec tortor. Pellentesque faucibus. Ut accumsan ultricies elit. Maecenas at justo id velit placerat molestie. Donec dictum lectus non odio. Cras a ante vitae enim iaculis aliquam. Mauris nunc quam, venenatis nec, euismod sit amet, egestas placerat, est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras id elit. Integer quis urna. Ut ante enim, dapibus malesuada, fringilla eu, condimentum quis, tellus. Aenean porttitor eros vel dolor. Donec convallis pede venenatis nibh. Duis quam. Nam eget lacus. Aliquam erat volutpat. Quisque dignissim congue leo.",
+            "tags": [
+                6
+            ]
+        }
+    },
+    {
+        "pk": 6,
+        "model": "proposing.documentproposal",
+        "fields": {
+            "favorited_by": [],
+            "diff": 4,
+            "motivation": "Some people want a conditional healthcare, e.g. for smokers. However, a disease can never be traced back to one single cause.",
+            "tags": [
+                9
+            ]
+        }
+    },
+    {
+        "pk": 8,
+        "model": "proposing.documentproposal",
+        "fields": {
+            "favorited_by": [],
+            "diff": 5,
+            "motivation": "I'm stupid and I don't know how to spel.",
+            "tags": [
+                8
+            ]
+        }
+    },
+    {
+        "pk": 9,
+        "model": "proposing.documentproposal",
+        "fields": {
+            "favorited_by": [],
+            "diff": 6,
+            "motivation": "mmm",
+            "tags": [
+                5,
+                6
+            ]
+        }
+    },
+    {
+        "pk": 11,
+        "model": "proposing.documentproposal",
+        "fields": {
+            "favorited_by": [],
+            "diff": 7,
+            "motivation": "kkk",
+            "tags": [
+                3
+            ]
+        }
+    },
+    {
+        "pk": 14,
+        "model": "proposing.documentproposal",
+        "fields": {
+            "favorited_by": [],
+            "diff": 8,
+            "motivation": "notoo",
+            "tags": [
+                1,
+                3
+            ]
+        }
+    },
+    {
+        "pk": 15,
+        "model": "proposing.documentproposal",
+        "fields": {
+            "favorited_by": [],
+            "diff": 9,
+            "motivation": "fsqdd",
+            "tags": [
+                1
+            ]
+        }
+    },
+    {
+        "pk": 16,
+        "model": "proposing.documentproposal",
+        "fields": {
+            "favorited_by": [],
+            "diff": 10,
+            "motivation": "lkasjfldkjf",
+            "tags": [
+                1
+            ]
+        }
+    },
+    {
+        "pk": 18,
+        "model": "proposing.documentproposal",
+        "fields": {
+            "favorited_by": [],
+            "diff": 11,
+            "motivation": "Daarom",
+            "tags": [
+                4
+            ]
+        }
+    },
+    {
+        "pk": 20,
+        "model": "proposing.documentproposal",
+        "fields": {
+            "favorited_by": [],
+            "diff": 12,
+            "motivation": "It is may 25th today",
+            "tags": [
+                4
+            ]
+        }
+    },
+    {
+        "pk": 21,
+        "model": "proposing.documentproposal",
+        "fields": {
+            "favorited_by": [
+                2
+            ],
+            "diff": 13,
+            "motivation": "Unpopular proposal",
+            "tags": [
+                4
+            ]
+        }
+    },
+    {
+        "pk": 1,
         "model": "proposing.proposal",
         "fields": {
-            "motivation": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\r\n\r\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
             "views": 22,
             "title": "Copyright should be abolished",
             "avgProposalvoteScore": 0.0,
@@ -1570,7 +1730,6 @@
                 2
             ],
             "expire_date": null,
-            "diff": 1,
             "discussion_time": 14,
             "slug": "copyright-should-be-abolished",
             "voting_stage": "EXPIRED"
@@ -1580,7 +1739,6 @@
         "pk": 3,
         "model": "proposing.proposal",
         "fields": {
-            "motivation": "The environment subject was missing.",
             "views": 32,
             "title": "Protect the environment",
             "avgProposalvoteScore": 1.8333333333333333,
@@ -1590,7 +1748,6 @@
                 5
             ],
             "expire_date": null,
-            "diff": 2,
             "discussion_time": 2,
             "slug": "protect-the-environment",
             "voting_stage": "APPROVED"
@@ -1600,7 +1757,6 @@
         "pk": 5,
         "model": "proposing.proposal",
         "fields": {
-            "motivation": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nam cursus. Morbi ut mi. Nullam enim leo, egestas id, condimentum at, laoreet mattis, massa. Sed eleifend nonummy diam. Praesent mauris ante, elementum et, bibendum at, posuere sit amet, nibh. Duis tincidunt lectus quis dui viverra vestibulum. Suspendisse vulputate aliquam dui. Nulla elementum dui ut augue. Aliquam vehicula mi at mauris. Maecenas placerat, nisl at consequat rhoncus, sem nunc gravida justo, quis eleifend arcu velit quis lacus. Morbi magna magna, tincidunt a, mattis non, imperdiet vitae, tellus. Sed odio est, auctor ac, sollicitudin in, consequat vitae, orci. Fusce id felis. Vivamus sollicitudin metus eget eros.\r\n\r\nPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In posuere felis nec tortor. Pellentesque faucibus. Ut accumsan ultricies elit. Maecenas at justo id velit placerat molestie. Donec dictum lectus non odio. Cras a ante vitae enim iaculis aliquam. Mauris nunc quam, venenatis nec, euismod sit amet, egestas placerat, est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras id elit. Integer quis urna. Ut ante enim, dapibus malesuada, fringilla eu, condimentum quis, tellus. Aenean porttitor eros vel dolor. Donec convallis pede venenatis nibh. Duis quam. Nam eget lacus. Aliquam erat volutpat. Quisque dignissim congue leo.",
             "views": 12,
             "title": "Stop tax avoidance",
             "avgProposalvoteScore": -2.269230769230769,
@@ -1610,7 +1766,6 @@
                 6
             ],
             "expire_date": null,
-            "diff": 3,
             "discussion_time": 2,
             "slug": "stop-tax-avoidance",
             "voting_stage": "REJECTED"
@@ -1620,7 +1775,6 @@
         "pk": 6,
         "model": "proposing.proposal",
         "fields": {
-            "motivation": "Some people want a conditional healthcare, e.g. for smokers. However, a disease can never be traced back to one single cause.",
             "views": 24,
             "title": "Healthcare is unconditional",
             "avgProposalvoteScore": -1.5454545454545454,
@@ -1630,7 +1784,6 @@
                 9
             ],
             "expire_date": null,
-            "diff": 4,
             "discussion_time": 2,
             "slug": "healthcare-is-unconditional",
             "voting_stage": "REJECTED"
@@ -1640,7 +1793,6 @@
         "pk": 8,
         "model": "proposing.proposal",
         "fields": {
-            "motivation": "I'm stupid and I don't know how to spel.",
             "views": 12,
             "title": "Spelling: focus -> fokus",
             "avgProposalvoteScore": 0.0,
@@ -1650,7 +1802,6 @@
                 8
             ],
             "expire_date": null,
-            "diff": 5,
             "discussion_time": 1,
             "slug": "spelling-focus-fokus",
             "voting_stage": "EXPIRED"
@@ -1660,7 +1811,6 @@
         "pk": 9,
         "model": "proposing.proposal",
         "fields": {
-            "motivation": "mmm",
             "views": 11,
             "title": "ddd",
             "avgProposalvoteScore": 0.0,
@@ -1671,7 +1821,6 @@
                 6
             ],
             "expire_date": "2013-06-22T22:23:48.096Z",
-            "diff": 6,
             "discussion_time": 2,
             "slug": "ddd",
             "voting_stage": "REJECTED"
@@ -1681,7 +1830,6 @@
         "pk": 11,
         "model": "proposing.proposal",
         "fields": {
-            "motivation": "kkk",
             "views": 15,
             "title": "Teaching",
             "avgProposalvoteScore": 0.0,
@@ -1691,7 +1839,6 @@
                 3
             ],
             "expire_date": "2013-06-22T22:23:48.537Z",
-            "diff": 7,
             "discussion_time": 1,
             "slug": "teaching",
             "voting_stage": "REJECTED"
@@ -1701,7 +1848,6 @@
         "pk": 14,
         "model": "proposing.proposal",
         "fields": {
-            "motivation": "notoo",
             "views": 5,
             "title": "fuck democracy",
             "avgProposalvoteScore": 0.0,
@@ -1712,7 +1858,6 @@
                 3
             ],
             "expire_date": "2013-06-22T22:23:48.997Z",
-            "diff": 8,
             "discussion_time": 2,
             "slug": "fuck-democracy",
             "voting_stage": "REJECTED"
@@ -1722,7 +1867,6 @@
         "pk": 15,
         "model": "proposing.proposal",
         "fields": {
-            "motivation": "fsqdd",
             "views": 4,
             "title": "iuohzrohdjk",
             "avgProposalvoteScore": 0.0,
@@ -1732,7 +1876,6 @@
                 1
             ],
             "expire_date": "2013-06-22T22:23:49.420Z",
-            "diff": 9,
             "discussion_time": 2,
             "slug": "iuohzrohdjk",
             "voting_stage": "REJECTED"
@@ -1742,7 +1885,6 @@
         "pk": 16,
         "model": "proposing.proposal",
         "fields": {
-            "motivation": "lkasjfldkjf",
             "views": 5,
             "title": "lsdkfjldk",
             "avgProposalvoteScore": 0.0,
@@ -1752,7 +1894,6 @@
                 1
             ],
             "expire_date": "2013-06-22T22:23:49.842Z",
-            "diff": 10,
             "discussion_time": 1,
             "slug": "lsdkfjldk",
             "voting_stage": "REJECTED"
@@ -1762,7 +1903,6 @@
         "pk": 18,
         "model": "proposing.proposal",
         "fields": {
-            "motivation": "Daarom",
             "views": 6,
             "title": "Gewoon iets dat ik er bij wil",
             "avgProposalvoteScore": 0.0,
@@ -1772,7 +1912,6 @@
                 4
             ],
             "expire_date": "2013-06-22T22:23:50.262Z",
-            "diff": 11,
             "discussion_time": 2,
             "slug": "gewoon-iets-dat-ik-er-bij-wil",
             "voting_stage": "REJECTED"
@@ -1782,7 +1921,6 @@
         "pk": 20,
         "model": "proposing.proposal",
         "fields": {
-            "motivation": "It is may 25th today",
             "views": 1,
             "title": "It is may 25th today",
             "avgProposalvoteScore": 0.0,
@@ -1792,7 +1930,6 @@
                 4
             ],
             "expire_date": null,
-            "diff": 12,
             "discussion_time": 2,
             "slug": "it-is-may-25th-today",
             "voting_stage": "VOTING"
@@ -1802,7 +1939,6 @@
         "pk": 21,
         "model": "proposing.proposal",
         "fields": {
-            "motivation": "Unpopular proposal",
             "views": 3,
             "title": "Unpopular proposal",
             "avgProposalvoteScore": 0.0,
@@ -1814,7 +1950,6 @@
                 4
             ],
             "expire_date": null,
-            "diff": 13,
             "discussion_time": 2,
             "slug": "unpopular-proposal",
             "voting_stage": "DISCUSSION"
