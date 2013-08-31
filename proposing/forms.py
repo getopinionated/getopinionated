@@ -55,8 +55,11 @@ class ProposalForm(forms.ModelForm):
         proposal = self._additional_save_operations(proposal)
         assert commit, "can't save form without commit because of many-to-manyfield"
         proposal.save() # save before the many-to-manyfield gets created
-        for tag in self.cleaned_data["tags"]:
-            proposal.tags.add(tag)
+        for tag in Tag.objects.all():
+            if tag in self.cleaned_data["tags"]:
+                proposal.tags.add(tag) # if tag is already added, this has no effect
+            elif tag in proposal.tags.all():
+                proposal.tags.remove(tag)
         proposal.save()
         ## add VotablePostEdit in case of edit
         if self.is_edit:
