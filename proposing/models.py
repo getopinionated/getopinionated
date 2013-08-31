@@ -341,7 +341,7 @@ class AmendmentProposal(Proposal):
 
     @property
     def proposaltype(self):
-        return "document"
+        return "amendment"
 
 class PositionProposal(Proposal):
     position_text = models.TextField()
