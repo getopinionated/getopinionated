@@ -25,7 +25,7 @@ class ProposalForm(forms.ModelForm):
         self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}),
             initial=self._get_initial_content())
         self.fields["discussion_time"] = forms.IntegerField(widget=NumberSliderWidget(attrs={'style':'width: 100%;'}),
-            initial=self.instance.discussion_time self.is_edit else 7)
+            initial=self.instance.discussion_time if self.is_edit else 7)
         self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }),
             initial=self.instance.tags.all() if self.is_edit else None)
         if self.is_edit:
@@ -69,7 +69,6 @@ class AmendmentProposalForm(ProposalForm):
     def __init__(self, document, *args, **kwargs):
         self.document = document
         super(AmendmentProposalForm, self).__init__(*args, **kwargs)
-        self.fields.keyOrder = ['title', 'content', 'motivation','tags', 'discussion_time']
 
     class Meta:
         model = AmendmentProposal
