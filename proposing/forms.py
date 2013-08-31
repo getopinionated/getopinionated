@@ -82,7 +82,7 @@ class AmendmentProposalForm(ProposalForm):
 
     class Meta:
         model = AmendmentProposal
-        fields = ('title', 'motivation')
+        fields = ('motivation',)
 
     def _get_initial_content(self):
         return self.instance.diff.getNewText() if self.has_instance else self.document.content
@@ -107,17 +107,18 @@ class AmendmentProposalForm(ProposalForm):
         return amendmentproposal
 
 class PositionProposalForm(ProposalForm, FocussingModelForm):
-    title = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'autofocus','style':'width: 100%;','placeholder':"Title of the position"})) # forus on page-load (html5))
-
     def __init__(self, *args, **kwargs):
         super(PositionProposalForm, self).__init__(*args, **kwargs)
         ## add placeholders for shared fields
-        self.fields['title'].widget.attrs['placeholder'] = "Title of the amendment"
-        self.fields['content'].widget.attrs['placeholder'] = "Position and motivation"
+        self.fields['title'].widget.attrs['placeholder'] = "Title of the position"
+        ## modify titles for shared fields
+        self.fields['title'].label = ""
+        self.fields['tags'].label = ""
+        self.fields['content'].label = "Position and motivation"
 
     class Meta:
         model = PositionProposal
-        fields = ('title',)
+        fields = ('title', 'tags', 'discussion_time')
 
     def _get_initial_content(self):
         return self.instance.position_text

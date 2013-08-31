@@ -1,9 +1,27 @@
 {% extends "base.html" %}
 {% load filters %}
+{% load bootstrap_toolkit %}
 {% load macros %}
 
 {% block title %}{% include "title.html" with subtitle=title %}{% endblock %}
 
+{% block extrastyle %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css/proposing.css" type="text/css" charset="utf-8" />
+    {{ proposalform.media }}
+{% endblock %}
+
 {% block content %}
-    {{ proposalform }}
+    <h2>{{title}}</h2>
+    <form class="form" action="" method="POST">
+        {% csrf_js_token %}
+        {{ proposalform|as_bootstrap }}
+        <a href="
+            {% if proposal %}
+                {% url proposals-detail proposal.slug %}
+            {% else %}
+                {% url proposals-index %}
+            {% endif %}
+        " class="btn" tabindex="-1">Cancel</a>
+        <button type="submit" class="btn btn-primary">Submit position</button>
+    </form>
 {% endblock %}
