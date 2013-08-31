@@ -82,7 +82,7 @@ class AmendmentProposalForm(ProposalForm):
 
     class Meta:
         model = AmendmentProposal
-        fields = ('motivation',)
+        fields = ('title', 'motivation',)
 
     def _get_initial_content(self):
         return self.instance.diff.getNewText() if self.has_instance else self.document.content
