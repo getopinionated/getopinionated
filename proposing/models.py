@@ -71,6 +71,19 @@ class VotablePost(models.Model):
     def lastEdit(self):
         return self.edits.latest('id')
 
+    def cast(self):
+        """ This method converts "self" into its correct child class
+            More information: http://stackoverflow.com/a/13306529/1218058
+        """
+        for name in dir(self):
+            try:
+                attr = getattr(self, name)
+                if isinstance(attr, self.__class__):
+                    return attr
+            except:
+                pass
+        return self        
+
 class UpDownVote(models.Model):
     user = models.ForeignKey(CustomUser, related_name="up_down_votes")
     post = models.ForeignKey(VotablePost, related_name="up_down_votes")

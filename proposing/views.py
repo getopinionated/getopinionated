@@ -187,9 +187,9 @@ def tagproplist(request, tag_slug):
 
 def detail(request, proposal_slug, edit_comment_id=-1, edit_commentreply_id=-1):
     ## get vars
-    proposal = get_object_or_404(AmendmentProposal, slug=proposal_slug)
-    commentform = None
-    commenteditform, commentreplyeditform = None, None
+    proposal = get_object_or_404(Proposal, slug=proposal_slug).cast()
+    commentform, commenteditform, commentreplyeditform = None, None, None
+    document = None
     proposal.addView()
 
     ## handle all POST-requests
@@ -243,8 +243,11 @@ def detail(request, proposal_slug, edit_comment_id=-1, edit_commentreply_id=-1):
         proxyvote = None
 
     ## get proposal edit form
-    proposaleditform = AmendmentProposalForm(proposal.diff.fulldocument, instance=proposal)
-    document = proposal.diff.fulldocument.getFinalVersion() if proposal.proposaltype == 'amendment' else None
+    if proposal.proposaltype == 'amendment':
+        proposaleditform = AmendmentProposalForm(proposal.diff.fulldocument, instance=proposal)
+        document = proposal.diff.fulldocument.getFinalVersion()
+    else:
+        proposaleditform = None
 
     ## return
     return render(request, 'proposal/detail.html', {
