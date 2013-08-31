@@ -1561,9 +1561,8 @@
         "fields": {
             "motivation": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\r\n\r\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
             "views": 22,
-            "avgProposalvoteScore": 0.0,
             "title": "Copyright should be abolished",
-            "discussion_time": 14,
+            "avgProposalvoteScore": 0.0,
             "voting_date": "2013-03-29T15:32:05Z",
             "favorited_by": [],
             "tags": [
@@ -1572,6 +1571,7 @@
             ],
             "expire_date": null,
             "diff": 1,
+            "discussion_time": 14,
             "slug": "copyright-should-be-abolished",
             "voting_stage": "EXPIRED"
         }
@@ -1582,9 +1582,8 @@
         "fields": {
             "motivation": "The environment subject was missing.",
             "views": 32,
-            "avgProposalvoteScore": 1.8333333333333333,
             "title": "Protect the environment",
-            "discussion_time": 2,
+            "avgProposalvoteScore": 1.8333333333333333,
             "voting_date": "2013-03-29T15:32:05Z",
             "favorited_by": [],
             "tags": [
@@ -1592,6 +1591,7 @@
             ],
             "expire_date": null,
             "diff": 2,
+            "discussion_time": 2,
             "slug": "protect-the-environment",
             "voting_stage": "APPROVED"
         }
@@ -1602,9 +1602,8 @@
         "fields": {
             "motivation": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nam cursus. Morbi ut mi. Nullam enim leo, egestas id, condimentum at, laoreet mattis, massa. Sed eleifend nonummy diam. Praesent mauris ante, elementum et, bibendum at, posuere sit amet, nibh. Duis tincidunt lectus quis dui viverra vestibulum. Suspendisse vulputate aliquam dui. Nulla elementum dui ut augue. Aliquam vehicula mi at mauris. Maecenas placerat, nisl at consequat rhoncus, sem nunc gravida justo, quis eleifend arcu velit quis lacus. Morbi magna magna, tincidunt a, mattis non, imperdiet vitae, tellus. Sed odio est, auctor ac, sollicitudin in, consequat vitae, orci. Fusce id felis. Vivamus sollicitudin metus eget eros.\r\n\r\nPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In posuere felis nec tortor. Pellentesque faucibus. Ut accumsan ultricies elit. Maecenas at justo id velit placerat molestie. Donec dictum lectus non odio. Cras a ante vitae enim iaculis aliquam. Mauris nunc quam, venenatis nec, euismod sit amet, egestas placerat, est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras id elit. Integer quis urna. Ut ante enim, dapibus malesuada, fringilla eu, condimentum quis, tellus. Aenean porttitor eros vel dolor. Donec convallis pede venenatis nibh. Duis quam. Nam eget lacus. Aliquam erat volutpat. Quisque dignissim congue leo.",
             "views": 12,
-            "avgProposalvoteScore": -2.269230769230769,
             "title": "Stop tax avoidance",
-            "discussion_time": 2,
+            "avgProposalvoteScore": -2.269230769230769,
             "voting_date": "2013-04-16T19:41:07.573Z",
             "favorited_by": [],
             "tags": [
@@ -1612,6 +1611,7 @@
             ],
             "expire_date": null,
             "diff": 3,
+            "discussion_time": 2,
             "slug": "stop-tax-avoidance",
             "voting_stage": "REJECTED"
         }
@@ -1622,9 +1622,8 @@
         "fields": {
             "motivation": "Some people want a conditional healthcare, e.g. for smokers. However, a disease can never be traced back to one single cause.",
             "views": 24,
-            "avgProposalvoteScore": -1.5454545454545454,
             "title": "Healthcare is unconditional",
-            "discussion_time": 2,
+            "avgProposalvoteScore": -1.5454545454545454,
             "voting_date": "2013-05-03T20:03:33.799Z",
             "favorited_by": [],
             "tags": [
@@ -1632,6 +1631,7 @@
             ],
             "expire_date": null,
             "diff": 4,
+            "discussion_time": 2,
             "slug": "healthcare-is-unconditional",
             "voting_stage": "REJECTED"
         }
@@ -1642,9 +1642,8 @@
         "fields": {
             "motivation": "I'm stupid and I don't know how to spel.",
             "views": 12,
-            "avgProposalvoteScore": 0.0,
             "title": "Spelling: focus -> fokus",
-            "discussion_time": 1,
+            "avgProposalvoteScore": 0.0,
             "voting_date": null,
             "favorited_by": [],
             "tags": [
@@ -1652,6 +1651,7 @@
             ],
             "expire_date": null,
             "diff": 5,
+            "discussion_time": 1,
             "slug": "spelling-focus-fokus",
             "voting_stage": "EXPIRED"
         }
@@ -1662,9 +1662,8 @@
         "fields": {
             "motivation": "mmm",
             "views": 11,
-            "avgProposalvoteScore": 0.0,
             "title": "ddd",
-            "discussion_time": 2,
+            "avgProposalvoteScore": 0.0,
             "voting_date": "2013-05-24T21:59:05.703Z",
             "favorited_by": [],
             "tags": [
@@ -1673,6 +1672,7 @@
             ],
             "expire_date": "2013-06-22T22:23:48.096Z",
             "diff": 6,
+            "discussion_time": 2,
             "slug": "ddd",
             "voting_stage": "REJECTED"
         }
@@ -1683,9 +1683,8 @@
         "fields": {
             "motivation": "kkk",
             "views": 15,
-            "avgProposalvoteScore": 0.0,
             "title": "Teaching",
-            "discussion_time": 1,
+            "avgProposalvoteScore": 0.0,
             "voting_date": "2013-05-24T21:59:05.749Z",
             "favorited_by": [],
             "tags": [
@@ -1693,6 +1692,7 @@
             ],
             "expire_date": "2013-06-22T22:23:48.537Z",
             "diff": 7,
+            "discussion_time": 1,
             "slug": "teaching",
             "voting_stage": "REJECTED"
         }
@@ -1703,9 +1703,8 @@
         "fields": {
             "motivation": "notoo",
             "views": 5,
-            "avgProposalvoteScore": 0.0,
             "title": "fuck democracy",
-            "discussion_time": 2,
+            "avgProposalvoteScore": 0.0,
             "voting_date": "2013-05-24T21:59:05.779Z",
             "favorited_by": [],
             "tags": [
@@ -1714,6 +1713,7 @@
             ],
             "expire_date": "2013-06-22T22:23:48.997Z",
             "diff": 8,
+            "discussion_time": 2,
             "slug": "fuck-democracy",
             "voting_stage": "REJECTED"
         }
@@ -1724,9 +1724,8 @@
         "fields": {
             "motivation": "fsqdd",
             "views": 4,
-            "avgProposalvoteScore": 0.0,
             "title": "iuohzrohdjk",
-            "discussion_time": 2,
+            "avgProposalvoteScore": 0.0,
             "voting_date": "2013-05-24T21:59:05.807Z",
             "favorited_by": [],
             "tags": [
@@ -1734,6 +1733,7 @@
             ],
             "expire_date": "2013-06-22T22:23:49.420Z",
             "diff": 9,
+            "discussion_time": 2,
             "slug": "iuohzrohdjk",
             "voting_stage": "REJECTED"
         }
@@ -1744,9 +1744,8 @@
         "fields": {
             "motivation": "lkasjfldkjf",
             "views": 5,
-            "avgProposalvoteScore": 0.0,
             "title": "lsdkfjldk",
-            "discussion_time": 1,
+            "avgProposalvoteScore": 0.0,
             "voting_date": "2013-05-24T21:59:05.839Z",
             "favorited_by": [],
             "tags": [
@@ -1754,6 +1753,7 @@
             ],
             "expire_date": "2013-06-22T22:23:49.842Z",
             "diff": 10,
+            "discussion_time": 1,
             "slug": "lsdkfjldk",
             "voting_stage": "REJECTED"
         }
@@ -1764,9 +1764,8 @@
         "fields": {
             "motivation": "Daarom",
             "views": 6,
-            "avgProposalvoteScore": 0.0,
             "title": "Gewoon iets dat ik er bij wil",
-            "discussion_time": 2,
+            "avgProposalvoteScore": 0.0,
             "voting_date": "2013-05-24T21:59:05.870Z",
             "favorited_by": [],
             "tags": [
@@ -1774,6 +1773,7 @@
             ],
             "expire_date": "2013-06-22T22:23:50.262Z",
             "diff": 11,
+            "discussion_time": 2,
             "slug": "gewoon-iets-dat-ik-er-bij-wil",
             "voting_stage": "REJECTED"
         }
@@ -1784,9 +1784,8 @@
         "fields": {
             "motivation": "It is may 25th today",
             "views": 1,
-            "avgProposalvoteScore": 0.0,
             "title": "It is may 25th today",
-            "discussion_time": 2,
+            "avgProposalvoteScore": 0.0,
             "voting_date": "2013-06-22T22:23:50.581Z",
             "favorited_by": [],
             "tags": [
@@ -1794,6 +1793,7 @@
             ],
             "expire_date": null,
             "diff": 12,
+            "discussion_time": 2,
             "slug": "it-is-may-25th-today",
             "voting_stage": "VOTING"
         }
@@ -1804,9 +1804,8 @@
         "fields": {
             "motivation": "Unpopular proposal",
             "views": 3,
-            "avgProposalvoteScore": 0.0,
             "title": "Unpopular proposal",
-            "discussion_time": 2,
+            "avgProposalvoteScore": 0.0,
             "voting_date": null,
             "favorited_by": [
                 2
@@ -1816,6 +1815,7 @@
             ],
             "expire_date": null,
             "diff": 13,
+            "discussion_time": 2,
             "slug": "unpopular-proposal",
             "voting_stage": "DISCUSSION"
         }
