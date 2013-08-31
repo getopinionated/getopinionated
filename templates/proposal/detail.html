@@ -86,7 +86,7 @@
 	    {% if proposal|args:user|call:"isEditableBy" %}
 	        {% usemacro proposal-form-modal-macro proposal.diff "editamendmentmodal" proposaleditform document %}
 	    {% endif %}
-	    {% usemacro proposal-form-modal-macro proposal.diff "forkamendmentmodal" proposaleditform document %}
+	    {% usemacro proposal-form-modal-macro proposal.diff "forkamendmentmodal" proposalforkform document %}
     {% endif %}
     <article class="proposal">
     	<div class="row-fluid">

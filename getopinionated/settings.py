@@ -312,7 +312,7 @@ VOTING_DAYS = 7
 ## Note: These only disable the creation by users of these proposals, an administrator
 ##       can add them manually via the admin interface)
 AMENDMENT_PROPOSALS_ALLOWED = True # this defines wheter the document system is used
-POSITION_PROPOSALS_ALLOWED = False
+POSITION_PROPOSALS_ALLOWED = True
 ## commentreply settings
 COMMENTREPLY_MIN_LENGTH = 15
 COMMENTREPLY_MAX_LENGTH = 500

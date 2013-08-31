@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% load filters %}
+{% load macros %}
+
+{% block title %}{% include "title.html" with subtitle=title %}{% endblock %}
+
+{% block content %}
+    {{ proposalform }}
+{% endblock %}

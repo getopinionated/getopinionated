@@ -17,18 +17,20 @@ import itertools
 class ProposalForm(forms.ModelForm):
     """ abstract superclass for AmendmentProposalForm and PositionProposalForm """
     is_edit = False
+    has_instance = False
 
     def __init__(self, *args, **kwargs):
-        self.is_edit = 'instance' in kwargs and kwargs['instance'] != None
+        self.has_instance = 'instance' in kwargs and kwargs['instance'] != None
+        self.is_edit = kwargs.pop('is_edit') if 'is_edit' in kwargs else self.has_instance
         super(ProposalForm, self).__init__(*args, **kwargs)
         ### add title, content, discussion_time and tags fields
         self.fields["title"] = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'autofocus','style':'width: 100%;'}))
         self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}),
             initial=self._get_initial_content())
         self.fields["discussion_time"] = forms.IntegerField(widget=NumberSliderWidget(attrs={'style':'width: 100%;'}),
-            initial=self.instance.discussion_time if self.is_edit else 7)
+            initial=self.instance.discussion_time if self.has_instance else 7)
         self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }),
-            initial=self.instance.tags.all() if self.is_edit else None)
+            initial=self.instance.tags.all() if self.has_instance else None)
         if self.is_edit:
             self.fields["edit"] = forms.CharField(widget=forms.HiddenInput(), initial=self.instance.pk)
 
@@ -83,7 +85,7 @@ class AmendmentProposalForm(ProposalForm):
         fields = ('title', 'motivation')
 
     def _get_initial_content(self):
-        return self.instance.diff.getNewText() if self.is_edit else self.document.content
+        return self.instance.diff.getNewText() if self.has_instance else self.document.content
 
     def clean_content(self):
         content = super(AmendmentProposalForm, self).clean_content()

@@ -11,6 +11,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from proposing.models import Tag, ProxyProposalVote, Proxy, VotablePost, FinalProposalVote
+from accounts.decorators import logged_in_or
 from document.models import FullDocument
 from models import VotablePost, UpDownVote, Proposal, Comment, CommentReply, ProposalVote, AmendmentProposal, PositionProposal
 from forms import CommentForm, CommentReplyForm, CommentEditForm, CommentReplyEditForm, ProxyForm, AmendmentProposalForm, PositionProposalForm
@@ -113,7 +114,7 @@ class ProxyGraphData:
             proxies = Proxy.objects.filter(tags__pk = filter_tag.pk).filter(isdefault=False)
             #select default edges from delegating people not in the previous set
             proxies = proxies | (Proxy.objects.filter(isdefault=True).exclude(delegating__in = proxies.values('delegating')))
-            
+
         for proxy in proxies:
             nodes.add(proxy.delegating.display_name)
             for delegate in proxy.delegates.all():
@@ -245,9 +246,10 @@ def detail(request, proposal_slug, edit_comment_id=-1, edit_commentreply_id=-1):
     ## get proposal edit form
     if proposal.proposaltype == 'amendment':
         proposaleditform = AmendmentProposalForm(proposal.diff.fulldocument, instance=proposal)
+        proposalforkform = AmendmentProposalForm(proposal.diff.fulldocument, instance=proposal, is_edit=False)
         document = proposal.diff.fulldocument.getFinalVersion()
     else:
-        proposaleditform = None
+        proposaleditform, proposalforkform = None, None
 
     ## return
     return render(request, 'proposal/detail.html', {
@@ -256,6 +258,7 @@ def detail(request, proposal_slug, edit_comment_id=-1, edit_commentreply_id=-1):
         'commentform': commentform,
         'proxyvote': proxyvote,
         'proposaleditform': proposaleditform,
+        'proposalforkform': proposalforkform,
         'document': document,
         'commentreplyform': CommentReplyForm() if commentform else None,
         'commenteditform': commenteditform,
@@ -283,8 +286,31 @@ def newcommentreply(request, proposal_slug, comment_id):
     messages.success(request, 'Comment reply added')
     return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
 
-def newpositionproposal(request):
-    pass
+@logged_in_or(settings.ANONYMOUS_PROPOSALS)
+def positionproposalform(request, edit_proposal_id=None):
+    proposalform = None
+    title = None
+
+    if edit_proposal_id == None: # creating new proposal
+        title = "New position proposal"
+        if request.method == 'POST': # POST data is for new comment form unless edit_comment_id != -1
+            proposalform = PositionProposalForm(request.POST)
+            if proposalform.is_valid():
+                proposal = proposalform.save(request.user)
+                messages.success(request, 'Position proposal created')
+                return HttpResponseRedirect(reverse('proposals-detail', args=(proposal.slug,)))
+        else:
+            proposalform = PositionProposalForm()
+    else:
+        title = "Edit position proposal"
+        proposal = get_object_or_404(PositionProposal, pk=edit_proposal_id)
+        # TODO
+
+    ## return
+    return render(request, 'proposal/positionproposal_form.html', {
+        'title': title,
+        'proposalform': proposalform,
+    })
 
 def proxy(request, tag_slug=None):
     tag = get_object_or_404(Tag, slug=tag_slug) if tag_slug else None
@@ -293,7 +319,7 @@ def proxy(request, tag_slug=None):
         if request.method == 'POST':
             proxyform = ProxyForm(user, request.POST)
             proxyform.save()
-    
+
         proxyform = ProxyForm(user)
         return render(request, 'accounts/proxy.html', {
                 'user': user,
@@ -323,7 +349,7 @@ def listofvoters(request, proposal_slug):
 def ajaxfavorite(request, proposal_slug):
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
     user = request.user
-    if user in proposal.favorited_by.all(): 
+    if user in proposal.favorited_by.all():
         proposal.favorited_by.remove(user)
         proposal.save()
         return HttpResponse(content='0', mimetype='text/plain')
