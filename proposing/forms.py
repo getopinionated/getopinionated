@@ -6,86 +6,131 @@ from document.models import FullDocument, Diff
 from proposing.widgets import TagSelectorWidget, RichTextEditorWidget,\
     VeryRichTextEditorWidget, NumberSliderWidget, EmptyTagSelectorWidget
 from proposing.fields import TagChoiceField, UserChoiceField
-from models import VotablePost, UpDownVote, Proposal, AmendmentProposal, Comment, CommentReply, Tag, VotablePostEdit
 from django.contrib.auth.models import User
 from accounts.models import CustomUser
 from django.forms.widgets import SelectMultiple
 from django.forms.fields import MultipleChoiceField
 from django.forms.models import ModelMultipleChoiceField
-from proposing.models import Proxy
+from models import VotablePost, UpDownVote, Proposal, AmendmentProposal, PositionProposal, Comment, CommentReply, Tag, VotablePostEdit, Proxy
 import itertools
 
+class ProposalForm(forms.ModelForm):
+    """ abstract superclass for AmendmentProposalForm and PositionProposalForm """
+    is_edit = False
 
-class AmendmentProposalForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.is_edit = 'instance' in kwargs and kwargs['instance'] != None
+        super(ProposalForm, self).__init__(*args, **kwargs)
+        ### add content, discussion_time and tags fields
+        self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}),
+            initial=self._get_initial_content())
+        if not self.is_edit:
+            self.fields["discussion_time"] = forms.IntegerField(widget=NumberSliderWidget(attrs={'style':'width: 100%;'}),
+                initial=7)
+            self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }))
+        else:
+            self.fields["discussion_time"] = forms.IntegerField(widget=NumberSliderWidget(attrs={'style':'width: 100%;'}),
+                initial=self.instance.discussion_time)
+            self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }),
+                initial=self.instance.tags.all())
+
+    def _get_initial_content(self):
+        raise NotImplementedError()
+
+    def _additional_save_operations(self, proposal):
+        return proposal
+    
+    def clean_content(self):
+        content = self.cleaned_data["content"]
+        content = sanitizehtml.sanitizeHtml(content)
+        content = FullDocument.cleanText(content)
+        return content
+
+    def save(self, user, commit=True):
+        proposal = super(ProposalForm, self).save(commit=False)
+        if not self.is_edit:
+            proposal.creator = user if user.is_authenticated() else None
+        proposal.discussion_time = int(self.cleaned_data["discussion_time"])
+        proposal = self._additional_save_operations(proposal)
+        assert commit, "can't save form without commit because of many-to-manyfield"
+        proposal.save() # save before the many-to-manyfield gets created
+        for tag in self.cleaned_data["tags"]:
+            proposal.tags.add(tag)
+        proposal.save()
+        ## add VotablePostEdit in case of edit
+        if self.is_edit:
+            VotablePostEdit(user=user, post=proposal).save()
+        return proposal
+
+class AmendmentProposalForm(ProposalForm):
     title = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'autofocus','style':'width: 100%;','placeholder':"Title of the amendment"})) # forus on page-load (html5))
     motivation = forms.CharField(widget=forms.Textarea(attrs={'style':'width: 100%;', 'rows':10,'placeholder':"Your motivation to propose this amendment. Convince the other users that this amendment is a good idea."}))
 
     def __init__(self, document, *args, **kwargs):
-        if 'instance' in kwargs:
-            initial = kwargs['instance']
-        else:
-            initial = None
-        super(AmendmentProposalForm, self).__init__(*args, **kwargs)
         self.document = document
-        
-        if initial:
-            self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}), initial=initial.diff.getNewText())
-            self.fields["discussion_time"] = forms.IntegerField(initial=initial.discussion_time, widget=NumberSliderWidget(attrs={'style':'width: 100%;'}))
-            self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), initial=initial.tags.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }))
-        else:
-            self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}), initial=document.content)
-            self.fields["discussion_time"] = forms.IntegerField(initial=7, widget=NumberSliderWidget(attrs={'style':'width: 100%;'}))
-            self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }))
-          
+        super(AmendmentProposalForm, self).__init__(*args, **kwargs)
         self.fields.keyOrder = ['title', 'content', 'motivation','tags', 'discussion_time']
 
     class Meta:
         model = AmendmentProposal
         fields = ('title', 'motivation')
 
+    def _get_initial_content(self):
+        return self.instance.diff.getNewText() if self.is_edit else self.document.content
+
     def clean_title(self):
         title = self.cleaned_data["title"]
-        if not AmendmentProposal().isValidTitle(title) and not "edit" in self.data.keys():
+        if not AmendmentProposal().isValidTitle(title) and not self.is_edit:
             raise forms.ValidationError("This title has already been used")
         return title
 
     def clean_content(self):
-        content = self.cleaned_data["content"]
-                
-        content = sanitizehtml.sanitizeHtml(content)
-        content = FullDocument.cleanText(content)
-        origcont = FullDocument.cleanText(self.document.content)
-        #Actually, you don't?
+        content = super(AmendmentProposalForm, self).clean_content()
+        ## check if content has changed w.r.t. original document
+        ## for an unknown reason Jonas removed this
+        #origcont = FullDocument.cleanText(self.document.content)
         #if content == origcont:
-        #    raise forms.ValidationError("You should make at least one change")
+        #   raise forms.ValidationError("You should make at least one change")
         return content
 
-    def save(self, user, commit=True):
+    def _additional_save_operations(self, proposal):
         ## create diff
-        newcontent = FullDocument.cleanText(self.cleaned_data["content"])
-        newdiff = Diff.generateDiff(self.document.content, newcontent)
+        content = FullDocument.cleanText(self.cleaned_data["content"])
+        newdiff = Diff.generateDiff(self.document.content, content)
         newdiff.fulldocument = self.document
         newdiff.save()
-        if "edit" in self.data.keys():
-            ## edit the proposal
-            newproposal = AmendmentProposal.objects.get(pk=int(self.data['edit']))
-            assert newproposal.isEditableBy(user), "You are not allowed to edit this proposal"
-            newproposal.title = self.cleaned_data['title']
-            newproposal.motivation = self.cleaned_data['motivation']
-        else:
-            ## create proposal
-            newproposal = super(AmendmentProposalForm, self).save(commit=False)
-        newproposal.diff = newdiff
-        newproposal.creator = user if user.is_authenticated() else None
-        newproposal.discussion_time = int(self.cleaned_data["discussion_time"])
-        newproposal.save()#save before the many-to-manyfield gets created
-        for tag in self.cleaned_data["tags"]:
-            newproposal.tags.add(tag)
-        newproposal.save()
-        ## add VotablePostEdit in case of edit
-        if "edit" in self.data.keys():
-            VotablePostEdit(user=user, post=newproposal).save()
-        return newproposal
+        ## add diff to proposal
+        proposal.diff = newdiff
+        return proposal
+
+class PositionProposalForm(ProposalForm, FocussingModelForm):
+    pass
+    # def __init__(self, *args, **kwargs):
+    #     initial = kwargs['instance'] if 'instance' in kwargs else None
+    #     super(PositionProposalForm, self).__init__(*args, **kwargs)
+    #     self.document = document
+        
+    #     if initial:
+    #         self.fields["position_text"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}), initial=initial.position_text)
+    #         self.fields["discussion_time"] = forms.IntegerField(initial=initial.discussion_time, widget=NumberSliderWidget(attrs={'style':'width: 100%;'}))
+    #         self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), initial=initial.tags.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }))
+    #     else:
+    #         self.fields["position_text"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}), initial=document.content)
+    #         self.fields["discussion_time"] = forms.IntegerField(initial=7, widget=NumberSliderWidget(attrs={'style':'width: 100%;'}))
+    #         self.fields["tags"] = TagChoiceField(queryset=Tag.objects.all(), widget=TagSelectorWidget(attrs={'style':'width: 100%;', 'data-placeholder':"Tags" }))
+          
+    #     self.fields.keyOrder = ['title', 'position_text', 'motivation','tags', 'discussion_time']
+
+
+    # class Meta:
+    #     model = PositionProposal
+    #     fields = ('title', 'position_text',)
+
+    # def save(self, proposal, user, commit=True):
+    #     new_post = super(PositionProposalForm, self).save(commit=False)
+    #     new_post.creator = user if user.is_authenticated() else None
+    #     new_post.save()
+    #     return new_post
 
 class CommentForm(forms.ModelForm):
     class Meta:

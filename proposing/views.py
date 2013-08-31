@@ -12,8 +12,8 @@ from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from proposing.models import Tag, ProxyProposalVote, Proxy, VotablePost, FinalProposalVote
 from document.models import FullDocument
-from forms import CommentForm, CommentReplyForm, CommentEditForm, CommentReplyEditForm, ProxyForm, AmendmentProposalForm
-from models import VotablePost, UpDownVote, Proposal, Comment, CommentReply, ProposalVote, AmendmentProposal
+from models import VotablePost, UpDownVote, Proposal, Comment, CommentReply, ProposalVote, AmendmentProposal, PositionProposal
+from forms import CommentForm, CommentReplyForm, CommentEditForm, CommentReplyEditForm, ProxyForm, AmendmentProposalForm, PositionProposalForm
 
 class TimelineData:
     # settings
@@ -282,6 +282,9 @@ def newcommentreply(request, proposal_slug, comment_id):
     commentform.save(comment, request.user)
     messages.success(request, 'Comment reply added')
     return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
+
+def newpositionproposal(request):
+    pass
 
 def proxy(request, tag_slug=None):
     tag = get_object_or_404(Tag, slug=tag_slug) if tag_slug else None

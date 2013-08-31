@@ -28,6 +28,15 @@
             <div class="span12"><canvas id="timeline"></canvas></div>
         </div>
     {% endif %}
+	<div style="padding: 20px 0 10px 30px;">
+		{% if settings.AMENDMENT_PROPOSALS_ALLOWED %}
+			<a href="{% url latest-document-detail 'the-pirate-codex' %}" role="button" class="btn">Propose new ammendment</a>
+		{% endif %}
+		<span style="padding-left: 20px"/>
+		{% if settings.POSITION_PROPOSALS_ALLOWED %}
+			<a href="{% url new-positionproposal %}" role="button" class="btn">Propose new position</a>
+		{% endif %}
+	</div>
 	<div class="row-fluid">
     
         <div class="span9">
