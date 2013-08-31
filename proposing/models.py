@@ -331,7 +331,7 @@ class Proposal(VotablePost):
     def votesOn(self, vote_value):
         return self.final_proxy_proposal_votes.filter(value = vote_value, voted_self=True)
 
-class DocumentProposal(Proposal):
+class AmendmentProposal(Proposal):
     motivation = models.TextField()
     diff = models.ForeignKey(Diff)
 

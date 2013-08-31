@@ -243,7 +243,7 @@ def detail(request, proposal_slug, edit_comment_id=-1, edit_commentreply_id=-1):
         proxyvote = None
 
     ## get proposal edit form
-    proposaleditform = ProposalForm(proposal.diff.fulldocument,instance=proposal)
+    proposaleditform = ProposalForm(proposal.diff.fulldocument, instance=proposal)
     document = proposal.diff.fulldocument.getFinalVersion()
 
     ## return

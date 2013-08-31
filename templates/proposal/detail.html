@@ -82,7 +82,7 @@
 {% endblock %}
 
 {% block content %}
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and proposal.proposaltype == 'amendment' %}
 	    {% if proposal|args:user|call:"isEditableBy" %}
 	        {% usemacro proposal-form-modal-macro proposal.diff "editamendmentmodal" proposaleditform document 1 %}
 	    {% endif %}

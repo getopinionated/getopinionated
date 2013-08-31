@@ -1557,7 +1557,7 @@
     },
     {
         "pk": 1,
-        "model": "proposing.documentproposal",
+        "model": "proposing.amendmentproposal",
         "fields": {
             "favorited_by": [],
             "diff": 1,
@@ -1570,7 +1570,7 @@
     },
     {
         "pk": 3,
-        "model": "proposing.documentproposal",
+        "model": "proposing.amendmentproposal",
         "fields": {
             "favorited_by": [],
             "diff": 2,
@@ -1582,7 +1582,7 @@
     },
     {
         "pk": 5,
-        "model": "proposing.documentproposal",
+        "model": "proposing.amendmentproposal",
         "fields": {
             "favorited_by": [],
             "diff": 3,
@@ -1594,7 +1594,7 @@
     },
     {
         "pk": 6,
-        "model": "proposing.documentproposal",
+        "model": "proposing.amendmentproposal",
         "fields": {
             "favorited_by": [],
             "diff": 4,
@@ -1606,7 +1606,7 @@
     },
     {
         "pk": 8,
-        "model": "proposing.documentproposal",
+        "model": "proposing.amendmentproposal",
         "fields": {
             "favorited_by": [],
             "diff": 5,
@@ -1618,7 +1618,7 @@
     },
     {
         "pk": 9,
-        "model": "proposing.documentproposal",
+        "model": "proposing.amendmentproposal",
         "fields": {
             "favorited_by": [],
             "diff": 6,
@@ -1631,7 +1631,7 @@
     },
     {
         "pk": 11,
-        "model": "proposing.documentproposal",
+        "model": "proposing.amendmentproposal",
         "fields": {
             "favorited_by": [],
             "diff": 7,
@@ -1643,7 +1643,7 @@
     },
     {
         "pk": 14,
-        "model": "proposing.documentproposal",
+        "model": "proposing.amendmentproposal",
         "fields": {
             "favorited_by": [],
             "diff": 8,
@@ -1656,7 +1656,7 @@
     },
     {
         "pk": 15,
-        "model": "proposing.documentproposal",
+        "model": "proposing.amendmentproposal",
         "fields": {
             "favorited_by": [],
             "diff": 9,
@@ -1668,7 +1668,7 @@
     },
     {
         "pk": 16,
-        "model": "proposing.documentproposal",
+        "model": "proposing.amendmentproposal",
         "fields": {
             "favorited_by": [],
             "diff": 10,
@@ -1680,7 +1680,7 @@
     },
     {
         "pk": 18,
-        "model": "proposing.documentproposal",
+        "model": "proposing.amendmentproposal",
         "fields": {
             "favorited_by": [],
             "diff": 11,
@@ -1692,7 +1692,7 @@
     },
     {
         "pk": 20,
-        "model": "proposing.documentproposal",
+        "model": "proposing.amendmentproposal",
         "fields": {
             "favorited_by": [],
             "diff": 12,
@@ -1704,7 +1704,7 @@
     },
     {
         "pk": 21,
-        "model": "proposing.documentproposal",
+        "model": "proposing.amendmentproposal",
         "fields": {
             "favorited_by": [
                 2
