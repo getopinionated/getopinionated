@@ -45,14 +45,16 @@
                         </div>
                         <br/>
                         <div class="proposal-tags">
-                            {% if proposal.cast.proposaltype == 'amendment' %}
-                                <div class="label label-inverse custom-popover" style="width:15px;text-align: center" popovertitle="This is an amendment proposal">
-                                    <i class="icon-file icon-white"></i>
-                                </div>
-                            {% elif proposal.cast.proposaltype == 'position' %}
-                                <div class="label label-inverse custom-popover" style="width:15px;text-align: center" popovertitle="This is a position proposal">
-                                    <i class="icon-question-sign icon-white"></i>
-                                </div>
+                            {% if settings.AMENDMENT_PROPOSALS_ALLOWED and settings.POSITION_PROPOSALS_ALLOWED %}
+                                {% if proposal.cast.proposaltype == 'amendment' %}
+                                    <div class="label label-inverse custom-popover" style="width:15px;text-align: center" popovertitle="This is an amendment proposal">
+                                        <i class="icon-file icon-white"></i>
+                                    </div>
+                                {% elif proposal.cast.proposaltype == 'position' %}
+                                    <div class="label label-inverse custom-popover" style="width:15px;text-align: center" popovertitle="This is a position proposal">
+                                        <i class="icon-question-sign icon-white"></i>
+                                    </div>
+                                {% endif %}
                             {% endif %}
                             <div class="label label-inverse">
                                 {{ proposal.get_voting_stage_display }}
