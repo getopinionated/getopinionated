@@ -196,7 +196,7 @@ def detail(request, proposal_slug, edit_comment_id=-1, edit_commentreply_id=-1):
     ## handle all POST-requests
     if edit_comment_id != -1: ## create comment edit form
         comment_to_edit = get_object_or_404(Comment, pk=edit_comment_id)
-        assert comment_to_edit.proposal == proposal
+        assert comment_to_edit.proposal.pk == proposal.pk
         if not comment_to_edit.isEditableBy(request.user):
             messages.error(request, 'This comment is not editable')
             return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
@@ -271,7 +271,7 @@ def newcommentreply(request, proposal_slug, comment_id):
     ## get vars
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
     comment = get_object_or_404(Comment, id=comment_id)
-    assert comment.proposal == proposal
+    assert comment.proposal.pk == proposal.pk
     ## check if user is allowed to make new CommentReply (same policy as Comment)
     if not proposal.commentsAllowedBy(request.user):
         messages.error(request, 'Making comment replies is not allowed')
