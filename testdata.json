@@ -17,7 +17,7 @@
             "is_active": true,
             "is_superuser": true,
             "is_staff": true,
-            "last_login": "2013-05-04T13:43:49.030Z",
+            "last_login": "2013-09-01T12:45:34.446Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$Ze3Zb4pRx1k3$lD4CksPyzQO68dSOk+3wcPiKE1yMCf0aK1MTTqIpAdo=",
@@ -1462,6 +1462,14 @@
         }
     },
     {
+        "pk": 25,
+        "model": "proposing.commentreply",
+        "fields": {
+            "comment": 24,
+            "motivation": "Yes it does make sense"
+        }
+    },
+    {
         "pk": 2,
         "model": "proposing.comment",
         "fields": {
@@ -1531,6 +1539,37 @@
             "color": "POS",
             "proposal": 11,
             "motivation": "looking good!"
+        }
+    },
+    {
+        "pk": 24,
+        "model": "proposing.comment",
+        "fields": {
+            "color": "NEG",
+            "proposal": 23,
+            "motivation": "This does not make any sense"
+        }
+    },
+    {
+        "pk": 22,
+        "model": "proposing.positionproposal",
+        "fields": {
+            "favorited_by": [],
+            "position_text": "<b>Motivation:</b><br />Milk is healthy<br />\n",
+            "tags": [
+                9
+            ]
+        }
+    },
+    {
+        "pk": 23,
+        "model": "proposing.positionproposal",
+        "fields": {
+            "favorited_by": [],
+            "position_text": "<b>Position:</b><br />We should declare war against nations that declare war against other nations<br /><br /><b>Motivation:</b><br />To keep the peace in the world<br />\n",
+            "tags": [
+                7
+            ]
         }
     },
     {
@@ -1930,6 +1969,42 @@
             "expire_date": null,
             "discussion_time": 2,
             "slug": "unpopular-proposal",
+            "voting_stage": "DISCUSSION"
+        }
+    },
+    {
+        "pk": 22,
+        "model": "proposing.proposal",
+        "fields": {
+            "views": 2,
+            "title": "We need a separate pipe system for milk",
+            "avgProposalvoteScore": 0.0,
+            "voting_date": null,
+            "favorited_by": [],
+            "tags": [
+                9
+            ],
+            "expire_date": null,
+            "discussion_time": 60,
+            "slug": "we-need-a-separate-pipe-system-for-milk",
+            "voting_stage": "DISCUSSION"
+        }
+    },
+    {
+        "pk": 23,
+        "model": "proposing.proposal",
+        "fields": {
+            "views": 4,
+            "title": "War against war",
+            "avgProposalvoteScore": 0.0,
+            "voting_date": null,
+            "favorited_by": [],
+            "tags": [
+                7
+            ],
+            "expire_date": null,
+            "discussion_time": 63,
+            "slug": "war-against-war",
             "voting_stage": "DISCUSSION"
         }
     },
@@ -4378,6 +4453,38 @@
         "model": "proposing.votablepost",
         "fields": {
             "create_date": "2013-05-24T22:01:27.563Z",
+            "creator": 1
+        }
+    },
+    {
+        "pk": 22,
+        "model": "proposing.votablepost",
+        "fields": {
+            "create_date": "2013-09-01T12:45:27.358Z",
+            "creator": null
+        }
+    },
+    {
+        "pk": 23,
+        "model": "proposing.votablepost",
+        "fields": {
+            "create_date": "2013-09-01T12:47:33.598Z",
+            "creator": 1
+        }
+    },
+    {
+        "pk": 24,
+        "model": "proposing.votablepost",
+        "fields": {
+            "create_date": "2013-09-01T12:48:21.380Z",
+            "creator": 1
+        }
+    },
+    {
+        "pk": 25,
+        "model": "proposing.votablepost",
+        "fields": {
+            "create_date": "2013-09-01T12:48:42.658Z",
             "creator": 1
         }
     }
