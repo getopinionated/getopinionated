@@ -211,7 +211,7 @@ def detail(request, proposal_slug, edit_comment_id=-1, edit_commentreply_id=-1):
 
     elif edit_commentreply_id != -1: ## create commentreply edit form
         commentreply_to_edit = get_object_or_404(CommentReply, pk=edit_commentreply_id)
-        assert commentreply_to_edit.comment.proposal == proposal
+        assert commentreply_to_edit.comment.proposal.pk == proposal.pk
         if not commentreply_to_edit.isEditableBy(request.user):
             messages.error(request, 'This comment reply is not editable')
             return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
