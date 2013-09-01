@@ -5,18 +5,14 @@ from django.contrib.auth.views import login, logout, auth_login
 from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.shortcuts import HttpResponseRedirect
+from django.shortcuts import HttpResponseRedirect, render, get_object_or_404
 from django.core.urlresolvers import reverse
-from django.shortcuts import render, get_object_or_404
+from django.db.models.aggregates import Count, Sum
 
-from common.shortcuts import render_to_response
 from proposing.models import Proposal, Comment, FinalProposalVote, Tag, Proxy
 from decorators import not_logged_in
-from forms import CustomUserCreationForm, ProfileUpdateForm, EmailAuthenticationForm
-from models import CustomUser
-from django.db.models.aggregates import Count, Sum
-from accounts.forms import SingleProxyForm
-from accounts.models import UnsubscribeCode
+from forms import CustomUserCreationForm, ProfileUpdateForm, EmailAuthenticationForm, SingleProxyForm
+from models import UnsubscribeCode, CustomUser
 
 def getuserproposals(member):
     return Proposal.objects.filter(creator=member).annotate(score=Sum('up_down_votes__value')).order_by('score')
@@ -176,7 +172,7 @@ def passwordreset(request):
             return HttpResponseRedirect(reverse('password-reset'))
     else:
         form = PasswordResetForm()
-    return render_to_response(request, 'accounts/password-reset.html', {
+    return render(request, 'accounts/password-reset.html', {
         'form': form,
     })
 
@@ -195,7 +191,7 @@ def userregister(request):
     else:
         form = CustomUserCreationForm()
 
-    return render_to_response(request, 'accounts/register.html', {
+    return render(request, 'accounts/register.html', {
         'form': form,
     })
 
@@ -221,7 +217,7 @@ def profileupdate(request):
     else:
         passwordform = PasswordChangeForm(request.user)
 
-    return render_to_response(request, 'accounts/update.html', {
+    return render(request, 'accounts/update.html', {
         'profileform': profileform,
         'passwordform': passwordform,
     })
@@ -236,7 +232,7 @@ def mailunsubscribe(request, code):
     user.weekly_digest = False
     user.daily_digest = False
     user.save()
-    return render_to_response(request, 'accounts/mailunsubscribe.html', {
+    return render(request, 'accounts/mailunsubscribe.html', {
         'user': user
     })
     
