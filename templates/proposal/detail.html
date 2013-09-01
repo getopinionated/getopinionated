@@ -126,7 +126,7 @@
 		    </div>
 		</div>
         {% if proposal.proposaltype == 'amendment' %}
-            <h3>The Amendment</h3>
+            <h3>Amendment</h3>
             <div id="fullamendmentmodal" class="modal hide fade">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -155,7 +155,7 @@
             {% if proposal.edits.count %}
                 <span class="creator-medium">{% usemacro user-medium proposal.lastEdit.user proposal.lastEdit.date "edited" %}</span>
             {% endif %}
-            <h3>The Motivation</h3>
+            <h3>Motivation</h3>
             <div class="motivation">
                 {{ proposal.motivation|linebreaks }}
                 <div class="proposal-tags">
@@ -165,7 +165,7 @@
                 </div>
             </div>
         {% elif proposal.proposaltype == 'position' %}
-            <h3>The Position</h3>
+            <h3>Position</h3>
             <div class="well clearfix">
                 <div style="float: right; margin:10px;">
                     {% if proposal|args:user|call:"isEditableBy" %}
