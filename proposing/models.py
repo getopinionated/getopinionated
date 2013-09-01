@@ -217,7 +217,7 @@ class Proposal(VotablePost):
         return is_empty_or_self(Proposal.objects.filter(title__iexact=title)) \
             and is_empty_or_self(Proposal.objects.filter(slug=slugify(title)))
 
-    def addView(self):
+    def incrementViewCounter(self):
         self.views += 1
         self.save()
 

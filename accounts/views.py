@@ -64,7 +64,7 @@ def getusertags(member):
 def userprofile(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
-    member.addView()
+    member.incrementViewCounter()
     
     if request.user.is_authenticated() and not request.user.pk==member.pk:
         if request.method == 'POST':
@@ -95,7 +95,7 @@ def userprofile(request, userslug):
 def userproposals(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
-    member.addView()
+    member.incrementViewCounter()
     
     return render(request, 'accounts/userproposals.html', {
         'member': member,
@@ -105,7 +105,7 @@ def userproposals(request, userslug):
 def usercomments(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
-    member.addView()
+    member.incrementViewCounter()
     
     return render(request, 'accounts/usercomments.html', {
         'member': member,
@@ -117,7 +117,7 @@ def usercomments(request, userslug):
 def usertags(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
-    member.addView()
+    member.incrementViewCounter()
     
     return render(request, 'accounts/usertags.html', {
         'member': member,
@@ -127,7 +127,7 @@ def usertags(request, userslug):
 def uservotes(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
-    member.addView()
+    member.incrementViewCounter()
     
     return render(request, 'accounts/uservotes.html', {
         'member': member,
@@ -139,7 +139,7 @@ def uservotes(request, userslug):
 def userproxyvotes(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
-    member.addView()
+    member.incrementViewCounter()
     
     return render(request, 'accounts/userproxyvotes.html', {
         'member': member,
@@ -151,7 +151,7 @@ def userproxyvotes(request, userslug):
 def userproxies(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
-    member.addView()
+    member.incrementViewCounter()
     
     return render(request, 'accounts/userproxies.html', {
         'member': member,

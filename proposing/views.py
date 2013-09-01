@@ -191,7 +191,7 @@ def detail(request, proposal_slug, edit_comment_id=-1, edit_commentreply_id=-1):
     proposal = get_object_or_404(Proposal, slug=proposal_slug).cast()
     commentform, commenteditform, commentreplyeditform = None, None, None
     document = None
-    proposal.addView()
+    proposal.incrementViewCounter()
 
     ## handle all POST-requests
     if edit_comment_id != -1: ## create comment edit form
