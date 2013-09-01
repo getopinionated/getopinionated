@@ -265,6 +265,7 @@ def detail(request, proposal_slug, edit_comment_id=-1, edit_commentreply_id=-1):
         'commentreplyeditform': commentreplyeditform,
     })
 
+@require_POST # all HTTP requests should be of type post on this view
 def newcommentreply(request, proposal_slug, comment_id):
     """ Note: all error checking is done by javascript. Therefore,
         all invalid input is due to hack or system error."""
@@ -276,8 +277,6 @@ def newcommentreply(request, proposal_slug, comment_id):
     if not proposal.commentsAllowedBy(request.user):
         messages.error(request, 'Making comment replies is not allowed')
         return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
-    ## all HTTP requests should be of type post on this view
-    assert request.method == 'POST'
     ## get form
     commentform = CommentReplyForm(request.POST)
     assert commentform.is_valid() # see note above
