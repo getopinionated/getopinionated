@@ -313,6 +313,8 @@ VOTING_DAYS = 7
 ##       can add them manually via the admin interface)
 AMENDMENTS_ALLOWED = True # this defines as well whether the document system is used
 POSITIONS_ALLOWED = True
+## proxy settings
+PROXIES_ALLOWED = True
 ## commentreply settings
 COMMENTREPLY_MIN_LENGTH = 15
 COMMENTREPLY_MAX_LENGTH = 500

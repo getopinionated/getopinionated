@@ -322,10 +322,11 @@ def positionproposalform(request, edit_proposal_slug=None):
 def proxy(request, tag_slug=None):
     tag = get_object_or_404(Tag, slug=tag_slug) if tag_slug else None
     user = request.user
-    if user.is_authenticated():
+    if user.is_authenticated() and settings.PROXIES_ALLOWED:
         if request.method == 'POST':
             proxyform = ProxyForm(user, request.POST)
-            proxyform.save()
+            if proxyform.is_valid():
+                proxyform.save()
 
         proxyform = ProxyForm(user)
         return render(request, 'accounts/proxy.html', {

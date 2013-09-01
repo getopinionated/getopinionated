@@ -71,7 +71,9 @@
     	                <li><a href="{% url latest-document-detail 'the-pirate-codex' %}">Document</a></li>
                     {% endif %}
 	                <li><a href="{% url proposals-index %}">Proposals</a></li>
-	                <li><a href="{% url proxy-index %}">Proxy</a></li>
+                    {% if settings.PROXIES_ALLOWED %}
+    	                <li><a href="{% url proxy-index %}">Proxy</a></li>
+                    {% endif %}
 	                {% if user.is_authenticated %}
 		                <li><a href="{% url user-profile user.slug %}">Profile</a></li>
 		                <li><a href="{% url profile-update %}">Account</a></li>
