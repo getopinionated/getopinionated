@@ -67,7 +67,9 @@
 	            <div class="container">
 	              <ul class="nav">
 	                <li><a href="{% url about %}"><i class="icon-home"></i>&nbsp;About</a></li>
-	                <li><a href="{% url latest-document-detail 'the-pirate-codex' %}">Document</a></li>
+                    {% if settings.AMENDMENTS_ALLOWED %}
+    	                <li><a href="{% url latest-document-detail 'the-pirate-codex' %}">Document</a></li>
+                    {% endif %}
 	                <li><a href="{% url proposals-index %}">Proposals</a></li>
 	                <li><a href="{% url proxy-index %}">Proxy</a></li>
 	                {% if user.is_authenticated %}
