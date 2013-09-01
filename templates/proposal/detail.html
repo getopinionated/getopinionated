@@ -169,7 +169,7 @@
             <div class="well clearfix">
                 <div style="float: right; margin:10px;">
                     {% if proposal|args:user|call:"isEditableBy" %}
-                       <a href="TODO" role="button" class="btn" data-toggle="modal" style="width: 161px;">Edit your position</a><br>
+                       <a href="{% url edit-positionproposal proposal.slug %}" role="button" class="btn" data-toggle="modal" style="width: 161px;">Edit your position</a><br>
                     {% endif %}
                 </div>
                 {{ proposal.position_text|safe }}

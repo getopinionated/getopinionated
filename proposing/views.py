@@ -287,13 +287,13 @@ def newcommentreply(request, proposal_slug, comment_id):
     return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
 
 @logged_in_or(settings.ANONYMOUS_PROPOSALS)
-def positionproposalform(request, edit_proposal_id=None):
+def positionproposalform(request, edit_proposal_slug=None):
     proposalform = None
     title = None
 
-    if edit_proposal_id == None: # creating new proposal
+    if edit_proposal_slug == None: # creating new proposal
         title = "New position proposal"
-        if request.method == 'POST': # POST data is for new comment form unless edit_comment_id != -1
+        if request.method == 'POST':
             proposalform = PositionProposalForm(request.POST)
             if proposalform.is_valid():
                 proposal = proposalform.save(request.user)
@@ -302,9 +302,16 @@ def positionproposalform(request, edit_proposal_id=None):
         else:
             proposalform = PositionProposalForm()
     else:
-        title = "Edit position proposal"
-        proposal = get_object_or_404(PositionProposal, pk=edit_proposal_id)
-        # TODO
+        title = "Edit proposal"
+        proposal = get_object_or_404(PositionProposal, slug=edit_proposal_slug)
+        if request.method == 'POST':
+            proposalform = PositionProposalForm(request.POST, instance=proposal)
+            if proposalform.is_valid():
+                proposal = proposalform.save(request.user)
+                messages.success(request, 'Proposal edited')
+                return HttpResponseRedirect(reverse('proposals-detail', args=(proposal.slug,)))
+        else:
+            proposalform = PositionProposalForm(instance=proposal)
 
     ## return
     return render(request, 'proposal/positionproposal_form.html', {
