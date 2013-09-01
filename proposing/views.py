@@ -320,28 +320,26 @@ def positionproposalform(request, edit_proposal_slug=None):
     })
 
 def proxy(request, tag_slug=None):
+    ## get vars
     tag = get_object_or_404(Tag, slug=tag_slug) if tag_slug else None
-    user = request.user
-    if user.is_authenticated() and settings.PROXIES_ALLOWED:
+    proxyform = None
+    ## create/handle proxy form if allowed
+    if request.user.is_authenticated() and settings.PROXIES_ALLOWED:
         if request.method == 'POST':
-            proxyform = ProxyForm(user, request.POST)
+            proxyform = ProxyForm(request.user, request.POST)
             if proxyform.is_valid():
                 proxyform.save()
-
-        proxyform = ProxyForm(user)
-        return render(request, 'accounts/proxy.html', {
-                'user': user,
-                'proxyform': proxyform,
-                'proxygraph': ProxyGraphData(tag),
-                'tags': Tag.objects.all(),
-                'filter_tag': tag,
-            })
-    else:
-        return render(request, 'accounts/proxy.html', {
-            'proxygraph': ProxyGraphData(tag),
-            'tags': Tag.objects.all(),
-            'filter_tag': tag,
-        })
+                messages.success(request, 'Proxies edited')
+                return HttpResponseRedirect(reverse('proxy-index', args=(tag_slug,) if tag_slug else ()))
+        else:
+            proxyform = ProxyForm(request.user)
+    ## render
+    return render(request, 'accounts/proxy.html', {
+        'proxyform': proxyform,
+        'proxygraph': ProxyGraphData(tag),
+        'tags': Tag.objects.all(),
+        'filter_tag': tag,
+    })
 
 @login_required
 def listofvoters(request, proposal_slug):

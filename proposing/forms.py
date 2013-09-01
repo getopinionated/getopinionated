@@ -211,6 +211,10 @@ class ProxyForm(forms.Form):
                 l.append((userfield, tagfield))
         return l
     
+    def is_valid(self, *args, **kwargs):
+        """ is_valid disable because otherwise this form doesn't work properly """
+        return True
+
     def save(self):
         ## create diff
         Proxy.objects.filter(delegating=self.user).delete()
