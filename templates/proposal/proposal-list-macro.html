@@ -45,7 +45,7 @@
                         </div>
                         <br/>
                         <div class="proposal-tags">
-                            {% if settings.AMENDMENT_PROPOSALS_ALLOWED and settings.POSITION_PROPOSALS_ALLOWED %}
+                            {% if settings.AMENDMENTS_ALLOWED and settings.POSITIONS_ALLOWED %}
                                 {% if proposal.cast.proposaltype == 'amendment' %}
                                     <div class="label label-inverse custom-popover" style="width:15px;text-align: center" popovertitle="This is an amendment proposal">
                                         <i class="icon-file icon-white"></i>
