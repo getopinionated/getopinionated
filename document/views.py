@@ -1,9 +1,9 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
+from django.conf import settings
 from proposing.forms import AmendmentProposalForm
 from proposing.models import Tag, AmendmentProposal
 from models import FullDocument
@@ -20,6 +20,7 @@ def documentView(request, document_slug, document_version=None):
         ## create new proposal form
         if request.user.is_authenticated() or settings.ANONYMOUS_PROPOSALS:
             if request.method == 'POST':
+                assert settings.AMENDMENTS_ALLOWED
                 form = AmendmentProposalForm(fulldocument, request.POST)
                 if form.is_valid():
                     proposal = form.save(user=request.user)

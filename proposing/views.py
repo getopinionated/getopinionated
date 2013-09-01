@@ -291,6 +291,7 @@ def positionproposalform(request, edit_proposal_slug=None):
     title = None
 
     if edit_proposal_slug == None: # creating new proposal
+        assert settings.POSITIONS_ALLOWED
         title = "New position proposal"
         if request.method == 'POST':
             proposalform = PositionProposalForm(request.POST)
