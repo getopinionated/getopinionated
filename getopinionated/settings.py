@@ -311,7 +311,7 @@ VOTING_DAYS = 7
 ## proposal type settings
 ## Note: These only disable the creation by users of these proposals, an administrator
 ##       can add them manually via the admin interface)
-AMENDMENTS_ALLOWED = True # this defines wheter the document system is used
+AMENDMENTS_ALLOWED = True # this defines as well whether the document system is used
 POSITIONS_ALLOWED = True
 ## commentreply settings
 COMMENTREPLY_MIN_LENGTH = 15
