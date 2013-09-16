@@ -71,6 +71,19 @@ class VotablePost(models.Model):
     def lastEdit(self):
         return self.edits.latest('id')
 
+    def cast(self):
+        """ This method converts "self" into its correct child class
+            More information: http://stackoverflow.com/a/13306529/1218058
+        """
+        for name in dir(self):
+            try:
+                attr = getattr(self, name)
+                if isinstance(attr, self.__class__):
+                    return attr
+            except:
+                pass
+        return self        
+
 class UpDownVote(models.Model):
     user = models.ForeignKey(CustomUser, related_name="up_down_votes")
     post = models.ForeignKey(VotablePost, related_name="up_down_votes")
@@ -95,16 +108,6 @@ class VotablePostEdit(models.Model):
     post = models.ForeignKey(VotablePost, related_name="edits")
     date = models.DateTimeField(auto_now=True)
 
-class ProposalType(models.Model):
-    name = models.CharField(max_length=255)
-    daysUntilVotingStarts = models.IntegerField("Days until voting starts", default=7)
-    minimalUpvotes = models.IntegerField("Minimal upvotes", default=3)
-    daysUntilVotingFinishes = models.IntegerField("Days until voting finishes", default=7)
-    daysUntilVotingExpires = models.IntegerField("Days until proposal expires", default=60, help_text="Starts from proposal creation date, expiration is due to lack of interest.")
-
-    def __unicode__(self):
-        return self.name
-
 class Proposal(VotablePost):
     # constants
     VOTING_STAGE = (
@@ -117,8 +120,6 @@ class Proposal(VotablePost):
     # fields
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
-    motivation = models.TextField()
-    diff = models.ForeignKey(Diff)
     views = models.IntegerField(default=0)
     voting_stage = models.CharField(max_length=20, choices=VOTING_STAGE, default='DISCUSSION')
     voting_date = models.DateTimeField(default=None, null=True, blank=True)
@@ -130,6 +131,10 @@ class Proposal(VotablePost):
 
     def __unicode__(self):
         return self.title
+
+    @property
+    def proposaltype(self):
+        raise NotImplementedError()
 
     @property
     def totalvotescore(self):
@@ -203,27 +208,16 @@ class Proposal(VotablePost):
         super(Proposal, self).save(*args, **kwargs)
 
     def isValidTitle(self, title):
-        """ Check if slug derived from title already exists,
-            the title is then automatically also unique.
+        """ Check:
+                * if the title already exists (case insensitive)
+                * if the slug derived from title already exists,
             Keeps into account possibility of already existing object.
         """
-        titleslug = slugify(title)
-        try:
-            proposal = Proposal.objects.get(slug=titleslug)
-            return self.id == proposal.id
-            if self.id == proposal.id:
-                proposal = Proposal.objects.get(title=title)
-                return self.id == proposal.id
-            else:
-                return False
-        except Proposal.DoesNotExist:
-            return True
+        is_empty_or_self = lambda queryset: queryset.count() == 0 or queryset[0].pk == self.pk
+        return is_empty_or_self(Proposal.objects.filter(title__iexact=title)) \
+            and is_empty_or_self(Proposal.objects.filter(slug=slugify(title)))
 
-    @property
-    def diffWithContext(self):
-        return self.diff.getNDiff()
-
-    def addView(self):
+    def incrementViewCounter(self):
         self.views += 1
         self.save()
 
@@ -332,6 +326,25 @@ class Proposal(VotablePost):
 
     def votesOn(self, vote_value):
         return self.final_proxy_proposal_votes.filter(value = vote_value, voted_self=True)
+
+class AmendmentProposal(Proposal):
+    motivation = models.TextField()
+    diff = models.ForeignKey(Diff)
+
+    @property
+    def diffWithContext(self):
+        return self.diff.getNDiff()
+
+    @property
+    def proposaltype(self):
+        return "amendment"
+
+class PositionProposal(Proposal):
+    position_text = models.TextField()
+
+    @property
+    def proposaltype(self):
+        return "position"
 
 class Comment(VotablePost):
     # constants

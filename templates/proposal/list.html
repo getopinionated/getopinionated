@@ -2,7 +2,6 @@
 {% load filters %}
 {% load macros %}
 {% loadmacros "proposal/proposal-list-macro.html" %}
-{% loadmacros "proposal/proposal-macro.html" %}
 {% loadmacros "proposal/tag-macro.html" %}
 
 {% block extrastyle %}
@@ -28,6 +27,15 @@
             <div class="span12"><canvas id="timeline"></canvas></div>
         </div>
     {% endif %}
+	<div style="padding: 20px 0 10px 30px;">
+		{% if settings.AMENDMENTS_ALLOWED %}
+			<a href="{% url latest-document-detail 'the-pirate-codex' %}" role="button" class="btn">Propose new amendment</a>
+		{% endif %}
+		<span style="padding-left: 20px"/>
+		{% if settings.POSITIONS_ALLOWED %}
+			<a href="{% url new-positionproposal %}" role="button" class="btn">Propose new position</a>
+		{% endif %}
+	</div>
 	<div class="row-fluid">
     
         <div class="span9">

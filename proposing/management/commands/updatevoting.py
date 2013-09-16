@@ -10,6 +10,9 @@ import scipy.sparse.linalg
 import numpy
 import itertools
 from accounts.models import CustomUser
+from common.socialnetwork import posttotwitter
+from django.core.urlresolvers import reverse
+from django.conf import settings
 
 def concurrent():
     import sys
@@ -35,17 +38,19 @@ class Command(NoArgsCommand):
         constraints_cnt = 0
         finished_cnt = 0
         expired_cnt = 0
-        
+                   
         for proposal in Proposal.objects.filter(
                     ~Q(voting_stage='APPROVED'),
                     ~Q(voting_stage='REJECTED'),
                     ~Q(voting_stage='EXPIRED'),
                 ):
+            
             if proposal.shouldStartVoting():
                 proposal.voting_stage = 'VOTING'
                 proposal.voting_date = timezone.now()
                 voting_cnt +=1
                 proposal.mail_sent=False
+                posttotwitter("VOTING BOOTS ARE OPEN: " + proposal.title + " " + settings.DOMAIN_NAME+reverse('proposals-detail',kwargs={'proposal_slug':proposal.slug}))
                 proposal.save()
             elif proposal.voting_stage == 'DISCUSSION' and proposal.minimalContraintsAreMet() and not proposal.voting_date:
                 proposal.voting_date = proposal.estimatedVotingDate
@@ -58,6 +63,10 @@ class Command(NoArgsCommand):
                 proposal.expire_date = timezone.now()
                 proposal.voting_stage = 'APPROVED' if proposal.isApproved() else 'REJECTED'
                 finished_cnt +=1
+                if proposal.voting_stage == 'APPROVED':
+                    posttotwitter("\"" + proposal.title + "\" made it in the program! " + settings.DOMAIN_NAME+reverse('proposals-detail',kwargs={'proposal_slug':proposal.slug}))
+                else:
+                    posttotwitter("\"" + proposal.title + "\" was rejected! " + settings.DOMAIN_NAME+reverse('proposals-detail',kwargs={'proposal_slug':proposal.slug}))
                 proposal.mail_sent=False
                 proposal.save()
             elif proposal.shouldExpire():

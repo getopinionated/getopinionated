@@ -1,21 +1,20 @@
 import time, json, logging, datetime
 from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import Context, loader
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
 from django.contrib import messages, auth
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
+from django.views.decorators.http import require_POST
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
-from models import VotablePost, UpDownVote, Proposal, Comment, ProposalVote
-from forms import CommentForm, CommentReplyForm, CommentEditForm
 from proposing.models import Tag, ProxyProposalVote, Proxy, VotablePost, FinalProposalVote
-from django.db.models import Count
-from proposing.forms import ProxyForm, ProposalForm
-from django.contrib.auth.views import redirect_to_login
+from accounts.decorators import logged_in_or
 from document.models import FullDocument
+from models import VotablePost, UpDownVote, Proposal, Comment, CommentReply, ProposalVote, AmendmentProposal, PositionProposal
+from forms import CommentForm, CommentReplyForm, CommentEditForm, CommentReplyEditForm, ProxyForm, AmendmentProposalForm, PositionProposalForm
 
 class TimelineData:
     # settings
@@ -115,7 +114,7 @@ class ProxyGraphData:
             proxies = Proxy.objects.filter(tags__pk = filter_tag.pk).filter(isdefault=False)
             #select default edges from delegating people not in the previous set
             proxies = proxies | (Proxy.objects.filter(isdefault=True).exclude(delegating__in = proxies.values('delegating')))
-            
+
         for proxy in proxies:
             nodes.add(proxy.delegating.display_name)
             for delegate in proxy.delegates.all():
@@ -187,17 +186,17 @@ def tagproplist(request, tag_slug):
         'title': "Latest proposals on %s" % tag.name.lower()
     })
 
-def detail(request, proposal_slug, edit_comment_id=-1):
+def detail(request, proposal_slug, edit_comment_id=-1, edit_commentreply_id=-1):
     ## get vars
-    proposal = get_object_or_404(Proposal, slug=proposal_slug)
-    commentform = None
-    commenteditform = None
-    proposal.addView()
+    proposal = get_object_or_404(Proposal, slug=proposal_slug).cast()
+    commentform, commenteditform, commentreplyeditform = None, None, None
+    document = None
+    proposal.incrementViewCounter()
 
     ## handle all POST-requests
     if edit_comment_id != -1: ## create comment edit form
         comment_to_edit = get_object_or_404(Comment, pk=edit_comment_id)
-        assert comment_to_edit.proposal == proposal
+        assert comment_to_edit.proposal.pk == proposal.pk
         if not comment_to_edit.isEditableBy(request.user):
             messages.error(request, 'This comment is not editable')
             return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
@@ -209,7 +208,21 @@ def detail(request, proposal_slug, edit_comment_id=-1):
                 return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
         else:
             commenteditform = CommentEditForm(instance=comment_to_edit)
-        commenteditform.comment_id = int(edit_comment_id)
+
+    elif edit_commentreply_id != -1: ## create commentreply edit form
+        commentreply_to_edit = get_object_or_404(CommentReply, pk=edit_commentreply_id)
+        assert commentreply_to_edit.comment.proposal.pk == proposal.pk
+        if not commentreply_to_edit.isEditableBy(request.user):
+            messages.error(request, 'This comment reply is not editable')
+            return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
+        if request.method == 'POST':
+            commentreplyeditform = CommentReplyEditForm(request.POST, instance=commentreply_to_edit)
+            if commentreplyeditform.is_valid():
+                commentreplyeditform.save(request.user)
+                messages.success(request, 'Comment reply edited')
+                return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
+        else:
+            commentreplyeditform = CommentReplyEditForm(instance=commentreply_to_edit)
 
     elif proposal.commentsAllowedBy(request.user): ## create new comment form
         if request.method == 'POST': # POST data is for new comment form unless edit_comment_id != -1
@@ -231,8 +244,12 @@ def detail(request, proposal_slug, edit_comment_id=-1):
         proxyvote = None
 
     ## get proposal edit form
-    proposaleditform = ProposalForm(proposal.diff.fulldocument,instance=proposal)
-    document = proposal.diff.fulldocument.getFinalVersion()
+    if proposal.proposaltype == 'amendment':
+        proposaleditform = AmendmentProposalForm(proposal.diff.fulldocument, instance=proposal)
+        proposalforkform = AmendmentProposalForm(proposal.diff.fulldocument, instance=proposal, is_edit=False)
+        document = proposal.diff.fulldocument.getFinalVersion()
+    else:
+        proposaleditform, proposalforkform = None, None
 
     ## return
     return render(request, 'proposal/detail.html', {
@@ -241,24 +258,25 @@ def detail(request, proposal_slug, edit_comment_id=-1):
         'commentform': commentform,
         'proxyvote': proxyvote,
         'proposaleditform': proposaleditform,
+        'proposalforkform': proposalforkform,
         'document': document,
-        'commentreplyform': CommentReplyForm() if proposal.commentsAllowedBy(request.user) else None,
+        'commentreplyform': CommentReplyForm() if commentform else None,
         'commenteditform': commenteditform,
+        'commentreplyeditform': commentreplyeditform,
     })
 
+@require_POST # all HTTP requests should be of type post on this view
 def newcommentreply(request, proposal_slug, comment_id):
     """ Note: all error checking is done by javascript. Therefore,
         all invalid input is due to hack or system error."""
     ## get vars
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
     comment = get_object_or_404(Comment, id=comment_id)
-    assert comment.proposal == proposal
+    assert comment.proposal.pk == proposal.pk
     ## check if user is allowed to make new CommentReply (same policy as Comment)
     if not proposal.commentsAllowedBy(request.user):
         messages.error(request, 'Making comment replies is not allowed')
         return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
-    ## all HTTP requests should be of type post on this view
-    assert request.method == 'POST'
     ## get form
     commentform = CommentReplyForm(request.POST)
     assert commentform.is_valid() # see note above
@@ -267,40 +285,61 @@ def newcommentreply(request, proposal_slug, comment_id):
     messages.success(request, 'Comment reply added')
     return HttpResponseRedirect(reverse('proposals-detail', args=(proposal_slug,)))
 
-def editcommentreply(request, proposal_slug, commentreply_id):
-    #### TODO: implement
-    pass
-    #""" Note: all error checking is done by javascript. Therefore,
-    #    all invalid input is due to hack or system error."""
-    ### get vars
-    #proposal = get_object_or_404(Proposal, slug=proposal_slug)
-    #commentreply = get_object_or_404(CommentReply, id=commentreply_id)
-    #comment = commentreply.comment
-    #assert comment.proposal == proposal
-    #raise NotImplementedError()
+@logged_in_or(settings.ANONYMOUS_PROPOSALS)
+def positionproposalform(request, edit_proposal_slug=None):
+    proposalform = None
+    title = None
+
+    if edit_proposal_slug == None: # creating new proposal
+        assert settings.POSITIONS_ALLOWED
+        title = "New position proposal"
+        if request.method == 'POST':
+            proposalform = PositionProposalForm(request.POST)
+            if proposalform.is_valid():
+                proposal = proposalform.save(request.user)
+                messages.success(request, 'Position proposal created')
+                return HttpResponseRedirect(reverse('proposals-detail', args=(proposal.slug,)))
+        else:
+            proposalform = PositionProposalForm()
+    else:
+        title = "Edit proposal"
+        proposal = get_object_or_404(PositionProposal, slug=edit_proposal_slug)
+        if request.method == 'POST':
+            proposalform = PositionProposalForm(request.POST, instance=proposal)
+            if proposalform.is_valid():
+                proposal = proposalform.save(request.user)
+                messages.success(request, 'Proposal edited')
+                return HttpResponseRedirect(reverse('proposals-detail', args=(proposal.slug,)))
+        else:
+            proposalform = PositionProposalForm(instance=proposal)
+
+    ## return
+    return render(request, 'proposal/positionproposal_form.html', {
+        'title': title,
+        'proposalform': proposalform,
+    })
 
 def proxy(request, tag_slug=None):
+    ## get vars
     tag = get_object_or_404(Tag, slug=tag_slug) if tag_slug else None
-    user = request.user
-    if user.is_authenticated():
+    proxyform = None
+    ## create/handle proxy form if allowed
+    if request.user.is_authenticated() and settings.PROXIES_ALLOWED:
         if request.method == 'POST':
-            proxyform = ProxyForm(user, request.POST)
-            proxyform.save()
-    
-        proxyform = ProxyForm(user)
-        return render(request, 'accounts/proxy.html', {
-                'user': user,
-                'proxyform': proxyform,
-                'proxygraph': ProxyGraphData(tag),
-                'tags': Tag.objects.all(),
-                'filter_tag': tag,
-            })
-    else:
-        return render(request, 'accounts/proxy.html', {
-            'proxygraph': ProxyGraphData(tag),
-            'tags': Tag.objects.all(),
-            'filter_tag': tag,
-        })
+            proxyform = ProxyForm(request.user, request.POST)
+            if proxyform.is_valid():
+                proxyform.save()
+                messages.success(request, 'Proxies edited')
+                return HttpResponseRedirect(reverse('proxy-index', args=(tag_slug,) if tag_slug else ()))
+        else:
+            proxyform = ProxyForm(request.user)
+    ## render
+    return render(request, 'accounts/proxy.html', {
+        'proxyform': proxyform,
+        'proxygraph': ProxyGraphData(tag),
+        'tags': Tag.objects.all(),
+        'filter_tag': tag,
+    })
 
 @login_required
 def listofvoters(request, proposal_slug):
@@ -316,7 +355,7 @@ def listofvoters(request, proposal_slug):
 def ajaxfavorite(request, proposal_slug):
     proposal = get_object_or_404(Proposal, slug=proposal_slug)
     user = request.user
-    if user in proposal.favorited_by.all(): 
+    if user in proposal.favorited_by.all():
         proposal.favorited_by.remove(user)
         proposal.save()
         return HttpResponse(content='0', mimetype='text/plain')

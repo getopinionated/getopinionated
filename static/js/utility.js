@@ -23,3 +23,16 @@ String.prototype.format = function () {
     }
   });
 };
+
+/*** apply popovers to all elements with popovertitle as attr ***/
+$( document ).ready(function () {
+    $('.custom-popover').each(function(){
+        $(this).popover({
+            animation: true,
+            html: false,
+            placement: "bottom",
+            trigger: "hover",
+            content: $(this).attr('popovertitle')
+        });
+    });
+});
