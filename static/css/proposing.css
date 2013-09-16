@@ -91,20 +91,9 @@ article.proposal .motivation .chzn-container * {
     border: 0 ! important;
 }
 
-article.proposal .comment .editedby {
-    font-size: 12px;
-}
-article.proposal .comment .motivation {
-    font-size: 12px;
-}
-
 article.proposal .comment h2 {
     border-bottom: 3px #aaa solid;
     margin-top: 24px;
-}
-article.proposal .comment a.edit {
-    margin-top: 10px;
-    font-size: 12px;
 }
 
 article.proposal .owncomment {
@@ -113,6 +102,10 @@ article.proposal .owncomment {
 
 article.proposal .votebuttons {
     padding-left: 50px;
+}
+
+article.proposal .comment_replies, article.proposal .comment_replies textarea {
+    font-size: 12px;
 }
 
 /***** timeline *****/

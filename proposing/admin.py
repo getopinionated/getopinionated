@@ -1,4 +1,4 @@
-from models import Proposal, Comment, CommentReply, UpDownVote, ProposalVote, ProposalType
+from models import Proposal, Comment, CommentReply, UpDownVote, ProposalVote, VotablePostEdit, AmendmentProposal, PositionProposal
 from django.contrib import admin
 from proposing.models import Tag, Proxy, ProxyProposalVote, FinalProposalVote
 
@@ -28,14 +28,9 @@ class ProposalVoteAdmin(admin.ModelAdmin):
 class FinalProposalVoteAdmin(admin.ModelAdmin):
     list_display = ('user','numvotes','voted_self','value','proposal')
 
-
 class ProxyProposalVoteAdmin(admin.ModelAdmin):
     list_display = ('user_voting','user_proxied','proposal','numvotes')
     
-    
-class ProposalTypeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'daysUntilVotingStarts', 'minimalUpvotes', 'daysUntilVotingFinishes')
-
 class CommentReplyInline(admin.TabularInline):
     model = CommentReply
     fk_name = 'comment'
@@ -54,9 +49,14 @@ class ProposalVoteInline(admin.TabularInline):
     model = ProposalVote
     extra = 3
 
+class VotablePostEditInline(admin.TabularInline):
+    model = VotablePostEdit
+    fk_name = 'post'
+    extra = 0
+
 class ProposalAdmin(admin.ModelAdmin):
     list_display = ['title', 'voting_stage', 'discussion_time', 'creator', 'create_date', 'upvote_score', 'number_of_comments', 'views', ]
-    inlines = [CommentInline, UpDownVoteInline, ProposalVoteInline]
+    inlines = [CommentInline, UpDownVoteInline, ProposalVoteInline, VotablePostEditInline]
     list_filter = ['create_date']
     actions = ['add_15_upvotes','add_15_proposalvotes','recount_votes']
     prepopulated_fields = {'slug': ('title',)}
@@ -88,14 +88,15 @@ class ProposalAdmin(admin.ModelAdmin):
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['proposal', 'creator', 'create_date', 'upvote_score']
-    inlines = [CommentReplyInline]
+    inlines = [CommentReplyInline, VotablePostEditInline]
     list_filter = ['create_date']
 
-admin.site.register(Proposal, ProposalAdmin)
+admin.site.register(AmendmentProposal, ProposalAdmin)
+admin.site.register(PositionProposal, ProposalAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Proxy, ProxyAdmin)
-admin.site.register(ProposalType, ProposalTypeAdmin)
 admin.site.register(ProposalVote, ProposalVoteAdmin)
 admin.site.register(FinalProposalVote, FinalProposalVoteAdmin)
 admin.site.register(ProxyProposalVote, ProxyProposalVoteAdmin)
+admin.site.register(VotablePostEdit, admin.ModelAdmin)

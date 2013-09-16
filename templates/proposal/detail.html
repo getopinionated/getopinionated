@@ -45,6 +45,31 @@
     {% endif %}
 {% endmacro %}
 
+{% macro commentreply_form_generator form comment %}
+    <form action="
+        {% if form == commentreplyeditform %}
+            {% url commentreply-edit proposal.slug form.instance.id %}#comment_{{comment.id}}
+        {% else %}
+            {% url new-commentreply proposal.slug comment.id %}#comment_{{comment.id}}
+        {% endif %}" method="POST" style="margin:0;" class="comment_reply_form">
+        {% csrf_js_token %}
+        <div class="row">
+            <div class="span9 offset1">
+                <textarea class="input-block-level" name="motivation" rows="1">{% if form.motivation.value %}{{form.motivation.value}}{% endif %}</textarea>
+            </div>
+            <div class="span2">
+                <input type="submit" class="btn btn-primary btn-small" value="{% if form == commentreplyeditform %}Edit reply{% else %}Add reply{% endif %}" />
+                {% if form == commentreplyeditform %}
+                    <a href="{% url proposals-detail proposal.slug %}#comment_{{comment.id}}" class="btn btn-small">Cancel</a>
+                {% else %}
+                    <a href="#" class="btn btn-small add_reply_toggle_button">Cancel</a>
+                {% endif %}
+            </div>
+            <div class="span11 offset1 muted feedback"></div>
+        </div>
+    </form>
+{% endmacro %}
+
 {% block title %}{% include "title.html" with subtitle=proposal.title %}{% endblock %}
 
 {% block description %}{% if proposal.creator %}User {{ proposal.creator }} made a proposal for the program of the Pirate Party:{% else %}A proposal has been made for the program of the Pirate Party:{% endif %} '{{ proposal.title }}'. Join the discussion and vote. Get opinionated! Everybody is free to step in and join the democratic process of the party. Share your expertise and make the Pirate Party a better party.{% endblock %}
@@ -57,11 +82,11 @@
 {% endblock %}
 
 {% block content %}
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and proposal.proposaltype == 'amendment' %}
 	    {% if proposal|args:user|call:"isEditableBy" %}
-	        {% usemacro proposal-form-modal-macro proposal.diff "editamendmentmodal" proposaleditform document 1 %}
+	        {% usemacro proposal-form-modal-macro proposal.diff "editamendmentmodal" proposaleditform document %}
 	    {% endif %}
-	    {% usemacro proposal-form-modal-macro proposal.diff "forkamendmentmodal" proposaleditform document 0 %}
+	    {% usemacro proposal-form-modal-macro proposal.diff "forkamendmentmodal" proposalforkform document %}
     {% endif %}
     <article class="proposal">
     	<div class="row-fluid">
@@ -100,47 +125,66 @@
 		        </header>
 		    </div>
 		</div>
-		<h3>The Amendment</h3>
-		<div id="fullamendmentmodal" class="modal hide fade">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3>The full amendment</h3>
+        {% if proposal.proposaltype == 'amendment' %}
+            <h3>Amendment</h3>
+            <div id="fullamendmentmodal" class="modal hide fade">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>The full amendment</h3>
+                </div>
+                <div class="modal-body">
+                    {{ proposal.diff|fulldiffrender }}
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</a>
+                </div>
             </div>
-            <div class="modal-body">
-                {{ proposal.diff|fulldiffrender }}
+            <div class="well amendment">
+                <div style="float: right; margin:10px;">
+                    <a href="#fullamendmentmodal" role="button" class="btn btn-primary btn-inverse" data-toggle="modal" style="width: 161px;">View full amendment</a><br>
+                    {% if user.is_authenticated %}
+                        {% if proposal|args:user|call:"isEditableBy" %}
+                           <a href="#editamendmentmodal" role="button" class="btn" data-toggle="modal" style="width: 161px;">Edit your amendment</a><br>
+                        {% endif %}
+                        <a href="#forkamendmentmodal" role="button" class="btn" data-toggle="modal" style="width: 161px;">Fork this amendment</a><br>
+                    {% endif %}
+                </div>
+                {{ proposal.diff|diffrender|cut:"\n" }}
             </div>
-            <div class="modal-footer">
-                <a href="#" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</a>
+            <span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>
+            {% if proposal.edits.count %}
+                <span class="creator-medium">{% usemacro user-medium proposal.lastEdit.user proposal.lastEdit.date "edited" %}</span>
+            {% endif %}
+            <h3>Motivation</h3>
+            <div class="motivation">
+                {{ proposal.motivation|linebreaks }}
+                <div class="proposal-tags">
+                    {% for tag in proposal.tags.all %}
+                        {% usemacro tag-small tag %}
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-        <div class="well amendment">
-            <div style="float: right; margin:10px;">
-                <a href="#fullamendmentmodal" role="button" class="btn btn-primary btn-inverse" data-toggle="modal" style="width: 161px;">View full amendment</a><br>
-                {% if user.is_authenticated %}
-	                {% if proposal|args:user|call:"isEditableBy" %}
-		               <a href="#editamendmentmodal" role="button" class="btn" data-toggle="modal" style="width: 161px;">Edit your amendment</a><br>
-		            {% endif %}
-		            <a href="#forkamendmentmodal" role="button" class="btn" data-toggle="modal" style="width: 161px;">Fork this amendment</a><br>
-	            {% endif %}
+        {% elif proposal.proposaltype == 'position' %}
+            <h3>Position</h3>
+            <div class="well clearfix">
+                <div style="float: right; margin:10px;">
+                    {% if proposal|args:user|call:"isEditableBy" %}
+                       <a href="{% url edit-positionproposal proposal.slug %}" role="button" class="btn" data-toggle="modal" style="width: 161px;">Edit your position</a><br>
+                    {% endif %}
+                </div>
+                {{ proposal.position_text|safe }}
+                <span class="creator-medium" style="clear: both;">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>
+                {% if proposal.edits.count %}
+                    <span class="creator-medium">{% usemacro user-medium proposal.lastEdit.user proposal.lastEdit.date "edited" %}</span>
+                {% endif %}
+                <br/><br/>
+                <div class="proposal-tags">
+                    {% for tag in proposal.tags.all %}
+                        {% usemacro tag-small tag %}
+                    {% endfor %}
+                </div>
             </div>
-            {{ proposal.diff|diffrender|cut:"\n" }}
-        </div>
-
-        <span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>
-        {% if proposal.edits.count %}
-            <span class="creator-medium">{% usemacro user-medium proposal.lastEdit.user proposal.lastEdit.date "edited" %}</span>
         {% endif %}
-        <h3>The Motivation</h3>
-
-
-        <div class="motivation">
-            {{ proposal.motivation|linebreaks }}
-        	<div class="proposal-tags">
-        		{% for tag in proposal.tags.all %}
-        			{% usemacro tag-small tag %}
-        		{% endfor %}
-        	</div>
-        </div>
         <div class="timeline">
             <h3>Timeline</h3>
             {% if proposal.voting_stage != 'EXPIRED' %}
@@ -264,11 +308,13 @@
 			                        </div>
 			                    {% endif %}
 			                    <div class="motivation">
-			                        {% if not commenteditform or commenteditform.comment_id != comment.id %}
+			                        {% if not commenteditform or commenteditform.instance.id != comment.id %}
 			                            {{ comment.motivation|linebreaks }}
 			                            {% if comment|args:user|call:"isEditableBy" %}
 			                                <div>
-			                                    <a href="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" class="btn btn-mini">edit</a>
+			                                    <a href="{% url comment-edit proposal.slug comment.id %}#comment_{{comment.id}}" class="btn btn-mini">
+                                                    <i class="icon-pencil"></i> edit
+                                                </a>
 			                                </div>
 			                            {% endif %}
 			                        {% else %}
@@ -285,31 +331,35 @@
 			                </div>
                         </div>
                         <!-- comment replies -->
-                        {% for commentreply in comment.replies.all %}
-                            <div class="row">
-                                <div class="span11 offset1 commentreply">
-                                    {{ commentreply.motivation }} -- {% usemacro user-small commentreply.creator commentreply.create_date %}
-                                </div>
-                            </div>
-                        {% endfor %}
-                        <!-- add comment reply -->
-                        <div class="add_comment_reply">
-                            <small class="add_comment_reply_link">
-                                <a href="" class="muted">add reply</a>
-                            </small>
-                            <div class="add_comment_reply_form" style="display:none;">
-                                <form action="{% url new-commentreply proposal.slug comment.id %}#comment_{{comment.id}}" method="POST" style="margin:0;">
-                                    {% csrf_js_token %}
+                        <div class="comment_replies">
+                            {% for commentreply in comment.replies.all %}
+                                {% if not commentreplyeditform or commentreplyeditform.instance.id != commentreply.id %}
                                     <div class="row">
-                                        <div class="span9 offset1">
-                                            <textarea class="input-block-level" name="motivation" rows="1"></textarea>
-                                        </div>
-                                        <div class="span2">
-                                            <input type="submit" class="btn btn-primary" value="Add reply" />
+                                        <div class="span11 offset1 commentreply">
+                                            {{ commentreply.motivation }}
+                                            -- {% usemacro user-small commentreply.creator commentreply.create_date %}
+                                            {% if commentreply|args:user|call:"isEditableBy" %}
+                                                <a class="btn btn-mini" href="{% url commentreply-edit proposal.slug commentreply.id %}#comment_{{comment.id}}"><i class="icon-pencil"></i></a>
+                                            {% elif commentreply.edits.count %}
+                                                <i class="icon-pencil custom-popover" popovertitle="{{commentreply.edits.count}} edit{{commentreply.edits.count|pluralize}}, last one {{commentreply.lastEdit.date|shorttime}} by {{commentreply.lastEdit.user}}"></i>
+                                            {% endif %}
                                         </div>
                                     </div>
-                                </form>
-                            </div>
+                                {% else %}
+                                    {% usemacro commentreply_form_generator commentreplyeditform comment %}            
+                                {% endif %}
+                            {% endfor %}
+                            <!-- add comment reply -->
+                            {% if commentreplyform %}
+                                <div class="add_comment_reply">
+                                    <small class="add_comment_reply_link">
+                                        <a href="" class="muted add_reply_toggle_button">add reply</a>
+                                    </small>
+                                    <div class="comment_reply_form_container" style="display:none;">
+                                        {% usemacro commentreply_form_generator commentreplyform comment %}
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
 	                </div>
 	            </div>
@@ -361,15 +411,51 @@
                 content: '<span class="delete">The amendment wants to remove this text from the document,</span><br/><span class="insert">the amendment wants to add this text to the document</span><br/>and this is context and is not voted with this amendment.',
                 container: '.amendment'
             });
-            /** add comment reply code **/
-            $(".add_comment_reply_link a").click(function(e){
+            /*** add comment reply code ***/
+            $(".add_reply_toggle_button").click(function(e){
                 var containerDiv = $(this).parents('.add_comment_reply');
                 // toggle hidden state of this link
                 containerDiv.find(".add_comment_reply_link").toggle();
-                // toggle hidden state of next .add_comment_reply_form element
-                containerDiv.find(".add_comment_reply_form").toggle();
+                // toggle hidden state of next .comment_reply_form_container element
+                containerDiv.find(".comment_reply_form_container").toggle();
                 // prevent <a> link to do anything
                 e.preventDefault();
+            });
+            function validate_reply_form_textarea(elem) {
+                // get vars
+                var MIN_LENGTH = {{settings.COMMENTREPLY_MIN_LENGTH}}
+                var MAX_LENGTH = {{settings.COMMENTREPLY_MAX_LENGTH}}
+                var content = $.trim($(elem).val());
+                // get feedback
+                var feedback = "";
+                var valid = false;
+                if(content.length < MIN_LENGTH)
+                    feedback = "Enter at least {} characters".format(MIN_LENGTH);
+                else if(content.length > MAX_LENGTH)
+                    feedback = "Too long by {} characters".format(content.length - MAX_LENGTH);
+                else {
+                    feedback = "{} characters left".format(MAX_LENGTH - content.length);
+                    valid = true;
+                }
+                $(elem).parents(".comment_reply_form").find(".feedback").html(feedback);
+                // update button
+                $(elem).parents(".comment_reply_form").find("input[type=submit]").prop('disabled', !valid);
+                return valid;
+            }
+            $(".comment_reply_form textarea" ).bind('input propertychange', function() {
+                validate_reply_form_textarea(this);
+            }).keydown(function(e) {
+                // inhibit newlines in textarea
+                if(e.keyCode == 13){
+                    e.preventDefault();
+                    //$(this).parents('form').submit(); // Submit form it belongs to
+                }
+            }).each(function() {
+                validate_reply_form_textarea(this);
+            });
+            $(".comment_reply_form").submit(function() {
+                elem = $(this).find('textarea');
+                return validate_reply_form_textarea(elem);
             });
         });
     </script>

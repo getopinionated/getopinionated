@@ -1,18 +1,7 @@
 {% extends "base.html" %}
 {% block title %}401 - Unauthorized {% endblock %}
-{% block extrahead %} <meta HTTP-EQUIV="REFRESH" content="10; url=/"> {% endblock %}
-{% block content %}
 
-<div class="side_header">
-  <h1>401 - Unauthorized</h1>
-</div>
-<div class="side_content">
-  <div class="content">
-    <p>U bent niet bevoegd tot de pagina die u opgevraagd heeft.</p>
-    {% if not user.is_authenticated %}
-      <p> Gelieve in te loggen en daarna opnieuw te proberen </p>
-    {% endif %} 
-    <p> U wordt automatisch terug naar de hoofdpagina geleid binnen 10 seconden.</p>
-  </div>
-</div>
+{% block content %}
+    <h1>401 - Unauthorized</h1>
+    <p>You are not allowed on this page.</p>
 {% endblock %}

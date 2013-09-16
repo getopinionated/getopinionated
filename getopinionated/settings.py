@@ -318,7 +318,16 @@ ANONYMOUS_COMMENTS = True # allow anonymous comments if True
 MIN_NUM_ENDORSEMENTS_BEFORE_VOTING = 3
 QUORUM_SIZE = 1 # minimal # of proposalvotes for approvement
 VOTING_DAYS = 7
-
+## proposal type settings
+## Note: These only disable the creation by users of these proposals, an administrator
+##       can add them manually via the admin interface)
+AMENDMENTS_ALLOWED = True # this defines as well whether the document system is used
+POSITIONS_ALLOWED = True
+## proxy settings
+PROXIES_ALLOWED = True
+## commentreply settings
+COMMENTREPLY_MIN_LENGTH = 15
+COMMENTREPLY_MAX_LENGTH = 500
 #####################################################################################
 # Import local settings
 #####################################################################################

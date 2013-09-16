@@ -65,7 +65,7 @@ class CustomUser(User):
                 raise forms.ValidationError(u'That image is too big. The image needs to be 700x700px (or less).')
         return image
     
-    def addView(self):
+    def incrementViewCounter(self):
         self.profile_views += 1
         self.save()
     
