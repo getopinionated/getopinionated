@@ -8,18 +8,19 @@ except:
     from twitter import *
     from facebook import *
 import urllib
-
+from django.conf import settings
 
 def posttotwitter(message):
     try:
         # see "Authentication" section below for tokens and keys
         t = Twitter(
-                    auth=OAuth(FEED_TWITTER_ACCESS_TOKEN, FEED_TWITTER_ACCESS_SECRET,
-                               FEED_TWITTER_CONSUMER_KEY, FEED_TWITTER_CONSUMER_SECRET)
+                    auth=OAuth(settings.FEED_TWITTER_ACCESS_TOKEN, settings.FEED_TWITTER_ACCESS_SECRET,
+                               settings.FEED_TWITTER_CONSUMER_KEY, settings.FEED_TWITTER_CONSUMER_SECRET)
                    )
         # Update your status
         t.statuses.update(status=message)
     except:
+	raise
         print "posting to twitter feed failed. Message was: ", message
 
 def posttofacebook(message): #This doesn't work yet, as it is impossible to keep keys for longer than 60 days, you can however connect your twitter-account to facebook
