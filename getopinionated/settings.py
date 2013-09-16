@@ -6,6 +6,8 @@ from os.path import dirname
 SITE_ROOT = dirname(dirname(os.path.realpath(__file__)))
 sys.path.insert(0, os.path.join(SITE_ROOT, 'libs'))
 
+DOMAIN_NAME = "http://opinion.pirateparty.be"
+
 #####################################################################################
 # Django settings
 #####################################################################################
@@ -298,6 +300,14 @@ SOCIAL_AUTH_SESSION_EXPIRATION = False
 
 SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
 
+
+#####################################################################################
+# Social feed settings
+#####################################################################################
+FEED_TWITTER_CONSUMER_KEY = "nI4PyCmErDbQIFAlb0o3w"
+FEED_TWITTER_CONSUMER_SECRET = "RhJk8Iz4tM1Nwz852BNbVAedjAGtWmGmBnZ2Cx4waI"
+FEED_TWITTER_ACCESS_TOKEN = "1723159872-9sBcEQxRHws9gY030vvLA2oPZYJzSNFFnyIMuD7"
+FEED_TWITTER_ACCESS_SECRET = "SZWI1FUVehVAX03KC9fHSHTAj9pgEGCnaG43KEFvDTk"
 #####################################################################################
 # GetOpinionated-specific default settings
 #####################################################################################

@@ -15,6 +15,9 @@ from django.forms.models import ModelMultipleChoiceField
 from proposing.models import Proxy
 import itertools
 
+from common.socialnetwork import posttotwitter
+from django.core.urlresolvers import reverse
+from django.conf import settings
 
 class ProposalForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'autofocus','style':'width: 100%;','placeholder':"Title of the amendment"})) # forus on page-load (html5))
@@ -82,6 +85,8 @@ class ProposalForm(forms.ModelForm):
         for tag in self.cleaned_data["tags"]:
             newproposal.tags.add(tag)
         newproposal.save()
+        
+        posttotwitter("A new proposal for the programme: " + newproposal.title + " " + settings.DOMAIN_NAME+reverse('proposals-detail',kwargs={'proposal_slug':newproposal.slug}))
         return newproposal
 
 class CommentForm(forms.ModelForm):

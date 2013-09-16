@@ -3,6 +3,7 @@ import sys, os
 from os.path import dirname
 
 SITE_ROOT = dirname(dirname(os.path.realpath(__file__)))
+DOMAIN_NAME = "http://opinion.pirateparty.be"
 
 DEBUG = True
 ADMINS = ()
@@ -36,3 +37,8 @@ LINKEDIN_CONSUMER_KEY = ''
 LINKEDIN_CONSUMER_SECRET = ''
 GOOGLE_OAUTH2_CLIENT_ID = ''
 GOOGLE_OAUTH2_CLIENT_SECRET = ''
+
+TWITTER_CONSUMER_KEY = ""
+TWITTER_CONSUMER_SECRET = ""
+TWITTER_ACCESS_TOKEN = "-"
+TWITTER_ACCESS_SECRET = ""
