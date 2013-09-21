@@ -64,7 +64,7 @@ class ProposalAdmin(admin.ModelAdmin):
     readonly_fields = ['diff_link']
 
     def diff_link(self, obj):
-        if hasattr(obj,diff):
+        if hasattr(obj,'diff'):
             change_url = urlresolvers.reverse('admin:document:diff', args=(obj.diff.pk,))
             return mark_safe('<a href="%s">%s</a>' % (change_url, obj.diff))
     #diff.short_description = 'Diff'
