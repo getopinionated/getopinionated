@@ -61,6 +61,14 @@ class ProposalAdmin(admin.ModelAdmin):
     actions = ['add_15_upvotes','add_15_proposalvotes','recount_votes']
     prepopulated_fields = {'slug': ('title',)}
 
+    readonly_fields = ['diff_link']
+
+    def diff_link(self, obj):
+        if hasattr(obj,diff):
+            change_url = urlresolvers.reverse('admin:document:diff', args=(obj.diff.pk,))
+            return mark_safe('<a href="%s">%s</a>' % (change_url, obj.diff))
+    #diff.short_description = 'Diff'
+
     def add_15_upvotes(self, request, queryset):
         for proposal in queryset:
             for i in xrange(15):
