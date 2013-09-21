@@ -89,6 +89,7 @@ class Command(NoArgsCommand):
             try:
                 prop.diff.fulldocument.getFinalVersion().applyDiff(prop.diff)
             except Exception as e:
+                print traceback.format_exc()
                 print "Error applying diff to final version: ", e
                 # TODO: catch this in nice way
             ## convert other proposal diffs
