@@ -99,11 +99,12 @@ class Command(NoArgsCommand):
                     ~Q(pk=prop.pk),
                 ):
                 try:
-                    newdiff = proposal.diff.applyDiffOnThisDiff(prop.diff)
-                    newdiff.fulldocument = prop.diff.fulldocument.getFinalVersion()
-                    newdiff.save()
-                    proposal.diff = newdiff
-                    proposal.save()
+                    if hasattr(proposal,'diff'):
+                        newdiff = proposal.diff.applyDiffOnThisDiff(prop.diff)
+                        newdiff.fulldocument = prop.diff.fulldocument.getFinalVersion()
+                        newdiff.save()
+                        proposal.diff = newdiff
+                        proposal.save()
                 except Exception as e:
                     print "Error applying diff to other diffs: ", e
                     print traceback.format_exc()
