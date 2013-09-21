@@ -87,7 +87,10 @@ class Command(NoArgsCommand):
         if prop.isApproved():
             ## apply this diff
             try:
-                prop.diff.fulldocument.getFinalVersion().applyDiff(prop.diff)
+                if hasattr(prop,'diff'):
+                    prop.diff.fulldocument.getFinalVersion().applyDiff(prop.diff)
+                else:
+                    print "Proposal",prop.title,"is approved, but has no Diff"
             except Exception as e:
                 print traceback.format_exc()
                 print "Error applying diff to final version: ", e
