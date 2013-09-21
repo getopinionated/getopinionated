@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError, NoArgsCommand
 from django.db.models import Q
 from django.utils import timezone
-from proposing.models import Proposal, ProxyProposalVote, Proxy, Tag, FinalProposalVote
+from proposing.models import Proposal, ProxyProposalVote, Proxy, Tag, FinalProposalVote, AmendmentProposal, PositionProposal
 from django.utils.timezone import datetime, timedelta
 import traceback
 from scipy.sparse.linalg import spsolve
