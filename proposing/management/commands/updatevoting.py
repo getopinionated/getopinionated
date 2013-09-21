@@ -43,10 +43,6 @@ class Command(NoArgsCommand):
                     ~Q(voting_stage='APPROVED'),
                     ~Q(voting_stage='REJECTED'),
                     ~Q(voting_stage='EXPIRED'),
-                ) | PositionProposal.objects.filter(
-                    ~Q(voting_stage='APPROVED'),
-                    ~Q(voting_stage='REJECTED'),
-                    ~Q(voting_stage='EXPIRED'),
                 ):
             
             if proposal.shouldStartVoting():
