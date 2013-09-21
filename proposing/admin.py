@@ -67,7 +67,7 @@ class ProposalAdmin(admin.ModelAdmin):
 
     def diff_link(self, obj):
         change_url = urlresolvers.reverse('admin:document:diff', args=(obj.diff.pk,))
-        return mark_safe('<a href="%s">%s</a>' % (str(change_url), "Go to the diff"))
+        return '<a href="%s">%s</a>' % (str(change_url), "Go to the diff")
     
     diff_link.short_description = 'Diff-object'
 
