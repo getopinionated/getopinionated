@@ -31,11 +31,11 @@ class FullDocument(models.Model):
         originalText = FullDocument.cleanText(diff.getOriginalText())
         mytext = FullDocument.cleanText(self.content.__str__())
         if originalText.strip() != mytext.strip():
-            #print "####################################################"
-            #print originalText.encode("hex")
-            #print "####################################################"
-            #print mytext.encode("hex")
-            #print "####################################################"
+            print "####################################################"
+            print originalText
+            print "####################################################"
+            print mytext
+            print "####################################################"
             raise Exception("This diff doesn't apply to this document!")
         newcontent = diff.getNewText()
         newcontent = FullDocument.cleanText(newcontent)

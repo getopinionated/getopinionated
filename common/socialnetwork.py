@@ -18,7 +18,7 @@ def posttotwitter(message):
                                settings.FEED_TWITTER_CONSUMER_KEY, settings.FEED_TWITTER_CONSUMER_SECRET)
                    )
         # Update your status
-        t.statuses.update(status=message)
+        #t.statuses.update(status=message)
     except:
 	raise
         print "posting to twitter feed failed. Message was: ", message
