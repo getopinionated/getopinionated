@@ -1,7 +1,7 @@
 from models import Proposal, Comment, CommentReply, UpDownVote, ProposalVote, VotablePostEdit, AmendmentProposal, PositionProposal
 from django.contrib import admin
 from proposing.models import Tag, Proxy, ProxyProposalVote, FinalProposalVote
-import django.core.urlresolvers
+import django.core.urlresolvers as urlresolvers
 from django.utils.safestring import mark_safe
 
 class TagAdmin(admin.ModelAdmin):
