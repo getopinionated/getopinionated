@@ -26,6 +26,7 @@ class Command(BaseCommand):
 
     def runserver(self):
         call_command('syncdb', noinput=True)
-        call_command('validate')
+        call_command('loaddata', "testdata.json")
+        call_command('validate')        
         call_command('runserver', '8000')
 

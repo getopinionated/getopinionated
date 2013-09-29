@@ -5,10 +5,8 @@ from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 from django.db.models.aggregates import Sum
-from django.contrib.auth.models import User
 from django.conf import settings
 from common.templatetags.filters import slugify
-from common.stringify import niceBigInteger
 from document.models import Diff
 from accounts.models import CustomUser
 from django.contrib.auth.models import Group, User
