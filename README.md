@@ -6,9 +6,10 @@ Little getting to-know-django-project. Together with some friends, making an onl
 Django specifics:
 -----------------
 
-This project is currently being developed on django. We are using the latest official release, being django 1.4.3. You can get it from https://www.djangoproject.com/download/.
+This project is currently being developed on django. We are using the latest official release, being django 1.4.0. You can get it from https://www.djangoproject.com/download/.
+You will also need scipy >0.12.0
 
-To run the development server, run `srv.py`. This will create the database, populate it with the data in `testdata.json` and execute `./manage.py runserver`.
+To run the development server, run `run_local.py`. This will create the database, populate it with the data in `testdata.json` and execute `./manage.py runserver`. For a production server, make sure to add a local_settings file. For more info on this, take a look at a template file.
 
 Dependencies:
 -------------

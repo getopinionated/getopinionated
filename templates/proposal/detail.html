@@ -225,28 +225,32 @@
             {% endif %}
         </div> <!-- end .timeline -->
         {% if proposal.voting_stage == 'VOTING' %}
-            <div class="votes">
-                {% if proposal|args:user|call:"userHasProposalvoted" == None %}
-                    <h2>Cast your vote:</h2>
-                {% else %}
-                    <h2>Change your vote:</h2>
-                {% endif %}
-                <div id="vote_messages"></div>
-                <div class="votebuttons">
-                    {% for option, helptext in proposal.voteOptions %}
-                        <div onclick="proposalvote_send('{{proposal.slug}}', '{{option}}'{% if not user.is_authenticated %}, '{% url user-login %}?next={{request.path|urlencode}}'{% endif %})"
-                            id="votebutton_{{option}}" class="btn
-                                {% if proposal|args:user|args:option|call:"userHasProposalvotedOn" %}
-                                    btn-primary
-                                {% else %}
-                                    btn-info
-                                {% endif %}" >
-                            <div>{{option}}</div>
-                            <div class="small">{% if helptext %}{{helptext}}{% else %}&nbsp;{% endif %}</div>
-                        </div>
-                    {% endfor %}
-              </div>
-            </div>
+            {% if proposal|args:user|call:"canBeVotedOnByUser" == None %}
+                <div class="votes">
+	                {% if proposal|args:user|call:"userHasProposalvoted" == None %}
+	                    <h2>Cast your vote:</h2>
+	                {% else %}
+	                    <h2>Change your vote:</h2>
+	                {% endif %}
+	                <div id="vote_messages"></div>
+	                <div class="votebuttons">
+	                    {% for option, helptext in proposal.voteOptions %}
+		                    <div onclick="proposalvote_send('{{proposal.slug}}', '{{option}}'{% if not user.is_authenticated %}, '{% url user-login %}?next={{request.path|urlencode}}'{% endif %})"
+		                        id="votebutton_{{option}}" class="btn
+		                            {% if proposal|args:user|args:option|call:"userHasProposalvotedOn" %}
+		                                btn-primary
+		                            {% else %}
+		                                btn-info
+		                            {% endif %}" >
+		                        <div>{{option}}</div>
+		                        <div class="small">{% if helptext %}{{helptext}}{% else %}&nbsp;{% endif %}</div>
+		                    </div>
+	                    {% endfor %}        
+	                </div>
+	            </div>
+            {% else %}
+                <h2>You are unfortunately not allowed to vote on this proposal.</h2>
+            {% endif %}
         {% elif proposal.finishedVoting %}
             <div class="votingresults">
                 <h2>Voting Result: {{ proposal.get_voting_stage_display }}</h2>

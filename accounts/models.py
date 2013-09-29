@@ -16,7 +16,7 @@ class CustomUserManager(UserManager):
 class CustomUser(User):
     slug = models.SlugField(unique=True)
     karma = models.IntegerField(default=0)
-    avatar = ImageField(upload_to='avatars/')
+    avatar = ImageField(upload_to='avatars/',null=True,blank=True)
     member_since = models.DateTimeField(default=now())
     profile_views = models.IntegerField(default=0)
     
