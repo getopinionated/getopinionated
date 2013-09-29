@@ -1,5 +1,5 @@
 from __future__ import division
-import datetime, logging
+import datetime, logging, traceback
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.db import models
 from django.db.models import Q
@@ -256,6 +256,10 @@ class Proposal(VotablePost):
             return False
         return self.voting_stage in ['DISCUSSION']
 
+    def execute(self):
+        """ perform necessary actions upon isApproved() """
+        pass
+
     @staticmethod
     def voteOptions():
         """ returns vote options, fit for use in template """
@@ -338,6 +342,35 @@ class AmendmentProposal(Proposal):
     @property
     def proposaltype(self):
         return "amendment"
+
+    def execute(self):
+        try:
+            if hasattr(self,'diff'):
+                self.diff.fulldocument.getFinalVersion().applyDiff(self.diff)
+            else:
+                print "Proposal",self.title,"is approved, but has no Diff"
+        except Exception as e:
+            print traceback.format_exc()
+            print "Error applying diff to final version: ", e
+            # TODO: catch this in nice way
+        ## convert other proposal diffs
+        for proposal in Proposal.objects.filter(
+                ~Q(voting_stage='APPROVED'),
+                ~Q(voting_stage='REJECTED'),
+                ~Q(voting_stage='EXPIRED'),
+                ~Q(pk=self.pk),
+            ):
+            try:
+                if hasattr(proposal,'diff'):
+                    newdiff = proposal.diff.applyDiffOnThisDiff(self.diff)
+                    newdiff.fulldocument = self.diff.fulldocument.getFinalVersion()
+                    newdiff.save()
+                    proposal.diff = newdiff
+                    proposal.save()
+            except Exception as e:
+                print "Error applying diff to other diffs: ", e
+                print traceback.format_exc()
+                # TODO: catch this in nice way
 
 class PositionProposal(Proposal):
     position_text = models.TextField()

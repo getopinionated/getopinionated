@@ -1,8 +1,11 @@
-from models import Proposal, Comment, CommentReply, UpDownVote, ProposalVote, VotablePostEdit, AmendmentProposal, PositionProposal
-from django.contrib import admin
-from proposing.models import Tag, Proxy, ProxyProposalVote, FinalProposalVote
+import datetime
 import django.core.urlresolvers as urlresolvers
+from django.contrib import admin
 from django.utils.safestring import mark_safe
+from django.conf import settings
+from django.utils import timezone
+from proposing.models import Tag, Proxy, ProxyProposalVote, FinalProposalVote
+from models import Proposal, Comment, CommentReply, UpDownVote, ProposalVote, VotablePostEdit, AmendmentProposal, PositionProposal
 
 class TagAdmin(admin.ModelAdmin):
     model = Tag
@@ -60,7 +63,7 @@ class ProposalAdmin(admin.ModelAdmin):
     list_display = ['title', 'voting_stage', 'discussion_time', 'creator', 'create_date', 'upvote_score', 'number_of_comments', 'views', ]
     inlines = [CommentInline, UpDownVoteInline, ProposalVoteInline, VotablePostEditInline]
     list_filter = ['create_date']
-    actions = ['add_15_upvotes','add_15_proposalvotes','recount_votes']
+    actions = ['debug_updatevoting_prepare_approval','recount_votes']
     prepopulated_fields = {'slug': ('title',)}
 
     readonly_fields = ['diff_link']
@@ -71,23 +74,17 @@ class ProposalAdmin(admin.ModelAdmin):
     
     diff_link.short_description = 'Diff-object'
 
-    def add_15_upvotes(self, request, queryset):
+    def debug_updatevoting_prepare_approval(self, request, queryset):
         for proposal in queryset:
-            for i in xrange(15):
-                UpDownVote(user = request.user,
-                post = proposal,
-                value = 1).save()
+            ## create positive proposal if there are none yet
+            if proposal.proposal_votes.count() == 0: 
+                ProposalVote(user=request.user, proposal=proposal, value=4).save()
+            ## make sure shouldBeFinished() return True
+            proposal.voting_stage = 'VOTING'
+            proposal.voting_date  = timezone.now() - datetime.timedelta(days=settings.VOTING_DAYS)
+            proposal.save()
                 
-    add_15_upvotes.short_description = "Add 15 upvotes"
-    
-    def add_15_proposalvotes(self, request, queryset):
-        for proposal in queryset:
-            for i in xrange(15):
-                ProposalVote(user = request.user,
-                             proposal = proposal,
-                             value = 5).save()
-                
-    add_15_proposalvotes.short_description = "Add 15 proposal votes"
+    debug_updatevoting_prepare_approval.short_description = "Debug updatevoting: prepare approval"
 
     def recount_votes(self, request, queryset):
         for proposal in queryset:
