@@ -314,6 +314,10 @@ FEED_TWITTER_ACCESS_SECRET = "SZWI1FUVehVAX03KC9fHSHTAj9pgEGCnaG43KEFvDTk"
 ## anonymous user settings
 ANONYMOUS_PROPOSALS = True # allow anonymous proposals if True
 ANONYMOUS_COMMENTS = True # allow anonymous comments if True
+
+COMMENTS_IN_DISCUSSION = True #
+COMMENTS_IN_VOTING = True #
+COMMENTS_IN_FINISHED = True #
 ## proposal settings
 MIN_NUM_ENDORSEMENTS_BEFORE_VOTING = 3
 QUORUM_SIZE = 1 # minimal # of proposalvotes for approvement

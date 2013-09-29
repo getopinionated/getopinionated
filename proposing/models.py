@@ -256,7 +256,7 @@ class Proposal(VotablePost):
         return self.avgProposalvoteScore > 0 and self.proposal_votes.count() >= settings.QUORUM_SIZE
     
     def commentsAllowed(self):
-        return self.voting_stage == 'DISCUSSION'
+        return (self.voting_stage == 'DISCUSSION' and settings.COMMENTS_IN_DISCUSSION) or (self.voting_stage == 'VOTING' and settings.COMMENTS_IN_VOTING) or (self.voting_stage in ['APPROVED','REJECTED','EXPIRED'] and settings.COMMENTS_IN_FINISHED)
 
     def commentsAllowedBy(self, user):
         return self.commentsAllowed() and (user.is_authenticated() or settings.ANONYMOUS_COMMENTS)
