@@ -140,7 +140,10 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('motivation', 'color',)
-
+        widgets = {
+            'motivation': forms.Textarea(attrs={'id': 'commentreply','style':'width: 98%;'}),
+        }
+        
     def save(self, proposal, user, commit=True):
         new_comment = super(CommentForm, self).save(commit=False)
         new_comment.proposal = proposal
@@ -152,6 +155,9 @@ class CommentReplyForm(forms.ModelForm):
     class Meta:
         model = CommentReply
         fields = ('motivation',)
+        widgets = {
+            'motivation': forms.Textarea(attrs={'id': 'commentreply'}),
+        }
 
     def save(self, comment, user, commit=True):
         new_comment_reply = super(CommentReplyForm, self).save(commit=False)
