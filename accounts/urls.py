@@ -3,7 +3,7 @@ import django.contrib.auth.views
 from django.conf.urls.defaults import *
 from views import userlogin, userregister, profileupdate, userlogout, userprofile, passwordreset
 from accounts.views import userproposals, usercomments, uservotes, userproxies,\
-    usertags, userproxyvotes, mailunsubscribe
+    usertags, userproxyvotes, mailunsubscribe, logincode
 
 urlpatterns = patterns('accounts.views',
     url(r'^login/$', userlogin, name='user-login'),
@@ -19,7 +19,7 @@ urlpatterns = patterns('accounts.views',
     url(r'^user/(?P<userslug>[-\w]+)/proxy-votes/$', userproxyvotes, name='user-proxy-votes'),
     
     url(r'^unsubscribe/mail/(?P<code>[-\w]+)/$', mailunsubscribe , name='unsubscribe-mail'),
-    
+    url(r'^single-login/(?P<code>[-\w]+)/$', logincode , name='single-login-mail'),
     url(r'^passwordreset/$', passwordreset, name='password-reset'),
     url(r'^password/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', django.contrib.auth.views.password_reset_confirm, \
         {'post_reset_redirect' : '/accounts/password/done/', 'template_name': 'accounts/password-reset-confirm.html'}),

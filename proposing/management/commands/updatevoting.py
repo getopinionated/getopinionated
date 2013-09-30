@@ -59,7 +59,8 @@ class Command(NoArgsCommand):
                 proposal.save()
             elif proposal.shouldBeFinished():
                 Command.doVoteCount(proposal)
-                Command.executeProposal(proposal)
+                if proposal.isApproved():
+                    proposal.execute()
                 proposal.expire_date = timezone.now()
                 proposal.voting_stage = 'APPROVED' if proposal.isApproved() else 'REJECTED'
                 finished_cnt +=1
@@ -82,40 +83,6 @@ class Command(NoArgsCommand):
         self.stdout.write('{} proposals to the finished phase\n'.format(finished_cnt))
         self.stdout.write('{} proposals expired\n'.format(expired_cnt))
         
-    @staticmethod
-    def executeProposal(prop):
-        if prop.isApproved():
-            ## apply this diff
-            try:
-                if hasattr(prop,'diff'):
-                    prop.diff.fulldocument.getFinalVersion().applyDiff(prop.diff)
-                else:
-                    print "Proposal",prop.title,"is approved, but has no Diff"
-            except Exception as e:
-                print traceback.format_exc()
-                print "Error applying diff to final version: ", e
-                # TODO: catch this in nice way
-            ## convert other proposal diffs
-            for proposal in Proposal.objects.filter(
-                    ~Q(voting_stage='APPROVED'),
-                    ~Q(voting_stage='REJECTED'),
-                    ~Q(voting_stage='EXPIRED'),
-                    ~Q(pk=prop.pk),
-                ):
-                try:
-                    if hasattr(proposal,'diff'):
-                        newdiff = proposal.diff.applyDiffOnThisDiff(prop.diff)
-                        newdiff.fulldocument = prop.diff.fulldocument.getFinalVersion()
-                        newdiff.save()
-                        proposal.diff = newdiff
-                        proposal.save()
-                except Exception as e:
-                    print "Error applying diff to other diffs: ", e
-                    print traceback.format_exc()
-                    # TODO: catch this in nice way
-        else:
-            return
-
     @staticmethod
     def doVoteCount(proposal):
         

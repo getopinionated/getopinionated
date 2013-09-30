@@ -1,12 +1,7 @@
-import datetime
-
-from django.utils import timezone
 from django.test import TestCase
 
-from proposing.models import Proposal,Proxy,ProposalVote, Tag
-from django.core.urlresolvers import reverse
+from proposing.models import AmendmentProposal,Proxy,ProposalVote, Tag
 from accounts.models import CustomUser
-from django.contrib.auth.models import User
 from document.models import Diff, FullDocument
 from proposing.management.commands.updatevoting import Command
 
@@ -49,7 +44,7 @@ class VoteCountTestCase(TestCase):
         doc.save()
         diff = Diff(fulldocument=doc)
         diff.save()
-        self.proposal = Proposal(title="Test", diff=diff)
+        self.proposal = AmendmentProposal(title="Test", diff=diff, motivation="Motivation")
         self.proposal.save()
     
     def setupVotes(self,tupples):

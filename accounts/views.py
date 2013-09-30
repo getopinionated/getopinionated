@@ -12,7 +12,9 @@ from django.db.models.aggregates import Count, Sum
 from proposing.models import Proposal, Comment, FinalProposalVote, Tag, Proxy
 from decorators import not_logged_in
 from forms import CustomUserCreationForm, ProfileUpdateForm, EmailAuthenticationForm, SingleProxyForm
-from models import UnsubscribeCode, CustomUser
+from models import UnsubscribeCode, CustomUser, LoginCode
+from django.contrib.auth import load_backend, login, logout
+from django.conf import settings
 
 def getuserproposals(member):
     return Proposal.objects.filter(creator=member).annotate(score=Sum('up_down_votes__value')).order_by('score')
@@ -236,4 +238,16 @@ def mailunsubscribe(request, code):
         'user': user
     })
     
+@not_logged_in
+def logincode(request, code):
+    logincode = LoginCode.objects.get(code=code)
+    user = logincode.user
+    if not hasattr(user, 'backend'):
+        for backend in settings.AUTHENTICATION_BACKENDS:
+            if user == load_backend(backend).get_user(user.pk):
+                user.backend = backend
+                break
+    if hasattr(user, 'backend'):
+        auth_login(request, user)
+    return profileupdate(request)
     

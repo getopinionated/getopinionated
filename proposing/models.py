@@ -1,16 +1,15 @@
 from __future__ import division
-import datetime, logging
+import datetime, logging, traceback
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 from django.db.models.aggregates import Sum
-from django.contrib.auth.models import User
 from django.conf import settings
 from common.templatetags.filters import slugify
-from common.stringify import niceBigInteger
 from document.models import Diff
 from accounts.models import CustomUser
+from django.contrib.auth.models import Group, User
 
 logger = logging.getLogger(__name__)
 
@@ -127,7 +126,9 @@ class Proposal(VotablePost):
     discussion_time = models.IntegerField(default=7)
     tags = models.ManyToManyField(Tag, related_name="proposals")
     avgProposalvoteScore = models.FloatField("score", default=0.0) 
-    favorited_by = models.ManyToManyField(User, related_name="favorites", null=True)
+    favorited_by = models.ManyToManyField(User, related_name="favorites", null=True, blank=True)
+
+    allowed_groups = models.ManyToManyField(Group, null=True, blank=True) # if null, all users can vote for this proposal
 
     def __unicode__(self):
         return self.title
@@ -173,6 +174,15 @@ class Proposal(VotablePost):
     def minimalContraintsAreMet(self):
         """ True if non-date constraints are met """
         return self.minimalNumEndorsementsIsMet()
+
+    def canBeVotedOnByUser(self, user):
+        if self.allowed_groups.count():
+            for group in self.allowed_groups.all():
+                if group in user.groups.all():
+                    return None
+        else:
+            return None
+        return "This user is not a member in any of the required groups"
 
     @property
     def upvotesNeededBeforeVoting(self):
@@ -246,7 +256,7 @@ class Proposal(VotablePost):
         return self.avgProposalvoteScore > 0 and self.proposal_votes.count() >= settings.QUORUM_SIZE
     
     def commentsAllowed(self):
-        return self.voting_stage == 'DISCUSSION'
+        return (self.voting_stage == 'DISCUSSION' and settings.COMMENTS_IN_DISCUSSION) or (self.voting_stage == 'VOTING' and settings.COMMENTS_IN_VOTING) or (self.voting_stage in ['APPROVED','REJECTED','EXPIRED'] and settings.COMMENTS_IN_FINISHED)
 
     def commentsAllowedBy(self, user):
         return self.commentsAllowed() and (user.is_authenticated() or settings.ANONYMOUS_COMMENTS)
@@ -255,6 +265,10 @@ class Proposal(VotablePost):
         if not super(Proposal, self).isEditableBy(user):
             return False
         return self.voting_stage in ['DISCUSSION']
+
+    def execute(self):
+        """ perform necessary actions upon isApproved() """
+        pass
 
     @staticmethod
     def voteOptions():
@@ -338,6 +352,35 @@ class AmendmentProposal(Proposal):
     @property
     def proposaltype(self):
         return "amendment"
+
+    def execute(self):
+        try:
+            if hasattr(self,'diff'):
+                self.diff.fulldocument.getFinalVersion().applyDiff(self.diff)
+            else:
+                print "Proposal",self.title,"is approved, but has no Diff"
+        except Exception as e:
+            print traceback.format_exc()
+            print "Error applying diff to final version: ", e
+            # TODO: catch this in nice way
+        ## convert other proposal diffs
+        for proposal in Proposal.objects.filter(
+                ~Q(voting_stage='APPROVED'),
+                ~Q(voting_stage='REJECTED'),
+                ~Q(voting_stage='EXPIRED'),
+                ~Q(pk=self.pk),
+            ):
+            try:
+                if hasattr(proposal,'diff'):
+                    newdiff = proposal.diff.applyDiffOnThisDiff(self.diff)
+                    newdiff.fulldocument = self.diff.fulldocument.getFinalVersion()
+                    newdiff.save()
+                    proposal.diff = newdiff
+                    proposal.save()
+            except Exception as e:
+                print "Error applying diff to other diffs: ", e
+                print traceback.format_exc()
+                # TODO: catch this in nice way
 
 class PositionProposal(Proposal):
     position_text = models.TextField()

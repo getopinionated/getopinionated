@@ -73,7 +73,7 @@ class Command(LabelCommand):
                                 'finished_proposals':finished_proposals,
                                 'unsubscribecode':unsubscribecode,
                                 'label':label,
-                                'user':user                                  
+                                'user':user                    
                                 })
             
             print "mail sent to:",mail_address
