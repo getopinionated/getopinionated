@@ -74,14 +74,13 @@ class Command(BaseCommand):
                 unsubscribecode = UnsubscribeCode(user=user, code=random.SystemRandom().getrandbits(64))
                 unsubscribecode.save()
                 text = render_to_string('mails/invite-mail.html', dictionary={
-                                    'logincode':logincode,
-                                    'unsubscribecode':unsubscribecode,
-                                    'user':user
-                                    })
+                                        'logincode':logincode,
+                                        'unsubscribecode':unsubscribecode,
+                                        'user':user
+                                        })
                 print "mail sent to:",email
                 try:
                     #pass
-                    print text
                     send_mail('GetOpinionated', text, 'opinion@pirateparty.be',[email], fail_silently=False)
                     user.save()
                 
