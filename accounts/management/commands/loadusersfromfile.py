@@ -1,7 +1,11 @@
 import os
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import Group, User
-from accounts.models import CustomUser
+from accounts.models import CustomUser, LoginCode, UnsubscribeCode
+import random
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
+from smtplib import SMTPRecipientsRefused
 
 class Command(BaseCommand):
     args = '<path to the email file> [<group name>]'
@@ -31,7 +35,7 @@ class Command(BaseCommand):
             for email in emails:
                 assert '@' in email, "Not every email has an @ (like {})".format(email)
                 for char in "(){}[], ":
-                    assert char not in email, "Illegal character ({}) en email ({})".format(char, email)
+                    assert char not in email, "Illegal character ({}) in email ({})".format(char, email)
             # check for doubles
             assert len(set(emails)) == len(emails), 'There are doubles in the emails list'
 
@@ -53,16 +57,39 @@ class Command(BaseCommand):
                 assert username, 'illegal email address: {}'.format(email)
                 while User.objects.filter(username=username).count() != 0:
                     username += '1'
+
                 first_name = username
                 last_name = ""
 
-                ## creat user
+                ## create user
                 self.stdout.write("Creating account for {} with username {}\n".format(email, username))
                 user = CustomUser.objects.create_user(username)
                 user.email = email
                 user.first_name = first_name
                 user.last_name = last_name
-                user.save()
+                
+                #mail user
+                logincode = LoginCode(user=user, code=random.SystemRandom().getrandbits(128))
+                logincode.save()
+                unsubscribecode = UnsubscribeCode(user=user, code=random.SystemRandom().getrandbits(64))
+                unsubscribecode.save()
+                text = render_to_string('mails/invite-mail.html', dictionary={
+                                    'logincode':logincode,
+                                    'unsubscribecode':unsubscribecode,
+                                    'user':user
+                                    })
+                print "mail sent to:",email
+                try:
+                    #pass
+                    print text
+                    send_mail('GetOpinionated', text, 'opinion@pirateparty.be',[email], fail_silently=False)
+                    user.save()
+                
+                except SMTPRecipientsRefused:
+                    print "refused"
+                    continue
+                
+            
             else:
                 self.stdout.write("Account already exists for {}\n".format(email))
 
@@ -73,4 +100,6 @@ class Command(BaseCommand):
                 user = User.objects.get(email=email)
                 group.user_set.add(user)
             self.stdout.write("Done\n\n".format(groupname))
-
+            
+        self.stdout.write("Done\n\n".format(groupname))
+        

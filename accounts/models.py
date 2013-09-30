@@ -77,3 +77,8 @@ class CustomUser(User):
 class UnsubscribeCode(models.Model):
     code = models.SlugField()
     user = models.ForeignKey(CustomUser)
+
+class LoginCode(models.Model):
+    code = models.TextField()
+    user = models.ForeignKey(CustomUser)
+    
