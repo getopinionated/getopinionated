@@ -185,7 +185,7 @@
                 </div>
             </div>
         {% endif %}
-        <div class="timeline">
+        <div class="timeline" style="display:none;">
             <h3>Timeline</h3>
             {% if proposal.voting_stage != 'EXPIRED' %}
                 <ul class="events">
@@ -223,7 +223,7 @@
                     <div>now</div>
                 </div> <!-- end .now -->
             {% endif %}
-        </div> <!-- end .timeline -->
+        </div>
         {% if proposal.voting_stage == 'VOTING' %}
             {% if proposal|args:user|call:"canBeVotedOnByUser" == None %}
                 <div class="votes">
