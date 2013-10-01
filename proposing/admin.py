@@ -7,6 +7,7 @@ from django.utils import timezone
 from proposing.models import Tag, Proxy, ProxyProposalVote, FinalProposalVote
 from models import Proposal, Comment, CommentReply, UpDownVote, ProposalVote, VotablePostEdit, AmendmentProposal, PositionProposal
 from django.contrib.auth.models import Group
+from django.utils import timezone
 
 class TagAdmin(admin.ModelAdmin):
     model = Tag
@@ -64,7 +65,7 @@ class ProposalAdmin(admin.ModelAdmin):
     list_display = ['title', 'voting_stage', 'discussion_time', 'creator', 'create_date', 'upvote_score', 'number_of_comments', 'views', ]
     inlines = [CommentInline, UpDownVoteInline, ProposalVoteInline, VotablePostEditInline]
     list_filter = ['create_date', 'allowed_groups']
-    actions = ['debug_updatevoting_prepare_approval','recount_votes']
+    actions = ['debug_updatevoting_prepare_approval','recount_votes','general_assembly_vote']
     prepopulated_fields = {'slug': ('title',)}
 
     readonly_fields = ['diff_link']
@@ -74,6 +75,17 @@ class ProposalAdmin(admin.ModelAdmin):
         return '<a href="%s">%s</a>' % (str(change_url), "Go to the diff")
     
     diff_link.short_description = 'Diff-object'
+
+
+    def general_assembly_vote(self, request, queryset):
+        for proposal in queryset:
+            proposal.allowed_groups.add(Group.objects.get(name='pirate-member'))
+            proposal.voting_date = timezone.now()
+            proposal.voting_stage = 'VOTING'
+            proposal.expire_date = timezone.now() + datetime.timedelta(days=31)
+            proposal.save()
+    general_assembly_vote.short_description = "General Assembly Vote"
+
 
     def debug_updatevoting_prepare_approval(self, request, queryset):
         for proposal in queryset:

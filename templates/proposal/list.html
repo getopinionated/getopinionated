@@ -22,11 +22,11 @@
 {% block beforecontent %}
 {% endblock %}
 {% block content %}
-    {% if timeline %}
+    <!-- {% if timeline %}
         <div class="row-fluid">
             <div class="span12"><canvas id="timeline"></canvas></div>
         </div>
-    {% endif %}
+    {% endif %} -->
 	<div style="padding: 20px 0 10px 30px;">
 		{% if settings.AMENDMENTS_ALLOWED %}
 			<a href="{% url latest-document-detail 'the-pirate-codex' %}" role="button" class="btn">Propose new amendment</a>
