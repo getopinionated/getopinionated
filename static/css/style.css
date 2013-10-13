@@ -155,18 +155,10 @@ section#content > header #header-modifier {
     top:40px;
     text-align: center;
     text-transform:uppercase;
-    /* Safari */
 	-webkit-transform: rotate(30deg);
-	
-	/* Firefox */
 	-moz-transform: rotate(30deg);
-	
-	/* IE */
 	-ms-transform: rotate(30deg);
-	
-	/* Opera */
 	-o-transform: rotate(30deg);
-	
 }
 
 section#content > header a {

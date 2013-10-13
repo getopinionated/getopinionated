@@ -8,6 +8,7 @@
 	    {% else %}
 	    	src="{{STATIC_URL}}images/nofavorite.png"
 	    {% endif %}
-	    	title="Follow this proposal"  alt="" class="favoritebutton" id="favorite-{{proposal.slug}}" onclick="favorite_send( '{{proposal.slug}}')"/>
+	    	alt="" class="favoritebutton custom-popover" id="favorite-{{proposal.slug}}" onclick="favorite_send( '{{proposal.slug}}')"
+	    	popovertitle="Follow this proposal and receive updates if something happens."/>
     {% endif %}
 {% endmacro %}

@@ -60,7 +60,10 @@
                     </div>
                     <div class="span9">
                         <div class="summary">
-                            <a href="{% url proposals-detail proposal.slug %}">{{ proposal.title }}</a>
+	                        {% if request.user in proposal.favorited_by.all %}
+	                            <img src="{{STATIC_URL}}images/favorite.png" class="custom-popover" popovertitle="You have favorited this proposal" style="vertical-align:top; display: inline-block; height:16px;"/>
+	                        {% endif %}
+	                        <a href="{% url proposals-detail proposal.slug %}">{{ proposal.title }}</a>
                         </div>
                         <br/>
                         <div class="proposal-tags">
@@ -75,9 +78,28 @@
                                     </div>
                                 {% endif %}
                             {% endif %}
-                            <div class="label label-inverse">
-                                {{ proposal.get_voting_stage_display }}
-                            </div>
+                            
+                            {% if proposal.voting_stage == 'EXPIRED' %}
+                                <div class="label label-inverse custom-popover" popovertitle="This proposal has expired because it didn't get enough votes in time.">
+	                                Expired
+	                            </div>
+	                        {% elif proposal.voting_stage == 'DISCUSSION' %}
+	                            <div class="label label-inverse custom-popover" popovertitle="This proposal is now being discussed until it has received 3 endorsements.">
+                                    Discussion
+                                </div>
+                            {% elif proposal.voting_stage == 'VOTING' %}
+                                <div class="label label-inverse custom-popover" popovertitle="This proposal is now being voted.">
+                                    Voting
+                                </div>
+                            {% elif proposal.voting_stage == 'ACCEPTED' %}
+                                <div class="label label-inverse custom-popover" popovertitle="This proposal has been voted and has been accepted.">
+                                    Accepted
+                                </div>
+                            {% elif proposal.voting_stage == 'REJECTED' %}
+                                <div class="label label-inverse custom-popover" popovertitle="This proposal has been voted, but it has been rejected">
+                                    Rejected
+                                </div>
+                            {% endif %}
                             {% for tag in proposal.tags.all|slice:":4" %}
                                 {% if forloop.counter0 == 3 %}
                                     <div class="label label-info">
