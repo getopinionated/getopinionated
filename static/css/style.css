@@ -140,12 +140,38 @@ section#content > header #header-title {
     font-family: "Dosis ExtraBold"; 
 	font-size: 100px;
 	line-height: 150px;
-    padding-left: 50px;
+    padding-left: 0px;
+    font-weight: normal!important;
+    
+}
+
+section#content > header #header-modifier {
+    color: green;
+    border-style:solid;
+    border-width:5px;
+    font: 20px 'Verdana';
+    font-weight: bold;
+    position:absolute;
+    left:1024px;
+    top:40px;
+    text-align: center;
+    text-transform:uppercase;
+    /* Safari */
+	-webkit-transform: rotate(30deg);
+	
+	/* Firefox */
+	-moz-transform: rotate(30deg);
+	
+	/* IE */
+	-ms-transform: rotate(30deg);
+	
+	/* Opera */
+	-o-transform: rotate(30deg);
+	
 }
 
 section#content > header a {
 	color: inherit!important;
-	font-weight: normal!important;
 	text-decoration: none!important;
 }
 
