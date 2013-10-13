@@ -149,9 +149,9 @@ section#content > header #header-modifier {
     color: green;
     border-style:solid;
     border-width:5px;
-    font: 20px 'Verdana';
+    font: 15px 'Verdana';
     font-weight: bold;
-    position:absolute;
+    position:relative;
     top:40px;
     text-align: center;
     text-transform:uppercase;
