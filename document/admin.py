@@ -7,7 +7,7 @@ class FullDocumentAdmin(admin.ModelAdmin):
 
 class DiffAdmin(admin.ModelAdmin):
     #fields = ['diff_text', 'getOriginalText', 'getNewText']
-    list_display = ('text_representation', 'getOriginalText', 'getNewText','getUnifiedDiff')
+    list_display = ('__unicode__', 'text_representation', 'getOriginalText', 'getNewText','getUnifiedDiff')
 
 admin.site.register(FullDocument, FullDocumentAdmin)
 admin.site.register(Diff, DiffAdmin)

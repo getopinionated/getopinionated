@@ -117,7 +117,7 @@ class Diff(models.Model):
 
     def __unicode__(self):
         nchanges = len([l for l in self.text_representation.split('\n') if l.startswith('+') or l.startswith('-')])
-        return "Diff for {} with {} changes ({})".format(self.fulldocument.title, nchanges, hashlib.md5(self.text_representation).hexdigest())
+        return "Diff for {} with {} changes ({})".format(self.fulldocument.title, nchanges, hashlib.md5(str(self.text_representation.encode('utf-8'))).hexdigest())
     
     @staticmethod
     def generateDiff(originaltext, derivedtext):
