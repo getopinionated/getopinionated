@@ -237,10 +237,14 @@ class Proposal(VotablePost):
             return self.userHasProposalvoted(user)
 
     def hasCommented(self, user):
-        return self.comments.filter(creator=user).count()
+        if user.is_authenticated():
+            return self.comments.filter(creator=user).count()
+        return False
 
     def hasViewed(self, user):
-        return self.viewed_by.filter(pk=user.pk).exists()
+        if user.is_authenticated():
+            return self.viewed_by.filter(pk=user.pk).exists()
+        return False
 
     def incrementViewCounter(self, user):
         self.views += 1
