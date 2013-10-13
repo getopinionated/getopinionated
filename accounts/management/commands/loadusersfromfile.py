@@ -53,7 +53,7 @@ class Command(BaseCommand):
         for email in emails:
             if User.objects.filter(email=email).count() == 0:
                 ## generate user data
-                username = email.split('@')[0]
+                username = email.split('@')[0][0:-3]
                 assert username, 'illegal email address: {}'.format(email)
                 while User.objects.filter(username=username).count() != 0:
                     username += '1'
@@ -78,11 +78,11 @@ class Command(BaseCommand):
                                         'unsubscribecode':unsubscribecode,
                                         'user':user
                                         })
-                print "mail sent to:",email
                 try:
                     #pass
-                    send_mail('GetOpinionated', text, 'opinion@pirateparty.be',[email], fail_silently=False)
+                    send_mail('GetOpinionated: vote online for the Pirate Party Programme', text, 'opinion@pirateparty.be',[email], fail_silently=False)
                     user.save()
+	            print "mail sent to:",email
                 
                 except SMTPRecipientsRefused:
                     print "refused"

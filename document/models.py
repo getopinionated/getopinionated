@@ -32,11 +32,11 @@ class FullDocument(models.Model):
         originalText = FullDocument.cleanText(diff.getOriginalText())
         mytext = FullDocument.cleanText(self.content.__str__())
         if originalText.strip() != mytext.strip():
-            #print "####################################################"
-            #print originalText.encode("hex")
-            #print "####################################################"
-            #print mytext.encode("hex")
-            #print "####################################################"
+            print "####################################################"
+            print originalText
+            print "####################################################"
+            print mytext
+            print "####################################################"
             raise Exception("This diff doesn't apply to this document!")
         newcontent = diff.getNewText()
         newcontent = FullDocument.cleanText(newcontent)
@@ -117,7 +117,7 @@ class Diff(models.Model):
 
     def __unicode__(self):
         nchanges = len([l for l in self.text_representation.split('\n') if l.startswith('+') or l.startswith('-')])
-        return "Diff for {} with {} changes ({})".format(self.fulldocument.title, nchanges, hashlib.md5(self.text_representation).hexdigest())
+        return "Diff for {} with {} changes ({})".format(self.fulldocument.title, nchanges, hashlib.md5(str(self.text_representation.encode('utf-8'))).hexdigest())
     
     @staticmethod
     def generateDiff(originaltext, derivedtext):
