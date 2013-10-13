@@ -127,8 +127,8 @@ class Proposal(VotablePost):
     tags = models.ManyToManyField(Tag, related_name="proposals")
     avgProposalvoteScore = models.FloatField("score", default=0.0) 
     favorited_by = models.ManyToManyField(User, related_name="favorites", null=True, blank=True)
-
     allowed_groups = models.ManyToManyField(Group, null=True, blank=True) # if null, all users can vote for this proposal
+    viewed_by =  models.ManyToManyField(CustomUser, null=True, blank=True)
 
     def __unicode__(self):
         return self.title
@@ -139,7 +139,10 @@ class Proposal(VotablePost):
 
     @property
     def totalvotescore(self):
-        return self.upvote_score + self.proposal_votes.count()
+        if self.voting_stage in ['DISCUSSION']:
+            return self.upvote_score
+        else:
+            return self.proposal_votes.count()
 
     @property
     def number_of_comments(self):
@@ -227,8 +230,22 @@ class Proposal(VotablePost):
         return is_empty_or_self(Proposal.objects.filter(title__iexact=title)) \
             and is_empty_or_self(Proposal.objects.filter(slug=slugify(title)))
 
-    def incrementViewCounter(self):
+    def hasActed(self, user):
+        if self.voting_stage in ['DISCUSSION']:
+            return self.userHasUpdownvoted(user)
+        else:
+            return self.userHasProposalvoted(user)
+
+    def hasCommented(self, user):
+        return self.comments.filter(creator=user).count()
+
+    def hasViewed(self, user):
+        return self.viewed_by.filter(pk=user.pk).exists()
+
+    def incrementViewCounter(self, user):
         self.views += 1
+        if user.is_authenticated():
+            self.viewed_by.add(user)
         self.save()
 
     def proposalvoteFromUser(self, user):

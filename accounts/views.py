@@ -13,7 +13,7 @@ from proposing.models import Proposal, Comment, FinalProposalVote, Tag, Proxy
 from decorators import not_logged_in
 from forms import CustomUserCreationForm, ProfileUpdateForm, EmailAuthenticationForm, SingleProxyForm
 from models import UnsubscribeCode, CustomUser, LoginCode
-from django.contrib.auth import load_backend, login, logout
+from django.contrib.auth import load_backend, logout
 from django.conf import settings
 
 def getuserproposals(member):
