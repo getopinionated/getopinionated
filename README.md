@@ -12,7 +12,8 @@ You need a number of python modules installed on your system to be able to run g
 * python-django-south
 * python-django-authopenid
 * python-oauth2
-* Scipy 0.12.0 or higher
+* *[optional] Scipy 0.12.0 or higher*
+* *[optional] python-imaging*
 
 Furthermore, getopinionated has been developed on python 2.7.
 
@@ -34,4 +35,13 @@ To run the development server, run
 
     python manage.py initializeserver
 
-This will create the database, populate it with the data in `testdata.json` and execute `manage.py runserver`. For a production server, make sure to add a `local_settings.py` file. For more info on this, take a look at a template file.
+This will create the database, populate it with the data in `testdata.json` and execute `manage.py runserver`.
+
+Notes for setting up a production server
+----------------------------------------
+* Make sure to add a `local_settings.py` file. For more info on this, take a look at a template file.
+* Install all optional dependencies as well
+* Set up cronjob to call the following at least every 5 minutes:
+    
+        python manage.py updatevoting
+
