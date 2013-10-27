@@ -17,7 +17,6 @@
             "is_active": true,
             "is_superuser": true,
             "is_staff": true,
-            "last_login": "2013-09-01T12:45:34.446Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$Ze3Zb4pRx1k3$lD4CksPyzQO68dSOk+3wcPiKE1yMCf0aK1MTTqIpAdo=",
@@ -35,7 +34,6 @@
             "is_active": true,
             "is_superuser": true,
             "is_staff": true,
-            "last_login": "2013-05-11T10:40:20.415Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$1cuSSBfv3l12$7DmmHte/05Z7YFDyNmzSAOc19N+Pv3qMtMixTjpydNo=",
@@ -53,7 +51,6 @@
             "is_active": true,
             "is_superuser": true,
             "is_staff": true,
-            "last_login": "2013-05-14T19:14:51.380Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$1cuSSBfv3l12$7DmmHte/05Z7YFDyNmzSAOc19N+Pv3qMtMixTjpydNo=",
@@ -71,7 +68,6 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2013-05-03T19:55:56.113Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$9nbAa9jlHiL7$MliWCMBJxeozrVtlbrY6xkvrt1gQkUx++NBH1oQD4/s=",
@@ -89,7 +85,6 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2013-05-03T19:56:44.281Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$X1SNybNsjGbK$lnJ0xLwD641j0hMce+D7Fb6+TY8rSr9gcgu+Y43h1+c=",
@@ -107,7 +102,6 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2013-05-03T19:57:10.177Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$ZuCyudZdKEEF$hwR2kZaxrL7kEOy5Di2WdWP1p2jWpu9UI5WpGLNq4FA=",
@@ -125,7 +119,6 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2013-05-03T19:57:31.789Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$E4FAyXDpt2my$TLKOgVUWlg1VMiD6psnlhPxYQ+UZntqDQ6ig7okE5bQ=",
@@ -143,7 +136,6 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2013-05-03T19:58:20.486Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$u5FglB4ukUos$jgg+nZ+Hu+Ghgl2LO/YxH/AR5AEnMzrbhV2ViHYg2Zw=",
@@ -161,7 +153,6 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2013-05-03T19:58:41.320Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$wqGMTxfDK6Ya$FzKTj1o2o9L2TEMtuZ9Cu/3Bh/4rcP6P7WU1spnUtwM=",
@@ -179,7 +170,6 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2013-05-03T19:58:56.357Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$7c0Ff4nRurUX$kNDdFPJOVYHejTTwlJxrIyrz2k0Ad9r9rRLwFCV7HOE=",
@@ -197,7 +187,6 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2013-05-03T19:59:14.646Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$f6omdkuoe88m$vSI6b7hB251bC3UTaya1O93XCLz0ohArVjoRz5ojqZA=",
@@ -215,7 +204,6 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2013-05-03T20:01:07.100Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$NEGOWOBhYzfL$egLdmeh2asXIczeiASborTnw3+NMmAhZHHKVYjhErgQ=",
@@ -233,7 +221,6 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2013-05-03T20:01:29.314Z",
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$JsFgK6ywgXsN$Uaa8l/5Qo18EnpeXPBBwSjsf8tRL447t6/NP37WcKFU=",
@@ -251,7 +238,6 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2013-05-20T13:22:01.952Z",
             "groups": [],
             "user_permissions": [],
             "password": "!",
@@ -269,7 +255,6 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2013-05-11T09:55:11.478Z",
             "groups": [],
             "user_permissions": [],
             "password": "!",
@@ -287,7 +272,6 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2013-05-19T13:26:00.106Z",
             "groups": [],
             "user_permissions": [],
             "password": "!",
@@ -1555,7 +1539,9 @@
         "model": "proposing.positionproposal",
         "fields": {
             "favorited_by": [],
+            "allowed_groups": [],
             "position_text": "<b>Motivation:</b><br />Milk is healthy<br />\n",
+            "viewed_by": [],
             "tags": [
                 9
             ]
@@ -1566,7 +1552,9 @@
         "model": "proposing.positionproposal",
         "fields": {
             "favorited_by": [],
+            "allowed_groups": [],
             "position_text": "<b>Position:</b><br />We should declare war against nations that declare war against other nations<br /><br /><b>Motivation:</b><br />To keep the peace in the world<br />\n",
+            "viewed_by": [],
             "tags": [
                 7
             ]
@@ -1576,167 +1564,196 @@
         "pk": 1,
         "model": "proposing.amendmentproposal",
         "fields": {
-            "favorited_by": [],
-            "diff": 1,
             "motivation": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\r\n\r\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "viewed_by": [],
             "tags": [
                 1,
                 2
-            ]
+            ],
+            "favorited_by": [],
+            "allowed_groups": [],
+            "diff": 1
         }
     },
     {
         "pk": 3,
         "model": "proposing.amendmentproposal",
         "fields": {
-            "favorited_by": [],
-            "diff": 2,
             "motivation": "The environment subject was missing.",
+            "viewed_by": [],
             "tags": [
                 5
-            ]
+            ],
+            "favorited_by": [],
+            "allowed_groups": [],
+            "diff": 2
         }
     },
     {
         "pk": 5,
         "model": "proposing.amendmentproposal",
         "fields": {
-            "favorited_by": [],
-            "diff": 3,
             "motivation": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nam cursus. Morbi ut mi. Nullam enim leo, egestas id, condimentum at, laoreet mattis, massa. Sed eleifend nonummy diam. Praesent mauris ante, elementum et, bibendum at, posuere sit amet, nibh. Duis tincidunt lectus quis dui viverra vestibulum. Suspendisse vulputate aliquam dui. Nulla elementum dui ut augue. Aliquam vehicula mi at mauris. Maecenas placerat, nisl at consequat rhoncus, sem nunc gravida justo, quis eleifend arcu velit quis lacus. Morbi magna magna, tincidunt a, mattis non, imperdiet vitae, tellus. Sed odio est, auctor ac, sollicitudin in, consequat vitae, orci. Fusce id felis. Vivamus sollicitudin metus eget eros.\r\n\r\nPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In posuere felis nec tortor. Pellentesque faucibus. Ut accumsan ultricies elit. Maecenas at justo id velit placerat molestie. Donec dictum lectus non odio. Cras a ante vitae enim iaculis aliquam. Mauris nunc quam, venenatis nec, euismod sit amet, egestas placerat, est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras id elit. Integer quis urna. Ut ante enim, dapibus malesuada, fringilla eu, condimentum quis, tellus. Aenean porttitor eros vel dolor. Donec convallis pede venenatis nibh. Duis quam. Nam eget lacus. Aliquam erat volutpat. Quisque dignissim congue leo.",
+            "viewed_by": [],
             "tags": [
                 6
-            ]
+            ],
+            "favorited_by": [],
+            "allowed_groups": [],
+            "diff": 3
         }
     },
     {
         "pk": 6,
         "model": "proposing.amendmentproposal",
         "fields": {
-            "favorited_by": [],
-            "diff": 4,
             "motivation": "Some people want a conditional healthcare, e.g. for smokers. However, a disease can never be traced back to one single cause.",
+            "viewed_by": [],
             "tags": [
                 9
-            ]
+            ],
+            "favorited_by": [],
+            "allowed_groups": [],
+            "diff": 4
         }
     },
     {
         "pk": 8,
         "model": "proposing.amendmentproposal",
         "fields": {
-            "favorited_by": [],
-            "diff": 5,
             "motivation": "I'm stupid and I don't know how to spel.",
+            "viewed_by": [],
             "tags": [
                 8
-            ]
+            ],
+            "favorited_by": [],
+            "allowed_groups": [],
+            "diff": 5
         }
     },
     {
         "pk": 9,
         "model": "proposing.amendmentproposal",
         "fields": {
-            "favorited_by": [],
-            "diff": 6,
             "motivation": "mmm",
+            "viewed_by": [],
             "tags": [
                 5,
                 6
-            ]
+            ],
+            "favorited_by": [],
+            "allowed_groups": [],
+            "diff": 6
         }
     },
     {
         "pk": 11,
         "model": "proposing.amendmentproposal",
         "fields": {
-            "favorited_by": [],
-            "diff": 7,
             "motivation": "kkk",
+            "viewed_by": [],
             "tags": [
                 3
-            ]
+            ],
+            "favorited_by": [],
+            "allowed_groups": [],
+            "diff": 7
         }
     },
     {
         "pk": 14,
         "model": "proposing.amendmentproposal",
         "fields": {
-            "favorited_by": [],
-            "diff": 8,
             "motivation": "notoo",
+            "viewed_by": [],
             "tags": [
                 1,
                 3
-            ]
+            ],
+            "favorited_by": [],
+            "allowed_groups": [],
+            "diff": 8
         }
     },
     {
         "pk": 15,
         "model": "proposing.amendmentproposal",
         "fields": {
-            "favorited_by": [],
-            "diff": 9,
             "motivation": "fsqdd",
+            "viewed_by": [],
             "tags": [
                 1
-            ]
+            ],
+            "favorited_by": [],
+            "allowed_groups": [],
+            "diff": 9
         }
     },
     {
         "pk": 16,
         "model": "proposing.amendmentproposal",
         "fields": {
-            "favorited_by": [],
-            "diff": 10,
             "motivation": "lkasjfldkjf",
+            "viewed_by": [],
             "tags": [
                 1
-            ]
+            ],
+            "favorited_by": [],
+            "allowed_groups": [],
+            "diff": 10
         }
     },
     {
         "pk": 18,
         "model": "proposing.amendmentproposal",
         "fields": {
-            "favorited_by": [],
-            "diff": 11,
             "motivation": "Daarom",
+            "viewed_by": [
+                1
+            ],
             "tags": [
                 4
-            ]
+            ],
+            "favorited_by": [],
+            "allowed_groups": [],
+            "diff": 11
         }
     },
     {
         "pk": 20,
         "model": "proposing.amendmentproposal",
         "fields": {
-            "favorited_by": [],
-            "diff": 12,
             "motivation": "It is may 25th today",
+            "viewed_by": [],
             "tags": [
                 4
-            ]
+            ],
+            "favorited_by": [],
+            "allowed_groups": [],
+            "diff": 12
         }
     },
     {
         "pk": 21,
         "model": "proposing.amendmentproposal",
         "fields": {
+            "motivation": "Unpopular proposal",
+            "viewed_by": [],
+            "tags": [
+                4
+            ],
             "favorited_by": [
                 2
             ],
-            "diff": 13,
-            "motivation": "Unpopular proposal",
-            "tags": [
-                4
-            ]
+            "allowed_groups": [],
+            "diff": 13
         }
     },
     {
         "pk": 1,
         "model": "proposing.proposal",
         "fields": {
+            "viewed_by": [],
             "views": 22,
             "title": "Copyright should be abolished",
             "avgProposalvoteScore": 0.0,
@@ -1747,6 +1764,7 @@
                 2
             ],
             "expire_date": null,
+            "allowed_groups": [],
             "discussion_time": 14,
             "slug": "copyright-should-be-abolished",
             "voting_stage": "EXPIRED"
@@ -1756,6 +1774,7 @@
         "pk": 3,
         "model": "proposing.proposal",
         "fields": {
+            "viewed_by": [],
             "views": 32,
             "title": "Protect the environment",
             "avgProposalvoteScore": 1.8333333333333333,
@@ -1765,6 +1784,7 @@
                 5
             ],
             "expire_date": null,
+            "allowed_groups": [],
             "discussion_time": 2,
             "slug": "protect-the-environment",
             "voting_stage": "APPROVED"
@@ -1774,6 +1794,7 @@
         "pk": 5,
         "model": "proposing.proposal",
         "fields": {
+            "viewed_by": [],
             "views": 12,
             "title": "Stop tax avoidance",
             "avgProposalvoteScore": -2.269230769230769,
@@ -1783,6 +1804,7 @@
                 6
             ],
             "expire_date": null,
+            "allowed_groups": [],
             "discussion_time": 2,
             "slug": "stop-tax-avoidance",
             "voting_stage": "REJECTED"
@@ -1792,6 +1814,7 @@
         "pk": 6,
         "model": "proposing.proposal",
         "fields": {
+            "viewed_by": [],
             "views": 24,
             "title": "Healthcare is unconditional",
             "avgProposalvoteScore": -1.5454545454545454,
@@ -1801,6 +1824,7 @@
                 9
             ],
             "expire_date": null,
+            "allowed_groups": [],
             "discussion_time": 2,
             "slug": "healthcare-is-unconditional",
             "voting_stage": "REJECTED"
@@ -1810,6 +1834,7 @@
         "pk": 8,
         "model": "proposing.proposal",
         "fields": {
+            "viewed_by": [],
             "views": 12,
             "title": "Spelling: focus -> fokus",
             "avgProposalvoteScore": 0.0,
@@ -1819,6 +1844,7 @@
                 8
             ],
             "expire_date": null,
+            "allowed_groups": [],
             "discussion_time": 1,
             "slug": "spelling-focus-fokus",
             "voting_stage": "EXPIRED"
@@ -1828,6 +1854,7 @@
         "pk": 9,
         "model": "proposing.proposal",
         "fields": {
+            "viewed_by": [],
             "views": 11,
             "title": "ddd",
             "avgProposalvoteScore": 0.0,
@@ -1838,6 +1865,7 @@
                 6
             ],
             "expire_date": "2013-06-22T22:23:48.096Z",
+            "allowed_groups": [],
             "discussion_time": 2,
             "slug": "ddd",
             "voting_stage": "REJECTED"
@@ -1847,6 +1875,7 @@
         "pk": 11,
         "model": "proposing.proposal",
         "fields": {
+            "viewed_by": [],
             "views": 15,
             "title": "Teaching",
             "avgProposalvoteScore": 0.0,
@@ -1856,6 +1885,7 @@
                 3
             ],
             "expire_date": "2013-06-22T22:23:48.537Z",
+            "allowed_groups": [],
             "discussion_time": 1,
             "slug": "teaching",
             "voting_stage": "REJECTED"
@@ -1865,6 +1895,7 @@
         "pk": 14,
         "model": "proposing.proposal",
         "fields": {
+            "viewed_by": [],
             "views": 5,
             "title": "fuck democracy",
             "avgProposalvoteScore": 0.0,
@@ -1875,6 +1906,7 @@
                 3
             ],
             "expire_date": "2013-06-22T22:23:48.997Z",
+            "allowed_groups": [],
             "discussion_time": 2,
             "slug": "fuck-democracy",
             "voting_stage": "REJECTED"
@@ -1884,6 +1916,7 @@
         "pk": 15,
         "model": "proposing.proposal",
         "fields": {
+            "viewed_by": [],
             "views": 4,
             "title": "iuohzrohdjk",
             "avgProposalvoteScore": 0.0,
@@ -1893,6 +1926,7 @@
                 1
             ],
             "expire_date": "2013-06-22T22:23:49.420Z",
+            "allowed_groups": [],
             "discussion_time": 2,
             "slug": "iuohzrohdjk",
             "voting_stage": "REJECTED"
@@ -1902,6 +1936,7 @@
         "pk": 16,
         "model": "proposing.proposal",
         "fields": {
+            "viewed_by": [],
             "views": 5,
             "title": "lsdkfjldk",
             "avgProposalvoteScore": 0.0,
@@ -1911,6 +1946,7 @@
                 1
             ],
             "expire_date": "2013-06-22T22:23:49.842Z",
+            "allowed_groups": [],
             "discussion_time": 1,
             "slug": "lsdkfjldk",
             "voting_stage": "REJECTED"
@@ -1920,7 +1956,10 @@
         "pk": 18,
         "model": "proposing.proposal",
         "fields": {
-            "views": 6,
+            "viewed_by": [
+                1
+            ],
+            "views": 7,
             "title": "Gewoon iets dat ik er bij wil",
             "avgProposalvoteScore": 0.0,
             "voting_date": "2013-05-24T21:59:05.870Z",
@@ -1929,6 +1968,7 @@
                 4
             ],
             "expire_date": "2013-06-22T22:23:50.262Z",
+            "allowed_groups": [],
             "discussion_time": 2,
             "slug": "gewoon-iets-dat-ik-er-bij-wil",
             "voting_stage": "REJECTED"
@@ -1938,6 +1978,7 @@
         "pk": 20,
         "model": "proposing.proposal",
         "fields": {
+            "viewed_by": [],
             "views": 1,
             "title": "It is may 25th today",
             "avgProposalvoteScore": 0.0,
@@ -1947,6 +1988,7 @@
                 4
             ],
             "expire_date": null,
+            "allowed_groups": [],
             "discussion_time": 2,
             "slug": "it-is-may-25th-today",
             "voting_stage": "VOTING"
@@ -1956,6 +1998,7 @@
         "pk": 21,
         "model": "proposing.proposal",
         "fields": {
+            "viewed_by": [],
             "views": 3,
             "title": "Unpopular proposal",
             "avgProposalvoteScore": 0.0,
@@ -1967,6 +2010,7 @@
                 4
             ],
             "expire_date": null,
+            "allowed_groups": [],
             "discussion_time": 2,
             "slug": "unpopular-proposal",
             "voting_stage": "DISCUSSION"
@@ -1976,6 +2020,7 @@
         "pk": 22,
         "model": "proposing.proposal",
         "fields": {
+            "viewed_by": [],
             "views": 2,
             "title": "We need a separate pipe system for milk",
             "avgProposalvoteScore": 0.0,
@@ -1985,6 +2030,7 @@
                 9
             ],
             "expire_date": null,
+            "allowed_groups": [],
             "discussion_time": 60,
             "slug": "we-need-a-separate-pipe-system-for-milk",
             "voting_stage": "DISCUSSION"
@@ -1994,7 +2040,8 @@
         "pk": 23,
         "model": "proposing.proposal",
         "fields": {
-            "views": 4,
+            "viewed_by": [],
+            "views": 5,
             "title": "War against war",
             "avgProposalvoteScore": 0.0,
             "voting_date": null,
@@ -2003,6 +2050,7 @@
                 7
             ],
             "expire_date": null,
+            "allowed_groups": [],
             "discussion_time": 63,
             "slug": "war-against-war",
             "voting_stage": "DISCUSSION"
