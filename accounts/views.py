@@ -2,7 +2,7 @@
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.views import login, logout, auth_login
-from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm
+from django.contrib.auth.forms import SetPasswordForm, PasswordResetForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import HttpResponseRedirect, render, get_object_or_404
@@ -211,13 +211,13 @@ def profileupdate(request):
         profileform = ProfileUpdateForm(instance=request.user)
     ## password change form
     if request.method == 'POST' and 'passwordchange' in request.POST:
-        passwordform = PasswordChangeForm(request.user, request.POST)
+        passwordform = SetPasswordForm(request.user, request.POST)
         if passwordform.is_valid():
             passwordform.save()
             messages.success(request, 'Password changed')
             return HttpResponseRedirect(reverse('profile-update'))
     else:
-        passwordform = PasswordChangeForm(request.user)
+        passwordform = SetPasswordForm(request.user)
 
     return render(request, 'accounts/update.html', {
         'profileform': profileform,
