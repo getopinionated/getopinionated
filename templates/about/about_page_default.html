@@ -3,56 +3,56 @@
 {% block title %}About{% endblock %}
 
 {% block content %}
-	<div class="jumbotron">
-		<h1>Get Opinionated!</h1>
-		<p class="lead">and help write the Pirate Party Political Programme</p>
-		{% if user.is_authenticated %}
-		    <a class="btn btn-large btn-primary" href="/document/the-pirate-codex">Starting Today!</a>
-		{% else %}
-		    <a class="btn btn-large btn-primary" href="{% url user-register %}">Register!</a>
-		{% endif %}
-	</div>
-	
-	<div class="row-fluid">
-		<div class="span4">
-			<h2>Write the programme</h2>
-			<p>Everybody can help out and put their area of expertise into our programme. Since everybody is an expert in his own field, allbeit a very small field, only together we can make an awesome program.</p>
-			<p><a class="btn" href="#write">View details &raquo;</a></p>
-		</div>
-		<div class="span4">
-			<h2>Using Liquid Democracy</h2>
-			<p>We believe in democracy rather than hierarchy, so we give you the state of the art in voting: Liquid Democracy. It strikes the perfect balance between a direct democracy system and a representative one, all to minimize your effort and maximize your influence.</p>
-			<p><a class="btn" href="#liquid-democracy">View details &raquo;</a></p>
-		</div>
-		<div class="span4">
-			<h2>As easy as possible</h2>
-			<p>We tried to make the entire process as easy as possible. The tool is not to be used by experts only, but by real people. We want as many people as possible to help out, and that's why we have put an extreme effort in making everything as simple as possible.</p>
-			<p><a class="btn" href="#process">View details &raquo;</a></p>
-		</div>
-	</div>
+    <div class="jumbotron">
+        <h1>Get Opinionated!</h1>
+        <p class="lead">and help write the {{ settings.DEFAULT_DOCUMENT_DESCRIPTION_LONG }}</p>
+        {% if user.is_authenticated %}
+            <a class="btn btn-large btn-primary" href="/document/the-pirate-codex">Starting Today!</a>
+        {% else %}
+            <a class="btn btn-large btn-primary" href="{% url user-register %}">Register!</a>
+        {% endif %}
+    </div>
+    
+    <div class="row-fluid">
+        <div class="span4">
+            <h2>Write the programme</h2>
+            <p>Everybody can help out and put their area of expertise into our programme. Since everybody is an expert in his own field, allbeit a very small field, only together we can make an awesome program.</p>
+            <p><a class="btn" href="#write">View details &raquo;</a></p>
+        </div>
+        <div class="span4">
+            <h2>Using Liquid Democracy</h2>
+            <p>We believe in democracy rather than hierarchy, so we give you the state of the art in voting: Liquid Democracy. It strikes the perfect balance between a direct democracy system and a representative one, all to minimize your effort and maximize your influence.</p>
+            <p><a class="btn" href="#liquid-democracy">View details &raquo;</a></p>
+        </div>
+        <div class="span4">
+            <h2>As easy as possible</h2>
+            <p>We tried to make the entire process as easy as possible. The tool is not to be used by experts only, but by real people. We want as many people as possible to help out, and that's why we have put an extreme effort in making everything as simple as possible.</p>
+            <p><a class="btn" href="#process">View details &raquo;</a></p>
+        </div>
+    </div>
 
     <div class="jumbotron" id="write">
         <h1>Write!</h1>
         <p class="lead">and bring your expertise into politics</p>
     </div>
     <div class="row-fluid">
-	    
-	    <div class="span4">
-	        <h2>GetOpinionated is a platform</h2>
-	        <p>Getopinionated is the platform which the Pirate Party Belgium uses to create its programme, in parallel to the development of the programme at the General Assemblies. A General Assembly allows certain kinds of people to jump in and help, this website is for another group of people. We do all this effort for your opinion, because we want everybody involved.</p>
-	        <p><a class="btn" href="#because">View details &raquo;</a></p>
-	    </div>
-	    <div class="span4">
+        
+        <div class="span4">
+            <h2>GetOpinionated is a platform</h2>
+            <p>Getopinionated is the platform which the Pirate Party Belgium uses to create its programme, in parallel to the development of the programme at the General Assemblies. A General Assembly allows certain kinds of people to jump in and help, this website is for another group of people. We do all this effort for your opinion, because we want everybody involved.</p>
+            <p><a class="btn" href="#because">View details &raquo;</a></p>
+        </div>
+        <div class="span4">
             <h2>Streamlined</h2>
             <p>We tried to make the entire process as easy as possible. We know not everybody has a Phd in politicology. That's why we streamlined the process and ask only the minimal of extra information, other than your actual idea. All to make adding your idea into our programme easier.</p>
             <p><a class="btn" href="#help">View details &raquo;</a></p>
         </div>
         <div class="span4">
-	        <h2>Political Programme</h2>
-	        <p>Firstly, the political programme of the Pirate Party is the plan the party will offer the voters on the day of election. More than that, it is the plan the Pirate Party will execute as good as possible, using its elected mandates in the years after the elections. The programme is what we are trying to achieve as a party, and not only that, it also explains why and how we are going to achieve this as well. The programme is our promise to the voters on how we will try to use their vote as good as possible.</p>
-	        <p><a class="btn" href="/document/the-pirate-codex">Go to the programme &raquo;</a></p>
-	    </div>
-	</div>
+            <h2>Political Programme</h2>
+            <p>Firstly, the political programme of the Pirate Party is the plan the party will offer the voters on the day of election. More than that, it is the plan the Pirate Party will execute as good as possible, using its elected mandates in the years after the elections. The programme is what we are trying to achieve as a party, and not only that, it also explains why and how we are going to achieve this as well. The programme is our promise to the voters on how we will try to use their vote as good as possible.</p>
+            <p><a class="btn" href="/document/the-pirate-codex">Go to the programme &raquo;</a></p>
+        </div>
+    </div>
 
     <div class="jumbotron" id="because">
         <h1>Because!</h1>
@@ -87,13 +87,13 @@
         <div class="span8">
             <h2>An Amendment</h2>
             <p>
-				<ul style="list-style-type:circle">
-				<li>A title: your amendment needs a name. Something which describes what it is about in a couple of words.</li>
-				<li>An amandment: what do you want the text to look like? If your proposal gets approved, your changes will be added to the document as well.</li>
-				<li>Tags: what is the subject of your amendment? These tags determine the subject of the proposal and help settle who is your proxy for the proposal.</li>
-				<li>A motivation: why do you want to propose this change? Put further explanation here, if you don't want the explanation to be in the programme.</li>
-				<li>Days to discuss: how many days of discussion will you need to convince the others that your proposal is a good idea?</li>
-				</ul>
+                <ul style="list-style-type:circle">
+                <li>A title: your amendment needs a name. Something which describes what it is about in a couple of words.</li>
+                <li>An amandment: what do you want the text to look like? If your proposal gets approved, your changes will be added to the document as well.</li>
+                <li>Tags: what is the subject of your amendment? These tags determine the subject of the proposal and help settle who is your proxy for the proposal.</li>
+                <li>A motivation: why do you want to propose this change? Put further explanation here, if you don't want the explanation to be in the programme.</li>
+                <li>Days to discuss: how many days of discussion will you need to convince the others that your proposal is a good idea?</li>
+                </ul>
             </p>
         </div>
     </div>
@@ -149,19 +149,19 @@
 {% block extrascripts %}
     <script type="text/javascript">
         $('a[href*=#]:not([href=#])').click(function() {
-		    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') 
-		        || location.hostname == this.hostname) {
-		
-		        var target = $(this.hash);
-		        target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
-		           if (target.length) {
-		             $('html,body').animate({
-		                 scrollTop: target.offset().top-50
-		            }, 1000);
-		            return false;
-		        }
-		    }
-		});
+            if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') 
+                || location.hostname == this.hostname) {
+        
+                var target = $(this.hash);
+                target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+                   if (target.length) {
+                     $('html,body').animate({
+                         scrollTop: target.offset().top-50
+                    }, 1000);
+                    return false;
+                }
+            }
+        });
     </script>
 {% endblock %}
 

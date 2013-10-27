@@ -6,8 +6,6 @@ from os.path import dirname
 SITE_ROOT = dirname(dirname(os.path.realpath(__file__)))
 sys.path.insert(0, os.path.join(SITE_ROOT, 'libs'))
 
-DOMAIN_NAME = "http://opinion.pirateparty.be"
-
 #####################################################################################
 # Django settings
 #####################################################################################
@@ -210,7 +208,7 @@ LOGIN_REDIRECT_URL = '/'
 #####################################################################################
 # Mail settings
 #####################################################################################
- 
+
 # favour django-mailer but fall back to django.core.mail
 if "mailer" in INSTALLED_APPS:
     from mailer import send_mail
@@ -304,13 +302,22 @@ SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
 #####################################################################################
 # Social feed settings
 #####################################################################################
-FEED_TWITTER_CONSUMER_KEY = "nI4PyCmErDbQIFAlb0o3w"
-FEED_TWITTER_CONSUMER_SECRET = "RhJk8Iz4tM1Nwz852BNbVAedjAGtWmGmBnZ2Cx4waI"
-FEED_TWITTER_ACCESS_TOKEN = "1723159872-9sBcEQxRHws9gY030vvLA2oPZYJzSNFFnyIMuD7"
-FEED_TWITTER_ACCESS_SECRET = "SZWI1FUVehVAX03KC9fHSHTAj9pgEGCnaG43KEFvDTk"
+FEED_TWITTER_CONSUMER_KEY = ""
+FEED_TWITTER_CONSUMER_SECRET = ""
+FEED_TWITTER_ACCESS_TOKEN = "-"
+FEED_TWITTER_ACCESS_SECRET = ""
+
 #####################################################################################
 # GetOpinionated-specific default settings
 #####################################################################################
+## project-specific content settings
+DOMAIN_NAME = "http://www.foo.bar"
+ABOUT_PAGE_FILENAME = 'about_page_default.html' # make sure this file exists in templates/about/
+DEFAULT_DOCUMENT_SLUG = 'the-pirate-codex' # url-friendly name of default document
+DEFAULT_DOCUMENT_DESCRIPTION = 'Party Programme'
+DEFAULT_DOCUMENT_DESCRIPTION_LONG = 'Party Programme of our organisation' # used in default about page
+NEW_POSITION_LABEL = 'Propose a new position' # label of the button for proposing a new position
+
 ## anonymous user settings
 ANONYMOUS_PROPOSALS = True # allow anonymous proposals if True
 ANONYMOUS_COMMENTS = True # allow anonymous comments if True
@@ -318,20 +325,25 @@ ANONYMOUS_COMMENTS = True # allow anonymous comments if True
 COMMENTS_IN_DISCUSSION = True #
 COMMENTS_IN_VOTING = True #
 COMMENTS_IN_FINISHED = True #
+
 ## proposal settings
 MIN_NUM_ENDORSEMENTS_BEFORE_VOTING = 3
 QUORUM_SIZE = 1 # minimal # of proposalvotes for approvement
 VOTING_DAYS = 7
+
 ## proposal type settings
 ## Note: These only disable the creation by users of these proposals, an administrator
 ##       can add them manually via the admin interface)
 AMENDMENTS_ALLOWED = True # this defines as well whether the document system is used
 POSITIONS_ALLOWED = True
+
 ## proxy settings
 PROXIES_ALLOWED = True
+
 ## commentreply settings
 COMMENTREPLY_MIN_LENGTH = 15
 COMMENTREPLY_MAX_LENGTH = 500
+
 #####################################################################################
 # Import local settings
 #####################################################################################

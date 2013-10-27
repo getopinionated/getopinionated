@@ -8,7 +8,7 @@ from proposing.forms import AmendmentProposalForm
 from proposing.models import Tag, AmendmentProposal
 from models import FullDocument
 
-def documentView(request, document_slug, document_version=None):
+def documentView(request, document_slug=settings.DEFAULT_DOCUMENT_SLUG, document_version=None):
     ## get the document
     creating_proposal = 'edit' not in request.POST
     if document_version == None:
