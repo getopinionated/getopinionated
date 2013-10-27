@@ -1,16 +1,16 @@
-from django.core.management.base import BaseCommand, CommandError, NoArgsCommand,\
-    LabelCommand
+import random
+from smtplib import SMTPRecipientsRefused
+from django.core.management.base import BaseCommand, CommandError, NoArgsCommand, LabelCommand
 from django.db.models import Q
 from django.utils import timezone
-from proposing.models import Proposal, ProxyProposalVote, Proxy, Tag
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
-from accounts.models import CustomUser, UnsubscribeCode
 from django.utils import timezone
 from django.utils.timezone import datetime, timedelta, now
-import random
+from django.conf import settings
 from django.core.mail import send_mail
-from smtplib import SMTPRecipientsRefused
+from accounts.models import CustomUser, UnsubscribeCode
+from proposing.models import Proposal, ProxyProposalVote, Proxy, Tag
 
 class Command(LabelCommand):
     help = '''Send a mail to the users regarding the updated proposals:
@@ -80,7 +80,7 @@ class Command(LabelCommand):
             
             try:
                 #pass
-                send_mail('GetOpinionated', text, 'opinion@pirateparty.be',[mail_address], fail_silently=False)
+                send_mail('GetOpinionated', text, settings.DEFAULT_FROM_EMAIL, [mail_address], fail_silently=False)
             except SMTPRecipientsRefused:
                 print "refused"
                 continue

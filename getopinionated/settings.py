@@ -310,13 +310,24 @@ FEED_TWITTER_ACCESS_SECRET = ""
 #####################################################################################
 # GetOpinionated-specific default settings
 #####################################################################################
+
 ## project-specific content settings
 DOMAIN_NAME = "http://www.foo.bar"
+ORGANISATION_NAME = 'The Voting Organisation'
 ABOUT_PAGE_FILENAME = 'about_page_default.html' # make sure this file exists in templates/about/
 DEFAULT_DOCUMENT_SLUG = 'the-pirate-codex' # url-friendly name of default document
 DEFAULT_DOCUMENT_DESCRIPTION = 'Party Programme'
-DEFAULT_DOCUMENT_DESCRIPTION_LONG = 'Party Programme of our organisation' # used in default about page
+DEFAULT_DOCUMENT_DESCRIPTION_LONG = 'Party Programme of our organisation'
 NEW_POSITION_LABEL = 'Propose a new position' # label of the button for proposing a new position
+PROPOSAL_DESCRIPTION = '''Join the discussion and vote. Get opinionated! Everybody is free to step in and join the democratic
+                          process of our organisation. Share your expertise and make our organisation better.'''
+PROPOSAL_SHARE_DESCRIPTION = '''This interesting proposal for the Party Programme of our organisation has been made on getOpinionated. Help us make the program a better program.'''
+
+## project-specific layout settings
+SHOW_FOLLOW_US_ON_FB_AND_TWITTER_BANNER = False
+
+## project-specific other settings
+MEMBER_GROUP_NAME = 'member'
 
 ## anonymous user settings
 ANONYMOUS_PROPOSALS = True # allow anonymous proposals if True

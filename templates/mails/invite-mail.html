@@ -1,10 +1,10 @@
 Hello {{user.username}},
 
-This is a mail to invite you to getopinionated. (http://opinion.pirateparty.be) The voting platform of the Pirate Party.
-To log in, please go to http://opinion.pirateparty.be{% url single-login-mail logincode.code %} and complete your account.
+This is a mail to invite you to getopinionated ({{settings.DOMAIN_NAME}}). The voting platform of {{ settings.ORGANISATION_NAME }}.
+To log in, please go to {{settings.DOMAIN_NAME}}{% url single-login-mail logincode.code %} and complete your account.
 
 Yours sincerely,
 
 The GetOpinionated team
 
-P.S. One-click unsubscribe: http://opinion.pirateparty.be{% url unsubscribe-mail unsubscribecode.code %}
+P.S. One-click unsubscribe: {{settings.DOMAIN_NAME}}{% url unsubscribe-mail unsubscribecode.code %}

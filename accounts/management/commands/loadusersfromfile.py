@@ -1,6 +1,7 @@
 import os
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import Group, User
+from django.conf import settings
 from accounts.models import CustomUser, LoginCode, UnsubscribeCode
 import random
 from django.template.loader import render_to_string
@@ -80,7 +81,8 @@ class Command(BaseCommand):
                                         })
                 try:
                     #pass
-                    send_mail('GetOpinionated: vote online for the Pirate Party Programme', text, 'opinion@pirateparty.be',[email], fail_silently=False)
+                    send_mail('GetOpinionated: vote online for the {}'.format(settings.DEFAULT_DOCUMENT_DESCRIPTION_LONG),
+                            text, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)
                     user.save()
 	            print "mail sent to:",email
                 

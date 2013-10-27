@@ -65,7 +65,7 @@ class ProposalAdmin(admin.ModelAdmin):
     list_display = ['title', 'voting_stage', 'discussion_time', 'creator', 'create_date', 'upvote_score', 'number_of_comments', 'views', ]
     inlines = [CommentInline, UpDownVoteInline, ProposalVoteInline, VotablePostEditInline]
     list_filter = ['create_date', 'allowed_groups']
-    actions = ['debug_updatevoting_prepare_approval','recount_votes','general_assembly_vote']
+    actions = ['debug_updatevoting_prepare_approval','recount_votes','member_vote']
     prepopulated_fields = {'slug': ('title',)}
 
     readonly_fields = ['diff_link']
@@ -77,14 +77,14 @@ class ProposalAdmin(admin.ModelAdmin):
     diff_link.short_description = 'Diff-object'
 
 
-    def general_assembly_vote(self, request, queryset):
+    def member_vote(self, request, queryset):
         for proposal in queryset:
-            proposal.allowed_groups.add(Group.objects.get(name='pirate-member'))
+            proposal.allowed_groups.add(Group.objects.get(name=settings.MEMBER_GROUP_NAME))
             proposal.voting_date = timezone.now()
             proposal.voting_stage = 'VOTING'
             proposal.expire_date = timezone.now() + datetime.timedelta(days=31)
             proposal.save()
-    general_assembly_vote.short_description = "General Assembly Vote"
+    member_vote.short_description = "Member Vote"
 
 
     def debug_updatevoting_prepare_approval(self, request, queryset):

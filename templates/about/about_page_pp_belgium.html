@@ -7,7 +7,7 @@
         <h1>Get Opinionated!</h1>
         <p class="lead">and help write the Pirate Party Political Programme</p>
         {% if user.is_authenticated %}
-            <a class="btn btn-large btn-primary" href="/document/the-pirate-codex">Starting Today!</a>
+            <a class="btn btn-large btn-primary" href="{% url latest-default-document-detail %}">Starting Today!</a>
         {% else %}
             <a class="btn btn-large btn-primary" href="{% url user-register %}">Register!</a>
         {% endif %}
@@ -50,7 +50,7 @@
         <div class="span4">
             <h2>Political Programme</h2>
             <p>Firstly, the political programme of the Pirate Party is the plan the party will offer the voters on the day of election. More than that, it is the plan the Pirate Party will execute as good as possible, using its elected mandates in the years after the elections. The programme is what we are trying to achieve as a party, and not only that, it also explains why and how we are going to achieve this as well. The programme is our promise to the voters on how we will try to use their vote as good as possible.</p>
-            <p><a class="btn" href="/document/the-pirate-codex">Go to the programme &raquo;</a></p>
+            <p><a class="btn" href="{% url latest-default-document-detail %}">Go to the programme &raquo;</a></p>
         </div>
     </div>
 
@@ -82,7 +82,7 @@
         <div class="span4">
             <h2>Change the Document</h2>
             <p>We already have a programme, which is no more than a document. If you want to improve it, first thing you have to do is to create an amendment. Go to the document and make an amendment.</p>
-            <p><a class="btn" href="/document/the-pirate-codex">Go to the document &raquo;</a></p>
+            <p><a class="btn" href="{% url latest-default-document-detail %}">Go to the document &raquo;</a></p>
         </div>
         <div class="span8">
             <h2>An Amendment</h2>

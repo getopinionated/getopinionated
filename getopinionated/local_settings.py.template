@@ -30,6 +30,8 @@ SECRET_KEY = 'xxx'
 # Mail settings
 #####################################################################################
 
+DEFAULT_FROM_EMAIL = 'foo@bar.be'
+
 ### Configuration to test locally with gmail ###
 #EMAIL_HOST = 'smtp.gmail.com'
 #EMAIL_PORT = '587'
@@ -63,4 +65,9 @@ FEED_TWITTER_ACCESS_SECRET = ""
 
 ## project-specific content settings
 DOMAIN_NAME = "http://www.foo.bar"
+ORGANISATION_NAME = 'The Voting Organisation'
 ABOUT_PAGE_FILENAME = 'about_page_default.html' # make sure this file exists in templates/about/
+DEFAULT_DOCUMENT_SLUG = 'the-pirate-codex' # url-friendly name of default document
+DEFAULT_DOCUMENT_DESCRIPTION = 'Party Programme'
+DEFAULT_DOCUMENT_DESCRIPTION_LONG = 'Party Programme of our organisation'
+NEW_POSITION_LABEL = 'Propose a new position' # label of the button for proposing a new position

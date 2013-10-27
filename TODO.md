@@ -26,7 +26,7 @@ Karma
 	- enkel laatste 3 maanden zijn relevant
 		- alleen upvotes
 	- lines of code still active
-- eID of lid van de partij om te mogen stemmen (authenticatie op site piratenpartij?)
+- eID of lid van de partij om te mogen stemmen
 - Karma voor editen posts/moderator en veel voor downvoten
 - Anonieme gebruikers mogen proposals en comments maken
 - flag as inappropriate

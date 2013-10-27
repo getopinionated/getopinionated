@@ -7,7 +7,7 @@
         <h1>Get Opinionated!</h1>
         <p class="lead">and help write the {{ settings.DEFAULT_DOCUMENT_DESCRIPTION_LONG }}</p>
         {% if user.is_authenticated %}
-            <a class="btn btn-large btn-primary" href="/document/the-pirate-codex">Starting Today!</a>
+            <a class="btn btn-large btn-primary" href="{% url latest-default-document-detail %}">Starting Today!</a>
         {% else %}
             <a class="btn btn-large btn-primary" href="{% url user-register %}">Register!</a>
         {% endif %}
