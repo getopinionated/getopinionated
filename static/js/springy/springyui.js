@@ -167,6 +167,13 @@ jQuery.fn.springy = function(params) {
 					n = i;
 				}
 			}
+			
+			// Getopinionated custom: highlight the arrows in focus
+			if (nearest !== null && nearest.node !== null && nearest.node.id === edge.source.id) {
+				var highlight = true;
+			} else {
+				var highlight = false;
+			}
 
 			var spacing = 6.0;
 
@@ -191,7 +198,10 @@ jQuery.fn.springy = function(params) {
 			var arrowLength;
 
 			var weight = (edge.data.weight !== undefined) ? edge.data.weight : 1.0;
-
+			if(highlight){
+				weight = weight * 2.0;
+			}
+			
 			ctx.lineWidth = Math.max(weight *  2, 0.1);
 			arrowWidth = 1 + ctx.lineWidth;
 			arrowLength = 8;
@@ -211,7 +221,7 @@ jQuery.fn.springy = function(params) {
 			ctx.moveTo(s1.x, s1.y);
 			ctx.lineTo(lineEnd.x, lineEnd.y);
 			ctx.stroke();
-
+			
 			// arrow
 			if (directional) {
 				ctx.save();
@@ -229,14 +239,17 @@ jQuery.fn.springy = function(params) {
 			}
 
 			// label
-			if (edge.data.label !== undefined) {
+			if (highlight && edge.data.label !== undefined) {
 				text = edge.data.label
 				ctx.save();
+				ctx.translate((x1+x2)/2, (y1+y2)/2);
+				var angle = Math.atan((y2 - y1) / (x2 - x1));
+				ctx.rotate(angle);
 				ctx.textAlign = "center";
 				ctx.textBaseline = "top";
-				ctx.font = "10px Helvetica, sans-serif";
-				ctx.fillStyle = "#5BA6EC";
-				ctx.fillText(text, (x1+x2)/2, (y1+y2)/2);
+				ctx.font = "12px Helvetica, sans-serif";
+				ctx.fillStyle = "#000";
+				ctx.fillText(text, 0, 0);
 				ctx.restore();
 			}
 

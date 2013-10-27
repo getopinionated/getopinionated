@@ -119,11 +119,19 @@ class ProxyGraphData:
             nodes.add(proxy.delegating.display_name)
             for delegate in proxy.delegates.all():
                 nodes.add(delegate.display_name)
-                self.dataEdges.append(r"['{}', '{}', {{color: '{}'}}]".format(
-                    proxy.delegating.display_name,
-                    delegate.display_name,
-                    '#0C3' if proxy.tags.count() else '#000',
-                ))
+                if proxy.tags.count():
+                    self.dataEdges.append(r"['{}', '{}', {{color: '{}', label: '{}'}}]".format(
+                        proxy.delegating.display_name,
+                        delegate.display_name,
+                        '#0C3',
+                        ', '.join([tag.name for tag in proxy.tags.all()]),
+                    ))
+                else:
+                    self.dataEdges.append(r"['{}', '{}', {{color: '{}'}}]".format(
+                        proxy.delegating.display_name,
+                        delegate.display_name,
+                        '#000'
+                    ))
 
         ## fill in nodes
         self.dataNodes = list(nodes)
