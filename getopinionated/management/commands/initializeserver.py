@@ -1,8 +1,8 @@
+from os import getcwd
+from os.path import exists
+from shutil import copyfile
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
-from os import getcwd
-from shutil import copyfile
-from os.path import exists
 
 class Command(BaseCommand):
 
