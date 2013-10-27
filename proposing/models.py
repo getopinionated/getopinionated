@@ -156,7 +156,7 @@ class Proposal(VotablePost):
     def estimatedVotingDate(self):
         if self.voting_stage == 'DISCUSSION':
             nominal_date = self.create_date + datetime.timedelta(days=self.discussion_time)
-            return nominal_date if timezone.now() < nominal_date else timezone.now()
+            return nominal_date
         else:
             return self.voting_date
 
@@ -319,14 +319,14 @@ class Proposal(VotablePost):
         fixed_dateToPx = [
             (begin - d10, -50),
             (begin, 0),
-            (voting, 200),
-            (finish, 400),
-            (finish + d10, 450),
+            (voting, 250),
+            (finish, 500),
+            (finish + d10, 550),
         ]
         ## linear interpolation between fixed dates
         px = fixed_dateToPx[0][1]
         for (date1, px1), (date2, px2) in zip(fixed_dateToPx[:-1], fixed_dateToPx[1:]):
-            if date1 < date <= date2:
+            if date1 <= date <= date2:
                 px = px1 + (px2-px1)/(date2-date1).days*(date-date1).days
         return px if date < fixed_dateToPx[-1][0] else fixed_dateToPx[-1][1];
 

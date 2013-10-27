@@ -41,7 +41,7 @@
     {% if proposal.minimalContraintsAreMet %}
         {{date|date:"j F"}}
     {% else %}
-        <acronym title="This proposal needs {{ settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING }} upvotes before voting is started. The date ({{date|date:"j F"}}) is an estimate.&#10;&#10;Proposal might expire on {{proposal.expirationDate|date:"j F"}} if the required number of upvotes is not met.">({{date|date:"j F"}})</acronym>
+        <acronym title="This proposal needs {{ settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING }} upvotes before voting is started, so the document might not get voted. The date ({{date|date:"j F"}}) is an estimate and can change if the author changes the discussion time of his proposal.">({{date|date:"j F"}})</acronym>
     {% endif %}
 {% endmacro %}
 
@@ -133,7 +133,6 @@
 		    </div>
 		</div>
         {% if proposal.proposaltype == 'amendment' %}
-            <h3>Amendment</h3>
             <div id="fullamendmentmodal" class="modal hide fade">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -172,7 +171,6 @@
                 </div>
             </div>
         {% elif proposal.proposaltype == 'position' %}
-            <h3>Position</h3>
             <div class="well clearfix">
                 <div style="float: right; margin:10px;">
                     {% if proposal|args:user|call:"isEditableBy" %}
@@ -192,45 +190,6 @@
                 </div>
             </div>
         {% endif %}
-        <div class="timeline">
-            <h3>Timeline</h3>
-            {% if proposal.voting_stage != 'EXPIRED' %}
-                <ul class="events">
-                    <li>{{proposal.create_date|date:"j F"}}</li>
-                    <li>{% usemacro date_with_help proposal.estimatedVotingDate %}</li>
-                    <li>{% usemacro date_with_help proposal.estimatedFinishDate %}</li>
-                </ul> <!-- end .events -->
-                <ul class="intervals">
-                    <li {% if proposal.voting_stage == 'DISCUSSION' %}class="current"{% endif %}>Discussion</li>
-                    <li {% if proposal.voting_stage == 'VOTING' %}class="current"{% endif %}>Voting</li>
-                    <li>&nbsp;</li>
-                </ul> <!-- end .intervals -->
-                <div class="now" style="left: {{proposal.currentDateToPx}}px">
-                    <div class="line">&nbsp;</div>
-                    <div>now</div>
-                </div> <!-- end .now -->
-                {% if proposal.expirationDateToPx != None %}
-                    <div class="now" style="left: {{proposal.expirationDateToPx}}px">
-                        <div class="line">&nbsp;</div>
-                        <div><acronym title="Proposal might expire on {{proposal.expirationDate|date:"j F"}} if the required number of upvotes is not met.">expiration</acronym></div>
-                    </div> <!-- end .now -->
-                {% endif %}
-            {% else %}
-                <ul class="events">
-                    <li>{{proposal.create_date|date:"j F"}}</li>
-                    <li>{{proposal.expirationDate|date:"j F"}}</li>
-                </ul> <!-- end .events -->
-                <ul class="intervals">
-                    <li>Discussion</li>
-                    <li class="current">Expired</li>
-                    <li>&nbsp;</li>
-                </ul> <!-- end .intervals -->
-                <div class="now" style="left: {{proposal.currentDateToPx}}px">
-                    <div class="line">&nbsp;</div>
-                    <div>now</div>
-                </div> <!-- end .now -->
-            {% endif %}
-        </div>
         {% if proposal.voting_stage == 'VOTING' %}
             {% if proposal|args:user|call:"canBeVotedOnByUser" == None %}
                 <div class="votes">
@@ -297,6 +256,23 @@
               </div>
             </div>
         {% endif %}
+        <div class="timeline">
+            <h3>Timeline</h3>
+            <ul class="events">
+                <li>{{proposal.create_date|date:"j F"}}</li>
+                <li>{% usemacro date_with_help proposal.estimatedVotingDate %}</li>
+                <li>{% usemacro date_with_help proposal.estimatedFinishDate %}</li>
+            </ul> <!-- end .events -->
+            <ul class="intervals">
+                <li {% if proposal.voting_stage == 'DISCUSSION' %}class="current"{% endif %}>Discussion</li>
+                <li {% if proposal.voting_stage == 'VOTING' %}class="current"{% endif %}>Voting</li>
+                <li>&nbsp;</li>
+            </ul> <!-- end .intervals -->
+            <div class="now" style="left: {{proposal.currentDateToPx}}px">
+                <div class="line">&nbsp;</div>
+                <div>now</div>
+            </div> <!-- end .now -->
+        </div>
         {% if comments %}
 	        <h3>Comments</h3>
 	        <div class="comments">

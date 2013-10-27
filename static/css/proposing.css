@@ -128,7 +128,7 @@ article.proposal .timeline ul.events {
     overflow: auto;
 }
 article.proposal .timeline ul.events li {
-    width: 200px;
+    width: 250px;
     color: #777;
     font-size: 0.8em;
     font-weight: bold;
@@ -140,9 +140,10 @@ article.proposal .timeline ul.events li {
 article.proposal .timeline ul.intervals {
     list-style-type: none;
     padding: 0;
-    width: 510px;
+    width: 735px;
+    margin: 0;
     display: block;
-    padding-left: 100px;
+    padding-left: 125px;
     overflow: auto;
     background-color: #ccc !important;
 }
@@ -154,7 +155,7 @@ article.proposal .timeline ul.intervals li {
     margin: 0;
     padding: 15px 0;
     text-align: center;
-    width: 199px;
+    width: 250px;
 }
 article.proposal .timeline ul.intervals li:last-child {
     width: 50px;
@@ -164,14 +165,14 @@ article.proposal .timeline ul.intervals li.current {
 }
 article.proposal .timeline .now {
     position: relative;
-    width: 200px;
+    width: 250px;
     text-align: center;
     top: -2px;
     font-size: 0.8em;
     font-weight: bold;
 }
 article.proposal .timeline .now .line {
-    width: 100px;
+    width: 125px;
     border-right: 1px solid;
     height: 10px;
 }
