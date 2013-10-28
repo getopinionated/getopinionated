@@ -15,6 +15,7 @@ from accounts.decorators import logged_in_or
 from document.models import FullDocument
 from models import VotablePost, UpDownVote, Proposal, Comment, CommentReply, ProposalVote, AmendmentProposal, PositionProposal
 from forms import CommentForm, CommentReplyForm, CommentEditForm, CommentReplyEditForm, ProxyForm, AmendmentProposalForm, PositionProposalForm
+from django.utils.html import escapejs
 
 class TimelineData:
     # settings
@@ -124,7 +125,7 @@ class ProxyGraphData:
                         proxy.delegating.display_name,
                         delegate.display_name,
                         '#0C3',
-                        ', '.join([tag.name for tag in proxy.tags.all()]),
+                        ', '.join([escapejs(tag.name) for tag in proxy.tags.all()]),
                     ))
                 else:
                     self.dataEdges.append(r"['{}', '{}', {{color: '{}'}}]".format(
