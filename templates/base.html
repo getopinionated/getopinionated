@@ -22,7 +22,7 @@
     <meta charset="utf-8" />
     {% block extrahead %} {% endblock %}
 </head>
-<body
+<body id="body"
 	{% if not user.is_authenticated %}
     style="padding-top: 60px;padding-bottom: 40px;"
     {% endif %}
