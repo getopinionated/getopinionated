@@ -154,7 +154,7 @@ class Proposal(VotablePost):
 
     @property
     def estimatedVotingDate(self):
-        if self.voting_stage == 'DISCUSSION':
+        if self.voting_stage in ['EXPIRED', 'DISCUSSION']:
             nominal_date = self.create_date + datetime.timedelta(days=self.discussion_time)
             return nominal_date
         else:
