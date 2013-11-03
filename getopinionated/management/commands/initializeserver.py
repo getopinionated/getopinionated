@@ -10,7 +10,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.import_local_settings()
-        self.runserver()
+        self.call_command('syncdb', interactive=False)
+        self.call_command('loaddata', "testdata.json")
+        self.call_command('validate')   
+        self.help_user_call_localserver()     
 
     def import_local_settings(self):
 
@@ -24,9 +27,12 @@ class Command(BaseCommand):
 
         import getopinionated.local_settings
 
-    def runserver(self):
-        call_command('syncdb', noinput=True)
-        call_command('loaddata', "testdata.json")
-        call_command('validate')        
-        call_command('runserver', '8000')
+    def call_command(self, *args, **kwargs):
+        self.stdout.write("*** Calling Command: {} ***\n".format(args[0]))
+        call_command(*args, **kwargs)
+        self.stdout.write("\n")
 
+    def help_user_call_localserver(self):
+        self.stdout.write("*** Done ***\n")
+        self.stdout.write("If the previous succeeded, you can start your own local server using:\n\n")
+        self.stdout.write("    python manage.py runserver 8000\n\n")
