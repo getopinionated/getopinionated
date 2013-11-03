@@ -24,7 +24,7 @@
 
 
 /*** settings ***/
-var MAX_HEIGHT_NUM_ITEMS = 7; // this many items can maximally be stacked onto each other
+var MAX_HEIGHT_NUM_ITEMS = 5; // this many items can maximally be stacked onto each other
 var TIMELINE_TOP_Y = 45;
 var TIMELINE_HEIGHT = 66.5; // added 0.5 so lines fall on half pixels
 // see http://stackoverflow.com/questions/9311428/draw-single-pixel-line-in-html5-canvas
