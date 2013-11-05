@@ -39,7 +39,7 @@ class Command(NoArgsCommand):
         finished_cnt = 0
         expired_cnt = 0
                    
-        for proposal in AmendmentProposal.objects.filter(
+        for proposal in Proposal.objects.filter(
                     ~Q(voting_stage='APPROVED'),
                     ~Q(voting_stage='REJECTED'),
                     ~Q(voting_stage='EXPIRED'),
