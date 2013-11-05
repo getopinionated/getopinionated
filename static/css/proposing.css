@@ -32,6 +32,8 @@ article.proposal header .updownvote {
     display: inline-block;
     bottom: 0;
     float: left;
+    width: 64px;
+    height: 83px;
 }
 
 article.proposal header .share {

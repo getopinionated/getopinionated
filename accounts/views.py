@@ -215,7 +215,7 @@ def profileupdate(request):
         if passwordform.is_valid():
             passwordform.save()
             messages.success(request, 'Password changed')
-            return HttpResponseRedirect(reverse('profile-update'))
+            return HttpResponseRedirect(reverse('profile-update') + '#body')
     else:
         passwordform = SetPasswordForm(request.user)
 

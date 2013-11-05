@@ -102,27 +102,40 @@
 		            <h1>
 		            	<div class="title-container">
 			                <div class="favorite">{% usemacro star-macro user proposal %}</div>
-			                <div class="updownvote" id="updownvote-proposal">
-				                {% if proposal|args:user|call:"canPressUpvote" %}
-							        <div id="endorse-{{proposal.slug}}" class="btn btn-mini" onclick="endorse_send('{{proposal.slug}}')">Endorse</div>
-							    {% else %}
-							        {% if proposal|args:user|call:"hasUpvoted" %}
-							           <div id="endorse-{{proposal.slug}}" class="btn btn-mini btn-success" onclick="endorse_send('{{proposal.slug}}')">Endorse</div>
-							        {% else %}
-							            <div class="btn btn-mini disabled" title="You're not allowed to vote">Endorse</div>
-							        {% endif %}
-							    {% endif %}
-							    <br/>
-                                <span class="score" id="endorse-score">
-                                    {{ proposal.upvote_score|smallint }}
-                                </span>
-                                {% if not proposal.minimalNumEndorsementsIsMet %}
-                                    <span>
-                                        / {{settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING}}
+			                {% if proposal.voting_stage == 'DISCUSSION' %}
+	                            <div class="updownvote" id="updownvote-proposal">
+				                    
+					                {% if proposal|args:user|call:"canPressUpvote" %}
+								        <div id="endorse-{{proposal.slug}}" class="btn btn-mini" onclick="endorse_send('{{proposal.slug}}')">Endorse</div>
+								    {% else %}
+								        {% if proposal|args:user|call:"hasUpvoted" %}
+								           <div id="endorse-{{proposal.slug}}" class="btn btn-mini btn-success" onclick="endorse_send('{{proposal.slug}}')">Endorse</div>
+								        {% else %}
+								            <div class="btn btn-mini disabled" title="You're not allowed to vote">Endorse</div>
+								        {% endif %}
+								    {% endif %}
+								    <br/>
+	                                <span class="score" id="endorse-score">
+	                                    {{ proposal.upvote_score|smallint }}
+	                                </span>
+	                                {% if not proposal.minimalNumEndorsementsIsMet %}
+	                                    <span>
+	                                        / {{settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING}}
+	                                    </span>
+	                                {% endif %}
+							    </div>
+							{% else %}
+							    <div class="updownvote" id="updownvote-proposal" style="font-size: 12px; line-height:20px;">
+							        Endorsed
+							        by
+							        <br \>
+							        <span class="score" id="endorse-score">
+                                        {{ proposal.upvote_score|smallint }}
                                     </span>
-                                {% endif %}
-						    </div>
-
+                                    <br \>
+                                    people
+                                </div>    
+                            {% endif %}
 			                <div class="share">
 			                	{% usemacro sharingbuttons request.build_absolute_uri proposal.title settings.PROPOSAL_SHARE_DESCRIPTION %}
 			        		</div>

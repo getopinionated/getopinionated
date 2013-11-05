@@ -37,7 +37,7 @@
             "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$1cuSSBfv3l12$7DmmHte/05Z7YFDyNmzSAOc19N+Pv3qMtMixTjpydNo=",
-            "email": "jonas@pirateparty.be",
+            "email": "jonas@foo.be",
             "date_joined": "2011-08-28T08:25:17Z"
         }
     },
@@ -366,8 +366,8 @@
             "content": "Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />The globalization of knowledge and human culture through digitalization and networking challenges all aspects of our traditional legal, economic and social systems. The wrong responses to this challenge make up just one of the reasons which promote the emergence of a complete totalitarian global police state. The fear of international terrorism makes security seem more important than freedom and mutes many of those who might otherwise defend freedom.<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.",
             "version": 0,
             "create_date": "2013-01-28T19:30:03.008Z",
-            "slug": "the-pirate-codex",
-            "title": "The Pirate Codex"
+            "slug": "default-document",
+            "title": "The Document"
         }
     },
     {
@@ -377,8 +377,8 @@
             "content": "Despite all superficial promises to protect our rights, the digital revolution of all areas of our lives poses unparalleled threats to human dignity and freedom. The speed at which this is happening exceeds the speed at which public opinion, laws and individuals are able to react. At the same time, the opportunities of shaping this process through the democratic framework of individual states are vanishing.<br /><br />The globalization of knowledge and human culture through digitalization and networking challenges all aspects of our traditional legal, economic and social systems. The wrong responses to this challenge make up just one of the reasons which promote the emergence of a complete totalitarian global police state. The fear of international terrorism makes security seem more important than freedom and mutes many of those who might otherwise defend freedom.<br /><br />The main focus of every political movement should be to protect the environment.<br /><br />Informational self-determination, free access to knowledge and culture, and privacy protection are the pillars of the information society of the future. Only on this basis can a democratic global order emerge that guarantees social justice and self-determination. First and foremost, the Pirate Party sees itself as part of a global political movement that wants to shape this order to the benefit of all.<br /><br />The Pirate Party wants to concentrate on the topics mentioned in the party platform, since we see this as the only way to assert these important demands in the future. At the same time, we believe that these issues should have the support of citizens from all parts of the traditional political spectrum. Choosing sides in this spectrum would obstruct our shared struggle for privacy protection and free knowledge and culture.\n",
             "version": 1,
             "create_date": "2013-04-07T14:39:05.419Z",
-            "slug": "the-pirate-codex",
-            "title": "The Pirate Codex"
+            "slug": "default-document",
+            "title": "The Document"
         }
     },
     {

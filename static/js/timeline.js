@@ -24,6 +24,7 @@
 
 
 /*** settings ***/
+var MAX_HEIGHT_NUM_ITEMS = 5; // this many items can maximally be stacked onto each other
 var TIMELINE_TOP_Y = 45;
 var TIMELINE_HEIGHT = 66.5; // added 0.5 so lines fall on half pixels
 // see http://stackoverflow.com/questions/9311428/draw-single-pixel-line-in-html5-canvas
@@ -120,27 +121,59 @@ function drawTimeline(timelineData){
             var ii = (key == "left") ? i : N - i - 1; // reverse order if right
             var proposal = data[key].proposals[ii];
             var x = data.dayToPx(proposal.day);
+            
             // get link position
             Link.setStyle();
             var linkWidth = ctx.measureText(proposal.text).width;
             var linkX = x + offSgn[key]*14;
             linkX -= (key == "left") ? linkWidth : 0;
+            
             // check if this is still on screen
             if(linkX < 0 || linkX + linkWidth > canvas.width)
                 continue;
-            // get link Y
-            INT_MARGIN = 3;
+
+            // get level and check if it is not too large
+            var INT_MARGIN = 3;
             var interval = (key == "left") ?
                 new Interval(linkX - INT_MARGIN, x + INT_MARGIN) :
                 new Interval(x - INT_MARGIN, linkX + linkWidth + INT_MARGIN);
             var level = proposalHeightHelper.addAndGetLevel(interval, x);
+            var drawEllipsis = false;
+            if(level == MAX_HEIGHT_NUM_ITEMS) {
+                drawEllipsis = true;
+                // re-calculate linkX
+                if(key == "left") {
+                    // revert old linkWidth
+                    linkX += linkWidth;
+                    // calculate new linkWidth
+                    Link.setStyle();
+                    linkWidth = ctx.measureText('...').width;
+                    // apply
+                    linkX -= linkWidth;
+                }
+            }
+            if(level > MAX_HEIGHT_NUM_ITEMS) {
+                continue;
+            }
+
+            // get link Y
             var y = TIMELINE_BOTTOM_Y + PROPOSAL_SPACE_Y*(level+1);
             var linkY = y - PROPOSAL_FONT_SIZE/2;
-            // add link
-            var link = new Link(linkX, linkY, linkWidth, PROPOSAL_FONT_SIZE,
-                proposal.text, proposal.linkUrl, data[key].color, "#00F");
-            links.push(link);
-            link.redraw();
+            
+            // add link / ellipsisaddAndGetLevel
+            if(!drawEllipsis) {
+                // add link
+                var link = new Link(linkX, linkY, linkWidth, PROPOSAL_FONT_SIZE,
+                    proposal.text, proposal.linkUrl, data[key].color, "#00F");
+                links.push(link);
+                link.redraw();
+            } else {
+                // add ellipsis
+                Link.setStyle();
+                ctx.fillStyle = data[key].color;
+                ctx.fillText('...', linkX, linkY);
+            }
+            
             // line
             ctx.beginPath();
             ctx.strokeStyle = data[key].color;
@@ -149,9 +182,11 @@ function drawTimeline(timelineData){
             ctx.lineTo(x + offSgn[key]*10, y);
             ctx.stroke();
             ctx.closePath();
+            
             // date
             dateAdder.add(proposal.day, data.dayToPx(proposal.day),
                 proposal.date, data[key].color);
+            
             // enlarge canvas height to make sure it is shown
             var marginBottom = 20;
             var bottomY = linkY + PROPOSAL_FONT_SIZE;

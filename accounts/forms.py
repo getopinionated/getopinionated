@@ -74,7 +74,7 @@ class CustomUserCreationForm(FocussingModelForm, UserCreationForm):
             user.save()
         return user
 
-class ProfileUpdateForm(FocussingModelForm):
+class ProfileUpdateForm(forms.ModelForm):
     '''avatar = libs.sorl.thumbnail.fields.ImageField(
         label='Select a file',
         help_text='max. 42 megabytes'

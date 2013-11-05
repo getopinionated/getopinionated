@@ -34,13 +34,6 @@
     	<h2>My proxies</h2>
 		<form class="form-horizontal" action="{% if filter_tag %}{% url proxy-index filter_tag.slug %}{% else %}{% url proxy-index %}{% endif %}" method="POST" class="proxyform">
 		{% csrf_js_token %}
-		<div class="control-group">
-			<label class="control-label" for="id_main_proxy">I delegate my vote to </label>
-			<div class="controls"> 
-				{{ proxyform.main_proxy }}
-			</div>
-		</div>
-		<h3>except for when</h3>
 		<div class="proxy_list">
 			<div id ="itemhidden" class="proxy_item" style="display:none">
 				<div class="form-inline control-group">
@@ -65,7 +58,7 @@
 				<div id ="item{{ forloop.counter0 }}" class="proxy_item">
 					<div class="form-inline control-group">
 						<span class="control-label">
-							I delegate my vote
+							<h5>I delegate my vote</h5>
 						</span>
 						<div class="controls control-row well">
 							<div class="control-group">
@@ -83,6 +76,13 @@
 			{% endfor%}
 		</div>
 		
+        <h5>For the tags I haven't proxied</h5>		
+        <div class="control-group">
+            <label class="control-label" for="id_main_proxy">I delegate my vote to</label>
+            <div class="controls"> 
+                {{ proxyform.main_proxy }}
+            </div>
+        </div>
 		
 		
 		<input type="number" id="tagfieldcount" name="tagfieldcount" value="{{ proxyform.getDefaultFieldList|length }}"  style="display:none" />

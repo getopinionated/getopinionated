@@ -14,7 +14,11 @@ from django.contrib.auth.models import Group, User
 logger = logging.getLogger(__name__)
 
 class VotablePost(models.Model):
-    """ super-model for all votable models """
+    """ Base class for all upvotable posts.
+
+    This means textual contributions from users that can be up- or downvoted by other Users.
+
+    """
     creator = models.ForeignKey(CustomUser, related_name="created_proposals", null=True, blank=True)
     create_date = models.DateTimeField(auto_now_add=True)
 
@@ -83,13 +87,22 @@ class VotablePost(models.Model):
                 pass
         return self        
 
+
 class UpDownVote(models.Model):
+    """ An up- or downvote for a VotablePost.
+
+    The date of every vote is kept for some historical record.
+
+    """
     user = models.ForeignKey(CustomUser, related_name="up_down_votes")
     post = models.ForeignKey(VotablePost, related_name="up_down_votes")
     date = models.DateTimeField(auto_now=True)
     value = models.IntegerField(choices=((1, 'up'), (-1, 'down')))
 
+
 class Tag(models.Model):
+    """ A content tag that can be assigned to Proposals. """
+
     name = models.CharField(max_length=35)
     slug = models.SlugField(unique=True)
 
@@ -102,12 +115,30 @@ class Tag(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class VotablePostEdit(models.Model):
+    """ Keeps track of changes to VotablePosts. """
+
     user = models.ForeignKey(CustomUser)
     post = models.ForeignKey(VotablePost, related_name="edits")
     date = models.DateTimeField(auto_now=True)
 
+
 class Proposal(VotablePost):
+    """ Base class for all proposals.
+
+    The main feature of a proposal is that it is subject to a voting process. This is not to
+    be confused with up/downvoting, which is a different kind of voting, mainly used to indicate
+    the popularity of a particular contribution.
+
+    The voting process of a proposal has a begin and end date. It allows proxy voting (one user
+    can let another user choose his/her vote).
+
+    Note: it is possible to put constraints on the starting of the vote process (e.g. a minimal
+          number of upvotes, in this case renamed to endorsements). These constraints are subject
+          of debate and the current definition can be found in minimalContraintsAreMet().
+
+    """
     # constants
     VOTING_STAGE = (
         ('DISCUSSION', 'Discussion'),
@@ -154,7 +185,7 @@ class Proposal(VotablePost):
 
     @property
     def estimatedVotingDate(self):
-        if self.voting_stage == 'DISCUSSION':
+        if self.voting_stage in ['EXPIRED', 'DISCUSSION']:
             nominal_date = self.create_date + datetime.timedelta(days=self.discussion_time)
             return nominal_date
         else:
@@ -362,7 +393,14 @@ class Proposal(VotablePost):
     def votesOn(self, vote_value):
         return self.final_proxy_proposal_votes.filter(value = vote_value, voted_self=True)
 
+
 class AmendmentProposal(Proposal):
+    """ Proposal for ammending a document.
+
+    The main component of this kind of proposal is the 'diff'. This is a set of changes that is made
+    to one of the documents (see document.models).
+
+    """
     motivation = models.TextField()
     diff = models.ForeignKey(Diff)
 
@@ -403,14 +441,27 @@ class AmendmentProposal(Proposal):
                 print traceback.format_exc()
                 # TODO: catch this in nice way
 
+
 class PositionProposal(Proposal):
+    """ Proposal for a position or statement that also can be used as a poll.
+
+    The main component is a text on which the users can vote. This text is assumed to
+    contain a statement as well as an (optional) motivation.
+
+    """
     position_text = models.TextField()
 
     @property
     def proposaltype(self):
         return "position"
 
+
 class Comment(VotablePost):
+    """ Comment on a Proposal.
+
+    Allows users to comment on proposals.
+
+    """
     # constants
     COMMENT_COLORS = (
         ('POS', 'positive'),
@@ -430,7 +481,13 @@ class Comment(VotablePost):
             return False
         return self.proposal.voting_stage in ['DISCUSSION']
 
+
 class CommentReply(VotablePost):
+    """ Reply on a Comment.
+
+    Allows users to reply on comments on proposals.
+
+    """
     # fields
     comment = models.ForeignKey(Comment, related_name="replies")
     motivation = models.TextField(validators=[
@@ -446,22 +503,28 @@ class CommentReply(VotablePost):
             return False
         return self.comment.proposal.voting_stage in ['DISCUSSION']
 
-"""
-    This contains what the user entered on the website for his vote
-"""
+
 class ProposalVote(models.Model):
+    """ Contains what the user entered on the website for his vote.
+
+    This is not to be confused with an UpDownVote. This type of vote is exclusively used for the voting
+    process of Proposals, with a distinct begin and end time.
+
+    """
     user = models.ForeignKey(CustomUser, related_name="proposal_votes")
     proposal = models.ForeignKey(Proposal, related_name="proposal_votes")
     date = models.DateTimeField(auto_now=True)
     value = models.IntegerField("The value of the vote")
 
-"""
-    This contains where everybodies votes came from 
-            and went to
-            in effect, it is the voting matrix
-            note that if the user_voting did not actually vote, the numvotes need to be interpreted as the number of votes "flowing through" this user, which is an upperbound to what the user would really have if he actually voted.
-"""
+
 class ProxyProposalVote(models.Model):
+    """ This contains where everybodies votes came from  and went to in effect, it is the voting matrix.
+
+    Note: If the user_voting did not actually vote, the numvotes need to be interpreted as the number
+    of votes "flowing through" this user, which is an upperbound to what the user would really have if
+    he actually voted.
+
+    """
     user_voting = models.ForeignKey(CustomUser, related_name="proxy_proposal_votes")
     user_proxied = models.ForeignKey(CustomUser, related_name="proxied_proposal_votes")
     proposal = models.ForeignKey(Proposal, related_name="proxy_proposal_votes")
@@ -477,11 +540,10 @@ class ProxyProposalVote(models.Model):
     def getVoteOfVotingUser(self):
         return FinalProposalVote.objects.get(proposal=self.proposal, user=self.user_voting)
 
-"""
-    This contains who voted what eventually after counting
-"""
 
 class FinalProposalVote(models.Model):
+    """ This contains who voted what eventually after counting. """
+
     user = models.ForeignKey(CustomUser, related_name="final_proxy_proposal_votes")
     proposal = models.ForeignKey(Proposal, related_name="final_proxy_proposal_votes")
     numvotes = models.FloatField(default=0)
@@ -495,10 +557,11 @@ class FinalProposalVote(models.Model):
     @property
     def getProxyProposalVoteEndNodes(self):
         return ProxyProposalVote.objects.filter(proposal=self.proposal, user_proxied=self.user, user_voting__in=self.proposal.proposal_votes.values("user")).all()
-'''
-    object containing the issued proxies for the voting system
-'''
+
+
 class Proxy(models.Model):
+    """ Object containing the issued proxies for the voting system. """
+
     delegating = models.ForeignKey(CustomUser, related_name="proxies")
     delegates = models.ManyToManyField(CustomUser, related_name="received_proxies")
     tags = models.ManyToManyField(Tag, related_name="allproxies")

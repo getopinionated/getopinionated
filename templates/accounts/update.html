@@ -32,8 +32,8 @@
     </p>
 </form>
 
-<h1>Update password</h1>
-<form class="form-horizontal" action="{% url profile-update %}" method="POST">
+<h1 id="h1_passwordform">Update password</h1>
+<form class="form-horizontal" action="{% url profile-update %}#h1_passwordform" method="POST">
     {% csrf_js_token %}
     {{ passwordform|as_bootstrap:"horizontal" }}
     <p class="form-actions">
