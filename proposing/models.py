@@ -8,9 +8,9 @@ from django.db.models.aggregates import Sum
 from django.contrib.auth.models import Group, User
 from django.conf import settings
 from common.templatetags.filters import slugify
+from common.models import DisableableModel
 from document.models import Diff
 from accounts.models import CustomUser
-from managers import EnabledObjectsManager
 
 logger = logging.getLogger(__name__)
 
@@ -108,36 +108,17 @@ class VotablePost(models.Model):
         return self        
 
 
-class UpDownVote(models.Model):
+class UpDownVote(DisableableModel):
     """ An up- or downvote for a VotablePost.
 
     Note: These objects should be treated as immutable and irremovable so a reference to an UpDownVote never becomes
           obsolete. Instead of changing an UpDownVote, please disable it and make a new copy with the change.
 
     """
-    ### fields ###
     user = models.ForeignKey(CustomUser, related_name="+") # the '+' inhibits the creation of a updownvote set in User
     post = models.ForeignKey(VotablePost, related_name="up_down_votes_including_disabled")
-    date = models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(auto_now_add=True)
     value = models.IntegerField(choices=((1, 'up'), (-1, 'down')))
-    enabled = models.BooleanField(default=True, help_text='If False, this object is no longer active, but rather '
-        'kept as reference. Unselect this instead of deleting/changing this object.')
-
-    ### managers ###
-    objects = models.Manager()
-    enabled_objects = EnabledObjectsManager()
-
-    def delete(self):
-        """ (overridden) inhibits normal delete, instead use disable()  """
-        if self.enabled:
-            raise NotImplementedError("Trying to delete an UpDownVote, please disable this field in stead.")
-        else:
-            # If delete operations would be desired in some cases, replace the following by super().delete()
-            raise NotImplementedError("Trying to delete a disabled field.")
-
-    def disable(self):
-        self.enabled = False
-        self.save()
 
 class Tag(models.Model):
     """ A content tag that can be assigned to Proposals. """
@@ -160,7 +141,7 @@ class VotablePostEdit(models.Model):
 
     user = models.ForeignKey(CustomUser)
     post = models.ForeignKey(VotablePost, related_name="edits")
-    date = models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(auto_now_add=True)
 
 
 class Proposal(VotablePost):
@@ -557,7 +538,7 @@ class ProposalVote(models.Model):
     """
     user = models.ForeignKey(CustomUser, related_name="proposal_votes")
     proposal = models.ForeignKey(Proposal, related_name="proposal_votes")
-    date = models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(auto_now_add=True)
     value = models.IntegerField("The value of the vote")
 
 
