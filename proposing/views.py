@@ -380,7 +380,7 @@ def ajaxendorse(request, proposal_slug):
     user = request.user
     if proposal.userHasUpdownvoted(user) != None:
         vote = proposal.updownvoteFromUser(user)
-        vote.delete()
+        vote.disable()
         return HttpResponse(content=proposal.upvote_score, mimetype='text/plain')
     # check if upvote is allowed
     if not proposal.userCanUpdownvote(user):
@@ -404,7 +404,7 @@ def ajaxupdownvote(request, post_id, updown):
     ## user has already voted: remove it
     if previous_vote != None:
         vote = post.updownvoteFromUser(user)
-        vote.delete()
+        vote.disable()
     ## requested updownvote on previous_vote ==> cancels vote
     if previous_vote == updown:
         pass
