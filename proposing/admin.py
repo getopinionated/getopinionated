@@ -9,6 +9,10 @@ from models import Proposal, Comment, CommentReply, UpDownVote, ProposalVote, Vo
 from django.contrib.auth.models import Group
 from django.utils import timezone
 
+def disable_action(modeladmin, request, queryset):
+    queryset.update(enabled=False)
+disable_action.short_description = "Disable selection (preferred instead of delete)."
+
 class TagAdmin(admin.ModelAdmin):
     model = Tag
     list_display = ('name',)
@@ -111,6 +115,11 @@ class CommentAdmin(admin.ModelAdmin):
     inlines = [CommentReplyInline, VotablePostEditInline]
     list_filter = ['create_date']
 
+class UpDownVoteAdmin(admin.ModelAdmin):
+    model = UpDownVote
+    list_display = ('user', 'post', 'date', 'value', 'enabled',)
+    actions = [disable_action]
+
 admin.site.register(AmendmentProposal, ProposalAdmin)
 admin.site.register(PositionProposal, ProposalAdmin)
 admin.site.register(Comment, CommentAdmin)
@@ -120,3 +129,4 @@ admin.site.register(ProposalVote, ProposalVoteAdmin)
 admin.site.register(FinalProposalVote, FinalProposalVoteAdmin)
 admin.site.register(ProxyProposalVote, ProxyProposalVoteAdmin)
 admin.site.register(VotablePostEdit, admin.ModelAdmin)
+admin.site.register(UpDownVote, UpDownVoteAdmin)

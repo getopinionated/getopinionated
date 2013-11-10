@@ -86,7 +86,7 @@
 		    {% if proposal_list %}
 		    	<div class="profile-proposal-list">
 			    	<h1>{{member.display_name}}'s proposals</h1>
-			        {% usemacro proposal-list-macro proposal_list.all|slice:":10" %}
+			        {% usemacro proposal-list-macro proposal_list|slice:":10" %}
 		        </div>
 		        
 		        {% if proposal_list.count > 10 %}
@@ -99,7 +99,7 @@
 			{% if pos_comment_list or neutr_comment_list or neg_comment_list %}
 				<div class="profile-comment-list">
 			    	<h1>{{member.display_name}}'s comments</h1>
-			    	{% usemacro comment-list-macro pos_comment_list.all|slice:":10" neutr_comment_list.all|slice:":10" neg_comment_list.all|slice:":10" %}	     
+			    	{% usemacro comment-list-macro pos_comment_list|slice:":10" neutr_comment_list|slice:":10" neg_comment_list|slice:":10" %}	     
 		        </div>
 		        {% if pos_comment_list.count > 10 or neutr_comment_list.count > 10 or neg_comment_list.count > 10 %}
 		            <a href="{% url user-comments member.slug %}">See all comments</a>
@@ -111,7 +111,7 @@
 			{% if pos_vote_list or neutr_vote_list or neg_vote_list %}
 				<div class="profile-vote-list">
 			    	<h1>{{member.display_name}}'s votes</h1>
-			    	{% usemacro vote-list-macro pos_vote_list.all|slice:":10" neutr_vote_list.all|slice:":10" neg_vote_list.all|slice:":10" %}		     
+			    	{% usemacro vote-list-macro pos_vote_list|slice:":10" neutr_vote_list|slice:":10" neg_vote_list|slice:":10" %}		     
 		        </div>
 		        {% if pos_vote_list.count > 10 or neutr_vote_list.count > 10 or neg_vote_list.count > 10 %}
 		            <a href="{% url user-votes member.slug %}">See all votes</a>
@@ -123,7 +123,7 @@
 			{% if pos_proxy_vote_list or neutr_proxy_vote_list or neg_proxy_vote_list %}
                 <div class="profile-vote-list">
                     <h1>{{member.display_name}}'s votes through proxies</h1>
-                    {% usemacro proxyvote-list-macro pos_proxy_vote_list.all|slice:":10" neutr_proxy_vote_list.all|slice:":10" neg_proxy_vote_list.all|slice:":10" %}
+                    {% usemacro proxyvote-list-macro pos_proxy_vote_list|slice:":10" neutr_proxy_vote_list|slice:":10" neg_proxy_vote_list|slice:":10" %}
                 </div>
                 {% if pos_proxy_vote_list.count > 10 or neutr_proxy_vote_list.count > 10 or neg_proxy_vote_list.count > 10 %}
                     <a href="{% url user-proxy-votes member.slug %}">See all votes</a>

@@ -5,11 +5,12 @@ from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 from django.db.models.aggregates import Sum
+from django.contrib.auth.models import Group, User
 from django.conf import settings
 from common.templatetags.filters import slugify
 from document.models import Diff
 from accounts.models import CustomUser
-from django.contrib.auth.models import Group, User
+from managers import EnabledObjectsManager
 
 logger = logging.getLogger(__name__)
 
@@ -23,9 +24,28 @@ class VotablePost(models.Model):
     create_date = models.DateTimeField(auto_now_add=True)
 
     @property
+    def up_down_votes(self):
+        return self.up_down_votes_including_disabled.filter(enabled=True)
+
+    @property
     def upvote_score(self):
-        v = VotablePost.objects.filter(pk=self.pk).aggregate(Sum('up_down_votes__value'))['up_down_votes__value__sum']
+        v = self.up_down_votes.aggregate(Sum('value'))['value__sum']
         return v if v else 0 # v is None when no votes have been cast
+
+    @property
+    def popularity(self):
+        """ A numerical measure for how popular a proposal is. This defines the position in lists.
+
+        Note: this method can be overridden if better measures can be found.
+
+        """
+        return self.upvote_score
+
+    def __unicode__(self):
+        return self.cast().to_string()
+
+    def to_string(self):
+        raise NotImplementedError("This method should be overridden by every child.")
 
     def updownvoteFromUser(self, user):
         if not user.is_authenticated():
@@ -91,13 +111,21 @@ class VotablePost(models.Model):
 class UpDownVote(models.Model):
     """ An up- or downvote for a VotablePost.
 
-    The date of every vote is kept for some historical record.
+    Note: These objects should be treated as immutable and irremovable so a reference to an UpDownVote never becomes
+          obsolete. Instead of changing an UpDownVote, please disable it and make a new copy with the change.
 
     """
-    user = models.ForeignKey(CustomUser, related_name="up_down_votes")
-    post = models.ForeignKey(VotablePost, related_name="up_down_votes")
+    ### fields ###
+    user = models.ForeignKey(CustomUser, related_name="+") # the '+' inhibits the creation of a updownvote set in User
+    post = models.ForeignKey(VotablePost, related_name="up_down_votes_including_disabled")
     date = models.DateTimeField(auto_now=True)
     value = models.IntegerField(choices=((1, 'up'), (-1, 'down')))
+    enabled = models.BooleanField(default=True, help_text='If False, this object is no longer active, but rather '
+        'kept as reference. Unselect this instead of deleting/changing this object.')
+
+    ### managers ###
+    objects = models.Manager()
+    enabled_objects = EnabledObjectsManager()
 
 
 class Tag(models.Model):
@@ -161,8 +189,13 @@ class Proposal(VotablePost):
     allowed_groups = models.ManyToManyField(Group, null=True, blank=True) # if null, all users can vote for this proposal
     viewed_by =  models.ManyToManyField(CustomUser, null=True, blank=True)
 
-    def __unicode__(self):
+    def to_string(self):
         return self.title
+
+    @property
+    def popularity(self):
+        """ (overridden) A numerical measure for how popular a proposal is. This defines the position in lists. """
+        return 1000*self.totalvotescore + 100*self.comments.count() + self.views
 
     @property
     def proposaltype(self):
@@ -417,7 +450,7 @@ class AmendmentProposal(Proposal):
             if hasattr(self,'diff'):
                 self.diff.fulldocument.getFinalVersion().applyDiff(self.diff)
             else:
-                print "Proposal",self.title,"is approved, but has no Diff"
+                  "Proposal",self.title,"is approved, but has no Diff"
         except Exception as e:
             print traceback.format_exc()
             print "Error applying diff to final version: ", e
@@ -473,7 +506,7 @@ class Comment(VotablePost):
     motivation = models.TextField()
     color = models.CharField(max_length=10, choices=COMMENT_COLORS, default='NEUTR')
 
-    def __unicode__(self):
+    def to_string(self):
         return "Comment on {}".format(self.proposal)
 
     def isEditableBy(self, user):
@@ -495,7 +528,7 @@ class CommentReply(VotablePost):
         MaxLengthValidator(settings.COMMENTREPLY_MAX_LENGTH),
     ])
 
-    def __unicode__(self):
+    def to_string(self):
         return "Reply to comment on {}".format(self.comment.proposal)
 
     def isEditableBy(self, user):
@@ -548,7 +581,7 @@ class FinalProposalVote(models.Model):
     proposal = models.ForeignKey(Proposal, related_name="final_proxy_proposal_votes")
     numvotes = models.FloatField(default=0)
     value = models.FloatField(default=0)
-    voted_self = models.BooleanField() #False if this vote actually went to other people
+    voted_self = models.BooleanField(help_text='If this is False, this vote actually went to other people.')
 
     @property
     def getProxyProposalVoteSources(self):
