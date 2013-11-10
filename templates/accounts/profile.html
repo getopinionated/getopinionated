@@ -89,7 +89,7 @@
 			        {% usemacro proposal-list-macro proposal_list|slice:":10" %}
 		        </div>
 		        
-		        {% if proposal_list.count > 10 %}
+		        {% if proposal_list|length > 10 %}
 		            <a href="{% url user-proposals member.slug %}">See all proposals</a>
 		        {% endif %}
 		    {% else %}
@@ -101,7 +101,7 @@
 			    	<h1>{{member.display_name}}'s comments</h1>
 			    	{% usemacro comment-list-macro pos_comment_list|slice:":10" neutr_comment_list|slice:":10" neg_comment_list|slice:":10" %}	     
 		        </div>
-		        {% if pos_comment_list.count > 10 or neutr_comment_list.count > 10 or neg_comment_list.count > 10 %}
+		        {% if pos_comment_list|length > 10 or neutr_comment_list|length > 10 or neg_comment_list|length > 10 %}
 		            <a href="{% url user-comments member.slug %}">See all comments</a>
 		        {% endif %}
 		    {% else %}
@@ -113,7 +113,7 @@
 			    	<h1>{{member.display_name}}'s votes</h1>
 			    	{% usemacro vote-list-macro pos_vote_list|slice:":10" neutr_vote_list|slice:":10" neg_vote_list|slice:":10" %}		     
 		        </div>
-		        {% if pos_vote_list.count > 10 or neutr_vote_list.count > 10 or neg_vote_list.count > 10 %}
+		        {% if pos_vote_list|length > 10 or neutr_vote_list|length > 10 or neg_vote_list|length > 10 %}
 		            <a href="{% url user-votes member.slug %}">See all votes</a>
 		        {% endif %}
 		    {% else %}
@@ -125,7 +125,7 @@
                     <h1>{{member.display_name}}'s votes through proxies</h1>
                     {% usemacro proxyvote-list-macro pos_proxy_vote_list|slice:":10" neutr_proxy_vote_list|slice:":10" neg_proxy_vote_list|slice:":10" %}
                 </div>
-                {% if pos_proxy_vote_list.count > 10 or neutr_proxy_vote_list.count > 10 or neg_proxy_vote_list.count > 10 %}
+                {% if pos_proxy_vote_list|length > 10 or neutr_proxy_vote_list|length > 10 or neg_proxy_vote_list|length > 10 %}
                     <a href="{% url user-proxy-votes member.slug %}">See all votes</a>
                 {% endif %}
             {% else %}
