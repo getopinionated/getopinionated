@@ -11,7 +11,7 @@ from accounts.models import CustomUser
 from django.forms.widgets import SelectMultiple
 from django.forms.fields import MultipleChoiceField
 from django.forms.models import ModelMultipleChoiceField
-from models import VotablePost, UpDownVote, Proposal, AmendmentProposal, PositionProposal, Comment, CommentReply, Tag, VotablePostEdit, Proxy
+from models import VotablePost, Proposal, AmendmentProposal, PositionProposal, Comment, CommentReply, Tag, VotablePostEdit, Proxy
 import itertools
 
 from common.socialnetwork import posttotwitter

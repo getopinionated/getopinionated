@@ -127,6 +127,15 @@ class UpDownVote(models.Model):
     objects = models.Manager()
     enabled_objects = EnabledObjectsManager()
 
+    def delete(self):
+        """ (overridden) inhibit normal delete, but instead disable this object.  """
+        if self.enabled:
+            self.enabled = False
+            self.save()
+        else:
+            # If delete operations would be desired in some cases, replace the following by super().delete()
+            raise NotImplementedError("Trying to delete a disabled field.")
+
 
 class Tag(models.Model):
     """ A content tag that can be assigned to Proposals. """
