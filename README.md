@@ -33,7 +33,7 @@ Getting started
 ---------------
 To run the development server, run
 
-    python manage.py initializeserver
+    python manage.py localserver
 
 This will create the database, populate it with the data in `testdata.json` and execute `manage.py runserver`.
 
