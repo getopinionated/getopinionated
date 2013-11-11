@@ -18,7 +18,9 @@ class ImmutableModelAdmin(admin.ModelAdmin):
             return self.readonly_fields
 
     def has_delete_permission(self, request, obj=None):
-        if not obj.immutable_is_deletable and obj.is_immutable():
+        if obj == None: # bugfix by Jens Nyman
+            return False
+        if not obj._meta.immutable_is_deletable and obj.is_immutable(): # bugfix by Jens Nyman
             return False
         return super(ImmutableModelAdmin, self).has_delete_permission(
             request,

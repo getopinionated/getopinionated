@@ -146,6 +146,7 @@ class ImmutableModelMeta(models.base.ModelBase):
             
 class ImmutableModel(models.Model):
     __metaclass__ = ImmutableModelMeta
+    _mutability_override = False # custom feature by Jens Nyman for getopinionated
 
     def can_change_field(self, field_name):
         field_changable = field_name in self._meta.mutable_fields or not self.is_immutable()
@@ -156,7 +157,9 @@ class ImmutableModel(models.Model):
         return field_changable
     
     def __setattr__(self, name, value):
-        if not self.can_change_field(name):
+        if name == '_mutability_override': # custom feature by Jens Nyman for getopinionated
+            pass # setattr can continue working
+        elif not self.can_change_field(name):
             try:
                 current_value = getattr(self, name, None)
             except:
@@ -171,6 +174,8 @@ class ImmutableModel(models.Model):
         super(ImmutableModel, self).__setattr__(name, value)
 
     def is_immutable(self):
+        if self._mutability_override == True: # custom feature by Jens Nyman for getopinionated
+            return False
         if self.has_immutable_lock_field():
             """
             During the creation of a Django ORM object, as far as we know,
@@ -182,6 +187,15 @@ class ImmutableModel(models.Model):
             """
             return getattr(self, self._meta.immutable_lock_field, True)
         return True
+
+    def override_mutability(self, mutability):
+        """ When override_mutability(True) is called, this object becomes a regular object (no more
+        Exceptions when violating immutability).
+
+        Note: This is a custom feature by Jens Nyman for getopinionated.
+
+        """
+        self._mutability_override = mutability;
 
     def has_immutable_lock_field(self):
         return self._meta.immutable_lock_field != None
