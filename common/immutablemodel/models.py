@@ -167,7 +167,6 @@ class ImmutableModel(models.Model):
             if current_value is not None and current_value is not '' and \
                 getattr(current_value, '_file', 'not_existant') is not None and \
                 current_value != value:
-                print current_value, value
                 if self._meta.immutable_quiet:
                     return
                 raise ValueError('%s.%s is immutable and cannot be changed' % (self.__class__.__name__, name))
