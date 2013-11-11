@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.db.models.aggregates import Sum
 from django.contrib.auth.models import Group, User
 from django.conf import settings
+from django.template.defaultfilters import truncatechars
 from common.templatetags.filters import slugify
 from common.models import DisableableModel
 from document.models import Diff
@@ -499,7 +500,9 @@ class Comment(VotablePost):
     color = models.CharField(max_length=10, choices=COMMENT_COLORS, default='NEUTR')
 
     def to_string(self):
-        return "Comment on {}".format(self.proposal)
+        proposal = truncatechars(unicode(self.proposal), 30)
+        motivation = truncatechars(self.motivation, 30)
+        return "Comment on {}: {}".format(proposal, motivation)
 
     def isEditableBy(self, user):
         if not super(Comment, self).isEditableBy(user):
