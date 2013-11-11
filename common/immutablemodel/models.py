@@ -173,6 +173,9 @@ class ImmutableModel(models.Model):
             elif current_value == value or not self.is_m2m_change(name, current_value, value):
                 pass
             else:
+                # a bit more output for debuggin ajax
+                print 'ValueError: %s.%s is immutable and cannot be changed from %s to %s.' \
+                    % (self.__class__.__name__, name, current_value, value)
                 if self._meta.immutable_quiet:
                     return
                 raise ValueError('%s.%s is immutable and cannot be changed' % (self.__class__.__name__, name))
@@ -237,6 +240,8 @@ class ImmutableModel(models.Model):
 
     def delete(self):
         if not self._meta.immutable_is_deletable and self.is_immutable():
+            # a bit more output for debuggin ajax
+            print "CantDeleteImmutableException: %s is immutable and cannot be deleted" % self
             if self._meta.immutable_quiet:
                 return
             else:
