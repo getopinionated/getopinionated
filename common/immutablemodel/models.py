@@ -1,7 +1,6 @@
 # encoding: utf-8
 from django.db import models
 
-
 class Option(object):
     def __init__(self, name, default=None):
         self.name = name
@@ -160,13 +159,20 @@ class ImmutableModel(models.Model):
         if name == '_mutability_override': # custom feature by Jens Nyman for getopinionated
             pass # setattr can continue working
         elif not self.can_change_field(name):
+            # get current value
             try:
                 current_value = getattr(self, name, None)
             except:
                 current_value = None
-            if current_value is not None and current_value is not '' and \
-                getattr(current_value, '_file', 'not_existant') is not None and \
-                current_value != value:
+            # check if this value has already been set once
+            if current_value is None or current_value is '' or \
+                getattr(current_value, '_file', 'not_existant') is None or \
+                self.is_empty_m2m(name, current_value):
+                pass
+            # check if this value is actually changed
+            elif current_value == value or not self.is_m2m_change(name, current_value, value):
+                pass
+            else:
                 if self._meta.immutable_quiet:
                     return
                 raise ValueError('%s.%s is immutable and cannot be changed' % (self.__class__.__name__, name))
@@ -194,7 +200,37 @@ class ImmutableModel(models.Model):
         Note: This is a custom feature by Jens Nyman for getopinionated.
 
         """
-        self._mutability_override = mutability;
+        self._mutability_override = mutability
+
+    ### m2m methods ###
+    @classmethod
+    def is_m2m(cls, field_name):
+        """ return whether field_name is a many_to_many field.
+
+        Note: This is used for a bugfix by Jens Nyman.
+
+        """
+        return field_name in [f.name for f in cls._meta.many_to_many]
+
+    def is_empty_m2m(self, field_name, value):
+        """ return whether this is an m2m that is empty.
+
+        Note: This is used for a bugfix by Jens Nyman.
+
+        """
+        if self.is_m2m(field_name):
+            return value.count() == 0
+
+    def is_m2m_change(self, field_name, old_value, new_value):
+        """ return whether this is an m2m that has changed from old to new.
+
+        Note: This is used for a bugfix by Jens Nyman.
+
+        """
+        # convert old and new to comparable set
+        old = set(f.pk for f in old_value.all()) # set of all id's in the RelatedManager
+        new = set(int(x) for x in new_value)
+        return old != new
 
     def has_immutable_lock_field(self):
         return self._meta.immutable_lock_field != None
