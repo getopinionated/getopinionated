@@ -245,7 +245,7 @@ class ImmutableModel(models.Model):
             return False
 
     def _is_unchanged_m2m(self, field_name, old_value, new_value):
-        """ return whether this is an m2m that has no changes from old to new.
+        """ Return whether this is an m2m that has no changes from old to new.
 
         Note: This is used for a bugfix by Jens Nyman.
 
