@@ -8,13 +8,13 @@ def delete_action(modeladmin, request, queryset):
 delete_action.short_description = "Delete selection."
 
 def disable_action(modeladmin, request, queryset):
-    queryset.update(enabled=False)
+    for item in queryset:
+        item.disable()
 disable_action.short_description = "Disable selection (preferred instead of delete)."
 
 ### define ModelAdmins ###
 class OverrideImmutabilityAdmin(admin.ModelAdmin):
     save_as = True
-    show_save = False
     actions = [delete_action]
 
     def has_change_permission(self, request, obj=None):
@@ -40,3 +40,4 @@ class OverrideImmutabilityAdmin(admin.ModelAdmin):
 
 class DisableableModelAdmin(OverrideImmutabilityAdmin):
     actions = OverrideImmutabilityAdmin.actions + [disable_action]
+    readonly_fields = ('enabled', 'date_disabled')
