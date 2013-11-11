@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from immutablemodel import ImmutableModel
 from managers import EnabledObjectsManager
+from copy import copy
 
 class DisableableModel(ImmutableModel):
     ### fields ###
@@ -10,8 +11,8 @@ class DisableableModel(ImmutableModel):
     date_disabled = models.DateTimeField(blank=True, null=True)
 
     ### managers ###
-    objects = models.Manager()
-    enabled_objects = EnabledObjectsManager()
+    all_objects = models.Manager()
+    objects = EnabledObjectsManager()
 
     class Meta:
         mutable_fields = []
@@ -30,3 +31,20 @@ class DisableableModel(ImmutableModel):
         self.date_disabled = timezone.now()
         self.save()
         self.override_mutability(False)
+
+    def disable_and_get_mutable_copy(self, save=True):
+        """ disable this object and make a copy """
+        # make copy
+        copy_obj = copy(self)
+
+        # disable
+        self.disable()
+
+        # will be copied on save (see https://docs.djangoproject.com/en/1.4/topics/db/queries/#copying-model-instances)
+        copy_obj.override_mutability(True)
+        copy_obj.pk = None
+        copy_obj.id = None
+        if save:
+            copy_obj.save()
+        return copy_obj
+

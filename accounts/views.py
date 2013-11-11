@@ -74,7 +74,10 @@ def userprofile(request, userslug):
     if request.user.is_authenticated() and not request.user.pk==member.pk:
         if request.method == 'POST':
             proxyform = SingleProxyForm(request.user, member, request.POST)
-            proxyform.save()
+            if proxyform.is_valid():
+                proxyform.save()
+                messages.success(request, 'Proxies saved')
+                return HttpResponseRedirect(request.build_absolute_uri())
         else:
             proxyform = SingleProxyForm(request.user, member)
     else:

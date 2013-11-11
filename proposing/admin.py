@@ -24,11 +24,12 @@ class TagInlineForProxy(admin.TabularInline):
     model = Proxy.tags.through
     extra = 1
 
-class ProxyAdmin(admin.ModelAdmin):
-    model = Proxy
-    list_display = ('delegating',)
-    inlines = (TagInlineForProxy,UserInlineForProxy)
+class ProxyAdmin(DisableableModelAdmin):
+    list_display = ('__unicode__', 'tags_str', 'delegating', 'isdefault', 'date_created', 'enabled')
+    inlines = (TagInlineForProxy, UserInlineForProxy)
     exclude = ('tags','delegates')
+    list_filter = DisableableModelAdmin.list_filter + ['date_created', 'tags']
+    search_fields = ['delegating__username', 'delegates__username', 'tags__name']
 
 class ProposalVoteAdmin(admin.ModelAdmin):
     list_display = ('user','proposal','date','value')
@@ -115,6 +116,7 @@ class CommentAdmin(admin.ModelAdmin):
 class UpDownVoteAdmin(DisableableModelAdmin):
     model = UpDownVote
     list_display = ('user', 'post', 'date', 'value', 'enabled',)
+    list_filter = DisableableModelAdmin.list_filter + ['date', 'value']
 
 admin.site.register(AmendmentProposal, ProposalAdmin)
 admin.site.register(PositionProposal, ProposalAdmin)

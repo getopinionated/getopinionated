@@ -41,3 +41,11 @@ class OverrideImmutabilityAdmin(admin.ModelAdmin):
 class DisableableModelAdmin(OverrideImmutabilityAdmin):
     actions = OverrideImmutabilityAdmin.actions + [disable_action]
     readonly_fields = ('enabled', 'date_disabled')
+    list_filter = ['enabled']
+
+    def queryset(self, request):
+        """ Show enabled and disabled objects (Django < 1.6 [TMP]) """
+        return self.model.all_objects
+    def get_queryset(self, request):
+        """ Show enabled and disabled objects (Django > 1.6) """
+        return self.model.all_objects

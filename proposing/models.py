@@ -106,17 +106,18 @@ class VotablePost(models.Model):
                     return attr
             except:
                 pass
-        return self        
+        return self
 
 
 class UpDownVote(DisableableModel):
     """ An up- or downvote for a VotablePost.
 
-    Note: These objects should be treated as immutable and irremovable so a reference to an UpDownVote never becomes
-          obsolete. Instead of changing an UpDownVote, please disable it and make a new copy with the change.
+    Note: These objects are immutable and irremovable so a reference to an UpDownVote never becomes obsolete.
+          Instead of changing an UpDownVote, please disable it and make a new copy with the change.
 
     """
-    user = models.ForeignKey(CustomUser, related_name="+") # the '+' inhibits the creation of a updownvote set in User
+    # the '+' inhibits the creation of a updownvote_set in CustomUser (would not make sense because disabled objects are also in this list)
+    user = models.ForeignKey(CustomUser, related_name="+")
     post = models.ForeignKey(VotablePost, related_name="up_down_votes_including_disabled")
     date = models.DateTimeField(auto_now_add=True)
     value = models.IntegerField(choices=((1, 'up'), (-1, 'down')))
@@ -177,7 +178,7 @@ class Proposal(VotablePost):
     expire_date = models.DateTimeField(default=None, null=True, blank=True)
     discussion_time = models.IntegerField(default=7)
     tags = models.ManyToManyField(Tag, related_name="proposals")
-    avgProposalvoteScore = models.FloatField("score", default=0.0) 
+    avgProposalvoteScore = models.FloatField("score", default=0.0)
     favorited_by = models.ManyToManyField(User, related_name="favorites", null=True, blank=True)
     allowed_groups = models.ManyToManyField(Group, null=True, blank=True) # if null, all users can vote for this proposal
     viewed_by =  models.ManyToManyField(CustomUser, null=True, blank=True)
@@ -187,7 +188,7 @@ class Proposal(VotablePost):
 
     @property
     def popularity(self):
-        """ (overridden) A numerical measure for how popular a proposal is. This defines the position in lists. """
+        """ [overridden] A numerical measure for how popular a proposal is. This defines the position in lists. """
         return 1000*self.totalvotescore + 100*self.comments.count() + self.views
 
     @property
@@ -219,7 +220,7 @@ class Proposal(VotablePost):
 
     @property
     def estimatedFinishDate(self):
-        return self.estimatedVotingDate + datetime.timedelta(days=settings.VOTING_DAYS) 
+        return self.estimatedVotingDate + datetime.timedelta(days=settings.VOTING_DAYS)
 
     @property
     def expirationDate(self):
@@ -247,9 +248,9 @@ class Proposal(VotablePost):
     @property
     def upvotesNeededBeforeVoting(self):
         """ True if non-date constraints are met """
-        missing = settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING - self.upvote_score 
+        missing = settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING - self.upvote_score
         return missing if missing >= 0 else 0
-    
+
     def shouldStartVoting(self):
         # check relevance
         if self.voting_stage != 'DISCUSSION':
@@ -332,7 +333,7 @@ class Proposal(VotablePost):
         # QUESTION: should quorum be number of voters of number of votes (c.f.r. liquid democracy, one person can have many votes)
         # Quorum is always number of voters, not number of votes. A quorum is needed to avoid under-the-radar-behaviour.
         return self.avgProposalvoteScore > 0 and self.proposal_votes.count() >= settings.QUORUM_SIZE
-    
+
     def commentsAllowed(self):
         return (self.voting_stage == 'DISCUSSION' and settings.COMMENTS_IN_DISCUSSION) or (self.voting_stage == 'VOTING' and settings.COMMENTS_IN_VOTING) or (self.voting_stage in ['APPROVED','REJECTED','EXPIRED'] and settings.COMMENTS_IN_FINISHED)
 
@@ -406,7 +407,7 @@ class Proposal(VotablePost):
     def numVotesOn(self, vote_value):
         a = self.final_proxy_proposal_votes.filter(value = vote_value, voted_self=True).aggregate(Sum('numvotes'))
         return a['numvotes__sum'] or 0
-    
+
     def numVotesToPx(self, vote_value):
         max_num_votes = max([self.numVotesOn(i) for i in xrange(-5,6)])
         if max_num_votes==0:
@@ -557,7 +558,7 @@ class ProxyProposalVote(models.Model):
     user_proxied = models.ForeignKey(CustomUser, related_name="proxied_proposal_votes")
     proposal = models.ForeignKey(Proposal, related_name="proxy_proposal_votes")
     numvotes = models.FloatField(default=0)
-    
+
     @property
     def getUpperBound(self):
         if numvotes>1.0:
@@ -581,19 +582,50 @@ class FinalProposalVote(models.Model):
     @property
     def getProxyProposalVoteSources(self):
         return ProxyProposalVote.objects.filter(proposal=self.proposal, user_voting=self.user).all()
- 
+
     @property
     def getProxyProposalVoteEndNodes(self):
         return ProxyProposalVote.objects.filter(proposal=self.proposal, user_proxied=self.user, user_voting__in=self.proposal.proposal_votes.values("user")).all()
 
 
-class Proxy(models.Model):
-    """ Object containing the issued proxies for the voting system. """
+class Proxy(DisableableModel):
+    """ Object containing the issued proxies for the voting system.
 
-    delegating = models.ForeignKey(CustomUser, related_name="proxies")
-    delegates = models.ManyToManyField(CustomUser, related_name="received_proxies")
-    tags = models.ManyToManyField(Tag, related_name="allproxies")
+    Note: These objects are immutable and irremovable so a reference to a Proxy never becomes obsolete.
+          Instead of changing a Proxy, please disable it and make a new copy with the change.
+
+    """
+    # the '+' inhibits the creation of a proxy_set in CustomUser and Tag (would not make sense because disabled objects are also in this list)
+    delegating = models.ForeignKey(CustomUser, related_name="+")
+    delegates = models.ManyToManyField(CustomUser, related_name="+")
+    tags = models.ManyToManyField(Tag, related_name="+")
     isdefault = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
+    def __unicode__(self):
+        delegates = ','.join(unicode(d) for d in self.delegates.all())
+        delegates = truncatechars(delegates, 40)
+        return "Proxy of {} to ({})".format(self.delegating, delegates)
+
+    def tags_str(self):
+        """ string representation of tags """
+        tags = ','.join(unicode(d) for d in self.tags.all())
+        tags = truncatechars(tags, 40)
+        return tags
+    tags_str.short_description = "tags"
+
+    def disable_and_get_mutable_copy(self, save=True):
+        """ [override] fix some problems that happen on copy """
+        # call super
+        copy_obj = super(Proxy, self).disable_and_get_mutable_copy(save=False)
+        # fix date_created
+        copy_obj.date_created = timezone.now()
+        # fix ManyToMany problems
+        if save:
+            copy_obj.save()
+            copy_obj.delegates.add(*self.delegates.all())
+            copy_obj.tags.add(*self.tags.all())
+        return copy_obj
+
+    class Meta(DisableableModel.Meta):
         verbose_name_plural = "Proxies"

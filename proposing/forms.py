@@ -229,9 +229,12 @@ class ProxyForm(forms.Form):
         return True
 
     def save(self):
-        ## create diff
-        Proxy.objects.filter(delegating=self.user).delete()
-        newproxy = Proxy(delegating=self.user,isdefault=True)
+        ### first disable all existing proxies (suboptimal, but easiest) ###
+        for proxy in Proxy.objects.filter(delegating=self.user):
+            proxy.disable()
+
+        ### add new proxy for each form element ###
+        newproxy = Proxy(delegating=self.user, isdefault=True)
         newproxy.save()
         if 'main_proxy' in self.data.keys():
             for user in self.data.getlist('main_proxy'):
