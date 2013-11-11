@@ -1,4 +1,5 @@
 # encoding: utf-8
+import types
 from django.db import models
 
 class Option(object):
@@ -167,10 +168,10 @@ class ImmutableModel(models.Model):
             # check if this value has already been set once
             if current_value is None or current_value is '' or \
                 getattr(current_value, '_file', 'not_existant') is None or \
-                self.is_empty_m2m(name, current_value):
+                self._is_empty_m2m(name, current_value): # bugfix by Jens Nyman
                 pass
             # check if this value is actually changed
-            elif current_value == value or not self.is_m2m_change(name, current_value, value):
+            elif current_value == value or self._is_unchanged_m2m(name, current_value, value): # bugfix by Jens Nyman
                 pass
             else:
                 # a bit more output for debuggin ajax
@@ -196,45 +197,6 @@ class ImmutableModel(models.Model):
             return getattr(self, self._meta.immutable_lock_field, True)
         return True
 
-    def override_mutability(self, mutability):
-        """ When override_mutability(True) is called, this object becomes a regular object (no more
-        Exceptions when violating immutability).
-
-        Note: This is a custom feature by Jens Nyman for getopinionated.
-
-        """
-        self._mutability_override = mutability
-
-    ### m2m methods ###
-    @classmethod
-    def is_m2m(cls, field_name):
-        """ return whether field_name is a many_to_many field.
-
-        Note: This is used for a bugfix by Jens Nyman.
-
-        """
-        return field_name in [f.name for f in cls._meta.many_to_many]
-
-    def is_empty_m2m(self, field_name, value):
-        """ return whether this is an m2m that is empty.
-
-        Note: This is used for a bugfix by Jens Nyman.
-
-        """
-        if self.is_m2m(field_name):
-            return value.count() == 0
-
-    def is_m2m_change(self, field_name, old_value, new_value):
-        """ return whether this is an m2m that has changed from old to new.
-
-        Note: This is used for a bugfix by Jens Nyman.
-
-        """
-        # convert old and new to comparable set
-        old = set(f.pk for f in old_value.all()) # set of all id's in the RelatedManager
-        new = set(int(x) for x in new_value)
-        return old != new
-
     def has_immutable_lock_field(self):
         return self._meta.immutable_lock_field != None
 
@@ -252,6 +214,56 @@ class ImmutableModel(models.Model):
         super(ImmutableModel, self).delete()
         delattr(self, '_deleting_immutable_model')
 
+    def override_mutability(self, mutability):
+        """ When override_mutability(True) is called, this object becomes a regular object (no more
+        Exceptions when violating immutability).
+
+        Note: This is a custom feature by Jens Nyman for getopinionated.
+
+        """
+        self._mutability_override = mutability
+
+    ### m2m methods ###
+    @classmethod
+    def _is_m2m(cls, field_name):
+        """ return whether field_name is a many_to_many field.
+
+        Note: This is used for a bugfix by Jens Nyman.
+
+        """
+        return field_name in [f.name for f in cls._meta.many_to_many]
+
+    def _is_empty_m2m(self, field_name, value):
+        """ return whether this is an m2m that is empty.
+
+        Note: This is used for a bugfix by Jens Nyman.
+
+        """
+        if self._is_m2m(field_name):
+            return value.count() == 0
+        else:
+            return False
+
+    def _is_unchanged_m2m(self, field_name, old_value, new_value):
+        """ return whether this is an m2m that has no changes from old to new.
+
+        Note: This is used for a bugfix by Jens Nyman.
+
+        """
+        def convert_to_set(value):
+            """ value can be array of strings (from initial json data) or RelatedManager """
+            if isinstance(value, types.ListType):
+                return set(int(x) for x in value)
+            else:
+                return set(f.pk for f in value.all()) # set of all id's in the RelatedManager
+
+        # convert old and new to comparable set
+        if self._is_m2m(field_name):
+            old = convert_to_set(old_value)
+            new = convert_to_set(new_value)
+            return old == new
+        else:
+            return False
+
     class Meta:
         abstract = True
-
