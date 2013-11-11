@@ -156,9 +156,16 @@ class ImmutableModel(models.Model):
                 return True 
         return field_changable
     
+    _inside_setattr = False # Bugfix by Jens Nyman: it is absolutely forbidden that setattr is called indirectly due to setattr
     def __setattr__(self, name, value):
+        if name == '_inside_setattr' or self._inside_setattr:
+            # Bugfix by Jens Nyman: it is absolutely forbidden that setattr is called indirectly due to setattr
+            return super(ImmutableModel, self).__setattr__(name, value)
+        self._inside_setattr = True
+
         if name == '_mutability_override': # custom feature by Jens Nyman for getopinionated
             pass # setattr can continue working
+            
         elif not self.can_change_field(name):
             # get current value
             try:
@@ -178,9 +185,11 @@ class ImmutableModel(models.Model):
                 print 'ValueError: %s.%s is immutable and cannot be changed from %s to %s.' \
                     % (self.__class__.__name__, name, current_value, value)
                 if self._meta.immutable_quiet:
+                    self._inside_setattr = False
                     return
                 raise ValueError('%s.%s is immutable and cannot be changed' % (self.__class__.__name__, name))
         super(ImmutableModel, self).__setattr__(name, value)
+        self._inside_setattr = False
 
     def is_immutable(self):
         if self._mutability_override == True: # custom feature by Jens Nyman for getopinionated
@@ -194,7 +203,10 @@ class ImmutableModel(models.Model):
             In the presence of a immutable_lock field decision,
             if the field does not exists, it can be changed.
             """
-            return getattr(self, self._meta.immutable_lock_field, True)
+            try: # try-except is bugfix by Jens Nyman (the following causes werid problems for mult-layer inheritance)
+                return getattr(self, self._meta.immutable_lock_field, True)
+            except:
+                return True
         return True
 
     def has_immutable_lock_field(self):
