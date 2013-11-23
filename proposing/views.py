@@ -197,14 +197,14 @@ def tagproplist(request, tag_slug):
 
 def detail(request, proposal_slug, edit_comment_id=-1, edit_commentreply_id=-1):
     ## get vars
-    proposal = get_object_or_404(Proposal, slug=proposal_slug).cast()
+    proposal = get_object_or_404(Proposal.objects, slug=proposal_slug).cast()
     commentform, commenteditform, commentreplyeditform = None, None, None
     document = None
     proposal.incrementViewCounter(request.user)
 
     ## handle all POST-requests
     if edit_comment_id != -1: ## create comment edit form
-        comment_to_edit = get_object_or_404(Comment, pk=edit_comment_id)
+        comment_to_edit = get_object_or_404(Comment.objects, pk=edit_comment_id)
         assert comment_to_edit.proposal.pk == proposal.pk
         if not comment_to_edit.isEditableBy(request.user):
             messages.error(request, 'This comment is not editable')
@@ -219,7 +219,7 @@ def detail(request, proposal_slug, edit_comment_id=-1, edit_commentreply_id=-1):
             commenteditform = CommentEditForm(instance=comment_to_edit)
 
     elif edit_commentreply_id != -1: ## create commentreply edit form
-        commentreply_to_edit = get_object_or_404(CommentReply, pk=edit_commentreply_id)
+        commentreply_to_edit = get_object_or_404(CommentReply.objects, pk=edit_commentreply_id)
         assert commentreply_to_edit.comment.proposal.pk == proposal.pk
         if not commentreply_to_edit.isEditableBy(request.user):
             messages.error(request, 'This comment reply is not editable')
@@ -279,8 +279,8 @@ def newcommentreply(request, proposal_slug, comment_id):
     """ Note: all error checking is done by javascript. Therefore,
         all invalid input is due to hack or system error."""
     ## get vars
-    proposal = get_object_or_404(Proposal, slug=proposal_slug)
-    comment = get_object_or_404(Comment, id=comment_id)
+    proposal = get_object_or_404(Proposal.objects, slug=proposal_slug)
+    comment = get_object_or_404(Comment.objects, id=comment_id)
     assert comment.proposal.pk == proposal.pk
     ## check if user is allowed to make new CommentReply (same policy as Comment)
     if not proposal.commentsAllowedBy(request.user):
@@ -312,7 +312,7 @@ def positionproposalform(request, edit_proposal_slug=None):
             proposalform = PositionProposalForm()
     else:
         title = "Edit proposal"
-        proposal = get_object_or_404(PositionProposal, slug=edit_proposal_slug)
+        proposal = get_object_or_404(PositionProposal.objects, slug=edit_proposal_slug)
         if request.method == 'POST':
             proposalform = PositionProposalForm(request.POST, instance=proposal)
             if proposalform.is_valid():
@@ -352,7 +352,7 @@ def proxy(request, tag_slug=None):
 
 @login_required
 def listofvoters(request, proposal_slug):
-    proposal = get_object_or_404(Proposal, slug=proposal_slug)
+    proposal = get_object_or_404(Proposal.objects, slug=proposal_slug)
     if not proposal.finishedVoting:
         raise Exception('Hacking attempt by {}'.format(request.user))
     return render(request, 'proposal/listofvoters.html', {
@@ -362,7 +362,7 @@ def listofvoters(request, proposal_slug):
 @login_required
 @require_POST # CSRF is only checked on HTTP post
 def ajaxfavorite(request, proposal_slug):
-    proposal = get_object_or_404(Proposal, slug=proposal_slug)
+    proposal = get_object_or_404(Proposal.objects, slug=proposal_slug)
     user = request.user
     if user in proposal.favorited_by.all():
         proposal.favorited_by.remove(user)
@@ -376,7 +376,7 @@ def ajaxfavorite(request, proposal_slug):
 @login_required
 @require_POST # CSRF is only checked on HTTP post
 def ajaxendorse(request, proposal_slug):
-    proposal = get_object_or_404(Proposal, slug=proposal_slug)
+    proposal = get_object_or_404(Proposal.objects, slug=proposal_slug)
     user = request.user
     if proposal.userHasUpdownvoted(user) != None:
         vote = proposal.updownvoteFromUser(user)
@@ -398,7 +398,7 @@ def ajaxendorse(request, proposal_slug):
 @login_required
 @require_POST # CSRF is only checked on HTTP post
 def ajaxupdownvote(request, post_id, updown):
-    post = get_object_or_404(VotablePost, pk=post_id)
+    post = get_object_or_404(VotablePost.objects, pk=post_id)
     user = request.user
     previous_vote = post.userHasUpdownvoted(user)
     ## user has already voted: remove it
@@ -426,7 +426,7 @@ def ajaxupdownvote(request, post_id, updown):
 @require_POST # CSRF is only checked on HTTP post
 def ajaxproposalvote(request, proposal_slug, score):
     # get vars
-    proposal = get_object_or_404(Proposal, slug=proposal_slug)
+    proposal = get_object_or_404(Proposal.objects, slug=proposal_slug)
     user = request.user
     ajax_response = lambda msgtype, message: HttpResponse("{}\n{}".format(msgtype, message), mimetype='text/plain')
     # check legality of vote

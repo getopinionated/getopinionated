@@ -8,6 +8,7 @@ from django.db.models.aggregates import Sum
 from django.contrib.auth.models import Group, User
 from django.conf import settings
 from django.template.defaultfilters import truncatechars
+from common.autoslug import AutoSlugField
 from common.templatetags.filters import slugify
 from common.models import DisableableModel
 from document.models import Diff
@@ -15,14 +16,30 @@ from accounts.models import CustomUser
 
 logger = logging.getLogger(__name__)
 
-class VotablePost(models.Model):
+class VotablePost(DisableableModel):
     """ Base class for all upvotable posts.
 
     This means textual contributions from users that can be up- or downvoted by other Users.
 
+    Note: There are two kinds of VotablePost:
+             1) Enabled and formerly enabled objects:
+                These objects can be treaded as normal objects. Enabled objects are mutable
+                but they should be disabled instead of deleted.
+
+             2) Historical records:
+                These objects are always disabled, have the is_historical_record flag and are
+                immutable. They are used to reconstruct the history of a VotablePost, together
+                with the VotablePostHistory model.
+
+          Every enabled object should have a kwasi-identical historical record copy. In other
+          words, every major change should be accompanied with the creation of a historical
+          record copy and a VotablePostHistory object.
+
     """
     creator = models.ForeignKey(CustomUser, related_name="created_proposals", null=True, blank=True)
     create_date = models.DateTimeField(auto_now_add=True)
+    is_historical_record = models.BooleanField(default=False, help_text="If True, this object is a historical record. "
+        "This can be used to distinguish historical records from 'removed' (i.e. disabled) objects.")
 
     @property
     def up_down_votes(self):
@@ -42,11 +59,51 @@ class VotablePost(models.Model):
         """
         return self.upvote_score
 
+    @property
+    def number_of_edits(self):
+        return max(0, self.edit_history.count() - 1)
+
     def __unicode__(self):
+        """ [override] Make sure a VotablePost object prints out the more specific to_string of its child. """
         return self.cast().to_string()
 
     def to_string(self):
+        """ Make sure to override this in every child. """
         raise NotImplementedError("This method should be overridden by every child.")
+
+    def can_change_field(self, field_name):
+       """ [override] make all attributes mutable if this object is enabled. """
+       # return True if enabled attribute does not yet exist (in re-building phase, we can allow more)
+       if not hasattr(self, 'enabled'):
+           return True
+
+       # disable immutability check if enabled
+       if self.enabled:
+           return True
+
+       # normal operation
+       return super(VotablePost, self).can_change_field(field_name)
+
+    def build_history(self, editing_user):
+        """ Create two new model objects:
+                1) A disabled copy of self with is_historical_record=True
+                2) A VotablePostHistory
+        
+        """
+        # create disabled copy
+        historical_record = self.get_mutable_copy()
+        historical_record.is_historical_record = True
+        historical_record.save()
+        historical_record.disable()
+
+        # create VotablePostHistory
+        vp_history = VotablePostHistory(
+            editing_user=editing_user,
+            post=self,
+            post_at_date=historical_record,
+        )
+        vp_history.save()
+        return (historical_record, vp_history)
 
     def updownvoteFromUser(self, user):
         if not user.is_authenticated():
@@ -93,7 +150,8 @@ class VotablePost(models.Model):
         return False
 
     def lastEdit(self):
-        return self.edits.latest('id')
+        assert self.number_of_edits > 0, 'VotablePost.lastEdit() is irrelevant if number_of_edits == 0'
+        return self.edit_history.latest('id')
 
     def cast(self):
         """ This method converts "self" into its correct child class
@@ -137,13 +195,24 @@ class Tag(models.Model):
     def __unicode__(self):
         return self.name
 
-
-class VotablePostEdit(models.Model):
+class VotablePostHistory(models.Model):
     """ Keeps track of changes to VotablePosts. """
 
-    user = models.ForeignKey(CustomUser)
-    post = models.ForeignKey(VotablePost, related_name="edits")
+    editing_user = models.ForeignKey(CustomUser)
+    post = models.ForeignKey(VotablePost, related_name="edit_history")
     date = models.DateTimeField(auto_now_add=True)
+    post_at_date = models.OneToOneField(VotablePost, related_name="history_object")
+
+    class Meta:
+        verbose_name = "VotablePost history"
+        verbose_name_plural = "VotablePost histories"
+
+    def __unicode__(self):
+        post_str = truncatechars(unicode(self.post), 30)
+        return "VotablePostHistory #{} for {}".format(self.number_of_previous_edits(), post_str)
+
+    def number_of_previous_edits(self):
+        return VotablePostHistory.objects.filter(post=self.post, date__lt=self.date).count()
 
 
 class Proposal(VotablePost):
@@ -171,7 +240,7 @@ class Proposal(VotablePost):
     )
     # fields
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True)
+    slug = AutoSlugField(unique=True, populate_from='title')
     views = models.IntegerField(default=0)
     voting_stage = models.CharField(max_length=20, choices=VOTING_STAGE, default='DISCUSSION')
     voting_date = models.DateTimeField(default=None, null=True, blank=True)
@@ -185,6 +254,26 @@ class Proposal(VotablePost):
 
     def to_string(self):
         return self.title
+
+    def get_mutable_copy(self, save=True):
+        """ [override] fix some problems that happen on copy """
+        ### call super ###
+        copy_obj = super(Proposal, self).get_mutable_copy(save=False)
+
+        ### fix ManyToMany problems ###
+        if save:
+            copy_obj.save()
+            copy_obj.tags.add(*self.tags.all())
+            copy_obj.favorited_by.add(*self.favorited_by.all())
+            copy_obj.allowed_groups.add(*self.allowed_groups.all())
+            copy_obj.viewed_by.add(*self.viewed_by.all())
+        else:
+            raise NotImplementedError("get_mutable_copy can't work without saving because there are ManyToMany fields")
+        return copy_obj
+
+    @property
+    def comments(self):
+        return self.comments_including_disabled.filter(enabled=True)
 
     @property
     def popularity(self):
@@ -272,21 +361,16 @@ class Proposal(VotablePost):
     def shouldExpire(self):
         return self.expirationDate and timezone.now() > self.expirationDate
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            # Newly created object, so set slug
-            self.slug = slugify(self.title)
-        super(Proposal, self).save(*args, **kwargs)
-
     def isValidTitle(self, title):
         """ Check:
                 * if the title already exists (case insensitive)
                 * if the slug derived from title already exists,
             Keeps into account possibility of already existing object.
         """
-        is_empty_or_self = lambda queryset: queryset.count() == 0 or queryset[0].pk == self.pk
-        return is_empty_or_self(Proposal.objects.filter(title__iexact=title)) \
-            and is_empty_or_self(Proposal.objects.filter(slug=slugify(title)))
+        def is_empty_or_self(queryset):
+            return queryset.count() == 0 or queryset[0].pk == self.pk
+        return is_empty_or_self(Proposal.all_objects.filter(title__iexact=title)) \
+            and is_empty_or_self(Proposal.all_objects.filter(slug=slugify(title)))
 
     def hasActed(self, user):
         if self.voting_stage in ['DISCUSSION']:
@@ -463,6 +547,7 @@ class AmendmentProposal(Proposal):
                     newdiff.save()
                     proposal.diff = newdiff
                     proposal.save()
+                    # TODO: create history record
             except Exception as e:
                 print "Error applying diff to other diffs: ", e
                 print traceback.format_exc()
@@ -495,11 +580,13 @@ class Comment(VotablePost):
         ('NEUTR', 'neutral'),
         ('NEG', 'negative'),
     )
+
     # fields
-    proposal = models.ForeignKey(Proposal, related_name="comments")
+    proposal = models.ForeignKey(Proposal, related_name="comments_including_disabled")
     motivation = models.TextField()
     color = models.CharField(max_length=10, choices=COMMENT_COLORS, default='NEUTR')
 
+    # methods
     def to_string(self):
         proposal = truncatechars(unicode(self.proposal), 30)
         motivation = truncatechars(self.motivation, 30)
@@ -510,6 +597,9 @@ class Comment(VotablePost):
             return False
         return self.proposal.voting_stage in ['DISCUSSION']
 
+    def truncated_motivation(self):
+        return truncatechars(self.motivation, 30)
+    truncated_motivation.short_description = "motivation"
 
 class CommentReply(VotablePost):
     """ Reply on a Comment.
@@ -518,7 +608,7 @@ class CommentReply(VotablePost):
 
     """
     # fields
-    comment = models.ForeignKey(Comment, related_name="replies")
+    comment = models.ForeignKey(Comment, related_name="replies_including_disabled")
     motivation = models.TextField(validators=[
         MinLengthValidator(settings.COMMENTREPLY_MIN_LENGTH),
         MaxLengthValidator(settings.COMMENTREPLY_MAX_LENGTH),
@@ -531,6 +621,10 @@ class CommentReply(VotablePost):
         if not super(CommentReply, self).isEditableBy(user):
             return False
         return self.comment.proposal.voting_stage in ['DISCUSSION']
+
+    def truncated_motivation(self):
+        return truncatechars(self.motivation, 30)
+    truncated_motivation.short_description = "motivation"
 
 
 class ProposalVote(models.Model):
@@ -614,10 +708,10 @@ class Proxy(DisableableModel):
         return tags
     tags_str.short_description = "tags"
 
-    def disable_and_get_mutable_copy(self, save=True):
+    def get_mutable_copy(self, save=True):
         """ [override] fix some problems that happen on copy """
         # call super
-        copy_obj = super(Proxy, self).disable_and_get_mutable_copy(save=False)
+        copy_obj = super(Proxy, self).get_mutable_copy(save=False)
         # fix date_created
         copy_obj.date_created = timezone.now()
         # fix ManyToMany problems
@@ -625,6 +719,8 @@ class Proxy(DisableableModel):
             copy_obj.save()
             copy_obj.delegates.add(*self.delegates.all())
             copy_obj.tags.add(*self.tags.all())
+        else:
+            raise NotImplementedError("get_mutable_copy can't work without saving because there are ManyToMany fields")
         return copy_obj
 
     class Meta(DisableableModel.Meta):

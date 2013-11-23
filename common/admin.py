@@ -14,6 +14,8 @@ disable_action.short_description = "Disable selection (preferred instead of dele
 
 ### define ModelAdmins ###
 class OverrideImmutabilityAdmin(admin.ModelAdmin):
+    """ ModelAdmin that allows the user to change ImmutableModel objects """
+
     save_as = True
     actions = [delete_action]
 
@@ -39,8 +41,10 @@ class OverrideImmutabilityAdmin(admin.ModelAdmin):
         return actions
 
 class DisableableModelAdmin(OverrideImmutabilityAdmin):
+    """ ModelAdmin for DisableableModel objects """
+
     actions = OverrideImmutabilityAdmin.actions + [disable_action]
-    readonly_fields = ('enabled', 'date_disabled')
+    readonly_fields = ['enabled', 'date_disabled']
     list_filter = ['enabled']
 
     def queryset(self, request):
@@ -49,3 +53,10 @@ class DisableableModelAdmin(OverrideImmutabilityAdmin):
     def get_queryset(self, request):
         """ Show enabled and disabled objects (Django > 1.6) """
         return self.model.all_objects
+
+class DisableableTabularInline(admin.TabularInline):
+    """ TabularInline for DisableableModel objects """
+
+    readonly_fields = ['enabled', 'date_disabled']
+
+    # TODO: special delete and save actions, analogous to OverrideImmutabilityAdmin

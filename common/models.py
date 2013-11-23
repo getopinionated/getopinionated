@@ -35,16 +35,41 @@ class DisableableModel(ImmutableModel):
     def disable_and_get_mutable_copy(self, save=True):
         """ disable this object and make a copy """
         # make copy
-        copy_obj = copy(self)
+        copy_obj = self.get_mutable_copy(save)
 
         # disable
         self.disable()
 
+        return copy_obj
+
+    def get_mutable_copy(self, save=True):
+        # make copy
+        def copy_this_field(fieldname):
+            if fieldname in ['pk', 'id', 'slug']: # filter normally unique fields
+                return False
+            if fieldname.endswith('_ptr'): # fix inheritance bug on clone
+                return False
+            return True
+
+        new_kwargs = dict([(fld.name, getattr(self, fld.name)) for fld in self._meta.fields if copy_this_field(fld.name)]);
+        copy_obj = self.__class__(**new_kwargs)
+
         # will be copied on save (see https://docs.djangoproject.com/en/1.4/topics/db/queries/#copying-model-instances)
-        copy_obj.override_mutability(True)
-        copy_obj.pk = None
-        copy_obj.id = None
         if save:
             copy_obj.save()
         return copy_obj
+
+    ## OLD IMPLEMENTATION ##
+    # def get_mutable_copy(self, save=True):
+    #     # make raw copy
+    #     copy_obj = copy(self)
+
+    #     # will be copied on save (see https://docs.djangoproject.com/en/1.4/topics/db/queries/#copying-model-instances)
+    #     copy_obj.override_mutability(True)
+    #     copy_obj.pk = None
+    #     copy_obj.id = None
+    #     if save:
+    #         copy_obj.save()
+    #     return copy_obj
+
 
