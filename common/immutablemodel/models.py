@@ -165,7 +165,7 @@ class ImmutableModel(models.Model):
 
         if name == '_mutability_override': # custom feature by Jens Nyman for getopinionated
             pass # setattr can continue working
-            
+
         elif not self.can_change_field(name):
             # get current value
             try:
@@ -178,16 +178,18 @@ class ImmutableModel(models.Model):
                 self._is_empty_m2m(name, current_value): # bugfix by Jens Nyman
                 pass
             # check if this value is actually changed
-            elif current_value == value or self._is_unchanged_m2m(name, current_value, value): # bugfix by Jens Nyman
+            elif current_value == value or self._is_unchanged_m2m(name, current_value, value) \
+                    or self._is_unchanged_model(current_value, value): # bugfix by Jens Nyman
                 pass
             else:
-                # a bit more output for debuggin ajax
+                # a bit more output for debugging ajax
                 print 'ValueError: %s.%s is immutable and cannot be changed from %s to %s.' \
                     % (self.__class__.__name__, name, current_value, value)
                 if self._meta.immutable_quiet:
                     self._inside_setattr = False
                     return
                 raise ValueError('%s.%s is immutable and cannot be changed' % (self.__class__.__name__, name))
+                
         super(ImmutableModel, self).__setattr__(name, value)
         self._inside_setattr = False
 
@@ -276,6 +278,19 @@ class ImmutableModel(models.Model):
             return old == new
         else:
             return False
+
+    def _is_unchanged_model(self, old_value, new_value):
+        """ Return whether these are two references to the same model object.
+
+        Note: This is used for a bugfix by Jens Nyman.
+
+        """
+        # check if it is a model object
+        if not hasattr(old_value, 'pk'):
+            return False
+
+        # check equality
+        return old_value.pk == new_value.pk
 
     class Meta:
         abstract = True
