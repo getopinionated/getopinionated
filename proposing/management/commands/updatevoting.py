@@ -21,10 +21,10 @@ logger = logging.getLogger(__name__)
 try:
     from scipy.sparse import identity as sparse_identity_matrix
     from scipy.sparse.linalg import inv as invert_sparse_matrix
-except ImportError:
+except ImportError as scipy_importerror:
     logger.warning("Could not load scipy.")
     def sparse_identity_matrix(length, **kwargs):
-        raise ImportError("Could not load scipy")
+        raise scipy_importerror
 
 def concurrent():
     import sys
