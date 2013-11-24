@@ -38,7 +38,7 @@ class TagInlineForProxy(admin.TabularInline):
     extra = 1
 
 class ProxyAdmin(DisableableModelAdmin):
-    list_display = ('__unicode__', 'tags_str', 'delegating', 'isdefault', 'date_created', 'enabled')
+    list_display = ['__unicode__', 'tags_str', 'delegating', 'isdefault', 'date_created', 'enabled']
     inlines = (TagInlineForProxy, UserInlineForProxy)
     exclude = ('tags','delegates')
     list_filter = DisableableModelAdmin.list_filter + ['date_created', 'tags']
@@ -120,13 +120,13 @@ class ProposalAdmin(VotablePostAdminBase):
     recount_votes.short_description = "Recount votes"
 
 class CommentAdmin(VotablePostAdminBase):
-    list_display = ['proposal', 'truncated_motivation', 'creator', 'create_date', 'upvote_score', 'enabled']
+    list_display = ['proposal', 'truncated_motivation', 'creator', 'create_date', 'upvote_score'] + VotablePostAdminBase.list_display + ['enabled']
     inlines = [CommentReplyInline, VotablePostHistoryInline]
     search_fields = VotablePostAdminBase.search_fields + ['proposal__title', 'motivation']
 
 class UpDownVoteAdmin(DisableableModelAdmin):
     model = UpDownVote
-    list_display = ('user', 'post', 'date', 'value', 'enabled',)
+    list_display = ['user', 'post', 'date', 'value', 'enabled']
     list_filter = DisableableModelAdmin.list_filter + ['date', 'value']
 
 class VotablePostHistoryAdmin(admin.ModelAdmin):

@@ -118,7 +118,7 @@ class VotablePost(DisableableModel):
 
         """
         if self.is_historical_record:
-            return "hist. record"
+            return "hist. record #{}".format(self.historical_record_number())
         else:
             return "enabled" if self.enabled else "disabled"
     verbose_record_type.short_description = "type"

@@ -58,7 +58,7 @@ def getnegativeuserproxyvotes(member):
 
 def getparticipatedproposals(member):
     return (Proposal.objects.filter(creator=member) |
-             Proposal.objects.filter(comments__creator=member) |
+             Proposal.objects.filter(comments_including_disabled__creator=member) |
              Proposal.objects.filter(proposal_votes__user=member).exclude(voting_stage='VOTING') # don't leak votings in progress
              ).distinct('pk')
 
