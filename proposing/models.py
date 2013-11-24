@@ -86,12 +86,16 @@ class VotablePost(DisableableModel):
        # normal operation
        return super(VotablePost, self).can_change_field(field_name)
 
-    def build_history(self, editing_user):
+    def build_history(self, editing_user=None, editing_amendment=None):
         """ Create two new model objects:
                 1) A disabled copy of self with is_historical_record=True
                 2) A VotablePostHistory
         
         """
+        # sanity check
+        assert bool(editing_user) ^ bool(editing_amendment), \
+            "VotablePost.build_history(): editing_user or editing_amendment must be set, but not both"
+
         # create disabled copy
         historical_record = self.get_mutable_copy()
         historical_record.is_historical_record = True
@@ -101,6 +105,7 @@ class VotablePost(DisableableModel):
         # create VotablePostHistory
         vp_history = VotablePostHistory(
             editing_user=editing_user,
+            editing_amendment=editing_amendment,
             post=self,
             post_at_date=historical_record,
         )
@@ -207,6 +212,7 @@ class UpDownVote(DisableableModel):
     date = models.DateTimeField(auto_now_add=True)
     value = models.IntegerField(choices=((1, 'up'), (-1, 'down')))
 
+
 class Tag(models.Model):
     """ A content tag that can be assigned to Proposals. """
 
@@ -231,24 +237,6 @@ class Tag(models.Model):
         """ Returns all Tags, sorted by the number of enabled proposals. """
         return sorted(cls.objects.all(), key=lambda tag: -tag.proposals.count())
 
-class VotablePostHistory(models.Model):
-    """ Keeps track of changes to VotablePosts. """
-
-    editing_user = models.ForeignKey(CustomUser)
-    post = models.ForeignKey(VotablePost, related_name="edit_history")
-    date = models.DateTimeField(auto_now_add=True)
-    post_at_date = models.OneToOneField(VotablePost, related_name="history_object")
-
-    class Meta:
-        verbose_name = "VotablePost history"
-        verbose_name_plural = "VotablePost histories"
-
-    def __unicode__(self):
-        post_str = truncatechars(unicode(self.post), 50)
-        return "History #{} for {}".format(self.number_of_previous_edits(), post_str)
-
-    def number_of_previous_edits(self):
-        return VotablePostHistory.objects.filter(post=self.post, date__lt=self.date).count()
 
 class Proposal(VotablePost):
     """ Base class for all proposals.
@@ -590,6 +578,7 @@ class AmendmentProposal(Proposal):
             print traceback.format_exc()
             print "Error applying diff to final version: ", e
             # TODO: catch this in nice way
+
         ## convert other proposal diffs
         for proposal in Proposal.objects.filter(
                 ~Q(voting_stage='APPROVED'),
@@ -604,7 +593,10 @@ class AmendmentProposal(Proposal):
                     newdiff.save()
                     proposal.diff = newdiff
                     proposal.save()
-                    # TODO: create history record
+
+                    # build history
+                    proposal.build_history(editing_amendment=self) # creates a historical record clone and a VotablePostHistory
+
             except Exception as e:
                 print "Error applying diff to other diffs: ", e
                 print traceback.format_exc()
@@ -662,6 +654,7 @@ class Comment(VotablePost):
         return truncatechars(self.motivation, 30)
     truncated_motivation.short_description = "motivation"
 
+
 class CommentReply(VotablePost):
     """ Reply on a Comment.
 
@@ -686,6 +679,27 @@ class CommentReply(VotablePost):
     def truncated_motivation(self):
         return truncatechars(self.motivation, 30)
     truncated_motivation.short_description = "motivation"
+
+
+class VotablePostHistory(models.Model):
+    """ Keeps track of changes to VotablePosts. """
+
+    editing_user = models.ForeignKey(CustomUser, null=True, blank=True)
+    editing_amendment = models.ForeignKey(AmendmentProposal, null=True, blank=True)
+    post = models.ForeignKey(VotablePost, related_name="edit_history")
+    date = models.DateTimeField(auto_now_add=True)
+    post_at_date = models.OneToOneField(VotablePost, related_name="history_object")
+
+    class Meta:
+        verbose_name = "VotablePost history"
+        verbose_name_plural = "VotablePost histories"
+
+    def __unicode__(self):
+        post_str = truncatechars(unicode(self.post), 50)
+        return "History #{} for {}".format(self.number_of_previous_edits(), post_str)
+
+    def number_of_previous_edits(self):
+        return self.objects.filter(post=self.post, date__lt=self.date).count()
 
 
 class ProposalVote(models.Model):

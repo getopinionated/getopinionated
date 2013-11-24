@@ -1,18 +1,30 @@
+## python imports
+import traceback
+import numpy
+import itertools
+import logging
+## django imports
 from django.core.management.base import BaseCommand, CommandError, NoArgsCommand
 from django.db.models import Q
 from django.utils import timezone
-from proposing.models import Proposal, ProxyProposalVote, Proxy, Tag, FinalProposalVote, AmendmentProposal, PositionProposal
 from django.utils.timezone import datetime, timedelta
-import traceback
-from scipy.sparse.linalg import spsolve
-from scipy.sparse import csr_matrix, csc_matrix,identity
-import scipy.sparse.linalg
-import numpy
-import itertools
-from accounts.models import CustomUser
-from common.socialnetwork import posttotwitter
 from django.core.urlresolvers import reverse
 from django.conf import settings
+## project imports
+from common.socialnetwork import posttotwitter
+from accounts.models import CustomUser
+from proposing.models import Proposal, ProxyProposalVote, Proxy, Tag, FinalProposalVote, AmendmentProposal, PositionProposal
+
+logger = logging.getLogger(__name__)
+
+## try importing scipy for sparse matrix functionailty
+try:
+    from scipy.sparse import identity as sparse_identity_matrix
+    from scipy.sparse.linalg import inv as invert_sparse_matrix
+except ImportError:
+    logger.warning("Could not load scipy.")
+    def sparse_identity_matrix(length, **kwargs):
+        raise ImportError("Could not load scipy")
 
 def concurrent():
     import sys
@@ -143,7 +155,7 @@ class Command(NoArgsCommand):
         # In short, of a square matrix A, the following is true:
         # inv(I-A) = I + A + A^2 + A^3 + A^4 + ... if the right hand side converges
         
-        system = identity(len(users), format='lil')#build matrix in lil format
+        system = sparse_identity_matrix(len(users), format='lil')#build matrix in lil format
         for edge in edges:
             system[edge[1],edge[0]] = -1.0/fromcount[edge[0]] #startnode splits his vote in equal parts
         
@@ -152,7 +164,7 @@ class Command(NoArgsCommand):
         #print system.todense()
         '''solve this sparse system'''
         if len(users)>1:
-            system = scipy.sparse.linalg.inv(system)
+            system = invert_sparse_matrix(system)
         #print "=========after========="
         #print system.todense()
         '''Now count all the votes and store the data in the respective models'''

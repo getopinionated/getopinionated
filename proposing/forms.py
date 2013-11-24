@@ -72,7 +72,7 @@ class ProposalForm(forms.ModelForm):
         proposal.save()
 
         ## build history
-        proposal.build_history(editing_user=user) # creates historical_record an VotablePostHistory
+        proposal.build_history(editing_user=user) # creates a historical record clone and a VotablePostHistory
 
         ## broadcast on social media
         if not self.is_edit:
@@ -154,7 +154,7 @@ class CommentForm(forms.ModelForm):
         new_comment.save()
 
         ## build history
-        new_comment.build_history(editing_user=user) # creates historical_record an VotablePostHistory
+        new_comment.build_history(editing_user=user) # creates a historical record clone and a VotablePostHistory
         return new_comment
 
 class CommentReplyForm(forms.ModelForm):
@@ -172,7 +172,7 @@ class CommentReplyForm(forms.ModelForm):
         new_comment_reply.save()
 
         ## build history
-        new_comment_reply.build_history(editing_user=user) # creates historical_record an VotablePostHistory
+        new_comment_reply.build_history(editing_user=user) # creates a historical record clone and a VotablePostHistory
         return new_comment_reply
 
 class VotablePostEditForm(forms.ModelForm):
@@ -180,7 +180,7 @@ class VotablePostEditForm(forms.ModelForm):
         votable_post = super(VotablePostEditForm, self).save(commit=commit)
 
         ## build history
-        votable_post.build_history(editing_user=user) # creates historical_record an VotablePostHistory
+        votable_post.build_history(editing_user=user) # creates a historical record clone and a VotablePostHistory
         return votable_post
 
 class CommentEditForm(VotablePostEditForm):
