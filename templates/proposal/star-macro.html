@@ -3,7 +3,7 @@
 {% macro star-macro user proposal %}
 	{% if user.is_authenticated %}
 		<img 
-	    {% if proposal in user.favorites.all %}
+	    {% if user in proposal.favorited_by.all %}
 	    	src="{{STATIC_URL}}images/favorite.png"
 	    {% else %}
 	    	src="{{STATIC_URL}}images/nofavorite.png"
