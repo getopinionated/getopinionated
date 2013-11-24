@@ -59,17 +59,19 @@ class VotablePost(DisableableModel):
         """
         return self.upvote_score
 
-    @property
-    def number_of_edits(self):
-        return max(0, self.edit_history.count() - 1)
-
     def __unicode__(self):
         """ [override] Make sure a VotablePost object prints out the more specific to_string of its child. """
-        return self.cast().to_string()
+        extra_info = " (hist. record #{})".format(self.historical_record_number()) if self.is_historical_record else ""
+        return self.cast().to_string() + extra_info
 
     def to_string(self):
         """ Make sure to override this in every child. """
-        raise NotImplementedError("This method should be overridden by every child.")
+        warning_msg = "The method to_string() should be overridden by every VotablePost child. If you get this error, it is " + \
+            "possible that you have a database row with a VotablePost (id={}) without a corresponding subclass. ".format(self.pk)  +  \
+            "You can verify this by going to the VotablePost admin."
+        logger.warning(warning_msg)
+        return "<<ILLEGAL VotablePost with pk={}>>".format(self.pk)
+        # raise NotImplementedError(warning_msg)
 
     def can_change_field(self, field_name):
        """ [override] make all attributes mutable if this object is enabled. """
@@ -104,6 +106,30 @@ class VotablePost(DisableableModel):
         )
         vp_history.save()
         return (historical_record, vp_history)
+
+    def number_of_edits(self):
+        return max(0, self.edit_history.count() - 1)
+    number_of_edits.short_description = 'edits'
+
+    def verbose_record_type(self):
+        """ Way of displaying the type of record (enabled vs. disabled vs. historical) for use in admin.
+
+        Note: this combines the two booleans is_historical_record and enabled.
+
+        """
+        if self.is_historical_record:
+            return "hist. record"
+        else:
+            return "enabled" if self.enabled else "disabled"
+    verbose_record_type.short_description = "type"
+
+    def historical_record_number(self):
+        """ Return the number of historical records of the same VotablePost before this one """
+        assert self.is_historical_record, "Asking historical_record_number of ProposalVote that is no historical_record"
+        try:
+            return self.history_object.number_of_previous_edits()
+        except VotablePostHistory.DoesNotExist:
+            return 0
 
     def updownvoteFromUser(self, user):
         if not user.is_authenticated():
@@ -214,7 +240,6 @@ class VotablePostHistory(models.Model):
     def number_of_previous_edits(self):
         return VotablePostHistory.objects.filter(post=self.post, date__lt=self.date).count()
 
-
 class Proposal(VotablePost):
     """ Base class for all proposals.
 
@@ -238,9 +263,16 @@ class Proposal(VotablePost):
         ('REJECTED', 'Rejected'),
         ('EXPIRED', 'Expired'),
     )
+    
+    # managers
+    all_objects_for_autoslugfield = models.Manager() # Redefined (this is the same as all_objects) here because it is needed for
+                                                     # the AutoSlugField to see all objects for slug uniqueness. Gives error in admin
+                                                     # if name is chosen the same as all_objects.
+
     # fields
     title = models.CharField(max_length=255)
-    slug = AutoSlugField(unique=True, populate_from='title')
+    slug = AutoSlugField(unique=True, populate_from='title', manager=all_objects_for_autoslugfield)
+    # slug = AutoSlugField(unique=True, populate_from='title')
     views = models.IntegerField(default=0)
     voting_stage = models.CharField(max_length=20, choices=VOTING_STAGE, default='DISCUSSION')
     voting_date = models.DateTimeField(default=None, null=True, blank=True)
@@ -259,6 +291,18 @@ class Proposal(VotablePost):
         """ [override] fix some problems that happen on copy """
         ### call super ###
         copy_obj = super(Proposal, self).get_mutable_copy(save=False)
+
+        ### Fix slug problem ###
+        def is_unique_slug(new_slug):
+            return Proposal.all_objects.filter(slug=new_slug).count() == 0
+        # find unused new slug (clipping to 40 chars because slug has a maximal length of 50 by default)
+        new_slug_base = self.slug[:40] + '-copy'
+        counter = 1
+        new_slug = new_slug_base
+        while not is_unique_slug(new_slug):
+            counter += 1
+            new_slug = "{}-{}".format(new_slug_base, counter)
+        copy_obj.slug = new_slug
 
         ### fix ManyToMany problems ###
         if save:
@@ -292,10 +336,6 @@ class Proposal(VotablePost):
             return self.proposal_votes.count()
 
     @property
-    def number_of_comments(self):
-        return self.comments.count()
-
-    @property
     def finishedVoting(self):
         return self.voting_stage == 'APPROVED' or self.voting_stage == 'REJECTED'
 
@@ -317,6 +357,10 @@ class Proposal(VotablePost):
         if self.minimalContraintsAreMet():
             return None
         return self.create_date + datetime.timedelta(days=self.discussion_time)
+
+    def number_of_comments(self):
+        return self.comments.count()
+    number_of_comments.short_description = 'comments'
 
     def minimalNumEndorsementsIsMet(self):
         return self.upvote_score >= settings.MIN_NUM_ENDORSEMENTS_BEFORE_VOTING
@@ -367,10 +411,11 @@ class Proposal(VotablePost):
                 * if the slug derived from title already exists,
             Keeps into account possibility of already existing object.
         """
-        def is_empty_or_self(queryset):
-            return queryset.count() == 0 or queryset[0].pk == self.pk
-        return is_empty_or_self(Proposal.all_objects.filter(title__iexact=title)) \
-            and is_empty_or_self(Proposal.all_objects.filter(slug=slugify(title)))
+        # if self.pk == None:
+        #     return Proposal.objects.filter(title__iexact=title).exclude(pk=self.pk).count() == 0 \
+        #         and Proposal.all_objects.filter(slug=slugify(title).exclude(pk=self.pk).count() == 0)
+        # else:
+        return Proposal.objects.filter(title__iexact=title).exclude(pk=self.pk).count() == 0
 
     def hasActed(self, user):
         if self.voting_stage in ['DISCUSSION']:

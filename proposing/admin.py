@@ -5,26 +5,29 @@ from django.utils.safestring import mark_safe
 from django.conf import settings
 from django.utils import timezone
 from proposing.models import Tag, Proxy, ProxyProposalVote, FinalProposalVote
-from models import Proposal, Comment, CommentReply, UpDownVote, ProposalVote, VotablePostHistory, AmendmentProposal, PositionProposal
+from models import VotablePost, Proposal, Comment, CommentReply, UpDownVote, ProposalVote, VotablePostHistory, AmendmentProposal, PositionProposal
 from django.contrib.auth.models import Group
 from django.utils import timezone
 from common.admin import DisableableModelAdmin, DisableableTabularInline
 
-class VotablePostAdmin(DisableableModelAdmin):
+class VotablePostAdminBase(DisableableModelAdmin):
     """ ModelAdmin for VotablePost objects """
+    list_display = ['verbose_record_type']
     list_filter = DisableableModelAdmin.list_filter + ['create_date', 'is_historical_record']
     readonly_fields = DisableableModelAdmin.readonly_fields + ['is_historical_record']
     search_fields = ['creator__username']
 
-class VotablePostTabularInline(DisableableTabularInline):
+class VotablePostTabularInlineBase(DisableableTabularInline):
     """ TabularInline for VotablePost objects """
     readonly_fields = DisableableTabularInline.readonly_fields + ['is_historical_record']
+
+class VotablePostAdmin(VotablePostAdminBase):
+    list_display = ['__unicode__', 'id', 'create_date', 'creator'] + VotablePostAdminBase.list_display
 
 class TagAdmin(admin.ModelAdmin):
     model = Tag
     list_display = ('name',)
     prepopulated_fields = {'slug': ('name',)}
-
 
 class UserInlineForProxy(admin.TabularInline):
     model = Proxy.delegates.through
@@ -50,12 +53,12 @@ class FinalProposalVoteAdmin(admin.ModelAdmin):
 class ProxyProposalVoteAdmin(admin.ModelAdmin):
     list_display = ('user_voting','user_proxied','proposal','numvotes')
     
-class CommentReplyInline(VotablePostTabularInline):
+class CommentReplyInline(VotablePostTabularInlineBase):
     model = CommentReply
     fk_name = 'comment'
     extra = 1
 
-class CommentInline(VotablePostTabularInline):
+class CommentInline(VotablePostTabularInlineBase):
     model = Comment
     fk_name = 'proposal'
     extra = 1
@@ -73,12 +76,12 @@ class VotablePostHistoryInline(admin.TabularInline):
     fk_name = 'post'
     extra = 0
 
-class ProposalAdmin(VotablePostAdmin):
-    list_display = ['title', 'slug', 'id', 'voting_stage', 'discussion_time', 'creator', 'create_date', 'upvote_score', 'number_of_comments', 'views', 'enabled',]
+class ProposalAdmin(VotablePostAdminBase):
+    list_display = ['__unicode__', 'slug', 'voting_stage', 'creator', 'create_date', 'upvote_score', 'number_of_comments', 'number_of_edits', 'views'] + VotablePostAdminBase.list_display
     inlines = [CommentInline, UpDownVoteInline, ProposalVoteInline, VotablePostHistoryInline]
-    list_filter = VotablePostAdmin.list_filter + ['allowed_groups']
-    actions = VotablePostAdmin.actions + ['debug_updatevoting_prepare_approval','recount_votes','member_vote']
-    readonly_fields = VotablePostAdmin.readonly_fields + ['diff_link']
+    list_filter = VotablePostAdminBase.list_filter + ['allowed_groups']
+    actions = VotablePostAdminBase.actions + ['debug_updatevoting_prepare_approval','recount_votes','member_vote']
+    readonly_fields = VotablePostAdminBase.readonly_fields + ['diff_link']
 
     def diff_link(self, obj):
         change_url = urlresolvers.reverse('admin:document:diff', args=(obj.diff.pk,))
@@ -116,10 +119,10 @@ class ProposalAdmin(VotablePostAdmin):
                 
     recount_votes.short_description = "Recount votes"
 
-class CommentAdmin(VotablePostAdmin):
+class CommentAdmin(VotablePostAdminBase):
     list_display = ['proposal', 'truncated_motivation', 'creator', 'create_date', 'upvote_score', 'enabled']
     inlines = [CommentReplyInline, VotablePostHistoryInline]
-    search_fields = VotablePostAdmin.search_fields + ['proposal__title', 'motivation']
+    search_fields = VotablePostAdminBase.search_fields + ['proposal__title', 'motivation']
 
 class UpDownVoteAdmin(DisableableModelAdmin):
     model = UpDownVote
@@ -131,6 +134,7 @@ class VotablePostHistoryAdmin(admin.ModelAdmin):
     list_filter = ['date']
     search_fields = ['editing_user__username']
 
+admin.site.register(VotablePost, VotablePostAdmin)
 admin.site.register(AmendmentProposal, ProposalAdmin)
 admin.site.register(PositionProposal, ProposalAdmin)
 admin.site.register(Comment, CommentAdmin)
