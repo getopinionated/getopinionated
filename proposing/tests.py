@@ -161,12 +161,38 @@ class ProposalTestCase(TestCase):
 
     def testAmendmentExecute(self):
         """ Test AmendmentProposal.execute() """
-        ## perform execute
+        ### perform execute ###
         self.proposal1.execute()
 
-        ## run tests
+        ### run tests ###
+        ## test number of objects
         self.assertEqual(AmendmentProposal.objects.count(), 2)
         self.assertEqual(AmendmentProposal.all_objects.count(), 5)
         self.assertEqual(VotablePostHistory.objects.count(), 3)
-        # TODO: other tests
+
+        ## get last objects
+        last_amendment = AmendmentProposal.all_objects.all()[-1]
+        last_history = VotablePostHistory.objects.all()[-1]
+
+        ## test last_amendment, should be hisotical_record copy of proposal2
+        self.assertEqual(last_amendment.is_historical_record, True)
+        self.assertEqual(last_amendment.enabled, False)
+        self.assertEqual(last_amendment.title, "TESTTITLE")
+        self.assertEqual(last_amendment.diff.pk, self.proposal2.diff.pk)
+
+        ## test last_history, shoud be history for proposal2
+        self.assertEqual(last_history.editing_user, None)
+        self.assertEqual(last_history.editing_amendment.pk, self.proposal1.pk)
+        self.assertEqual(last_history.post.pk, self.proposal2.pk)
+        self.assertEqual(last_history.post_at_date.pk, last_amendment.pk)
+
+        ## test new state of proposal1
+        # update proposal
+        self.proposal1 = AmendmentProposal.objects.get(pk=self.proposal1.pk)
+        # TODO
+
+        ## test new state of proposal2
+        # update proposal
+        self.proposal2 = AmendmentProposal.objects.get(pk=self.proposal2.pk)
+        # TODO
 
