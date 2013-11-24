@@ -181,14 +181,19 @@ class ImmutableModel(models.Model):
             elif current_value == value or self._is_unchanged_m2m(name, current_value, value) \
                     or self._is_unchanged_model(current_value, value): # bugfix by Jens Nyman
                 pass
+            # When there is a link to a base class, these seem to give annoying errors
+            # Probably these get changed after _deleting_immutable_model and _mutability_override have been removed
+            elif '_ptr_' in name or name == 'id':
+                pass
             else:
                 # a bit more output for debugging ajax
-                print 'ValueError: %s.%s is immutable and cannot be changed from %s to %s.' \
+                error_msg = '%s.%s is immutable and cannot be changed from %s to %s.' \
                     % (self.__class__.__name__, name, current_value, value)
+                print "ValueError:", error_msg
                 if self._meta.immutable_quiet:
                     self._inside_setattr = False
                     return
-                raise ValueError('%s.%s is immutable and cannot be changed' % (self.__class__.__name__, name))
+                raise ValueError(error_msg)
                 
         super(ImmutableModel, self).__setattr__(name, value)
         self._inside_setattr = False
