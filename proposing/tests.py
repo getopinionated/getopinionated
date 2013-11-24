@@ -6,8 +6,7 @@ from accounts.models import CustomUser
 from document.models import Diff, FullDocument
 from proposing.management.commands.updatevoting import Command
 
-# class VoteCountTestCase(TestCase):
-class VoteCountTestCase(object): # TMP DISABLE
+class VoteCountTestCase(TestCase):
     def setUp(self):
         numusers = 20
         self.users = []
@@ -162,7 +161,10 @@ class ProposalTestCase(TestCase):
 
     def testAmendmentExecute(self):
         """ Test AmendmentProposal.execute() """
+        ## perform execute
         self.proposal1.execute()
+
+        ## run tests
         self.assertEqual(VotablePostHistory.objects.count(), 3)
         # TODO: other tests
 
