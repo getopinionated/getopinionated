@@ -93,8 +93,8 @@ class VotablePost(DisableableModel):
         
         """
         # sanity check
-        assert bool(editing_user) ^ bool(editing_amendment), \
-            "VotablePost.build_history(): editing_user or editing_amendment must be set, but not both"
+        assert not (editing_user and editing_amendment), \
+            "VotablePost.build_history(): editing_user and editing_amendment can't both be set"
 
         # create disabled copy
         historical_record = self.get_mutable_copy()
@@ -580,7 +580,7 @@ class AmendmentProposal(Proposal):
             # TODO: catch this in nice way
 
         ## convert other proposal diffs
-        for proposal in Proposal.objects.filter(
+        for proposal in AmendmentProposal.objects.filter(
                 ~Q(voting_stage='APPROVED'),
                 ~Q(voting_stage='REJECTED'),
                 ~Q(voting_stage='EXPIRED'),
@@ -699,7 +699,7 @@ class VotablePostHistory(models.Model):
         return "History #{} for {}".format(self.number_of_previous_edits(), post_str)
 
     def number_of_previous_edits(self):
-        return self.objects.filter(post=self.post, date__lt=self.date).count()
+        return VotablePostHistory.objects.filter(post=self.post, date__lt=self.date).count()
 
 
 class ProposalVote(models.Model):
