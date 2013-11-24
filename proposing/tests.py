@@ -165,6 +165,8 @@ class ProposalTestCase(TestCase):
         self.proposal1.execute()
 
         ## run tests
+        self.assertEqual(AmendmentProposal.objects.count(), 2)
+        self.assertEqual(AmendmentProposal.all_objects.count(), 5)
         self.assertEqual(VotablePostHistory.objects.count(), 3)
         # TODO: other tests
 
