@@ -38,6 +38,12 @@ class CustomUser(User):
         self.slug = slugify(self.username)
         super(CustomUser, self).save(*args, **kwargs)
 
+    @property
+    def favorites(self):
+        print "favorites----"
+        return self.favorites_including_disabled
+        # return self.favorites_including_disabled.filter(enabled=True)
+
     def isValidUserName(self, username):
         """ Check if slug derived from username already exists,
             the username is then automatically also unique.

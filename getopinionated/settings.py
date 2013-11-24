@@ -165,11 +165,12 @@ SSL_URLS = (
 MIXED_URLS = (
 )
 
-# A sample logging configuration. The only tangible logging
-# performed by this configuration is to send an email to
-# the site admins on every HTTP 500 error when DEBUG=False.
-# See http://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
+# The logging configuration.
+# See http://docs.djangoproject.com/en/dev/topics/logging
+# Sample usage:
+#     import logging
+#     logger = logging.getLogger(__name__)
+#     logger.error('Something went wrong!')
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -197,7 +198,7 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'mail_admins'],
+            'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
         },

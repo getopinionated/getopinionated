@@ -129,6 +129,7 @@ class VotablePost(DisableableModel):
         try:
             return self.history_object.number_of_previous_edits()
         except VotablePostHistory.DoesNotExist:
+            logger.warning("VotablePost.historical_record_number(): Could not find history_object for VotablePost with pk={}.".format(self.pk))
             return 0
 
     def updownvoteFromUser(self, user):
@@ -221,6 +222,15 @@ class Tag(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def proposals(self):
+        return self.proposals_including_disabled.filter(enabled=True)
+
+    @classmethod
+    def all_objects_sorted_by_num_proposals(cls):
+        """ Returns all Tags, sorted by the number of enabled proposals. """
+        return sorted(cls.objects.all(), key=lambda tag: -tag.proposals.count())
+
 class VotablePostHistory(models.Model):
     """ Keeps track of changes to VotablePosts. """
 
@@ -234,8 +244,8 @@ class VotablePostHistory(models.Model):
         verbose_name_plural = "VotablePost histories"
 
     def __unicode__(self):
-        post_str = truncatechars(unicode(self.post), 30)
-        return "VotablePostHistory #{} for {}".format(self.number_of_previous_edits(), post_str)
+        post_str = truncatechars(unicode(self.post), 50)
+        return "History #{} for {}".format(self.number_of_previous_edits(), post_str)
 
     def number_of_previous_edits(self):
         return VotablePostHistory.objects.filter(post=self.post, date__lt=self.date).count()
@@ -267,7 +277,7 @@ class Proposal(VotablePost):
     # managers
     all_objects_for_autoslugfield = models.Manager() # Redefined (this is the same as all_objects) here because it is needed for
                                                      # the AutoSlugField to see all objects for slug uniqueness. Gives error in admin
-                                                     # if name is chosen the same as all_objects.
+                                                     # if name is chosen 'all_objects'.
 
     # fields
     title = models.CharField(max_length=255)
@@ -278,11 +288,12 @@ class Proposal(VotablePost):
     voting_date = models.DateTimeField(default=None, null=True, blank=True)
     expire_date = models.DateTimeField(default=None, null=True, blank=True)
     discussion_time = models.IntegerField(default=7)
-    tags = models.ManyToManyField(Tag, related_name="proposals")
+    tags = models.ManyToManyField(Tag, related_name="proposals_including_disabled")
     avgProposalvoteScore = models.FloatField("score", default=0.0)
-    favorited_by = models.ManyToManyField(User, related_name="favorites", null=True, blank=True)
-    allowed_groups = models.ManyToManyField(Group, null=True, blank=True) # if null, all users can vote for this proposal
-    viewed_by =  models.ManyToManyField(CustomUser, null=True, blank=True)
+    favorited_by = models.ManyToManyField(User, related_name="favorites_including_disabled", null=True, blank=True)
+    # the 'p+' inhibits the creation of a proposal_set in User and Group (would not make sense because disabled objects are also in this list)
+    allowed_groups = models.ManyToManyField(Group, null=True, blank=True, related_name="p+") # if null, all users can vote for this proposal
+    viewed_by =  models.ManyToManyField(CustomUser, null=True, blank=True, related_name="p+")
 
     def to_string(self):
         return self.title
@@ -558,7 +569,8 @@ class AmendmentProposal(Proposal):
 
     """
     motivation = models.TextField()
-    diff = models.ForeignKey(Diff)
+    # the '+' inhibits the creation of a amendmentproposal_set in Diff (would not make sense because disabled objects are also in this list)
+    diff = models.ForeignKey(Diff, related_name='+')
 
     @property
     def diffWithContext(self):
@@ -632,6 +644,10 @@ class Comment(VotablePost):
     color = models.CharField(max_length=10, choices=COMMENT_COLORS, default='NEUTR')
 
     # methods
+    @property
+    def replies(self):
+        return self.replies_including_disabled.filter(enabled=True)
+
     def to_string(self):
         proposal = truncatechars(unicode(self.proposal), 30)
         motivation = truncatechars(self.motivation, 30)

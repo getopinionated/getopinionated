@@ -178,7 +178,7 @@ def proplist(request, list_type="latest"):
             proposal_generators = (proposals, proposals),
             right_grey = True,
         )
-    taglist = Tag.objects.annotate(num_props=Count('proposals')).order_by('-num_props')
+    taglist = Tag.all_objects_sorted_by_num_proposals()
     return render(request, 'proposal/list.html', {
         'latest_proposal_list': proposals,
         'taglist': taglist,
@@ -188,7 +188,7 @@ def proplist(request, list_type="latest"):
 def tagproplist(request, tag_slug):
     tag = get_object_or_404(Tag, slug=tag_slug)
     proposals = tag.proposals.order_by('create_date')[:]#for debugging purposes, results should actually be paginated
-    taglist = Tag.objects.annotate(num_props=Count('proposals')).order_by('-num_props')
+    taglist = Tag.all_objects_sorted_by_num_proposals()
     return render(request, 'proposal/list.html', {
         'latest_proposal_list': proposals,
         'taglist': taglist,
