@@ -1,12 +1,10 @@
 try:
-    from twitter import *
-    from facebook import *
+    from twitter import Twitter,OAuth
 except:
     import sys
     sys.path.append("../libs")
     sys.path.append("../getopinionated")
-    from twitter import *
-    from facebook import *
+    from twitter import Twitter,OAuth
 import urllib
 from django.conf import settings
 
@@ -20,7 +18,7 @@ def posttotwitter(message):
         # Update your status
         #t.statuses.update(status=message)
     except:
-	raise
+        raise
         print "posting to twitter feed failed. Message was: ", message
 
 def posttofacebook(message): #This doesn't work yet, as it is impossible to keep keys for longer than 60 days, you can however connect your twitter-account to facebook
