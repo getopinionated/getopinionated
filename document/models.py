@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.db.models import Max
 from common.templatetags.filters import slugify
-
+from common.htmldiff import ndiffhtmldiff
 from common.stringify import int_to_roman
 import difflib
 import re
@@ -26,6 +26,7 @@ class FullDocument(models.Model):
         if not self.id:
             # Newly created object, so set slug
             self.slug = slugify(self.title)
+        self.content = FullDocument.cleanText(self.content)
         super(FullDocument, self).save(*args, **kwargs)
 
     def applyDiff(self, diff):
@@ -123,7 +124,6 @@ class Diff(models.Model):
     def generateDiff(originaltext, derivedtext):
         originaltext = FullDocument.cleanText(originaltext)
         derivedtext = FullDocument.cleanText(derivedtext)
-        from common.htmldiff import ndiffhtmldiff
         diff = ndiffhtmldiff(originaltext, derivedtext)
         return Diff( text_representation=''.join(diff) )
     
@@ -150,11 +150,18 @@ class Diff(models.Model):
     def applyDiffOnThisDiff(self, new_diff, safety=SAFE):
         difflines = new_diff.text_representation.__str__().splitlines(1)
         newlines = self.text_representation.__str__().splitlines(1)
+        #print difflines
+        #print newlines        
         index = 0
         for diffline in difflines:
+            #print [newlines[index][:]+' ? '+diffline[:]]
+            if diffline.startswith('  ') and newlines[index].startswith('  ') and newlines[index]!=diffline:
+                #kan niet!
+                raise
             if diffline.startswith('  '):
                 while newlines[index][1:]!=diffline[1:]:
                     index+=1
+                index+=1
             elif diffline.startswith('- '):
                 while newlines[index][1:]!=diffline[1:]:
                     index+=1
@@ -185,9 +192,11 @@ class Diff(models.Model):
                 elif newlines[index].startswith('- '):
                     index+=1
                     newlines.insert(index,'  %s'%diffline[2:])
-                elif newlines[index].startswith('  '):
                     index+=1
+                elif newlines[index].startswith('  '):
                     newlines.insert(index,'  %s'%diffline[2:])
+                    index+=1
                 else:
                     raise Exception('Bad start of a line in the new diff')
+        #print [''.join(newlines)]
         return Diff(text_representation = ''.join(newlines))

@@ -96,7 +96,7 @@ class ProposalTestCase(TestCase):
     proposal2 = None
 
     def _lines_to_document_content(self, lines):
-        return'<br />'.join(lines)
+        return'\n<br />\n'.join(lines)+'\n'
 
     def setUp(self):
         # set up document
@@ -171,8 +171,8 @@ class ProposalTestCase(TestCase):
         self.assertEqual(VotablePostHistory.objects.count(), 3)
 
         ## get last objects
-        last_amendment = AmendmentProposal.all_objects.all()[-1]
-        last_history = VotablePostHistory.objects.all()[-1]
+        last_amendment = AmendmentProposal.all_objects.all().order_by('-create_date')[0]
+        last_history = VotablePostHistory.objects.all().order_by('-date')[0]
 
         ## test last_amendment, should be hisotical_record copy of proposal2
         self.assertEqual(last_amendment.is_historical_record, True)
