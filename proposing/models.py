@@ -96,8 +96,11 @@ class VotablePost(DisableableModel):
         assert not (editing_user and editing_amendment), \
             "VotablePost.build_history(): editing_user and editing_amendment can't both be set"
 
+        # perform cast before copy in case this is a VotablePost object
+        selfcast = self.cast()
+
         # create disabled copy
-        historical_record = self.get_mutable_copy()
+        historical_record = selfcast.get_mutable_copy()
         historical_record.is_historical_record = True
         historical_record.save()
         historical_record.disable()
@@ -106,7 +109,7 @@ class VotablePost(DisableableModel):
         vp_history = VotablePostHistory(
             editing_user=editing_user,
             editing_amendment=editing_amendment,
-            post=self,
+            post=selfcast,
             post_at_date=historical_record,
         )
         vp_history.save()
@@ -185,15 +188,20 @@ class VotablePost(DisableableModel):
         assert self.number_of_edits > 0, 'VotablePost.lastEdit() is irrelevant if number_of_edits == 0'
         return self.edit_history.latest('id')
 
-    def cast(self):
+    def cast(self, depth=2):
         """ This method converts "self" into its correct child class
             More information: http://stackoverflow.com/a/13306529/1218058
+
+            The depth is used because more than one layer of inheritance is present. The depth is this maximal level.
         """
         for name in dir(self):
             try:
                 attr = getattr(self, name)
                 if isinstance(attr, self.__class__):
-                    return attr
+                    if depth > 1:
+                        return attr.cast(depth=depth-1)
+                    else:
+                        return attr
             except:
                 pass
         return self
