@@ -4,7 +4,7 @@ except:
     import sys
     sys.path.append("../libs")
     sys.path.append("../getopinionated")
-    from twitter import Twitter, OAuth
+    from twitter import Twitter,OAuth
 import urllib
 from django.conf import settings
 

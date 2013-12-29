@@ -16,17 +16,24 @@ from models import UnsubscribeCode, CustomUser, LoginCode
 from django.contrib.auth import load_backend
 from django.conf import settings
 
+def sort_by_popularity(votableposts):
+    return sorted(votableposts, key=lambda vp: -vp.popularity)
+
 def getuserproposals(member):
-    return Proposal.objects.filter(creator=member).annotate(score=Sum('up_down_votes__value')).order_by('score')
-     
+    items = Proposal.objects.filter(creator=member)
+    return sort_by_popularity(items)
+
 def getpositiveusercomments(member):
-    return Comment.objects.filter(creator=member, color='POS').annotate(score=Sum('up_down_votes__value')).order_by('score')
+    items = Comment.objects.filter(creator=member, color='POS')
+    return sort_by_popularity(items)
 
 def getnegativeusercomments(member):
-    return Comment.objects.filter(creator=member, color='NEG').annotate(score=Sum('up_down_votes__value')).order_by('score')
+    items = Comment.objects.filter(creator=member, color='NEG')
+    return sort_by_popularity(items)
 
 def getneutralusercomments(member):
-    return Comment.objects.filter(creator=member, color='NEUTR').annotate(score=Sum('up_down_votes__value')).order_by('score')
+    items = Comment.objects.filter(creator=member, color='NEUTR')
+    return sort_by_popularity(items)
 
 def getuserproxies(member):
     return Proxy.objects.filter(delegating=member).values('delegates').distinct()
@@ -50,24 +57,27 @@ def getnegativeuserproxyvotes(member):
     return FinalProposalVote.objects.filter(user=member,voted_self=False).filter(value__lt=-1)
 
 def getparticipatedproposals(member):
-    return (Proposal.objects.filter(creator=member) | 
-             Proposal.objects.filter(comments__creator=member) | 
+    return (Proposal.objects.filter(creator=member) |
+             Proposal.objects.filter(comments_including_disabled__creator=member) |
              Proposal.objects.filter(proposal_votes__user=member).exclude(voting_stage='VOTING') # don't leak votings in progress
              ).distinct('pk')
 
 def getusertags(member):
     tag_id_list = getparticipatedproposals(member).values('tags').annotate(count=Count('tags')).distinct().order_by('-count')
     return [(Tag.objects.get(pk=item['tags']), item['count']) for item in tag_id_list]
-    
+
 def userprofile(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
     member.incrementViewCounter()
-    
+
     if request.user.is_authenticated() and not request.user.pk==member.pk:
         if request.method == 'POST':
             proxyform = SingleProxyForm(request.user, member, request.POST)
-            proxyform.save()
+            if proxyform.is_valid():
+                proxyform.save()
+                messages.success(request, 'Proxies saved')
+                return HttpResponseRedirect(request.build_absolute_uri())
         else:
             proxyform = SingleProxyForm(request.user, member)
     else:
@@ -94,51 +104,51 @@ def userproposals(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
     member.incrementViewCounter()
-    
+
     return render(request, 'accounts/userproposals.html', {
         'member': member,
-        'proposal_list': getuserproposals(member)    
+        'proposal_list': getuserproposals(member)
     })
 
 def usercomments(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
     member.incrementViewCounter()
-    
+
     return render(request, 'accounts/usercomments.html', {
         'member': member,
         'pos_comment_list': getpositiveusercomments(member),
         'neutr_comment_list': getneutralusercomments(member),
-        'neg_comment_list': getnegativeusercomments(member),    
+        'neg_comment_list': getnegativeusercomments(member),
     })
 
 def usertags(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
     member.incrementViewCounter()
-    
+
     return render(request, 'accounts/usertags.html', {
         'member': member,
-        'tag_list': getusertags(member),    
+        'tag_list': getusertags(member),
     })
 
 def uservotes(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
     member.incrementViewCounter()
-    
+
     return render(request, 'accounts/uservotes.html', {
         'member': member,
         'pos_vote_list': getpositiveuservotes(member),
         'neutr_vote_list': getneutraluservotes(member),
-        'neg_vote_list': getnegativeuservotes(member),  
+        'neg_vote_list': getnegativeuservotes(member),
     })
 
 def userproxyvotes(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
     member.incrementViewCounter()
-    
+
     return render(request, 'accounts/userproxyvotes.html', {
         'member': member,
         'pos_proxy_vote_list': getpositiveuserproxyvotes(member),
@@ -150,10 +160,10 @@ def userproxies(request, userslug):
     # Initialize the form either fresh or with the appropriate POST data as the instance
     member = get_object_or_404(CustomUser, slug=userslug)
     member.incrementViewCounter()
-    
+
     return render(request, 'accounts/userproxies.html', {
         'member': member,
-        'proxy_list': getuserproxies(member),    
+        'proxy_list': getuserproxies(member),
     })
 
 @not_logged_in
@@ -202,7 +212,7 @@ def profileupdate(request):
     ## profile update form
     if request.method == 'POST' and 'profileupdate' in request.POST:
         profileform = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
-        
+
         if profileform.is_valid():
             profileform.save()
             messages.success(request, 'Profile details updated')
@@ -227,7 +237,7 @@ def profileupdate(request):
 @login_required
 def userlogout(request):
     return logout(request, next_page='/')
-    
+
 def mailunsubscribe(request, code):
     unsubscribecode = UnsubscribeCode.objects.get(code=code)
     user = unsubscribecode.user
@@ -237,7 +247,7 @@ def mailunsubscribe(request, code):
     return render(request, 'accounts/mailunsubscribe.html', {
         'user': user
     })
-    
+
 @not_logged_in
 def logincode(request, code):
     logincode = LoginCode.objects.get(code=code)
@@ -250,4 +260,4 @@ def logincode(request, code):
     if hasattr(user, 'backend'):
         auth_login(request, user)
     return profileupdate(request)
-    
+

@@ -11,7 +11,7 @@ from accounts.models import CustomUser
 from django.forms.widgets import SelectMultiple
 from django.forms.fields import MultipleChoiceField
 from django.forms.models import ModelMultipleChoiceField
-from models import VotablePost, UpDownVote, Proposal, AmendmentProposal, PositionProposal, Comment, CommentReply, Tag, VotablePostEdit, Proxy
+from models import VotablePost, Proposal, AmendmentProposal, PositionProposal, Comment, CommentReply, Tag, VotablePostHistory, Proxy
 import itertools
 
 from common.socialnetwork import posttotwitter
@@ -70,10 +70,13 @@ class ProposalForm(forms.ModelForm):
             elif tag in proposal.tags.all():
                 proposal.tags.remove(tag)
         proposal.save()
-        ## add VotablePostEdit in case of edit
-        if self.is_edit:
-            VotablePostEdit(user=user, post=proposal).save()
-        posttotwitter("A new proposal for the programme: " + proposal.title + " " + settings.DOMAIN_NAME+reverse('proposals-detail',kwargs={'proposal_slug':proposal.slug}))
+
+        ## build history
+        proposal.build_history(editing_user=user) # creates a historical record clone and a VotablePostHistory
+
+        ## broadcast on social media
+        if not self.is_edit:
+            posttotwitter("A new proposal for the programme: " + proposal.title + " " + settings.DOMAIN_NAME+reverse('proposals-detail',kwargs={'proposal_slug':proposal.slug}))
         
         return proposal
 
@@ -149,6 +152,9 @@ class CommentForm(forms.ModelForm):
         new_comment.proposal = proposal
         new_comment.creator = user if user.is_authenticated() else None
         new_comment.save()
+
+        ## build history
+        new_comment.build_history(editing_user=user) # creates a historical record clone and a VotablePostHistory
         return new_comment
 
 class CommentReplyForm(forms.ModelForm):
@@ -164,12 +170,17 @@ class CommentReplyForm(forms.ModelForm):
         new_comment_reply.comment = comment
         new_comment_reply.creator = user if user.is_authenticated() else None
         new_comment_reply.save()
+
+        ## build history
+        new_comment_reply.build_history(editing_user=user) # creates a historical record clone and a VotablePostHistory
         return new_comment_reply
 
 class VotablePostEditForm(forms.ModelForm):
     def save(self, user, commit=True):
         votable_post = super(VotablePostEditForm, self).save(commit=commit)
-        VotablePostEdit(user=user, post=votable_post).save()
+
+        ## build history
+        votable_post.build_history(editing_user=user) # creates a historical record clone and a VotablePostHistory
         return votable_post
 
 class CommentEditForm(VotablePostEditForm):
@@ -229,9 +240,12 @@ class ProxyForm(forms.Form):
         return True
 
     def save(self):
-        ## create diff
-        Proxy.objects.filter(delegating=self.user).delete()
-        newproxy = Proxy(delegating=self.user,isdefault=True)
+        ### first disable all existing proxies (suboptimal, but easiest) ###
+        for proxy in Proxy.objects.filter(delegating=self.user):
+            proxy.disable()
+
+        ### add new proxy for each form element ###
+        newproxy = Proxy(delegating=self.user, isdefault=True)
         newproxy.save()
         if 'main_proxy' in self.data.keys():
             for user in self.data.getlist('main_proxy'):

@@ -171,8 +171,8 @@
                 {{ proposal.diff|diffrender|cut:"\n" }}
             </div>
             <span class="creator-medium">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>
-            {% if proposal.edits.count %}
-                <span class="creator-medium">{% usemacro user-medium proposal.lastEdit.user proposal.lastEdit.date "edited" %}</span>
+            {% if proposal.number_of_edits %}
+                <span class="creator-medium">{% usemacro user-medium proposal.lastEdit.editing_user proposal.lastEdit.date "edited" %}</span>
             {% endif %}
             <h3>Motivation</h3>
             <div class="motivation">
@@ -192,8 +192,8 @@
                 </div>
                 {{ proposal.position_text|safe }}
                 <span class="creator-medium" style="clear: both;">{% usemacro user-medium proposal.creator proposal.create_date "proposed" %}</span>
-                {% if proposal.edits.count %}
-                    <span class="creator-medium">{% usemacro user-medium proposal.lastEdit.user proposal.lastEdit.date "edited" %}</span>
+                {% if proposal.number_of_edits %}
+                    <span class="creator-medium">{% usemacro user-medium proposal.lastEdit.editing_user proposal.lastEdit.date "edited" %}</span>
                 {% endif %}
                 <br/><br/>
                 <div class="proposal-tags">
@@ -298,11 +298,11 @@
 			                </div>
 			                <div class="span11 ">
 			                    <span class="editedby">written</span>{% usemacro user-small comment.creator comment.create_date %}
-			                    {% if comment.edits.count %}
+			                    {% if comment.number_of_edits %}
 			                        <span class="editedby">and edited by</span>
 			                        <div class="user-small">
-			                            <a href="{% url user-profile comment.lastEdit.user.slug %}">
-			                                <span class="user-name">{{comment.lastEdit.user.display_name}}</span>
+			                            <a href="{% url user-profile comment.lastEdit.editing_user.slug %}">
+			                                <span class="user-name">{{comment.lastEdit.editing_user.display_name}}</span>
 			                            </a>
 			                            <span title="{{comment.lastEdit.date}}" class="user-time">, {{comment.lastEdit.date|humantime}}</span>
 			                        </div>
@@ -340,8 +340,8 @@
                                             -- {% usemacro user-small commentreply.creator commentreply.create_date %}
                                             {% if commentreply|args:user|call:"isEditableBy" %}
                                                 <a class="btn btn-mini" href="{% url commentreply-edit proposal.slug commentreply.id %}#comment_{{comment.id}}"><i class="icon-pencil"></i></a>
-                                            {% elif commentreply.edits.count %}
-                                                <i class="icon-pencil custom-popover" popovertitle="{{commentreply.edits.count}} edit{{commentreply.edits.count|pluralize}}, last one {{commentreply.lastEdit.date|shorttime}} by {{commentreply.lastEdit.user}}"></i>
+                                            {% elif commentreply.number_of_edits %}
+                                                <i class="icon-pencil custom-popover" popovertitle="{{commentreply.number_of_edits}} edit{{commentreply.number_of_edits|pluralize}}, last one {{commentreply.lastEdit.date|shorttime}} by {{commentreply.lastEdit.editing_user}}"></i>
                                             {% endif %}
                                         </div>
                                     </div>

@@ -30,7 +30,7 @@ def documentView(request, document_slug=settings.DEFAULT_DOCUMENT_SLUG, document
                 form = AmendmentProposalForm(fulldocument)
     else:
         ## edit proposal form
-        proposal = get_object_or_404(AmendmentProposal, pk=int(request.POST['edit']))
+        proposal = get_object_or_404(AmendmentProposal.objects, pk=int(request.POST['edit']))
         assert proposal.isEditableBy(request.user), "You are not allowed to edit this proposal"
         assert request.method == 'POST', "the empty edit form is not created on this page"
         form = AmendmentProposalForm(fulldocument, request.POST, instance=proposal)

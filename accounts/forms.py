@@ -125,9 +125,15 @@ class SingleProxyForm(forms.Form):
         ## remove old proxies for this delegate
         proxies = Proxy.objects.filter(delegating=self.user, delegates=self.delegate, isdefault=False)
         for proxy in proxies:
-            proxy.delegates.remove(self.delegate)
-            if not proxy.delegates.exists():
-                proxy.delete()
+            if proxy.delegates.filter(pk=self.delegate.pk).exists():
+                # this proxy contains the delegate --> disable this proxy and create a new one without this delegate
+                # check if this proxy will be empty after removing delegate
+                if proxy.delegates.count() == 1:
+                    # don't save new proxy because it would be empty
+                    proxy.disable()
+                else:
+                    newproxy = proxy.disable_and_get_mutable_copy()
+                    newproxy.delegates.remove(self.delegate)
         
         # create a single new proxy for this delegate
         newproxy = Proxy(delegating=self.user, isdefault=False)

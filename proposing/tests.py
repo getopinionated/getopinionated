@@ -1,6 +1,7 @@
+from copy import copy
 from django.test import TestCase
 
-from proposing.models import AmendmentProposal,Proxy,ProposalVote, Tag
+from proposing.models import AmendmentProposal,Proxy,ProposalVote, Tag, VotablePostHistory
 from accounts.models import CustomUser
 from document.models import Diff, FullDocument
 from proposing.management.commands.updatevoting import Command
@@ -88,4 +89,110 @@ class VoteCountTestCase(TestCase):
         self.proposal.tags.add(self.tags[1])
         Command.doVoteCount(self.proposal)
         self.assertEqual(self.proposal.avgProposalvoteScore, 3.0)       
+
+class ProposalTestCase(TestCase):
+    document = None
+    proposal1 = None
+    proposal2 = None
+
+    def _lines_to_document_content(self, lines):
+        return'\n<br />\n'.join(lines)+'\n'
+
+    def setUp(self):
+        # set up document
+        document_content_raw = """
+            Line 1
+            Line 2
+            Line 3
+            Line 4
+            Line 5
+            Line 6
+            Line 7
+            Line 8
+            Line 9
+            Line 10
+            Line 11
+            Line 12
+            Line 13
+        """
+        document_content_lines = [l.strip() for l in document_content_raw.split('\n') if l.strip()]
+        document_content = self._lines_to_document_content(document_content_lines)
+        self.document = FullDocument(
+            title = "Test-document",
+            content = document_content,
+        )
+        self.document.save()
+
+        # set up proposal 1
+        new_document_content_lines = copy(document_content_lines)
+        new_document_content_lines[8] = 'ABCD'
+        diff1 = Diff.generateDiff(document_content, self._lines_to_document_content(new_document_content_lines))
+        diff1.fulldocument = self.document
+        diff1.save()
+        self.proposal1 = AmendmentProposal(
+            title = 'testtitle',
+            motivation = 'Test-motivation',
+            diff = diff1,
+            creator = None,
+        )
+        self.proposal1.save()
+        self.proposal1.build_history(editing_user=None)
+
+        # set up proposal 2
+        new_document_content_lines = copy(document_content_lines)
+        new_document_content_lines.pop(11)
+        new_document_content_lines[1] = "DEFG"
+        diff2 = Diff.generateDiff(document_content, self._lines_to_document_content(new_document_content_lines))
+        diff2.fulldocument = self.document
+        diff2.save()
+        self.proposal2 = AmendmentProposal(
+            title = 'TESTTITLE',
+            motivation = 'Test-motivation for proposal 2',
+            diff = diff2,
+            creator = None,
+        )
+        self.proposal2.save()
+        self.proposal2.build_history(editing_user=None)
+
+    def testProposalSlug(self):
+        """ Test Proposal's AutoSlugField """
+        self.assertEqual(self.proposal1.slug, 'testtitle')
+        self.assertEqual(self.proposal2.slug, 'testtitle-2')
+
+    def testAmendmentExecute(self):
+        """ Test AmendmentProposal.execute() """
+        ### perform execute ###
+        self.proposal1.execute()
+
+        ### run tests ###
+        ## test number of objects
+        self.assertEqual(AmendmentProposal.objects.count(), 2)
+        self.assertEqual(AmendmentProposal.all_objects.count(), 5)
+        self.assertEqual(VotablePostHistory.objects.count(), 3)
+
+        ## get last objects
+        last_amendment = AmendmentProposal.all_objects.all().order_by('-create_date')[0]
+        last_history = VotablePostHistory.objects.all().order_by('-date')[0]
+
+        ## test last_amendment, should be hisotical_record copy of proposal2
+        self.assertEqual(last_amendment.is_historical_record, True)
+        self.assertEqual(last_amendment.enabled, False)
+        self.assertEqual(last_amendment.title, "TESTTITLE")
+        self.assertEqual(last_amendment.diff.pk, self.proposal2.diff.pk)
+
+        ## test last_history, shoud be history for proposal2
+        self.assertEqual(last_history.editing_user, None)
+        self.assertEqual(last_history.editing_amendment.pk, self.proposal1.pk)
+        self.assertEqual(last_history.post.pk, self.proposal2.pk)
+        self.assertEqual(last_history.post_at_date.pk, last_amendment.pk)
+
+        ## test new state of proposal1
+        # update proposal
+        self.proposal1 = AmendmentProposal.objects.get(pk=self.proposal1.pk)
+        # TODO
+
+        ## test new state of proposal2
+        # update proposal
+        self.proposal2 = AmendmentProposal.objects.get(pk=self.proposal2.pk)
+        # TODO
 

@@ -165,31 +165,46 @@ SSL_URLS = (
 MIXED_URLS = (
 )
 
-# A sample logging configuration. The only tangible logging
-# performed by this configuration is to send an email to
-# the site admins on every HTTP 500 error when DEBUG=False.
-# See http://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
+# The logging configuration.
+# See http://docs.djangoproject.com/en/dev/topics/logging
+# Sample usage:
+#     import logging
+#     logger = logging.getLogger(__name__)
+#     logger.error('Something went wrong!')
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'console_format': {
+            'format': '[%(levelname)s in %(module)s] %(message)s'
+        },
+    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
         }
     },
     'handlers': {
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_format',
+        },
         'mail_admins': {
-            'level': 'ERROR',
+            'level': 'WARNING',
             'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
+            'class': 'django.utils.log.AdminEmailHandler',
+        },
     },
     'loggers': {
-        'django.request': {
+        'django': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
+        },
+        'proposing': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'WARNING',
         },
     }
 }
