@@ -12,3 +12,6 @@ def home(request):
 def about(request):
     about_template_filename = settings.ABOUT_PAGE_FILENAME
     return render(request, "about/{}".format(about_template_filename), {})
+
+def under_maintenance(request):
+    return render(request, "under_maintenance.html")

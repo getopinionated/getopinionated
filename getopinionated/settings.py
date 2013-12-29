@@ -370,6 +370,9 @@ PROXIES_ALLOWED = True
 COMMENTREPLY_MIN_LENGTH = 15
 COMMENTREPLY_MAX_LENGTH = 500
 
+## update settings
+UNDER_MAINTENANCE = False
+
 #####################################################################################
 # Import local settings
 #####################################################################################
