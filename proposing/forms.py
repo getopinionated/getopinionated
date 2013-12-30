@@ -120,7 +120,7 @@ class PositionProposalForm(ProposalForm, FocussingModelForm):
     def __init__(self, *args, **kwargs):
         super(PositionProposalForm, self).__init__(*args, **kwargs)
         ## add placeholders for shared fields
-        self.fields['title'].widget.attrs['placeholder'] = "State the position concicely"
+        self.fields['title'].widget.attrs['placeholder'] = "State the position concisely"
         self.fields['content'].widget.attrs['placeholder'] = "<b>Position:</b><br>[Optional] Clarification of position stated above<br><br><b>Motivation:</b><br>..."
         ## modify titles for shared fields
         self.fields['title'].label = ""
