@@ -390,11 +390,24 @@
 	        $( document ).ready(function () {
 	            $('#updownvote-proposal').popover({
 	                animation: true,
-	                html: false,
+	                html: true,
 	                placement: "bottom",
 	                trigger: "hover",
 	                title: "Endorsement",
-	                content: "This proposal needs {% if 0 < proposal.upvotesNeededBeforeVoting %}{{proposal.upvotesNeededBeforeVoting}}{% else %}no{% endif %} more endorsements before it will be voted. The deadline was set for {{proposal.expirationDate|naturaltime}}.",
+	                content: "This proposal needs {% if 0 < proposal.upvotesNeededBeforeVoting %}{{proposal.upvotesNeededBeforeVoting}}{% else %}no{% endif %} more endorsements before it will be voted. The deadline was set for {{proposal.expirationDate|naturaltime}}."
+                        {% if proposal.up_down_votes %}
+                            + "<br/><br/>Endorsed by: "
+                            {% for vote in proposal.up_down_votes|slice:":10" %}
+                                + "{{vote.user}}"
+                                {% if not forloop.last %}
+                                    + ", "
+                                {% endif %}
+                            {% endfor %}
+                            {% if proposal.up_down_votes|length > 10 %}
+                                + ", ..."
+                            {% endif %}
+                        {% endif %}
+                    ,
 	                container: 'article'
 	            });
 	        });
