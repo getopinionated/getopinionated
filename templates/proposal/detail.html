@@ -394,7 +394,7 @@
 	                placement: "bottom",
 	                trigger: "hover",
 	                title: "Endorsement",
-	                content: "This proposals needs {% if 0 < proposal.upvotesNeededBeforeVoting %}{{proposal.upvotesNeededBeforeVoting}}{% else %}no{% endif %} more endorsements before it will be voted. The deadline was set for {{proposal.expirationDate|naturaltime}}.",
+	                content: "This proposal needs {% if 0 < proposal.upvotesNeededBeforeVoting %}{{proposal.upvotesNeededBeforeVoting}}{% else %}no{% endif %} more endorsements before it will be voted. The deadline was set for {{proposal.expirationDate|naturaltime}}.",
 	                container: 'article'
 	            });
 	        });
