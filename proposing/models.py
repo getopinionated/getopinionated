@@ -704,7 +704,7 @@ class VotablePostHistory(models.Model):
 
     def __unicode__(self):
         post_str = truncatechars(unicode(self.post), 50)
-        return "History #{} for {}".format(self.number_of_previous_edits(), post_str)
+        return "History #{} for {}".format(self.number_of_previous_edits(), unicode(post_str))
 
     def number_of_previous_edits(self):
         return VotablePostHistory.objects.filter(post=self.post, date__lt=self.date).count()
