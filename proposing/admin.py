@@ -133,6 +133,7 @@ class VotablePostHistoryAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'editing_user', 'date', 'post')
     list_filter = ['date']
     search_fields = ['editing_user__username']
+    readonly_fields = ['post', 'post_at_date']
 
 admin.site.register(VotablePost, VotablePostAdmin)
 admin.site.register(AmendmentProposal, ProposalAdmin)
