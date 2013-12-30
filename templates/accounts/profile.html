@@ -75,7 +75,7 @@
                     <h1>{{member.display_name}}'s tags</h1>
                 </div>
                 {% usemacro tag-list-macro tag_list|slice:":25" %}
-                {% if tag_list.keys > 25 %}
+                {% if tag_list|length > 25 %}
                     <a href="{% url user-tags member.slug %}">See all tags</a>
                 {% endif %}
             {% else %}

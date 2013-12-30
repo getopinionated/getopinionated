@@ -8,7 +8,6 @@
             <h1>{{member.display_name}}'s tags</h1>
         </div>
         {% usemacro tag-list-macro tag_list %}
-        <a href="{% url user-tags member.slug %}">See all tags</a>
     {% else %}
     <p>{{member.display_name}} hasn't been involved in any tags.</p>
     {% endif %}
