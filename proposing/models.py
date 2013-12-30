@@ -61,16 +61,16 @@ class VotablePost(DisableableModel):
 
     def __unicode__(self):
         """ [override] Make sure a VotablePost object prints out the more specific to_string of its child. """
-        extra_info = " (hist. record #{})".format(self.historical_record_number()) if self.is_historical_record else ""
+        extra_info = u" (hist. record #{})".format(self.historical_record_number()) if self.is_historical_record else ""
         return self.cast().to_string() + extra_info
 
     def to_string(self):
         """ Make sure to override this in every child. """
-        warning_msg = "The method to_string() should be overridden by every VotablePost child. If you get this error, it is " + \
-            "possible that you have a database row with a VotablePost (id={}) without a corresponding subclass. ".format(self.pk)  +  \
-            "You can verify this by going to the VotablePost admin."
+        warning_msg = u"The method to_string() should be overridden by every VotablePost child. If you get this error, it is " + \
+            u"possible that you have a database row with a VotablePost (id={}) without a corresponding subclass. ".format(self.pk)  +  \
+            u"You can verify this by going to the VotablePost admin."
         logger.warning(warning_msg)
-        return "<<ILLEGAL VotablePost with pk={}>>".format(self.pk)
+        return u"<<ILLEGAL VotablePost with pk={}>>".format(self.pk)
         # raise NotImplementedError(warning_msg)
 
     def can_change_field(self, field_name):
@@ -126,7 +126,7 @@ class VotablePost(DisableableModel):
 
         """
         if self.is_historical_record:
-            return "hist. record #{}".format(self.historical_record_number())
+            return u"hist. record #{}".format(self.historical_record_number())
         else:
             return "enabled" if self.enabled else "disabled"
     verbose_record_type.short_description = "type"
@@ -137,7 +137,7 @@ class VotablePost(DisableableModel):
         try:
             return self.history_object.number_of_previous_edits()
         except VotablePostHistory.DoesNotExist:
-            logger.warning("VotablePost.historical_record_number(): Could not find history_object for VotablePost with pk={}.".format(self.pk))
+            logger.warning(u"VotablePost.historical_record_number(): Could not find history_object for VotablePost with pk={}.".format(self.pk))
             return 0
 
     def updownvoteFromUser(self, user):
@@ -308,7 +308,7 @@ class Proposal(VotablePost):
         new_slug = new_slug_base
         while not is_unique_slug(new_slug):
             counter += 1
-            new_slug = "{}-{}".format(new_slug_base, counter)
+            new_slug = u"{}-{}".format(new_slug_base, counter)
         copy_obj.slug = new_slug
 
         ### fix ManyToMany problems ###
@@ -651,7 +651,7 @@ class Comment(VotablePost):
     def to_string(self):
         proposal = truncatechars(unicode(self.proposal), 30)
         motivation = truncatechars(self.motivation, 30)
-        return "Comment on {}: {}".format(proposal, motivation)
+        return u"Comment on {}: {}".format(proposal, motivation)
 
     def isEditableBy(self, user):
         if not super(Comment, self).isEditableBy(user):
@@ -677,7 +677,7 @@ class CommentReply(VotablePost):
     ])
 
     def to_string(self):
-        return "Reply to comment on {}".format(self.comment.proposal)
+        return u"Reply to comment on {}".format(self.comment.proposal)
 
     def isEditableBy(self, user):
         if not super(CommentReply, self).isEditableBy(user):
@@ -782,7 +782,7 @@ class Proxy(DisableableModel):
     def __unicode__(self):
         delegates = ','.join(unicode(d) for d in self.delegates.all())
         delegates = truncatechars(delegates, 40)
-        return "Proxy of {} to ({})".format(self.delegating, delegates)
+        return u"Proxy of {} to ({})".format(self.delegating, delegates)
 
     def tags_str(self):
         """ string representation of tags """
