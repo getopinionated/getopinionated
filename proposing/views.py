@@ -159,11 +159,12 @@ def proplist(request, list_type="latest"):
         )
     elif list_type == "latest":
         proposals = Proposal.objects.order_by('-create_date')
-        timeline = TimelineData(
-            filterkeywords = ["created", "voting_starts"],
-            proposal_generators = (proposals, proposals),
-            right_grey = True,
-        )
+        # timeline = TimelineData(
+        #     filterkeywords = ["created", "voting_starts"],
+        #     proposal_generators = (proposals, proposals),
+        #     right_grey = True,
+        # )
+        timeline = None
     elif list_type == "voting":
         proposals = Proposal.objects.filter(voting_stage='VOTING').order_by('-voting_date')
         timeline = TimelineData(

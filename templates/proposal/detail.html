@@ -385,23 +385,42 @@
 {% endblock %}
 
 {% block extrascripts %}
-    {% if proposal.voting_stage == 'DISCUSSION' %}
-	    <script type="text/javascript">
-	        $( document ).ready(function () {
-	            $('#updownvote-proposal').popover({
-	                animation: true,
-	                html: false,
-	                placement: "bottom",
-	                trigger: "hover",
-	                title: "Endorsement",
-	                content: "This proposals needs {% if 0 < proposal.upvotesNeededBeforeVoting %}{{proposal.upvotesNeededBeforeVoting}}{% else %}no{% endif %} more endorsements before it will be voted. The deadline was set for {{proposal.expirationDate|naturaltime}}.",
-	                container: 'article'
-	            });
-	        });
-	    </script>
-    {% endif %}
     <script type="text/javascript">
         $( document ).ready(function () {
+            /*** endorsement info ***/
+            $('#updownvote-proposal').popover({
+                animation: true,
+                html: true,
+                placement: "bottom",
+                trigger: "hover",
+                title: ""
+                    {% if proposal.voting_stage == 'DISCUSSION' %}
+                        {% if proposal.upvotesNeededBeforeVoting > 0 %}
+                            + "This proposal needs {{proposal.upvotesNeededBeforeVoting}} more endorsements before it will be voted. The deadline was set for {{proposal.expirationDate|naturaltime}}."
+                        {% else %}
+                            + "This proposal has enough endorsements and will be voted on {{proposal.estimatedVotingDate|naturaltime}}."
+                        {% endif %}
+                    {% endif %}
+                    {% if proposal.up_down_votes and proposal.voting_stage == 'DISCUSSION' %}
+                        + "<br/><br/>"
+                    {% endif %}
+                    {% if proposal.up_down_votes %}
+                        + "Endorsed by: "
+                        {% for vote in proposal.up_down_votes|slice:":10" %}
+                            + "{{vote.user}}"
+                            {% if not forloop.last %}
+                                + ", "
+                            {% endif %}
+                        {% endfor %}
+                        {% if proposal.up_down_votes|length > 10 %}
+                            + ", ..."
+                        {% endif %}
+                    {% endif %}
+                    ,
+                container: 'article'
+            });
+
+            /*** amendment legend ***/
             $('.amendment').popover({
                 animation: true,
                 html: true,

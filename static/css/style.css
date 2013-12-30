@@ -225,6 +225,9 @@ ul.messages li.error {
 .amendment {
 	color: #888888; 
 }
+div.well.amendment .popover {
+    width: 150px;
+}
 /* main general content */
 
 /* far too broad applicable. Is destroying layout from plugins, such as chosen
