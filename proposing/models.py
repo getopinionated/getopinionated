@@ -107,7 +107,7 @@ class VotablePost(DisableableModel):
 
         # create VotablePostHistory
         vp_history = VotablePostHistory(
-            editing_user=editing_user,
+            editing_user=editing_user if editing_user.is_authenticated() else None,
             editing_amendment=editing_amendment,
             post=selfcast,
             post_at_date=historical_record,
