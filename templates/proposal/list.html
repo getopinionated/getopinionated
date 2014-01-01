@@ -32,9 +32,11 @@
 		{% if settings.AMENDMENTS_ALLOWED %}
 			<a href="{% url latest-default-document-detail %}" role="button" class="btn">Amend the {{ settings.DEFAULT_DOCUMENT_DESCRIPTION }}</a>
 		{% endif %}
-		<span  class="lead" style="vertical-align: sub;">
-		  or
-        </span>
+		{% if settings.AMENDMENTS_ALLOWED and settings.POSITIONS_ALLOWED %}
+			<span  class="lead" style="vertical-align: sub;">
+			  or
+	        </span>
+		{% endif %}
 		{% if settings.POSITIONS_ALLOWED %}
 			<a href="{% url new-positionproposal %}" role="button" class="btn">{{ settings.NEW_POSITION_LABEL }}</a>
 		{% endif %}
