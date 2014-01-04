@@ -11,7 +11,7 @@ from django.utils import timezone
 from common.admin import DisableableModelAdmin, DisableableTabularInline
 
 class VotablePostAdminBase(DisableableModelAdmin):
-    """ ModelAdmin for VotablePost objects """
+    """ Base class for ModelAdmin for VotablePost objects """
     list_display = ['verbose_record_type']
     list_filter = DisableableModelAdmin.list_filter + ['create_date', 'is_historical_record']
     readonly_fields = DisableableModelAdmin.readonly_fields + ['is_historical_record']
