@@ -222,6 +222,9 @@ class UpDownVote(DisableableModel):
     date = models.DateTimeField(auto_now_add=True)
     value = models.IntegerField(choices=((1, 'up'), (-1, 'down')))
 
+    def __unicode__(self):
+        return u"UpDownVote by {} of {}".format(self.user, truncatechars(unicode(self.post), 30))
+
 
 class Tag(models.Model):
     """ A content tag that can be assigned to Proposals. """
