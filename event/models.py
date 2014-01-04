@@ -55,7 +55,7 @@ class Event(models.Model):
             - a PersonalEventListener and PersonalEventEmailQueue for every listening_user
             - a GlobalEventEmailQueue if necessary
 
-        Returns the new event, wich is already saved.
+        Returns the new event, which is already saved.
 
         """
         # check that we are not trying to create an Event (instead of a subclass)
@@ -141,7 +141,7 @@ class GlobalEventEmailQueue(models.Model):
     already_mailed_users = models.ManyToManyField(CustomUser, related_name="sent_global_emails")
 
 
-######### speicific implementations of Events #########
+######### specific implementations of Events #########
 
 class VotablePostReactionEvent(Event):
     """ A new VotablePost was made as reaction to another VotablePost. """
