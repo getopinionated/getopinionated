@@ -24,6 +24,9 @@ class VotablePostTabularInlineBase(DisableableTabularInline):
 class VotablePostAdmin(VotablePostAdminBase):
     list_display = ['__unicode__', 'id', 'create_date', 'creator'] + VotablePostAdminBase.list_display
 
+    def has_add_permission(self, request):
+        return False
+
 class TagAdmin(admin.ModelAdmin):
     model = Tag
     list_display = ('name',)
