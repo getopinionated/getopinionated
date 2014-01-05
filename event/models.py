@@ -55,12 +55,17 @@ class Event(models.Model):
             - a PersonalEventListener and PersonalEventEmailQueue for every listening_user
             - a GlobalEventEmailQueue if necessary
 
-        Returns the new event, which is already saved.
+        Returns the new event, which is already saved. Returns None if the event and related objects are
+        unnecessary (no global event and no listening_users).
 
         """
         # check that we are not trying to create an Event (instead of a subclass)
         if cls == Event:
             raise Exception("Call this method only on subclasses of Event.")
+
+        # check necessity
+        if len(listening_users) == 0 and not cls().is_global_event():
+            return None
 
         # create new event
         event = cls(*args, **kwargs)
@@ -116,6 +121,9 @@ class PersonalEventListener(models.Model):
     user = models.ForeignKey(CustomUser, related_name="personal_event_listeners")
     viewed_by_user = models.BooleanField(default=False)
 
+    def __unicode__(self):
+        return u"PersonalEventListener: {} listens to {}".format(self.user, self.event)
+
 
 class PersonalEventEmailQueue(models.Model):
     """ All objects of this model are temporarily queued until either an email gets sent to the user or an email
@@ -128,6 +136,9 @@ class PersonalEventEmailQueue(models.Model):
     """
     event_listener = models.OneToOneField(PersonalEventListener, related_name="queued_email")
 
+    def __unicode__(self):
+        return u"PersonalEventEmailQueue for {}".format(self.event_listener)
+
 
 class GlobalEventEmailQueue(models.Model):
     """ All objects of this model are temporarily queued until all users that want to be emailed about the event
@@ -139,6 +150,9 @@ class GlobalEventEmailQueue(models.Model):
     """
     event = models.ForeignKey(Event, related_name="queued_global_event_emails")
     already_mailed_users = models.ManyToManyField(CustomUser, related_name="sent_global_emails")
+
+    def __unicode__(self):
+        return u"GlobalEventEmailQueue for {}".format(self.event)
 
 
 ######### specific implementations of Events #########
