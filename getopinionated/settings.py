@@ -131,12 +131,13 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'accounts',
     'social_auth',
+    # 'event', # temporarily disabled because not yet used
     # libs
     'libs.sorl.thumbnail',
     'libs.debug_toolbar',
     'libs.bootstrap_toolkit',
     # main app
-    'getopinionated'
+    'getopinionated',
 )
 ENABLE_SOUTH = False
 
@@ -203,6 +204,10 @@ LOGGING = {
             'propagate': True,
         },
         'proposing': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'WARNING',
+        },
+        'event': {
             'handlers': ['console', 'mail_admins'],
             'level': 'WARNING',
         },

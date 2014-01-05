@@ -8,6 +8,7 @@ from django.db.models.aggregates import Sum
 from django.contrib.auth.models import Group, User
 from django.conf import settings
 from django.template.defaultfilters import truncatechars
+from common.utils import overrides
 from common.autoslug import AutoSlugField
 from common.templatetags.filters import slugify
 from common.models import DisableableModel
@@ -60,7 +61,7 @@ class VotablePost(DisableableModel):
         return self.upvote_score
 
     def __unicode__(self):
-        """ [override] Make sure a VotablePost object prints out the more specific to_string of its child. """
+        """ Make sure a VotablePost object prints out the more specific to_string of its child. """
         extra_info = u" (hist. record #{})".format(self.historical_record_number()) if self.is_historical_record else ""
         return self.cast().to_string() + extra_info
 
@@ -73,8 +74,9 @@ class VotablePost(DisableableModel):
         return u"<<ILLEGAL VotablePost with pk={}>>".format(self.pk)
         # raise NotImplementedError(warning_msg)
 
+    @overrides(DisableableModel)
     def can_change_field(self, field_name):
-       """ [override] make all attributes mutable if this object is enabled. """
+       """ make all attributes mutable if this object is enabled. """
        # return True if enabled attribute does not yet exist (in re-building phase, we can allow more)
        if not hasattr(self, 'enabled'):
            return True
@@ -220,6 +222,9 @@ class UpDownVote(DisableableModel):
     date = models.DateTimeField(auto_now_add=True)
     value = models.IntegerField(choices=((1, 'up'), (-1, 'down')))
 
+    def __unicode__(self):
+        return u"UpDownVote by {} of {}".format(self.user, truncatechars(unicode(self.post), 30))
+
 
 class Tag(models.Model):
     """ A content tag that can be assigned to Proposals. """
@@ -291,11 +296,13 @@ class Proposal(VotablePost):
     allowed_groups = models.ManyToManyField(Group, null=True, blank=True, related_name="p+") # if null, all users can vote for this proposal
     viewed_by =  models.ManyToManyField(CustomUser, null=True, blank=True, related_name="p+")
 
+    @overrides(VotablePost)
     def to_string(self):
         return self.title
 
+    @overrides(DisableableModel)
     def get_mutable_copy(self, save=True):
-        """ [override] fix some problems that happen on copy """
+        """ fix some problems that happen on copy """
         ### call super ###
         copy_obj = super(Proposal, self).get_mutable_copy(save=False)
 
@@ -648,6 +655,7 @@ class Comment(VotablePost):
     def replies(self):
         return self.replies_including_disabled.filter(enabled=True)
 
+    @overrides(VotablePost)
     def to_string(self):
         proposal = truncatechars(unicode(self.proposal), 30)
         motivation = truncatechars(self.motivation, 30)
@@ -676,6 +684,7 @@ class CommentReply(VotablePost):
         MaxLengthValidator(settings.COMMENTREPLY_MAX_LENGTH),
     ])
 
+    @overrides(VotablePost)
     def to_string(self):
         return u"Reply to comment on {}".format(self.comment.proposal)
 
@@ -791,8 +800,9 @@ class Proxy(DisableableModel):
         return tags
     tags_str.short_description = "tags"
 
+    @overrides(DisableableModel)
     def get_mutable_copy(self, save=True):
-        """ [override] fix some problems that happen on copy """
+        """ fix some problems that happen on copy """
         # call super
         copy_obj = super(Proxy, self).get_mutable_copy(save=False)
         # fix date_created

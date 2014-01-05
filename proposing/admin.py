@@ -11,7 +11,7 @@ from django.utils import timezone
 from common.admin import DisableableModelAdmin, DisableableTabularInline
 
 class VotablePostAdminBase(DisableableModelAdmin):
-    """ ModelAdmin for VotablePost objects """
+    """ Base class for ModelAdmin for VotablePost objects """
     list_display = ['verbose_record_type']
     list_filter = DisableableModelAdmin.list_filter + ['create_date', 'is_historical_record']
     readonly_fields = DisableableModelAdmin.readonly_fields + ['is_historical_record']
@@ -23,6 +23,9 @@ class VotablePostTabularInlineBase(DisableableTabularInline):
 
 class VotablePostAdmin(VotablePostAdminBase):
     list_display = ['__unicode__', 'id', 'create_date', 'creator'] + VotablePostAdminBase.list_display
+
+    def has_add_permission(self, request):
+        return False
 
 class TagAdmin(admin.ModelAdmin):
     model = Tag
@@ -123,6 +126,7 @@ class CommentAdmin(VotablePostAdminBase):
     list_display = ['proposal', 'truncated_motivation', 'creator', 'create_date', 'upvote_score'] + VotablePostAdminBase.list_display + ['enabled']
     inlines = [CommentReplyInline, VotablePostHistoryInline]
     search_fields = VotablePostAdminBase.search_fields + ['proposal__title', 'motivation']
+    readonly_fields = VotablePostAdminBase.readonly_fields + ['proposal']
 
 class UpDownVoteAdmin(DisableableModelAdmin):
     model = UpDownVote
