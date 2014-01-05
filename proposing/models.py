@@ -685,7 +685,8 @@ class CommentReply(VotablePost):
     ])
 
     class Meta:
-        ordering = ['create_date']
+        ordering = ['create_date'] # without this, there is no guarantee that replies will be ordered by creation date
+                                   # e.g. when there was a lower free id.
 
     @overrides(VotablePost)
     def to_string(self):
