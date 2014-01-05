@@ -10,6 +10,10 @@ from proposing.models import VotablePost, Proposal, VotablePostHistory, UpDownVo
 
 logger = logging.getLogger(__name__)
 
+def _everyone_except(listening_users, event_causing_user):
+    """ small utility method for use in event.get_listening_users() """
+    return set([u for u in listening_users if u != event_causing_user])
+
 class Event(models.Model):
     """ Base class for all events on the site that might be of interest for someone.
 
@@ -54,6 +58,16 @@ class Event(models.Model):
         """
         #raise NotImplementedError("Every Event implementation should override this method.")
         return False # TMP
+
+    def get_listening_users(self):
+        """ Return a set of users that should be notified about this event. Don't forget to remove the user that caused
+        the event from the list.
+
+        Make sure to override this in every child.
+
+        """
+        #raise NotImplementedError("Every Event implementation should override this method.")
+        return set() # TMP
 
     @staticmethod
     def generate_html_string_for(events, user):
@@ -106,14 +120,15 @@ class Event(models.Model):
         return u"<<ILLEGAL Event with pk={}>>".format(self.pk)
 
     @classmethod
-    def new_event_and_create_listeners_and_email_queue_entries(cls, listening_users, *args, **kwargs):
-        """ Static factory for creating new events together with some related objects.
+    def new_event_and_create_listeners_and_email_queue_entries(cls, *args, **kwargs):
+        """ Static factory method for creating new events together with some related objects.
 
         Creates:
             - a new event of the given type, e.g.:
                 VotablePostEditEvent.new_event_and_create_listeners_and_email_queue_entries(...)
-            - a PersonalEventListener and PersonalEventEmailQueue for every listening_user
+            - a PersonalEventListener and PersonalEventEmailQueue for every listening_user*
             - a GlobalEventEmailQueue if necessary
+        * listening_users are those returned by event.get_listening_users()
 
         Returns the new event, which is already saved. Returns None if the event and related objects are
         unnecessary (no global event and no listening_users).
@@ -123,12 +138,15 @@ class Event(models.Model):
         if cls == Event:
             raise Exception("Call this method only on subclasses of Event.")
 
+        # get listening users
+        event = cls(*args, **kwargs)
+        listening_users = event.get_listening_users()
+
         # check necessity
-        if len(listening_users) == 0 and not cls().is_global_event():
+        if len(listening_users) == 0 and not event.is_global_event():
             return None
 
         # create new event
-        event = cls(*args, **kwargs)
         event.save()
 
         # create PersonalEventListeners and PersonalEventEmailQueues
@@ -235,7 +253,36 @@ class VotablePostReactionEvent(Event):
     def can_be_combined_with(self, event, user):
         return self.origin_post == event.origin_post
 
+    @overrides(Event)
+    def get_listening_users(self):
+        ## get vars and add most obvious users
+        origin_post = self.origin_post.cast()
+        event_causing_user = self.reaction_post.creator
+        listening_users = set([origin_post.creator])
+
+        ## add others less obvious users
+        if isinstance(origin_post, Proposal):
+            # add everyone else who commented, replied to a comment or favorited this proposal
+            proposal = origin_post
+            for comment in proposal.comments:
+                listening_users.add(comment.creator)
+                for commentreply in comment.replies:
+                    listening_users.add(commentreply.creator)
+            for u in proposal.favorited_by:
+                listening_users.add(u)
+
+        elif isinstance(origin_post, Comment):
+            # add everyone else who replied to this comment or favorited this proposal
+            comment = origin_post
+            for commentreply in comment.replies:
+                listening_users.add(commentreply.creator)
+            for u in comment.proposal.favorited_by:
+                listening_users.add(u)
+
+        return _everyone_except(listening_users, event_causing_user)
+
     @staticmethod
+    @overrides(Event)
     def generate_html_string_for(events, user):
         # get vars
         origin_post = events[0].origin_post.cast()
