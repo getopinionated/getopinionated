@@ -126,6 +126,7 @@ class CommentAdmin(VotablePostAdminBase):
     list_display = ['proposal', 'truncated_motivation', 'creator', 'create_date', 'upvote_score'] + VotablePostAdminBase.list_display + ['enabled']
     inlines = [CommentReplyInline, VotablePostHistoryInline]
     search_fields = VotablePostAdminBase.search_fields + ['proposal__title', 'motivation']
+    readonly_fields = VotablePostAdminBase.readonly_fields + ['proposal']
 
 class UpDownVoteAdmin(DisableableModelAdmin):
     model = UpDownVote
