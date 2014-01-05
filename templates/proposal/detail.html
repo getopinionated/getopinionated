@@ -222,7 +222,7 @@
 		                                btn-info
 		                            {% endif %}" >
 		                        <div>{{option}}</div>
-		                        <div class="small">{% if helptext %}{{helptext}}{% else %}&nbsp;{% endif %}</div>
+		                        <div class="small">{{ helptext|default:"&nbsp;" }}</div>
 		                    </div>
 	                    {% endfor %}
 	                </div>
@@ -262,7 +262,7 @@
                             </div>
                             <div class="caption">
                                 <div>{{option}}</div>
-                                <div class="small">{% if helptext %}{{helptext}}{% else %}&nbsp;{% endif %}</div>
+                                <div class="small">{{ helptext|default:"&nbsp;" }}</div>
                             </div>
                         </div>
                     {% endfor %}
