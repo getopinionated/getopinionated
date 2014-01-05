@@ -67,7 +67,8 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
         """
         combine_candidates = events
         result = [] # list of event-lists
-        for event in events:
+        while combine_candidates:
+            event = combine_candidates[0]
             # get combineable events
             combinable_events = [event_cand for event_cand in combine_candidates if event.can_be_combined_with(event_cand, user)]
             assert event in combinable_events, "reflexivity is violated"

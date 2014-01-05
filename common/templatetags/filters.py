@@ -49,7 +49,12 @@ def userjoin(users, max_num_users=3):
             "user1, user2 and 5 others"
 
     """
-    users = list(users) # convert generator to list
+    def _unique_not_none(seq):
+        """ filter duplicate entries except if they are None """
+        seen = set()
+        seen_add = seen.add
+        return [x for x in seq if x == None or (x not in seen and not seen_add(x))]
+    users = _unique_not_none(users)
     authenticated_users = [u for u in users if u != None]
     if len(authenticated_users) <= max_num_users and users == authenticated_users:
         return nicejoin(users)

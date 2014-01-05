@@ -5,6 +5,7 @@ from django.template.defaultfilters import truncatechars
 from common.utils import overrides
 from common.templatetags.filters import userjoin
 from accounts.models import CustomUser
+from utils import link_to
 from proposing.models import VotablePost, Proposal, VotablePostHistory, UpDownVote, Proxy
 
 logger = logging.getLogger(__name__)
@@ -236,16 +237,25 @@ class VotablePostReactionEvent(Event):
 
     @staticmethod
     def generate_html_string_for(events, user):
+        # get vars
         origin_post = events[0].origin_post.cast()
         users = userjoin(e.reaction_post.creator for e in events)
         origin_post_str = origin_post.human_readable_summary()
+
+        # get word that has to come before origin_post
         if user == origin_post.creator:
             owner = 'your'
         elif origin_post.creator == None:
             owner = 'a' if origin_post_str[0] != 'a' else 'an'
         else:
             owner = u"{}'s".format(origin_post.creator)
-        return u"{} reacted to {} {}".format(users, owner, origin_post_str)
+
+        # get link
+        linked_post = events[0].reaction_post.cast() if len(events) == 1 else origin_post
+        link = link_to(linked_post, u"{} {}".format(owner, origin_post_str))
+        
+        # return full combination
+        return u"{} reacted to {}".format(users, link)
 
 class VotablePostEditEvent(Event):
     """ A VotablePost was edited """
