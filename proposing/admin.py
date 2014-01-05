@@ -21,6 +21,7 @@ class VotablePostAdminBase(DisableableModelAdmin):
 class VotablePostTabularInlineBase(DisableableTabularInline):
     """ TabularInline for VotablePost objects """
     readonly_fields = DisableableTabularInline.readonly_fields + ['is_historical_record']
+    raw_id_fields = ['creator']
 
 class VotablePostAdmin(VotablePostAdminBase):
     list_display = ['__unicode__', 'id', 'create_date', 'creator'] + VotablePostAdminBase.list_display
@@ -36,7 +37,7 @@ class TagAdmin(admin.ModelAdmin):
 class UserInlineForProxy(admin.TabularInline):
     model = Proxy.delegates.through
     extra = 1
-    
+
 class TagInlineForProxy(admin.TabularInline):
     model = Proxy.tags.through
     extra = 1
@@ -47,34 +48,37 @@ class ProxyAdmin(DisableableModelAdmin):
     exclude = ('tags','delegates')
     list_filter = DisableableModelAdmin.list_filter + ['date_created', 'tags']
     search_fields = ['delegating__username', 'delegates__username', 'tags__name']
+    raw_id_fields = ['delegating']
 
 class ProposalVoteAdmin(admin.ModelAdmin):
     list_display = ('user','proposal','date','value')
+    raw_id_fields = ['user', 'proposal']
 
 class FinalProposalVoteAdmin(admin.ModelAdmin):
     list_display = ('user','numvotes','voted_self','value','proposal')
 
 class ProxyProposalVoteAdmin(admin.ModelAdmin):
     list_display = ('user_voting','user_proxied','proposal','numvotes')
-    
+
 class CommentReplyInline(VotablePostTabularInlineBase):
     model = CommentReply
     fk_name = 'comment'
     extra = 1
-    raw_id_fields = ('creator',)
 
 class CommentInline(VotablePostTabularInlineBase):
     model = Comment
     fk_name = 'proposal'
-    extra = 1
+    extra = 0
 
 class UpDownVoteInline(DisableableTabularInline):
     model = UpDownVote
-    extra = 3
+    extra = 0
+    raw_id_fields = ['user']
 
 class ProposalVoteInline(admin.TabularInline):
     model = ProposalVote
-    extra = 3
+    extra = 0
+    raw_id_fields = ['user']
 
 class VotablePostHistoryInline(admin.TabularInline):
     model = VotablePostHistory
@@ -127,6 +131,9 @@ class ProposalAdmin(VotablePostAdminBase):
                 
     recount_votes.short_description = "Recount votes"
 
+class AmendmentProposalAdmin(ProposalAdmin):
+    raw_id_fields = ProposalAdmin.raw_id_fields + ['diff']
+
 class CommentAdmin(VotablePostAdminBase):
     list_display = ['proposal', 'truncated_motivation', 'creator', 'create_date', 'upvote_score'] + VotablePostAdminBase.list_display + ['enabled']
     inlines = [CommentReplyInline, VotablePostHistoryInline]
@@ -137,15 +144,17 @@ class UpDownVoteAdmin(DisableableModelAdmin):
     model = UpDownVote
     list_display = ['user', 'post', 'date', 'value', 'enabled']
     list_filter = DisableableModelAdmin.list_filter + ['date', 'value']
+    raw_id_fields = ['user', 'post']
 
 class VotablePostHistoryAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'editing_user', 'date', 'post')
     list_filter = ['date']
     search_fields = ['editing_user__username']
     readonly_fields = ['post', 'post_at_date']
+    raw_id_fields = ['editing_user', 'editing_amendment']
 
 admin.site.register(VotablePost, VotablePostAdmin)
-admin.site.register(AmendmentProposal, ProposalAdmin)
+admin.site.register(AmendmentProposal, AmendmentProposalAdmin)
 admin.site.register(PositionProposal, ProposalAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Tag, TagAdmin)
