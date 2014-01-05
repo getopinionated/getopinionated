@@ -235,9 +235,9 @@
                 <h2>Voting Result: {{ proposal.get_voting_stage_display }}</h2>
                 <p>Average score: {{ proposal.avgProposalvoteScore|floatformat:"-2" }}</p>
                 {% if proxyvote != None %}
-                    <p>You voted '{{ proxyvote.value|floatformat:"-2" }}'
+                    <p>You voted {{ proxyvote.value|floatformat:"-2" }}
                     {% if proxyvote.voted_self %}
-                    	with {{ proxyvote.numvotes|floatformat:"-2" }} votes.
+                    	with {{ proxyvote.numvotes|floatformat:"-2" }} vote{{proxyvote.numvotes|pluralize}}.
                     {% else %}
                     	{% for vote in proxyvote.getProxyProposalVoteEndNodes %}through {% usemacro user-micro vote.user_voting %}{% if vote.numvotes < 1.0 %}({{ vote.numvotes|percent }}%){% endif %} who voted {{ vote.getVoteOfVotingUser.value }}{% usemacro comma %}{% endfor %}.
                     {% endif %}
