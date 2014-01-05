@@ -1,7 +1,9 @@
 import logging
 from django.db import models
 from django.utils import timezone
+from django.template.defaultfilters import truncatechars
 from common.utils import overrides
+from common.templatetags.filters import userjoin
 from accounts.models import CustomUser
 from proposing.models import VotablePost, Proposal, VotablePostHistory, UpDownVote, Proxy
 
@@ -30,6 +32,63 @@ class Event(models.Model):
 
         """
         raise NotImplementedError("Every Event implementation should override this method.")
+
+    def can_be_combined_with(self, event, user):
+        """ Return True if self can be combined with event into one string. This means that generate_html_string_for
+        would succeed on [self, event].
+
+        This method defines a relationship between events that should be:
+            - Reflexive: x.can_be_combined_with(x) should return True.
+            - Symmetric: x.can_be_combined_with(y) should return True if and only if y.can_be_combined_with(x) returns
+                         True.
+            - Transitive: If x.can_be_combined_with(y) returns True and y.can_be_combined_with(z) returns True, then
+                          x.can_be_combined_with(z) should return true.
+
+        Arguments:
+        event
+        user -- the user that will be looking at the event.
+
+        Make sure to override this in every child.
+
+        """
+        #raise NotImplementedError("Every Event implementation should override this method.")
+        return False # TMP
+
+    @staticmethod
+    def generate_html_string_for(events, user):
+        """ Return a html-string that combines events for use in a notification bar.
+
+        Arguments:
+        events -- should be mutually combinable (see can_be_combined_with()).
+        user -- the user that will be looking at the string.
+
+        Make sure to override this in every child.
+
+        """
+        ## sanity checks
+        # check that all events are of the same class
+        first = events[0]
+        assert all(type(first) == type(e) for e in events), 'all events must be of the same class'
+        # check that all events are combineable
+        assert all(first.can_be_combined_with(e, user) for e in events), 'all events must be mutually combineable'
+
+        ## delegate generation to subclass
+        # check if event is not instance of Event
+        eventclass = type(first)
+        if eventclass == Event:
+            warning_msg = u"Event.generate_html_string_for() should be overridden by every Event child. If you get this error, it is " + \
+                u"possible that you have a database row with an Event (id={}) without a corresponding subclass. ".format(self.pk)  +  \
+                u"You can verify this by going to the Event admin."
+            logger.warning(warning_msg)
+            return u"<<ILLEGAL Events with pks={}>>".format([e.pk for e in events])
+            
+        # check if generate_html_string_for() has been implemented in the subclass
+        elif eventclass.generate_html_string_for == Event.generate_html_string_for:
+            #raise NotImplementedError("Every Event implementation should override this method.")
+            return unicode(events) # TMP
+
+        else:
+            return eventclass.generate_html_string_for(events, user)
 
     def __unicode__(self):
         """ Make sure to override this in every child. """
@@ -119,7 +178,7 @@ class PersonalEventListener(models.Model):
     """
     event = models.ForeignKey(Event, related_name="personal_event_listeners")
     user = models.ForeignKey(CustomUser, related_name="personal_event_listeners")
-    viewed_by_user = models.BooleanField(default=False)
+    seen_by_user = models.BooleanField(default=False)
 
     def __unicode__(self):
         return u"PersonalEventListener: {} listens to {}".format(self.user, self.event)
@@ -131,7 +190,7 @@ class PersonalEventEmailQueue(models.Model):
 
     Note: a PersonalEventEmailQueue object should be removed as soon as the email has been sent.
     Note2: emails can be queued also if user doesn't want any emails, this has to be filtered later.
-    Note3: if the PersonalEventListener.viewed_by_user is True, no email has to be sent.
+    Note3: if the PersonalEventListener.seen_by_user is True, no email has to be sent.
 
     """
     event_listener = models.OneToOneField(PersonalEventListener, related_name="queued_email")
@@ -170,7 +229,23 @@ class VotablePostReactionEvent(Event):
     @overrides(Event)
     def __unicode__(self):
         return u"VotablePostReactionEvent to {}".format(self.origin_post)
+    
+    @overrides(Event)
+    def can_be_combined_with(self, event, user):
+        return self.origin_post == event.origin_post
 
+    @staticmethod
+    def generate_html_string_for(events, user):
+        origin_post = events[0].origin_post.cast()
+        users = userjoin(e.reaction_post.creator for e in events)
+        origin_post_str = origin_post.human_readable_summary()
+        if user == origin_post.creator:
+            owner = 'your'
+        elif origin_post.creator == None:
+            owner = 'a' if origin_post_str[0] != 'a' else 'an'
+        else:
+            owner = u"{}'s".format(origin_post.creator)
+        return u"{} reacted to {} {}".format(users, owner, origin_post_str)
 
 class VotablePostEditEvent(Event):
     """ A VotablePost was edited """

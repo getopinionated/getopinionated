@@ -12,14 +12,14 @@ class EventAdmin(EventAdminBase):
         return False
 
 class PersonalEventListenerAdmin(admin.ModelAdmin):
-    list_display = ['event', 'user', 'viewed_by_user']
-    list_filter = ['viewed_by_user', 'event__date_created']
+    list_display = ['event', 'user', 'seen_by_user']
+    list_filter = ['seen_by_user', 'event__date_created']
     search_fields = ['user__username']
     raw_id_fields = ['event', 'user']
 
 class PersonalEventEmailQueueAdmin(admin.ModelAdmin):
     list_display = ['event_listener']
-    list_filter = ['event_listener__viewed_by_user', 'event_listener__event__date_created']
+    list_filter = ['event_listener__seen_by_user', 'event_listener__event__date_created']
     search_fields = ['event_listener__user__username']
     raw_id_fields = ['event_listener']
 
