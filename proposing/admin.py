@@ -36,11 +36,11 @@ class TagAdmin(admin.ModelAdmin):
 
 class UserInlineForProxy(admin.TabularInline):
     model = Proxy.delegates.through
-    extra = 1
+    extra = 0
 
 class TagInlineForProxy(admin.TabularInline):
     model = Proxy.tags.through
-    extra = 1
+    extra = 0
 
 class ProxyAdmin(DisableableModelAdmin):
     list_display = ['__unicode__', 'tags_str', 'delegating', 'isdefault', 'date_created', 'enabled']
@@ -63,7 +63,7 @@ class ProxyProposalVoteAdmin(admin.ModelAdmin):
 class CommentReplyInline(VotablePostTabularInlineBase):
     model = CommentReply
     fk_name = 'comment'
-    extra = 1
+    extra = 0
 
 class CommentInline(VotablePostTabularInlineBase):
     model = Comment

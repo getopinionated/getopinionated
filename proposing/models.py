@@ -684,6 +684,9 @@ class CommentReply(VotablePost):
         MaxLengthValidator(settings.COMMENTREPLY_MAX_LENGTH),
     ])
 
+    class Meta:
+        ordering = ['create_date']
+
     @overrides(VotablePost)
     def to_string(self):
         return u"Reply to comment on {}".format(self.comment.proposal)
