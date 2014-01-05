@@ -66,13 +66,35 @@ class VotablePost(DisableableModel):
         return self.cast().to_string() + extra_info
 
     def to_string(self):
-        """ Make sure to override this in every child. """
+        """ Used only in the implementation of __unicode__, which is mainly used for debug output and the admin.
+
+        Make sure to override this in every child.
+
+        """
         warning_msg = u"The method to_string() should be overridden by every VotablePost child. If you get this error, it is " + \
             u"possible that you have a database row with a VotablePost (id={}) without a corresponding subclass. ".format(self.pk)  +  \
             u"You can verify this by going to the VotablePost admin."
         logger.warning(warning_msg)
         return u"<<ILLEGAL VotablePost with pk={}>>".format(self.pk)
         # raise NotImplementedError(warning_msg)
+
+    def human_readable_summary(self):
+        """ Used to display to a user what this VotablePost is about. Don't use technical terms and make sure it is possible to prepend
+        the string with "Your ".
+
+        Example:
+            'proposal "We need a separate pipeline for..."'
+                 which can be used in:
+            'user1 and user4 reacted to your proposal "We need a separate pipeline for...".'
+
+        Make sure to override this in every child.
+
+        """
+        warning_msg = u"The method human_readable_summary() should be overridden by every VotablePost child. If you get this error, it is " + \
+            u"possible that you have a database row with a VotablePost (id={}) without a corresponding subclass. ".format(self.pk)  +  \
+            u"You can verify this by going to the VotablePost admin."
+        logger.warning(warning_msg)
+        return u"<<ILLEGAL VotablePost with pk={}>>".format(self.pk)
 
     @overrides(DisableableModel)
     def can_change_field(self, field_name):
@@ -583,6 +605,11 @@ class AmendmentProposal(Proposal):
     def proposaltype(self):
         return "amendment"
 
+    @overrides(VotablePost)
+    def human_readable_summary(self):
+        proposal = truncatechars(self.title, 30)
+        return u'amendment proposal "{}"'.format(proposal)
+
     def execute(self):
         try:
             if hasattr(self,'diff'):
@@ -631,6 +658,10 @@ class PositionProposal(Proposal):
     def proposaltype(self):
         return "position"
 
+    @overrides(VotablePost)
+    def human_readable_summary(self):
+        proposal = truncatechars(self.title, 30)
+        return u'position proposal "{}"'.format(proposal)
 
 class Comment(VotablePost):
     """ Comment on a Proposal.
@@ -661,6 +692,11 @@ class Comment(VotablePost):
         motivation = truncatechars(self.motivation, 30)
         return u"Comment on {}: {}".format(proposal, motivation)
 
+    @overrides(VotablePost)
+    def human_readable_summary(self):
+        proposal = truncatechars(self.proposal.title, 30)
+        return u'comment on "{}"'.format(proposal)
+
     def isEditableBy(self, user):
         if not super(Comment, self).isEditableBy(user):
             return False
@@ -685,11 +721,17 @@ class CommentReply(VotablePost):
     ])
 
     class Meta:
-        ordering = ['create_date']
+        ordering = ['create_date'] # without this, there is no guarantee that replies will be ordered by creation date
+                                   # e.g. when there was a lower free id.
 
     @overrides(VotablePost)
     def to_string(self):
         return u"Reply to comment on {}".format(self.comment.proposal)
+
+    @overrides(VotablePost)
+    def human_readable_summary(self):
+        proposal = truncatechars(self.comment.proposal.title, 30)
+        return u'comment-reply on "{}"'.format(proposal)
 
     def isEditableBy(self, user):
         if not super(CommentReply, self).isEditableBy(user):
