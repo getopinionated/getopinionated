@@ -16,6 +16,7 @@ class VotablePostAdminBase(DisableableModelAdmin):
     list_filter = DisableableModelAdmin.list_filter + ['create_date', 'is_historical_record']
     readonly_fields = DisableableModelAdmin.readonly_fields + ['is_historical_record']
     search_fields = ['creator__username']
+    raw_id_fields = ['creator']
 
 class VotablePostTabularInlineBase(DisableableTabularInline):
     """ TabularInline for VotablePost objects """
@@ -60,6 +61,7 @@ class CommentReplyInline(VotablePostTabularInlineBase):
     model = CommentReply
     fk_name = 'comment'
     extra = 1
+    raw_id_fields = ('creator',)
 
 class CommentInline(VotablePostTabularInlineBase):
     model = Comment
@@ -78,6 +80,7 @@ class VotablePostHistoryInline(admin.TabularInline):
     model = VotablePostHistory
     fk_name = 'post'
     extra = 0
+    raw_id_fields = ('editing_user', 'editing_amendment', 'post_at_date',)
 
 class ProposalAdmin(VotablePostAdminBase):
     list_display = ['__unicode__', 'slug', 'voting_stage', 'creator', 'create_date', 'upvote_score', 'number_of_comments', 'number_of_edits', 'views'] + VotablePostAdminBase.list_display
@@ -85,6 +88,8 @@ class ProposalAdmin(VotablePostAdminBase):
     list_filter = VotablePostAdminBase.list_filter + ['allowed_groups']
     actions = VotablePostAdminBase.actions + ['debug_updatevoting_prepare_approval','recount_votes','member_vote']
     readonly_fields = VotablePostAdminBase.readonly_fields + ['diff_link']
+    raw_id_fields = VotablePostAdminBase.raw_id_fields + ['favorited_by', 'viewed_by']
+    search_fields = VotablePostAdminBase.search_fields + ['title']
 
     def diff_link(self, obj):
         change_url = urlresolvers.reverse('admin:document:diff', args=(obj.diff.pk,))
@@ -126,7 +131,7 @@ class CommentAdmin(VotablePostAdminBase):
     list_display = ['proposal', 'truncated_motivation', 'creator', 'create_date', 'upvote_score'] + VotablePostAdminBase.list_display + ['enabled']
     inlines = [CommentReplyInline, VotablePostHistoryInline]
     search_fields = VotablePostAdminBase.search_fields + ['proposal__title', 'motivation']
-    readonly_fields = VotablePostAdminBase.readonly_fields + ['proposal']
+    raw_id_fields = VotablePostAdminBase.raw_id_fields + ['proposal']
 
 class UpDownVoteAdmin(DisableableModelAdmin):
     model = UpDownVote
