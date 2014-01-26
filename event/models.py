@@ -5,8 +5,8 @@ from django.template.defaultfilters import truncatechars
 from common.utils import overrides
 from common.templatetags.filters import userjoin
 from accounts.models import CustomUser
-from utils import link_to
-from proposing.models import VotablePost, Proposal, VotablePostHistory, UpDownVote, Proxy
+from utils import link_to, get_owner_str, link_and_add_owner
+from proposing.models import VotablePost, Comment, CommentReply, Proposal, VotablePostHistory, UpDownVote, Proxy
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,7 @@ class Event(models.Model):
         """
         raise NotImplementedError("Every Event implementation should override this method.")
 
-    def can_be_combined_with(self, event, user):
+    def can_be_combined_with(self, event, reading_user):
         """ Return True if self can be combined with event into one string. This means that generate_html_string_for
         would succeed on [self, event].
 
@@ -51,7 +51,7 @@ class Event(models.Model):
 
         Arguments:
         event
-        user -- the user that will be looking at the event.
+        reading_user -- the user that will be looking at the event.
 
         Make sure to override this in every child.
 
@@ -60,7 +60,7 @@ class Event(models.Model):
         return False # TMP
 
     def get_listening_users(self):
-        """ Return a set of users that should be notified about this event. Don't forget to remove the user that caused
+        """ Return a set of CustomUsers that should be notified about this event. Don't forget to remove the user that caused
         the event from the list.
 
         Make sure to override this in every child.
@@ -70,12 +70,12 @@ class Event(models.Model):
         return set() # TMP
 
     @staticmethod
-    def generate_html_string_for(events, user):
+    def generate_html_string_for(events, reading_user):
         """ Return a html-string that combines events for use in a notification bar.
 
         Arguments:
         events -- should be mutually combinable (see can_be_combined_with()).
-        user -- the user that will be looking at the string.
+        reading_user -- the user that will be looking at the string.
 
         Make sure to override this in every child.
 
@@ -85,7 +85,7 @@ class Event(models.Model):
         first = events[0]
         assert all(type(first) == type(e) for e in events), 'all events must be of the same class'
         # check that all events are combineable
-        assert all(first.can_be_combined_with(e, user) for e in events), 'all events must be mutually combineable'
+        assert all(first.can_be_combined_with(e, reading_user) for e in events), 'all events must be mutually combineable'
 
         ## delegate generation to subclass
         # check if event is not instance of Event
@@ -103,7 +103,7 @@ class Event(models.Model):
             return unicode(events) # TMP
 
         else:
-            return eventclass.generate_html_string_for(events, user)
+            return eventclass.generate_html_string_for(events, reading_user)
 
     def __unicode__(self):
         """ Make sure to override this in every child. """
@@ -250,7 +250,7 @@ class VotablePostReactionEvent(Event):
         return u"VotablePostReactionEvent to {}".format(self.origin_post)
     
     @overrides(Event)
-    def can_be_combined_with(self, event, user):
+    def can_be_combined_with(self, event, reading_user):
         return self.origin_post == event.origin_post
 
     @overrides(Event)
@@ -268,7 +268,7 @@ class VotablePostReactionEvent(Event):
                 listening_users.add(comment.creator)
                 for commentreply in comment.replies:
                     listening_users.add(commentreply.creator)
-            for u in proposal.favorited_by:
+            for u in proposal.favorited_by.all():
                 listening_users.add(u)
 
         elif isinstance(origin_post, Comment):
@@ -276,33 +276,111 @@ class VotablePostReactionEvent(Event):
             comment = origin_post
             for commentreply in comment.replies:
                 listening_users.add(commentreply.creator)
-            for u in comment.proposal.favorited_by:
+            for u in comment.proposal.favorited_by.all():
                 listening_users.add(u)
 
         return _everyone_except(listening_users, event_causing_user)
 
     @staticmethod
     @overrides(Event)
-    def generate_html_string_for(events, user):
+    def generate_html_string_for(events, reading_user):
         # get vars
         origin_post = events[0].origin_post.cast()
         users = userjoin(e.reaction_post.creator for e in events)
-        origin_post_str = origin_post.human_readable_summary()
-
-        # get word that has to come before origin_post
-        if user == origin_post.creator:
-            owner = 'your'
-        elif origin_post.creator == None:
-            owner = 'a' if origin_post_str[0] != 'a' else 'an'
-        else:
-            owner = u"{}'s".format(origin_post.creator)
 
         # get link
-        linked_post = events[0].reaction_post.cast() if len(events) == 1 else origin_post
-        link = link_to(linked_post, u"{} {}".format(owner, origin_post_str))
+        target_post = events[0].reaction_post.cast() if len(events) == 1 else origin_post
+        link = link_and_add_owner(displayed_post=origin_post, reading_user=reading_user, target_post=target_post)
         
         # return full combination
         return u"{} reacted to {}".format(users, link)
+
+
+class ProposalLifeCycleEvent(Event):
+    """ A proposal was created or the voting stage of a Proposal has changed. """
+
+    proposal = models.ForeignKey(Proposal)
+    new_voting_stage = models.CharField(max_length=20, choices=Proposal.VOTING_STAGE)
+
+    @overrides(Event)
+    def is_global_event(self):
+        return True
+
+    @overrides(Event)
+    def __unicode__(self):
+        return u"ProposalLifeCycleEvent: {} -> {}".format(self.proposal, self.get_new_voting_stage_display())
+
+    @overrides(Event)
+    def can_be_combined_with(self, event, reading_user):
+        return False
+
+    @overrides(Event)
+    def get_listening_users(self):
+        ## get vars and add most obvious users
+        proposal = self.proposal.cast()
+        listening_users = set([proposal.creator])
+
+        ## add others less obvious users:
+        # add everyone else who commented or replied to a comment
+        for comment in proposal.comments:
+            listening_users.add(comment.creator)
+            for commentreply in comment.replies:
+                listening_users.add(commentreply.creator)
+
+        # add everyone else who favorited this proposal
+        for u in proposal.favorited_by.all():
+            listening_users.add(u)
+
+        return _everyone_except(listening_users, event_causing_user)
+
+    @staticmethod
+    @overrides(Event)
+    def generate_html_string_for(events, reading_user):
+        # get vars
+        assert len(events) == 1, "combining ProposalLifeCycleEvents not (yet) supported"
+        proposal = events[0].proposal.cast()
+        new_voting_stage = events[0].new_voting_stage
+
+        # prepare strings
+        link_with_owner = link_and_add_owner(proposal, reading_user)
+        creator_str = unicode(proposal.creator) if proposal.creator != None else u'Someone'
+        
+        # return full combination
+        if new_voting_stage == 'DISCUSSION':
+            a_new_proposal_link = link_to(proposal, u"a new proposal: {}".format(proposal.title))
+            return u"{} made {}".format(creator_str, a_new_proposal_link)
+
+        elif new_voting_stage == 'VOTING':
+            return u"Voting started for {}".format(link_with_owner)
+        
+        elif new_voting_stage == 'APPROVED':
+            return u"{} was approved".format(link_with_owner)
+
+        elif new_voting_stage == 'REJECTED':
+            return u"{} was rejected".format(link_with_owner)
+
+        elif new_voting_stage == 'EXPIRED':
+            return u"{} expired".format(link_with_owner)
+
+        else:
+            raise NotImplementedError("Unknown voting stage " + new_voting_stage)
+
+
+class UpDownVoteEvent(Event):
+    """ A VotablePost was up- or downvoted """
+
+    updownvote = models.ForeignKey(UpDownVote)
+
+    @overrides(Event)
+    def is_global_event(self):
+        return False
+
+    @overrides(Event)
+    def __unicode__(self):
+        return u"UpDownVoteEvent for {}".format(self.updownvote)
+
+    ## TODO: implement rest of interface
+
 
 class VotablePostEditEvent(Event):
     """ A VotablePost was edited """
@@ -316,6 +394,8 @@ class VotablePostEditEvent(Event):
     @overrides(Event)
     def __unicode__(self):
         return u"VotablePostEditEvent for {}".format(self.edit)
+
+    ## TODO: implement rest of interface
 
 
 class ProposalForkEvent(Event):
@@ -332,19 +412,7 @@ class ProposalForkEvent(Event):
     def __unicode__(self):
         return u"ProposalForkEvent: forked {}".format(self.origin_proposal)
 
-
-class UpDownVoteEvent(Event):
-    """ A VotablePost was up- or downvoted """
-
-    updownvote = models.ForeignKey(UpDownVote)
-
-    @overrides(Event)
-    def is_global_event(self):
-        return False
-
-    @overrides(Event)
-    def __unicode__(self):
-        return u"UpDownVoteEvent for {}".format(self.updownvote)
+    ## TODO: implement rest of interface
 
 
 class ProxyChangeEvent(Event):
@@ -373,18 +441,5 @@ class ProxyChangeEvent(Event):
     def __unicode__(self):
         return u"ProxyChangeEvent: {} {}".format(self.get_change_type_display(), self.new_proxy)
 
-
-class ProposalLifeCycleEvent(Event):
-    """ A proposal was created or the voting stage of a Proposal has changed. """
-
-    proposal = models.ForeignKey(Proposal)
-    new_voting_stage = models.CharField(max_length=20, choices=Proposal.VOTING_STAGE)
-
-    @overrides(Event)
-    def is_global_event(self):
-        return True
-
-    @overrides(Event)
-    def __unicode__(self):
-        return u"ProposalLifeCycleEvent: {} -> {}".format(self.proposal, self.get_new_voting_stage_display())
+    ## TODO: implement rest of interface
 
