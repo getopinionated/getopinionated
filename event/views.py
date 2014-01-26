@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 from models import Event
 
 @login_required
-# @require_POST # CSRF is only checked on HTTP post ## TODO RE-ENABLE THIS
+@require_POST # CSRF is only checked on HTTP post
 def ajax_notificationbarclicked(request):
-    print request.user.personal_event_listeners.filter(seen_by_user=False).update(seen_by_user=True)
+    request.user.personal_event_listeners.filter(seen_by_user=False).update(seen_by_user=True)
     return HttpResponse("ok", mimetype='text/plain')

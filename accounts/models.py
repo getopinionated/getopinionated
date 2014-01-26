@@ -40,7 +40,6 @@ class CustomUser(User):
 
     @property
     def favorites(self):
-        print "favorites----"
         return self.favorites_including_disabled
         # return self.favorites_including_disabled.filter(enabled=True)
 
