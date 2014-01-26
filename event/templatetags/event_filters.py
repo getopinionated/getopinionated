@@ -13,6 +13,8 @@ class BundledEvent:
     events = None
     unseen_events = False
     reading_user = None
+    human_readable_text = ""
+    link_url = ""
 
     def __init__(self, events, unseen_events, reading_user):
         """ Constructor.
@@ -27,6 +29,7 @@ class BundledEvent:
         self.events = sorted(events, key=lambda e: e.date_created)
         self.unseen_events = unseen_events
         self.reading_user = reading_user
+        self.human_readable_text, self.link_url = Event.generate_human_readable_format(self.events, self.reading_user)
 
     def html_string(self):
         try:
@@ -111,9 +114,32 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
             combined_events = _add_event_to_combined_events(combined_events, event)
 
     ## Step 3: generate BundledEvent from combined_events
+    result = []
     for combination in combined_events:
-        yield BundledEvent(
+        result.append(BundledEvent(
             events=combination,
             unseen_events=unseen_events,
             reading_user=user,
-        )
+        ))
+    return result
+
+@register.filter(name='cached_events')
+def cached_events(user):
+    """Calls the more versatile filter listeners_to_bundled_events to generate max 10 bundles and caches
+    the result.
+
+    """
+    if hasattr(user, '_cached_events'):
+        return user._cached_events
+
+    result = listeners_to_bundled_events(
+        personal_event_listeners=user.personal_event_listeners,
+        max_num_of_bundles=10,
+    )
+    user._cached_events = result
+    return result
+
+@register.filter(name='count_unseen_bundledevents')
+def count_unseen_bundledevents(bundledevents):
+    """Return the number of BundledEvents in bundledevents that respond True to contains_unseen_events()."""
+    return len([b for b in bundledevents if b.contains_unseen_events()])
