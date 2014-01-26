@@ -1,7 +1,7 @@
 import logging
 from django.db import models
 from django.utils import timezone
-from django.template.defaultfilters import truncatechars
+from django.template.defaultfilters import truncatechars, pluralize
 from common.utils import overrides
 from common.templatetags.filters import userjoin
 from accounts.models import CustomUser
@@ -42,6 +42,8 @@ class Event(models.Model):
         """ Return True if self can be combined with event into one string. This means that generate_html_string_for
         would succeed on [self, event].
 
+        Note: can_be_combined_with can only be called with an event of the same class as self.
+
         This method defines a relationship between events that should be:
             - Reflexive: x.can_be_combined_with(x) should return True.
             - Symmetric: x.can_be_combined_with(y) should return True if and only if y.can_be_combined_with(x) returns
@@ -50,24 +52,35 @@ class Event(models.Model):
                           x.can_be_combined_with(z) should return true.
 
         Arguments:
-        event
+        event -- an instance of the same subclass of Event as self is.
         reading_user -- the user that will be looking at the event.
 
         Make sure to override this in every child.
 
         """
-        #raise NotImplementedError("Every Event implementation should override this method.")
-        return False # TMP
+        raise NotImplementedError("Every Event implementation should override this method.")
+
+    def is_deprecated(self, reading_user):
+        """ Return True if this Event no longer has any relevance for reading_user. It will not be shown in reading_user's
+        notification bar or emails.
+
+        Arguments:
+        reading_user -- the user that will be looking at the event.
+
+        """
+        return False
 
     def get_listening_users(self):
         """ Return a set of CustomUsers that should be notified about this event. Don't forget to remove the user that caused
         the event from the list.
 
+        Note: after calling this method, None should always be filtered out of the list, so implementations of get_listening_users()
+              don't have to bother checking for e.g. anonymous VotablePosts.
+
         Make sure to override this in every child.
 
         """
-        #raise NotImplementedError("Every Event implementation should override this method.")
-        return set() # TMP
+        raise NotImplementedError("Every Event implementation should override this method.")
 
     @staticmethod
     def generate_html_string_for(events, reading_user):
@@ -99,8 +112,7 @@ class Event(models.Model):
             
         # check if generate_html_string_for() has been implemented in the subclass
         elif eventclass.generate_html_string_for == Event.generate_html_string_for:
-            #raise NotImplementedError("Every Event implementation should override this method.")
-            return unicode(events) # TMP
+            raise NotImplementedError("Every Event implementation should override this method.")
 
         else:
             return eventclass.generate_html_string_for(events, reading_user)
@@ -141,6 +153,7 @@ class Event(models.Model):
         # get listening users
         event = cls(*args, **kwargs)
         listening_users = event.get_listening_users()
+        listening_users = set(u for u in listening_users if u != None) # filter possible null entries
 
         # check necessity
         if len(listening_users) == 0 and not event.is_global_event():
@@ -317,7 +330,7 @@ class ProposalLifeCycleEvent(Event):
     @overrides(Event)
     def get_listening_users(self):
         ## get vars and add most obvious users
-        proposal = self.proposal.cast()
+        proposal = self.proposal
         listening_users = set([proposal.creator])
 
         ## add others less obvious users:
@@ -331,14 +344,14 @@ class ProposalLifeCycleEvent(Event):
         for u in proposal.favorited_by.all():
             listening_users.add(u)
 
-        return _everyone_except(listening_users, event_causing_user)
+        return listening_users
 
     @staticmethod
     @overrides(Event)
     def generate_html_string_for(events, reading_user):
         # get vars
         assert len(events) == 1, "combining ProposalLifeCycleEvents not (yet) supported"
-        proposal = events[0].proposal.cast()
+        proposal = events[0].proposal
         new_voting_stage = events[0].new_voting_stage
 
         # prepare strings
@@ -367,8 +380,12 @@ class ProposalLifeCycleEvent(Event):
 
 
 class UpDownVoteEvent(Event):
-    """ A VotablePost was up- or downvoted """
+    """ A VotablePost was up- or downvoted.
 
+    Please note that removal of a vote is not seen as an UpDownVoteEvent. Also, a, UpDownVote that has been disabled is
+    immediately deprecated.
+
+    """
     updownvote = models.ForeignKey(UpDownVote)
 
     @overrides(Event)
@@ -379,67 +396,99 @@ class UpDownVoteEvent(Event):
     def __unicode__(self):
         return u"UpDownVoteEvent for {}".format(self.updownvote)
 
-    ## TODO: implement rest of interface
-
-
-class VotablePostEditEvent(Event):
-    """ A VotablePost was edited """
-
-    edit = models.ForeignKey(VotablePostHistory)
+    @overrides(Event)
+    def is_deprecated(self, reading_user):
+        return not self.updownvote.enabled
 
     @overrides(Event)
-    def is_global_event(self):
-        return False
+    def can_be_combined_with(self, event, reading_user):
+        return self.updownvote.post == event.updownvote.post
 
     @overrides(Event)
-    def __unicode__(self):
-        return u"VotablePostEditEvent for {}".format(self.edit)
+    def get_listening_users(self):
+        ## only the creator of updownvote.post is a listening_user
+        return set([self.updownvote.post.creator])
 
-    ## TODO: implement rest of interface
-
-
-class ProposalForkEvent(Event):
-    """ An existing origin_proposal was forked. """
-
-    origin_proposal = models.ForeignKey(Proposal, related_name="+fork_event_origin")
-    fork_proposal = models.ForeignKey(Proposal, related_name="+fork_event")
-
+    @staticmethod
     @overrides(Event)
-    def is_global_event(self):
-        return False
+    def generate_html_string_for(events, reading_user):
+        # get vars
+        post = events[0].updownvote.post.cast()
+        link_with_owner = link_and_add_owner(post, reading_user)
+        users = userjoin(e.updownvote.user for e in events)
 
-    @overrides(Event)
-    def __unicode__(self):
-        return u"ProposalForkEvent: forked {}".format(self.origin_proposal)
+        # get net increase / decrease in score
+        score_diff = sum(e.updownvote.value for e in events)
+        
+        # return full combination
+        if isinstance(post, Proposal):
+            return u"{} got {} endorsement{} by {}".format(link_with_owner, score_diff, pluralize(score_diff), users)
+        elif score_diff >= 0:
+            return u"{} got {} upvote{}".format(link_with_owner, score_diff, pluralize(score_diff))
+        else:
+            score_diff = abs(score_diff)
+            return u"{} got {} downvote{}".format(link_with_owner, score_diff, pluralize(score_diff))
 
-    ## TODO: implement rest of interface
 
-
-class ProxyChangeEvent(Event):
-    """ A proxy has been added or removed.
-
-    Note: only 'ADDED' should be supported because 'REMOVED' seems like an unpleasant message (analogy: facebook only
-          notifies you when someone accepted your friend request but never notifies about defriending). 'REMOVED' was
-          added for completeness. 
-
-    """
-    # constants
-    CHANGE_TYPES = (
-        ('ADDED', 'Added'),
-        ('REMOVED', 'Removed'),
-    )
-
-    # fields
-    change_type = models.CharField(max_length=10, choices=CHANGE_TYPES)
-    new_proxy = models.ForeignKey(Proxy)
-
-    @overrides(Event)
-    def is_global_event(self):
-        return False
-
-    @overrides(Event)
-    def __unicode__(self):
-        return u"ProxyChangeEvent: {} {}".format(self.get_change_type_display(), self.new_proxy)
-
-    ## TODO: implement rest of interface
-
+#class VotablePostEditEvent(Event):
+#    """ A VotablePost was edited """
+#
+#    edit = models.ForeignKey(VotablePostHistory)
+#
+#    @overrides(Event)
+#    def is_global_event(self):
+#        return False
+#
+#    @overrides(Event)
+#    def __unicode__(self):
+#        return u"VotablePostEditEvent for {}".format(self.edit)
+#
+#    TODO: implement rest of interface
+#
+#
+#class ProposalForkEvent(Event):
+#    """ An existing origin_proposal was forked. """
+#
+#    origin_proposal = models.ForeignKey(Proposal, related_name="+fork_event_origin")
+#    fork_proposal = models.ForeignKey(Proposal, related_name="+fork_event")
+#
+#    @overrides(Event)
+#    def is_global_event(self):
+#        return False
+#
+#    @overrides(Event)
+#    def __unicode__(self):
+#        return u"ProposalForkEvent: forked {}".format(self.origin_proposal)
+#
+#    TODO: implement rest of interface
+#
+#
+#class ProxyChangeEvent(Event):
+#    """ A proxy has been added or removed.
+#
+#    Note: only 'ADDED' should be supported because 'REMOVED' seems like an unpleasant message (analogy: facebook only
+#          notifies you when someone accepted your friend request but never notifies about defriending). 'REMOVED' was
+#          added for completeness. 
+#
+#    """
+#    # constants
+#    CHANGE_TYPES = (
+#        ('ADDED', 'Added'),
+#        ('REMOVED', 'Removed'),
+#    )
+#
+#    # fields
+#    change_type = models.CharField(max_length=10, choices=CHANGE_TYPES)
+#    new_proxy = models.ForeignKey(Proxy)
+#
+#    @overrides(Event)
+#    def is_global_event(self):
+#        return False
+#
+#    @overrides(Event)
+#    def __unicode__(self):
+#        return u"ProxyChangeEvent: {} {}".format(self.get_change_type_display(), self.new_proxy)
+#
+#    TODO: implement rest of interface
+#
+#
