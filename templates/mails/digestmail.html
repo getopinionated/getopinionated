@@ -4,18 +4,18 @@ This is your {{label}} digest mail of what is going on on GetOpinionated.
 {% if new_proposals %}
 New Proposals
 =============
-{% for proposal in new_proposals %}{{proposal.title}}, by {{proposal.creator}} ({{settings.DOMAIN_NAME}}{% url proposals-detail proposal.slug %})
+{% for proposal in new_proposals %}{{proposal.title}}, by {{proposal.creator}} ({{DOMAIN_NAME}}{% url proposals-detail proposal.slug %})
 {% endfor %}{% endif %}{% if voting_proposals %}
 Proposals to vote
 =================
-{% for proposal in voting_proposals %}{{proposal.title}}, by {{proposal.creator}} ({{settings.DOMAIN_NAME}}{% url proposals-detail proposal.slug %})
+{% for proposal in voting_proposals %}{{proposal.title}}, by {{proposal.creator}} ({{DOMAIN_NAME}}{% url proposals-detail proposal.slug %})
 {% endfor %}{% endif %}{% if finished_proposals %}
 Finished proposals
 ==================
-{% for proposal in finished_proposals %}{{proposal.voting_stage}}: {{proposal.title}}, by {{proposal.creator}} ({{settings.DOMAIN_NAME}}{% url proposals-detail proposal.slug %})
+{% for proposal in finished_proposals %}{{proposal.voting_stage}}: {{proposal.title}}, by {{proposal.creator}} ({{DOMAIN_NAME}}{% url proposals-detail proposal.slug %})
 {% endfor %}{% endif %}
 Yours sincerely,
 
 The GetOpinionated team
 
-P.S. One-click unsubscribe: {{settings.DOMAIN_NAME}}{% url unsubscribe-mail unsubscribecode.code %}
+P.S. One-click unsubscribe: {{DOMAIN_NAME}}{% url unsubscribe-mail unsubscribecode.code %}

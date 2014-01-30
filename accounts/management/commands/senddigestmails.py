@@ -68,6 +68,7 @@ class Command(LabelCommand):
             unsubscribecode = UnsubscribeCode(user=user, code=random.SystemRandom().getrandbits(64))
             unsubscribecode.save()
             text = render_to_string('mails/digestmail.html', dictionary={
+				'DOMAIN_NAME':settings.DOMAIN_NAME,
                                 'new_proposals':new_proposals,
                                 'voting_proposals':voting_proposals,
                                 'finished_proposals':finished_proposals,
@@ -75,7 +76,7 @@ class Command(LabelCommand):
                                 'label':label,
                                 'user':user                    
                                 })
-            
+            print text
             print "mail sent to:",mail_address
             
             try:
