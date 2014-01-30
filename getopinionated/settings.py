@@ -87,6 +87,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
     # 'django.middleware.cache.UpdateCacheMiddleware',
     # "django.middleware.cache.FetchFromCacheMiddleware",
+    'accounts.middleware.UpdateLastActivityMiddleware',
 ]
 
 ROOT_URLCONF = 'getopinionated.urls'

@@ -206,7 +206,7 @@ class ProxyChangeEvent(Event):
 
     Note: only 'ADDED' should be supported because 'REMOVED' seems like an unpleasant message (analogy: facebook only
           notifies you when someone accepted your friend request but never notifies about defriending). 'REMOVED' was
-          added for completeness. 
+          added for completeness.
 
     """
     # constants
