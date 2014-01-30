@@ -132,7 +132,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'accounts',
     'social_auth',
-    # 'event', # temporarily disabled because not yet used
+    'event',
     # libs
     'libs.sorl.thumbnail',
     'libs.debug_toolbar',

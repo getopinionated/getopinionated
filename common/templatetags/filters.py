@@ -1,8 +1,9 @@
+import re
 from django import template
+from django.utils.safestring import mark_safe
+from django.template.defaultfilters import pluralize
 from common.stringify import niceBigInteger,timesince
 from common.htmldiff import htmldiff
-from django.utils.safestring import mark_safe
-import re
 
 register = template.Library()
 
@@ -36,8 +37,33 @@ def fulldiffrender(diff):
     
 @register.filter(name='nicejoin')
 def nicejoin(l):
-    return l[:-1].join(",").append(" and ").append(l[-1])
+    l = list(l) # convert generator to list
+    if len(l) <= 1:
+        return unicode(l[0]) if l else u""
+    else:
+        return u"{} and {}".format(", ".join(unicode(e) for e in l[:-1]), l[-1])
 
+@register.filter(name='userjoin')
+def userjoin(users, max_num_users=3):
+    """ Join the unicode() values of users in a way as illustrated below:
+            "user1, user2 and 5 others"
+
+    """
+    def _unique_not_none(seq):
+        """ filter duplicate entries except if they are None """
+        seen = set()
+        seen_add = seen.add
+        return [x for x in seq if x == None or (x not in seen and not seen_add(x))]
+    users = _unique_not_none(users)
+    authenticated_users = [u for u in users if u != None]
+    if len(authenticated_users) <= max_num_users and users == authenticated_users:
+        return nicejoin(users)
+    elif not authenticated_users:
+        return u"{} user{}".format(len(users), pluralize(len(users)))
+    else:
+        users_to_show = [unicode(u) for u in authenticated_users[:max_num_users-1]]
+        users_left = len(users) - len(users_to_show)
+        return u"{} and {} others".format(", ".join(users_to_show), users_left)
     
 @register.filter(name='percent')
 def percent(f):

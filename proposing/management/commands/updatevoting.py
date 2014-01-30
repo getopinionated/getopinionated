@@ -17,12 +17,12 @@ from proposing.models import Proposal, ProxyProposalVote, Proxy, Tag, FinalPropo
 
 logger = logging.getLogger(__name__)
 
-## try importing scipy for sparse matrix functionailty
+## try importing scipy for sparse matrix functionality
 try:
     from scipy.sparse import identity as sparse_identity_matrix
     from scipy.sparse.linalg import inv as invert_sparse_matrix
 except ImportError as scipy_importerror:
-    logger.warning("Could not load scipy.")
+    logger.warning("Could not load scipy. Without scipy, I won't be able to calculate the result of the voting. Please install scipy > 0.12.0")
     def sparse_identity_matrix(length, **kwargs):
         raise scipy_importerror
 
@@ -98,7 +98,7 @@ class Command(NoArgsCommand):
     @staticmethod
     def doVoteCount(proposal):
         
-        # deleta all previous results (safety, this method may be called twice, even though it shouldn't)
+        # delete all previous results (safety, this method may be called twice, even though it shouldn't)
         ProxyProposalVote.objects.filter(proposal=proposal).delete()
         FinalProposalVote.objects.filter(proposal=proposal).delete()
         # set up graph, doing as few queries as possible
@@ -109,7 +109,8 @@ class Command(NoArgsCommand):
         validproxies = proxies.filter(tags__in = proposal.tags.all()).filter(isdefault=False)
         #select default edges from delegating people not in the previous set
         validproxies = validproxies | (proxies.filter(isdefault=True).exclude(delegating__in = validproxies.values('delegating')))
-        
+        logged_in_users = CustomUser.objects.all().exclude()
+        validproxies = validproxies.exclude(delegating__in)
         validproxies = list(validproxies)
         votes = list(proposal.proposal_votes.all())
         voters = list(CustomUser.objects.filter(id__in=voters).all())
