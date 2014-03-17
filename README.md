@@ -12,8 +12,10 @@ You need a number of python modules installed on your system to be able to run g
 * python-django-south
 * python-django-authopenid
 * python-oauth2
-* *[optional] Scipy 0.12.0 or higher*
+* *[optional] Scipy 0.12.0 or higher* 
+* * * (needed for the evaluation of the votes. An efficient inverse for sparse matrices was only added to scipy recently)
 * *[optional] python-imaging*
+* * * (needed to get avatars from the users social network account)
 
 Furthermore, getopinionated has been developed on python 2.7.
 
@@ -26,8 +28,11 @@ Assuming you have python 2.7, run the following for Django:
 And Install the other dependencies as follows:
 
     sudo pip install south django-authopenid oauth2
-
-TODO: add howto install scipy (although this seems to be optional)
+    sudo pip install git+http://github.com/numpy/numpy/
+    sudo pip install cython
+    sudo apt-get install gfortran libopenblas-dev liblapack-dev
+    sudo pip install git+http://github.com/scipy/scipy/
+    sudo pip install PIL
 
 Getting started
 ---------------
