@@ -363,20 +363,6 @@ class VotablePostReactionEvent(Event):
         return u"ProposalForkEvent: forked {}".format(self.origin_proposal)
 
 
-class UpDownVoteEvent(Event):
-    """ A VotablePost was up- or downvoted """
-
-    updownvote = models.ForeignKey(UpDownVote)
-
-    @overrides(Event)
-    def is_global_event(self):
-        return False
-
-    @overrides(Event)
-    def __unicode__(self):
-        return u"UpDownVoteEvent for {}".format(self.updownvote)
-
-
 class ProxyChangeEvent(Event):
     """ A proxy has been added or removed.
 
