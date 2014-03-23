@@ -23,6 +23,7 @@ else:
 	    (r'^accounts/', include('accounts.urls')),
 		(r'^proposals/', include('proposing.urls')),
 		(r'^document/', include('document.urls')),
+		(r'^event/', include('event.urls')),
 		url(r'^tag/(?P<tag_slug>[-\w]+)/$', proposing.views.tagproplist, name='tag-index'),
 		(r'^media/(?P<path>.*)/$', 'django.views.static.serve',{'document_root': MEDIA_ROOT, }),
 		url(r'', include('social_auth.urls')),

@@ -19,7 +19,7 @@ class CustomUser(User):
     avatar = ImageField(upload_to='avatars/',null=True,blank=True)
     member_since = models.DateTimeField(default=now())
     profile_views = models.IntegerField(default=0)
-    
+    last_activity = models.DateTimeField(default=now())
     daily_digest = models.BooleanField("Get a daily digest in your mailbox",default=False)
     weekly_digest = models.BooleanField("Get a weekly digest in your mailbox",default=True)
     
@@ -40,7 +40,6 @@ class CustomUser(User):
 
     @property
     def favorites(self):
-        print "favorites----"
         return self.favorites_including_disabled
         # return self.favorites_including_disabled.filter(enabled=True)
 
