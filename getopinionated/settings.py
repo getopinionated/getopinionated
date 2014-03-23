@@ -403,8 +403,8 @@ if DEBUG:
     class InvalidString(str):
         def __mod__(self, other):
             # hack for bug in admin
-            if str(other) == 'header.class_attrib':
-                return
+            if str(other) == 'header.class_attrib' or str(other) == 'choices_start' or str(other) == 'choices_end':
+                return ""
             from django.template.base import TemplateSyntaxError
             raise TemplateSyntaxError(
                 "Undefined variable or unknown value for: \"%s\"" % other)

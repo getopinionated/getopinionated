@@ -14,21 +14,45 @@ class CustomUserManager(UserManager):
         return user
 
 class CustomUser(User):
+    # constants
+    MAIL_FREQUENCIES = [
+        ('IMMEDIATELY', 'immediately'),
+        ('DAILY', 'a daily digest'),
+        ('WEEKLY', 'a weekly digest'),
+        ('NEVER', 'never'),
+    ]
+
+    MAIL_WHEN_VOTING_STAGE_CHANGE = [
+        ('ALWAYS', 'always'),
+        ('I_REACTED', 'I reacted to the proposal (e.g.: endorsed, commented, starred, ...)'),
+        ('I_STARRED', 'I starred the proposal'),
+        ('NEVER', 'never'),
+    ]
+
+    # fields
     slug = models.SlugField(unique=True)
     karma = models.IntegerField(default=0)
     avatar = ImageField(upload_to='avatars/',null=True,blank=True)
     member_since = models.DateTimeField(default=now())
     profile_views = models.IntegerField(default=0)
     last_activity = models.DateTimeField(default=now())
-    daily_digest = models.BooleanField("Get a daily digest in your mailbox",default=False)
-    weekly_digest = models.BooleanField("Get a weekly digest in your mailbox",default=True)
+
+
+    mail_frequency = models.CharField(max_length=20, choices=MAIL_FREQUENCIES, default='DAILY')
+    mail_when_voting_stage_change = models.CharField(max_length=20, choices=MAIL_WHEN_VOTING_STAGE_CHANGE, default='ALWAYS')
+    mail_when_related_event = models.BooleanField("Content of mails: inform me when anything happens related to me (e.g.: "
+            + "someone reacts to my proposal, added me as proxy or upvoted my comment)", default=True)
+
+
+    # daily_digest = models.BooleanField("Get a daily digest in your mailbox",default=False)
+    # weekly_digest = models.BooleanField("Get a weekly digest in your mailbox",default=True)
+    # send_new = models.BooleanField("Get a mail for new proposals",default=True)
+    # send_voting = models.BooleanField("Get a mail for proposals to vote",default=True)
+    # send_finished = models.BooleanField("Get a mail for finished proposals",default=True)
+    # send_favorites_and_voted = models.BooleanField("But only mail my favorites",default=False)
     
-    send_new = models.BooleanField("Get a mail for new proposals",default=True)
-    send_voting = models.BooleanField("Get a mail for proposals to vote",default=True)
-    send_finished = models.BooleanField("Get a mail for finished proposals",default=True)
-    
-    send_favorites_and_voted = models.BooleanField("But only mail my favorites",default=False)
-    
+
+
     REQUIRED_FIELDS = ['username']
     
     # Use UserManager to get the create_user method, etc.
