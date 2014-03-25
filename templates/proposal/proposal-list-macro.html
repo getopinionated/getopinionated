@@ -120,4 +120,21 @@
     {% empty %}
         <p>No such proposals available.</p>
     {% endfor %}
+    
+    <div class="pagination">
+	    <span class="step-links">
+	        {% if proposal_list.has_previous %}
+	            <a href="?page={{ proposal_list.previous_page_number }}">previous</a>
+	        {% endif %}
+	
+	        <span class="current">
+	            Page {{ proposal_list.number }} of {{ proposal_list.paginator.num_pages }}.
+	        </span>
+	
+	        {% if proposal_list.has_next %}
+	            <a href="?page={{ proposal_list.next_page_number }}">next</a>
+	        {% endif %}
+	    </span>
+	</div>
+    
 {% endmacro %}

@@ -19,6 +19,8 @@ from document.models import FullDocument
 from event.models import UpDownVoteEvent
 from models import VotablePost, UpDownVote, Proposal, Comment, CommentReply, ProposalVote, AmendmentProposal, PositionProposal
 from forms import CommentForm, CommentReplyForm, CommentEditForm, CommentReplyEditForm, ProxyForm, AmendmentProposalForm, PositionProposalForm
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 class TimelineData:
     # settings
@@ -183,8 +185,21 @@ def proplist(request, list_type="latest"):
             right_grey = True,
         )
     taglist = Tag.all_objects_sorted_by_num_proposals()
+    
+    paginator = Paginator(proposals, 5) # Show 25 proposals per page
+
+    page = request.GET.get('page')
+    try:
+        proposals_paginator = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        proposals_paginator = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        proposals_paginator = paginator.page(paginator.num_pages)
+    
     return render(request, 'proposal/list.html', {
-        'latest_proposal_list': proposals,
+        'latest_proposal_list': proposals_paginator,
         'taglist': taglist,
         'timeline': timeline,
     })
