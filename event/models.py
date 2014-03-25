@@ -156,7 +156,9 @@ class Event(models.Model):
             raise NotImplementedError("Every Event implementation should override this method.")
 
         else:
-            return eventclass.generate_human_readable_format(events, reading_user)
+            retval = eventclass.generate_human_readable_format(events, reading_user)
+            assert retval != None and len(retval) == 2
+            return retval
 
     def __unicode__(self):
         """ Make sure to override this in every child. """
@@ -357,6 +359,10 @@ class VotablePostReactionEvent(Event):
         origin_post = events[0].origin_post.cast()
         users = userjoin(e.reaction_post.creator for e in events)
         origin_post_str = add_owner(origin_post, reading_user)
+        link_target_post = events[0].reaction_post.cast() if len(events) == 1 else origin_post
+
+        # return description + url
+        return u"{} reacted to {}".format(users, origin_post_str), url_to(link_target_post)
 
     @overrides(Event)
     def __unicode__(self):
