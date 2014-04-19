@@ -98,23 +98,23 @@ class VotablePost(DisableableModel):
 
     @overrides(DisableableModel)
     def can_change_field(self, field_name):
-       """ make all attributes mutable if this object is enabled. """
-       # return True if enabled attribute does not yet exist (in re-building phase, we can allow more)
-       if not hasattr(self, 'enabled'):
-           return True
+        """ make all attributes mutable if this object is enabled. """
+        # return True if enabled attribute does not yet exist (in re-building phase, we can allow more)
+        if not hasattr(self, 'enabled'):
+            return True
 
-       # disable immutability check if enabled
-       if self.enabled:
-           return True
+        # disable immutability check if enabled
+        if self.enabled:
+            return True
 
-       # normal operation
-       return super(VotablePost, self).can_change_field(field_name)
+         # normal operation
+        return super(VotablePost, self).can_change_field(field_name)
 
     def build_history(self, editing_user=None, editing_amendment=None):
         """ Create two new model objects:
                 1) A disabled copy of self with is_historical_record=True
                 2) A VotablePostHistory
-        
+
         """
         # sanity check
         assert not (editing_user and editing_amendment), \
@@ -184,7 +184,7 @@ class VotablePost(DisableableModel):
             return False
         vote = self.updownvoteFromUser(user)
         if vote != None:
-            return "up" if vote.value==1 else "down"
+            return "up" if vote.value == 1 else "down"
         return None
 
     def hasUpvoted(self, user):
@@ -296,7 +296,7 @@ class Proposal(VotablePost):
         ('REJECTED', 'Rejected'),
         ('EXPIRED', 'Expired'),
     )
-    
+
     # managers
     all_objects_for_autoslugfield = models.Manager() # Redefined (this is the same as all_objects) here because it is needed for
                                                      # the AutoSlugField to see all objects for slug uniqueness. Gives error in admin
@@ -500,7 +500,9 @@ class Proposal(VotablePost):
         return self.avgProposalvoteScore > 0 and self.proposal_votes.count() >= settings.QUORUM_SIZE
 
     def commentsAllowed(self):
-        return (self.voting_stage == 'DISCUSSION' and settings.COMMENTS_IN_DISCUSSION) or (self.voting_stage == 'VOTING' and settings.COMMENTS_IN_VOTING) or (self.voting_stage in ['APPROVED','REJECTED','EXPIRED'] and settings.COMMENTS_IN_FINISHED)
+        return (self.voting_stage == 'DISCUSSION' and settings.COMMENTS_IN_DISCUSSION) \
+            or (self.voting_stage == 'VOTING' and settings.COMMENTS_IN_VOTING) \
+            or (self.voting_stage in ['APPROVED', 'REJECTED','EXPIRED'] and settings.COMMENTS_IN_FINISHED)
 
     def commentsAllowedBy(self, user):
         return self.commentsAllowed() and (user.is_authenticated() or settings.ANONYMOUS_COMMENTS)
@@ -551,7 +553,7 @@ class Proposal(VotablePost):
         for (date1, px1), (date2, px2) in zip(fixed_dateToPx[:-1], fixed_dateToPx[1:]):
             if date1 <= date <= date2:
                 px = px1 + (px2-px1)/(date2-date1).days*(date-date1).days
-        return px if date < fixed_dateToPx[-1][0] else fixed_dateToPx[-1][1];
+        return px if date < fixed_dateToPx[-1][0] else fixed_dateToPx[-1][1]
 
     def currentDateToPx(self):
         if self.voting_stage != 'EXPIRED':
@@ -574,8 +576,8 @@ class Proposal(VotablePost):
         return a['numvotes__sum'] or 0
 
     def numVotesToPx(self, vote_value):
-        max_num_votes = max([self.numVotesOn(i) for i in xrange(-5,6)])
-        if max_num_votes==0:
+        max_num_votes = max([self.numVotesOn(i) for i in xrange(-5, 6)])
+        if max_num_votes == 0:
             return 0
         num_votes = self.numVotesOn(int(vote_value))
         fraction = num_votes / max_num_votes
@@ -615,7 +617,8 @@ class AmendmentProposal(Proposal):
             if hasattr(self,'diff'):
                 self.diff.fulldocument.getFinalVersion().applyDiff(self.diff)
             else:
-                  "Proposal",self.title,"is approved, but has no Diff"
+                # TODO@Jonas: should this be logged or removed?
+                print "Proposal", self.title, "is approved, but has no Diff"
         except Exception as e:
             print traceback.format_exc()
             print "Error applying diff to final version: ", e
@@ -792,9 +795,9 @@ class ProxyProposalVote(models.Model):
 
     @property
     def getUpperBound(self):
-        if numvotes>1.0:
+        if self.numvotes > 1.0:
             return 1.0
-        return numvotes
+        return self.numvotes
 
     @property
     def getVoteOfVotingUser(self):
@@ -816,7 +819,11 @@ class FinalProposalVote(models.Model):
 
     @property
     def getProxyProposalVoteEndNodes(self):
-        return ProxyProposalVote.objects.filter(proposal=self.proposal, user_proxied=self.user, user_voting__in=self.proposal.proposal_votes.values("user")).all()
+        return ProxyProposalVote.objects.filter(
+                proposal=self.proposal,
+                user_proxied=self.user,
+                user_voting__in=self.proposal.proposal_votes.values("user"),
+            ).all()
 
 
 class Proxy(DisableableModel):

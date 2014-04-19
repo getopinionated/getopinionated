@@ -16,18 +16,18 @@ class CustomUserManager(UserManager):
 class CustomUser(User):
     slug = models.SlugField(unique=True)
     karma = models.IntegerField(default=0)
-    avatar = ImageField(upload_to='avatars/',null=True,blank=True)
+    avatar = ImageField(upload_to='avatars/', null=True, blank=True)
     member_since = models.DateTimeField(default=now())
     profile_views = models.IntegerField(default=0)
     last_activity = models.DateTimeField(default=now())
-    daily_digest = models.BooleanField("Get a daily digest in your mailbox",default=False)
-    weekly_digest = models.BooleanField("Get a weekly digest in your mailbox",default=True)
+    daily_digest = models.BooleanField("Get a daily digest in your mailbox", default=False)
+    weekly_digest = models.BooleanField("Get a weekly digest in your mailbox", default=True)
     
-    send_new = models.BooleanField("Get a mail for new proposals",default=True)
-    send_voting = models.BooleanField("Get a mail for proposals to vote",default=True)
-    send_finished = models.BooleanField("Get a mail for finished proposals",default=True)
+    send_new = models.BooleanField("Get a mail for new proposals", default=True)
+    send_voting = models.BooleanField("Get a mail for proposals to vote", default=True)
+    send_finished = models.BooleanField("Get a mail for finished proposals", default=True)
     
-    send_favorites_and_voted = models.BooleanField("But only mail my favorites",default=False)
+    send_favorites_and_voted = models.BooleanField("But only mail my favorites", default=False)
     
     REQUIRED_FIELDS = ['username']
     
@@ -64,7 +64,7 @@ class CustomUser(User):
         if image:
             from django.core.files.images import get_image_dimensions
             w, h = get_image_dimensions(image)
-            if not image.content_type in ["png","jpg","jpeg","gif","bmp"]:
+            if not image.content_type in ["png", "jpg", "jpeg", "gif", "bmp"]:
                 raise forms.ValidationError(u'Only .png and .jpg images are allowed.')
             if w > 750 or h > 750:
                 raise forms.ValidationError(u'That image is too big. The image needs to be 700x700px (or less).')

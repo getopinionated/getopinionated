@@ -1,5 +1,6 @@
 import collections
 import functools
+import warnings
 
 def overrides(interface_class):
     """ overrides annotation from Stack Overflow:
@@ -36,8 +37,9 @@ def deprecated(func):
     as deprecated. It will result in a warning being emitted
     when the function is used.'''
     def new_func(*args, **kwargs):
-        warnings.warn("Call to deprecated function {}.".format(func.__name__),
-                      category=DeprecationWarning)
+        warningmessage = "Call to deprecated function {}.".format(func.__name__)
+        print "Warning:", warningmessage
+        warnings.warn(warningmessage, category=DeprecationWarning)
         return func(*args, **kwargs)
     new_func.__name__ = func.__name__
     new_func.__doc__ = func.__doc__

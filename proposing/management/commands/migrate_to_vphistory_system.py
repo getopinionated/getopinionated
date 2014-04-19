@@ -6,7 +6,7 @@ class Command(NoArgsCommand):
     help = "Migrates the database to the system where VotablePostHistory objects" + \
            " are kept for every change, including the first."
 
-    def handle(self, *args, **options):
+    def handle_noargs(self, **options):
         """ Migrates the database to the system where VotablePostHistory objects are kept for
             every change.
 

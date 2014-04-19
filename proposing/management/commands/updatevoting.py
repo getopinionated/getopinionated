@@ -19,8 +19,8 @@ logger = logging.getLogger(__name__)
 
 ## try importing scipy for sparse matrix functionality
 try:
-    from scipy.sparse import identity as sparse_identity_matrix
-    from scipy.sparse.linalg import inv as invert_sparse_matrix
+    from scipy.sparse import identity as sparse_identity_matrix #(ignore 'no module named ...') pylint: disable=E0611
+    from scipy.sparse.linalg import inv as invert_sparse_matrix #(ignore 'no module named ...') pylint: disable=E0611
 except ImportError as scipy_importerror:
     logger.warning("Could not load scipy. Without scipy, I won't be able to calculate the result of the voting. Please install scipy > 0.12.0")
     def sparse_identity_matrix(length, **kwargs):
@@ -60,14 +60,15 @@ class Command(NoArgsCommand):
             if proposal.shouldStartVoting():
                 proposal.voting_stage = 'VOTING'
                 proposal.voting_date = timezone.now()
-                voting_cnt +=1
-                proposal.mail_sent=False
-                posttotwitter("VOTING BOOTS ARE OPEN: " + proposal.title + " " + settings.DOMAIN_NAME+reverse('proposals-detail',kwargs={'proposal_slug':proposal.slug}))
+                voting_cnt += 1
+                proposal.mail_sent = False
+                posttotwitter("VOTING BOOTS ARE OPEN: " + proposal.title + " " + settings.DOMAIN_NAME +
+                    reverse('proposals-detail', kwargs={'proposal_slug':proposal.slug}))
                 proposal.save()
             elif proposal.voting_stage == 'DISCUSSION' and proposal.minimalContraintsAreMet() and not proposal.voting_date:
                 proposal.voting_date = proposal.estimatedVotingDate
                 constraints_cnt += 1
-                proposal.mail_sent=False
+                proposal.mail_sent = False
                 proposal.save()
             elif proposal.shouldBeFinished():
                 Command.doVoteCount(proposal)
@@ -75,18 +76,20 @@ class Command(NoArgsCommand):
                     proposal.execute()
                 proposal.expire_date = timezone.now()
                 proposal.voting_stage = 'APPROVED' if proposal.isApproved() else 'REJECTED'
-                finished_cnt +=1
+                finished_cnt += 1
                 if proposal.voting_stage == 'APPROVED':
-                    posttotwitter("\"" + proposal.title + "\" made it in the program! " + settings.DOMAIN_NAME+reverse('proposals-detail',kwargs={'proposal_slug':proposal.slug}))
+                    posttotwitter("\"" + proposal.title + "\" made it in the program! " + settings.DOMAIN_NAME
+                        + reverse('proposals-detail',kwargs={'proposal_slug':proposal.slug}))
                 else:
-                    posttotwitter("\"" + proposal.title + "\" was rejected! " + settings.DOMAIN_NAME+reverse('proposals-detail',kwargs={'proposal_slug':proposal.slug}))
-                proposal.mail_sent=False
+                    posttotwitter("\"" + proposal.title + "\" was rejected! " + settings.DOMAIN_NAME
+                        + reverse('proposals-detail',kwargs={'proposal_slug':proposal.slug}))
+                proposal.mail_sent = False
                 proposal.save()
             elif proposal.shouldExpire():
                 proposal.expire_date = timezone.now()
                 proposal.voting_stage = 'EXPIRED'
-                expired_cnt +=1
-                proposal.mail_sent=False
+                expired_cnt += 1
+                proposal.mail_sent = False
                 proposal.save()
         
         self.stdout.write('Successfully updated:\n')
@@ -110,6 +113,7 @@ class Command(NoArgsCommand):
         #select default edges from delegating people not in the previous set
         validproxies = validproxies | (proxies.filter(isdefault=True).exclude(delegating__in = validproxies.values('delegating')))
         logged_in_users = CustomUser.objects.all().exclude()
+        # TODO@Jonas: this seems to be an error: delegating__in doesn't exist
         validproxies = validproxies.exclude(delegating__in)
         validproxies = list(validproxies)
         votes = list(proposal.proposal_votes.all())
@@ -126,14 +130,14 @@ class Command(NoArgsCommand):
         users = list(voters) #copy this list
         
         usertoidmap = {}
-        for i,u in enumerate(users):
+        for i, u in enumerate(users):
             usertoidmap[u.pk] = i
         
         edges = set([])
         
         fromcount = [0]*len(users)
         i = 0
-        while i<len(users):
+        while i < len(users):
             current = users[i]
             for proxy in validproxies:
                 if current in proxy.delegates.all():
@@ -144,7 +148,7 @@ class Command(NoArgsCommand):
                         fromcount.append(0)
                     f = usertoidmap[delegating.pk]
                     #print f,"->",i
-                    if f!=i: #no self-referring edges
+                    if f != i: #no self-referring edges
                         edge = (f, i) # edge from a to b
                         edges.add(edge)
                         fromcount[f] += 1
@@ -158,7 +162,7 @@ class Command(NoArgsCommand):
         
         system = sparse_identity_matrix(len(users), format='lil')#build matrix in lil format
         for edge in edges:
-            system[edge[1],edge[0]] = -1.0/fromcount[edge[0]] #startnode splits his vote in equal parts
+            system[edge[1], edge[0]] = -1.0/fromcount[edge[0]] #startnode splits his vote in equal parts
         
         system = system.tocsc()#convert to csc for the inverse
         #print "=========before========="
@@ -177,7 +181,7 @@ class Command(NoArgsCommand):
         finalvotes = [0]*len(users)
         numvotes = [0]*len(users)
         cx = system.tocoo()    #convert to coo for efficient looping
-        for touserid,fromuserid,vote in itertools.izip(cx.row, cx.col, cx.data):
+        for touserid, fromuserid, vote in itertools.izip(cx.row, cx.col, cx.data):
             touserid, fromuserid = int(touserid), int(fromuserid)            
             if touserid in mapidvotes:
                 finalvotes[fromuserid] += vote*mapidvotes[touserid]
@@ -187,15 +191,15 @@ class Command(NoArgsCommand):
         
         totalresult = 0
         totalvotes = 0
-        for id,fv in enumerate(finalvotes):
-            actual = (users[id] in voters)
-            fpv = FinalProposalVote(user = users[id], proposal=proposal, numvotes=numvotes[id], value=finalvotes[id], voted_self=actual)
+        for pk, fv in enumerate(finalvotes):
+            actual = (users[pk] in voters)
+            fpv = FinalProposalVote(user = users[pk], proposal=proposal, numvotes=numvotes[pk], value=finalvotes[pk], voted_self=actual)
             fpv.save()
-            #print users[id].slug,"voted",finalvotes[id],"with",numvotes[id],"votes"
+            #print users[pk].slug,"voted",finalvotes[pk],"with",numvotes[pk],"votes"
             if actual:
                 #
-                totalresult += numvotes[id] * finalvotes[id]
-                totalvotes += numvotes[id]
+                totalresult += numvotes[pk] * finalvotes[pk]
+                totalvotes += numvotes[pk]
         
         proposal.avgProposalvoteScore = totalresult/totalvotes
         proposal.save()

@@ -2,7 +2,6 @@ import random
 from smtplib import SMTPRecipientsRefused
 from django.core.management.base import BaseCommand, CommandError, NoArgsCommand, LabelCommand
 from django.db.models import Q
-from django.utils import timezone
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -29,9 +28,9 @@ class Command(LabelCommand):
             
             relevant_proposals = Proposal.objects.all()
             dt = None
-            if user.daily_digest and label=='daily':
+            if user.daily_digest and label == 'daily':
                 dt = 1
-            if user.weekly_digest and label=='weekly':
+            if user.weekly_digest and label == 'weekly':
                 dt = 7
             if dt is None:
                 continue
@@ -76,7 +75,7 @@ class Command(LabelCommand):
                                 'label':label,
                                 'user':user                    
                                 })
-            print "mail sent to:",mail_address
+            print "mail sent to:", mail_address
             
             try:
                 #pass

@@ -63,7 +63,7 @@ class CustomUserCreationForm(FocussingModelForm, UserCreationForm):
                 # the username/userslug does already exist
                 index = 2
                 while True:
-                    username="{} {}".format(username, int_to_roman(index))
+                    username = "{} {}".format(username, int_to_roman(index))
                     if user.isValidUserName(username):
                         break
                     index += 1
@@ -111,7 +111,7 @@ class SingleProxyForm(forms.Form):
     
     def __init__(self, delegating, delegate, *args, **kwargs):
         self.user = delegating
-        self.delegate=delegate
+        self.delegate = delegate
         super(SingleProxyForm, self).__init__(*args, **kwargs)        
         proxies = Proxy.objects.all().filter(delegating__pk__exact=delegating.pk, delegates=delegate, isdefault=False)
         tagset = Tag.objects.all()

@@ -23,9 +23,10 @@ def htmlEncode(s, esc=cgi.escape):
 
 commentRE = re.compile('<!--.*?-->', re.S)
 tagRE = re.compile('<script.*?>.*?</script>|<.*?>', re.S)
-headRE = re.compile('<\s*head\s*>', re.S | re.I)
+headRE = re.compile(r'<\s*head\s*>', re.S | re.I)
 wsRE = re.compile('^([ \n\r\t]|&nbsp;|<.*?>)+$')
-stopwords = ['I', 'a', 'about', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'have', 'how', 'in', 'is', 'it', 'of', 'on', 'or', 'that', 'the', 'this', 'to', 'was', 'what', 'when', 'where', 'who', 'will', 'with']
+stopwords = ['I', 'a', 'about', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'have', 'how', 'in',
+    'is', 'it', 'of', 'on', 'or', 'that', 'the', 'this', 'to', 'was', 'what', 'when', 'where', 'who', 'will', 'with']
 
 # Note: Just returning false here gives a generally more accurate,
 # but much slower and more noisy result.
@@ -125,7 +126,7 @@ class HTMLMatcher(SequenceMatcher):
                     if contextbr in item:
                         brsincecontentadded += 1
                         if added:
-                            if brsincecontentadded>=3:
+                            if brsincecontentadded >= 3:
                                 if alreadyadded:
                                     out.write("(...)")
                                 out.write(context.getvalue())
@@ -134,7 +135,7 @@ class HTMLMatcher(SequenceMatcher):
                                 context = StringIO()# #erase first paragraph
                                 brsincecontentadded = 0
                         else:
-                            if brsincecontentadded>=4:
+                            if brsincecontentadded >= 4:
                                 store = context.getvalue()[context.getvalue().find(contextbr)+len(contextbr):]
                                 context = StringIO()# #erase first paragraph
                                 context.write(store)

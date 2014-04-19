@@ -2,7 +2,6 @@ from django.conf import settings
 from django.core.management.base import CommandError
 import logging
 from django.core.management.base import BaseCommand
-from django.db import connection
         
 class Command(BaseCommand):
     help = "Resets a database."
@@ -73,11 +72,11 @@ class Command(BaseCommand):
     
             # Encoding should be SQL_ASCII (7-bit postgres default) or prefered UTF8 (8-bit)
             create_query = ("""
-CREATE DATABASE %s
-    WITH OWNER = %s
-        ENCODING = 'UTF8'
-        TABLESPACE = pg_default;
-""" % (settings.DATABASE_NAME, settings.DATABASE_USER))
+                CREATE DATABASE %s
+                WITH OWNER = %s
+                    ENCODING = 'UTF8'
+                    TABLESPACE = pg_default;
+            """ % (settings.DATABASE_NAME, settings.DATABASE_USER))
             logging.info('Executing... "' + create_query + '"')
             cursor.execute(create_query)
     

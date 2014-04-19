@@ -2,14 +2,14 @@ import re
 from django import template
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import pluralize
-from common.stringify import niceBigInteger,timesince
+from common.stringify import niceBigInteger, timesince
 from common.htmldiff import htmldiff
 
 register = template.Library()
 
 @register.filter(name='smallint')
 def smallint(value):
-    return niceBigInteger(value,smallest=True)
+    return niceBigInteger(value, smallest=True)
 
 @register.filter(name='mediumint')
 def mediumint(value):
@@ -67,33 +67,33 @@ def userjoin(users, max_num_users=3):
     
 @register.filter(name='percent')
 def percent(f):
-    return "%.1f"%(f*100)
+    return "%.1f" % (f * 100)
 
 
 @register.filter(name='numberheaders')
 def numberheaders(s):
-    hcounter = [0,0,0]
+    hcounter = [0, 0, 0]
     ins = []
-    ins.extend([m.start()+3,0] for m in re.finditer('<h1',s))
-    ins.extend([m.start()+3,1] for m in re.finditer('<h2',s))
-    ins.extend([m.start()+3,2] for m in re.finditer('<h3',s))
+    ins.extend([m.start()+3, 0] for m in re.finditer('<h1', s))
+    ins.extend([m.start()+3, 1] for m in re.finditer('<h2', s))
+    ins.extend([m.start()+3, 2] for m in re.finditer('<h3', s))
     ins = sorted(ins)
     for el in ins:
-        hcounter[el[1]]+=1
+        hcounter[el[1]] += 1
         el.extend( [hcounter[0], hcounter[1], hcounter[2]] )
-        if el[1]==0:
-            hcounter[1]=0
-            hcounter[2]=0
-        elif el[1]==1:
-            hcounter[2]=0
+        if el[1] == 0:
+            hcounter[1] = 0
+            hcounter[2] = 0
+        elif el[1] == 1:
+            hcounter[2] = 0
     ins.reverse()
     for el in ins:
-        if el[1]==0:
-            s = s[:el[0]] + ' id="h%s"'%(el[2]) + s[el[0]:]
-        elif el[1]==1:
-            s = s[:el[0]] + ' id="h%s-%s"'%(el[2],el[3]) + s[el[0]:]
-        elif el[1]==2:
-            s = s[:el[0]] + ' id="h%s-%s-%s"'%(el[2],el[3],el[4]) + s[el[0]:]
+        if el[1] == 0:
+            s = s[:el[0]] + ' id="h%s"' % (el[2]) + s[el[0]:]
+        elif el[1] == 1:
+            s = s[:el[0]] + ' id="h%s-%s"' % (el[2], el[3]) + s[el[0]:]
+        elif el[1] == 2:
+            s = s[:el[0]] + ' id="h%s-%s-%s"' % (el[2], el[3], el[4]) + s[el[0]:]
     return s
 
 def slugify(value):
@@ -102,10 +102,10 @@ def slugify(value):
     and converts spaces to hyphens.
     """
     import unicodedata
-    v=value
+    v = value
     value = unicodedata.normalize('NFKD', unicode(value)).encode('ascii', 'ignore')
-    value = unicode(re.sub('[^\w\s-]', '', value).strip().lower())
-    value = re.sub('[-\s]+', '-', value)
+    value = unicode(re.sub(r'[^\w\s-]', '', value).strip().lower())
+    value = re.sub(r'[-\s]+', '-', value)
     value = mark_safe(value)
     if value == '':
         value = mark_safe(''.join([str(ord(c)) for c in v.encode('utf-8')]))

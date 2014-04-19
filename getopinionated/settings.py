@@ -342,7 +342,8 @@ DEFAULT_DOCUMENT_DESCRIPTION_LONG = 'Party Programme of our organisation'
 NEW_POSITION_LABEL = 'Propose a new position' # label of the button for proposing a new position
 PROPOSAL_DESCRIPTION = '''Join the discussion and vote. Get opinionated! Everybody is free to step in and join the democratic
                           process of our organisation. Share your expertise and make our organisation better.'''
-PROPOSAL_SHARE_DESCRIPTION = '''This interesting proposal for the Party Programme of our organisation has been made on getOpinionated. Help us make the program a better program.'''
+PROPOSAL_SHARE_DESCRIPTION = "This interesting proposal for the Party Programme of our organisation has been made on getOpinionated. " \
+                             + "Help us make the program a better program."
 
 ## project-specific layout settings
 SHOW_FOLLOW_US_ON_FB_AND_TWITTER_BANNER = False
@@ -389,7 +390,6 @@ except ImportError:
         from mod_python import apache
         apache.log_error("You need to copy local_settings.py.example to local_settings.py and edit settings")
     except ImportError:
-        import sys
         sys.stderr.write("You need to copy local_settings.py.example to local_settings.py and edit settings")
 
 TEMPLATE_DEBUG = DEBUG
