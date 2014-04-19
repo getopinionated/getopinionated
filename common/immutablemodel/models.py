@@ -24,7 +24,8 @@ class FieldsOption(Option):
         return []
 
 
-class CantDeleteImmutableException(Exception): pass
+class CantDeleteImmutableException(Exception):
+    pass
 
 class __Undefined(object): 
     def __len__(self):
@@ -33,7 +34,8 @@ class __Undefined(object):
         return u"__Undefined()"
 UNDEFINED = __Undefined()
 
-class PK_FIELD: pass
+class PK_FIELD:
+    pass
 
 IMMUTABLEFIELD_OPTIONS = dict([(opt.name, opt) for opt in (
     FieldsOption('mutable_fields'),
@@ -45,12 +47,12 @@ IMMUTABLEFIELD_OPTIONS = dict([(opt.name, opt) for opt in (
     
 
 class ImmutableModelMeta(models.base.ModelBase):
-    def __new__(cls, name, bases, attrs):
-        super_new = super(ImmutableModelMeta, cls).__new__
+    def __new__(mcs, name, bases, attrs):
+        super_new = super(ImmutableModelMeta, mcs).__new__
         parents = [b for b in bases if isinstance(b, ImmutableModelMeta)]
         if not parents:
             # If this isn't a **sub**class of ImmutableMeta (ie. probably ImmutableModel itself), don't do anything special.
-            return super_new(cls, name, bases, attrs)
+            return super_new(mcs, name, bases, attrs)
         if 'Meta' in attrs:
             meta = attrs.get('Meta')
         else:
@@ -58,7 +60,7 @@ class ImmutableModelMeta(models.base.ModelBase):
         immutability_options = ImmutableModelMeta.immutable_options_from_meta(meta)
         if meta:
             stripped = ImmutableModelMeta.strip_immutability_options(meta)
-        registered_model = models.base.ModelBase.__new__(cls, name, bases, attrs)
+        registered_model = models.base.ModelBase.__new__(mcs, name, bases, attrs)
         if meta:
             ImmutableModelMeta.reattach_stripped(meta, stripped)
         ImmutableModelMeta.check_and_reinject_options(immutability_options, registered_model)
@@ -91,7 +93,7 @@ class ImmutableModelMeta(models.base.ModelBase):
     
     @staticmethod
     def reattach_stripped(meta, stripped):
-        for k,v in stripped.iteritems():
+        for k, v in stripped.iteritems():
             setattr(meta, k, v)
              
     @staticmethod
@@ -219,7 +221,7 @@ class ImmutableModel(models.Model):
     def has_immutable_lock_field(self):
         return self._meta.immutable_lock_field != None
 
-    def delete(self):
+    def delete(self, using=None):
         if not self._meta.immutable_is_deletable and self.is_immutable():
             # a bit more output for debuggin ajax
             print "CantDeleteImmutableException: %s is immutable and cannot be deleted" % self

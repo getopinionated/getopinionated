@@ -49,7 +49,7 @@ def boolean(func):
     """
     Sets 'boolean' attribute (this attribute is used by list_display).
     """
-    func.boolean=True
+    func.boolean = True
     return func
 
 def limit_width(max_len):

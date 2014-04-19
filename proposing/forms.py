@@ -15,7 +15,7 @@ from common import sanitizehtml
 from accounts.models import CustomUser
 from document.models import FullDocument, Diff
 from event.models import VotablePostReactionEvent
-from widgets import TagSelectorWidget, RichTextEditorWidget,\
+from widgets import TagSelectorWidget, RichTextEditorWidget, \
     VeryRichTextEditorWidget, NumberSliderWidget, EmptyTagSelectorWidget
 from fields import TagChoiceField, UserChoiceField
 from models import VotablePost, Proposal, AmendmentProposal, PositionProposal, Comment, CommentReply, Tag, VotablePostHistory, Proxy
@@ -30,7 +30,7 @@ class ProposalForm(forms.ModelForm):
         self.is_edit = kwargs.pop('is_edit') if 'is_edit' in kwargs else self.has_instance
         super(ProposalForm, self).__init__(*args, **kwargs)
         ### add title, content, discussion_time and tags fields
-        self.fields["title"] = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'autofocus','style':'width: 100%;'}))
+        self.fields["title"] = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'autofocus', 'style':'width: 100%;'}))
         self.fields["content"] = forms.CharField(widget=RichTextEditorWidget(attrs={'style':'width: 100%;height:100%;'}),
             initial=self._get_initial_content())
         self.fields["discussion_time"] = forms.IntegerField(widget=NumberSliderWidget(attrs={'style':'width: 100%;'}),
@@ -78,12 +78,14 @@ class ProposalForm(forms.ModelForm):
 
         ## broadcast on social media
         if not self.is_edit:
-            posttotwitter("A new proposal for the programme: " + proposal.title + " " + settings.DOMAIN_NAME+reverse('proposals-detail',kwargs={'proposal_slug':proposal.slug}))
+            posttotwitter("A new proposal for the programme: " + proposal.title + " " + settings.DOMAIN_NAME
+                + reverse('proposals-detail', kwargs={'proposal_slug': proposal.slug}))
         
         return proposal
 
 class AmendmentProposalForm(ProposalForm):
-    motivation = forms.CharField(widget=forms.Textarea(attrs={'style':'width: 100%;', 'rows':10,'placeholder':"Your motivation to propose this amendment. Convince the other users that this amendment is a good idea."}))
+    motivation = forms.CharField(widget=forms.Textarea(attrs={'style':'width: 100%;', 'rows':10,
+        'placeholder':"Your motivation to propose this amendment. Convince the other users that this amendment is a good idea."}))
 
     def __init__(self, document, *args, **kwargs):
         self.document = document
@@ -123,7 +125,8 @@ class PositionProposalForm(ProposalForm, FocussingModelForm):
         super(PositionProposalForm, self).__init__(*args, **kwargs)
         ## add placeholders for shared fields
         self.fields['title'].widget.attrs['placeholder'] = "State the position concisely"
-        self.fields['content'].widget.attrs['placeholder'] = "<b>Position:</b><br>[Optional] Clarification of position stated above<br><br><b>Motivation:</b><br>..."
+        self.fields['content'].widget.attrs['placeholder'] = """<b>Position:</b><br>
+                                                                [Optional] Clarification of position stated above<br><br><b>Motivation:</b><br>..."""
         ## modify titles for shared fields
         self.fields['title'].label = ""
         self.fields['tags'].label = ""
@@ -227,17 +230,17 @@ class ProxyForm(forms.Form):
         self.defaultfields = []
         for proxy in proxies.filter(isdefault=False):
             userfield = UserChoiceField(queryset=userset, widget=TagSelectorWidget(), initial=proxy.delegates.all())
-            self.fields["side_proxy%d"%count] = userfield
+            self.fields["side_proxy%d" % count] = userfield
                         
             tagfield = TagChoiceField(queryset=tagset, widget=TagSelectorWidget(), initial=proxy.tags.all())
-            self.fields["side_proxy_tags%d"%count] = tagfield
-            self.defaultfields.append(("side_proxy%d"%count,"side_proxy_tags%d"%count))
+            self.fields["side_proxy_tags%d" % count] = tagfield
+            self.defaultfields.append(("side_proxy%d"%count,"side_proxy_tags%d" % count))
             count += 1
         
     def getDefaultFieldList(self):
         l = []
         fields = list(self)
-        for username,tagname in self.defaultfields:
+        for username, tagname in self.defaultfields:
             userfield = None
             tagfield = None
             for field in fields:
@@ -268,7 +271,7 @@ class ProxyForm(forms.Form):
         newproxy.save()
         
         for count in xrange(int(self.data["tagfieldcount"])):
-            if "side_proxy%d"%count in self.data.keys() and "side_proxy_tags%d"%count in self.data.keys():
+            if "side_proxy%d" % count in self.data.keys() and "side_proxy_tags%d" % count in self.data.keys():
                 newproxy = Proxy(delegating=self.user)
                 newproxy.save()
                 for user in self.data.getlist("side_proxy%d"%count):

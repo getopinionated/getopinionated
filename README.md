@@ -53,3 +53,7 @@ Notes for setting up a production server
     
         python manage.py updatevoting
 
+
+Github branching layout
+-----------------------
+http://nvie.com/posts/a-successful-git-branching-model/

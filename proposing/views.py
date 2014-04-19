@@ -332,7 +332,7 @@ def positionproposalform(request, edit_proposal_slug=None):
         'proposalform': proposalform,
     })
 
-def proxy(request, tag_slug=None):
+def show_proxies(request, tag_slug=None):
     ## get vars
     tag = get_object_or_404(Tag, slug=tag_slug) if tag_slug else None
     proxyform = None

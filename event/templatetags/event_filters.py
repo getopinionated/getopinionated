@@ -42,6 +42,9 @@ class BundledEvent:
     def contains_unseen_events(self):
         return any(e in self.unseen_events for e in self.events)
 
+    def __repr__(self):
+        return "BundledEvent for {}".format(self.events)
+    
     def __unicode__(self):
         return u"BundledEvent for {}".format(self.events)
 

@@ -7,7 +7,6 @@ from django.utils import timezone
 from proposing.models import Tag, Proxy, ProxyProposalVote, FinalProposalVote
 from models import VotablePost, Proposal, Comment, CommentReply, UpDownVote, ProposalVote, VotablePostHistory, AmendmentProposal, PositionProposal
 from django.contrib.auth.models import Group
-from django.utils import timezone
 from common.admin import DisableableModelAdmin, DisableableTabularInline
 
 class VotablePostAdminBase(DisableableModelAdmin):
@@ -51,14 +50,14 @@ class ProxyAdmin(DisableableModelAdmin):
     raw_id_fields = ['delegating']
 
 class ProposalVoteAdmin(admin.ModelAdmin):
-    list_display = ('user','proposal','date','value')
+    list_display = ('user', 'proposal', 'date', 'value')
     raw_id_fields = ['user', 'proposal']
 
 class FinalProposalVoteAdmin(admin.ModelAdmin):
-    list_display = ('user','numvotes','voted_self','value','proposal')
+    list_display = ('user', 'numvotes', 'voted_self', 'value', 'proposal')
 
 class ProxyProposalVoteAdmin(admin.ModelAdmin):
-    list_display = ('user_voting','user_proxied','proposal','numvotes')
+    list_display = ('user_voting', 'user_proxied', 'proposal', 'numvotes')
 
 class CommentReplyInline(VotablePostTabularInlineBase):
     model = CommentReply
@@ -87,10 +86,11 @@ class VotablePostHistoryInline(admin.TabularInline):
     raw_id_fields = ('editing_user', 'editing_amendment', 'post_at_date',)
 
 class ProposalAdmin(VotablePostAdminBase):
-    list_display = ['__unicode__', 'slug', 'voting_stage', 'creator', 'create_date', 'upvote_score', 'number_of_comments', 'number_of_edits', 'views'] + VotablePostAdminBase.list_display
+    list_display = ['__unicode__', 'slug', 'voting_stage', 'creator', 'create_date', 'upvote_score', 'number_of_comments',
+        'number_of_edits', 'views'] + VotablePostAdminBase.list_display
     inlines = [CommentInline, UpDownVoteInline, ProposalVoteInline, VotablePostHistoryInline]
     list_filter = VotablePostAdminBase.list_filter + ['allowed_groups']
-    actions = VotablePostAdminBase.actions + ['debug_updatevoting_prepare_approval','recount_votes','member_vote']
+    actions = VotablePostAdminBase.actions + ['debug_updatevoting_prepare_approval', 'recount_votes', 'member_vote']
     readonly_fields = VotablePostAdminBase.readonly_fields + ['diff_link']
     raw_id_fields = VotablePostAdminBase.raw_id_fields + ['favorited_by', 'viewed_by']
     search_fields = VotablePostAdminBase.search_fields + ['title']

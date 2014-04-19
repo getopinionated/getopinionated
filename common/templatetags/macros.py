@@ -90,7 +90,9 @@ def do_macro(parser, token):
     r_valid_arg_name = re.compile(r'^[a-zA-Z0-9_]+$')
     for arg in args:
         if not r_valid_arg_name.match(arg):
-            raise template.TemplateSyntaxError, "Argument '%s' to macro '%s' contains illegal characters. Only alphanumeric characters and '_' are allowed." % (arg, macro_name)
+            raise template.TemplateSyntaxError, \
+                "Argument '%s' to macro '%s' contains illegal characters. Only alphanumeric characters and '_' are allowed." \
+                    % (arg, macro_name)
     nodelist = parser.parse(('endmacro', ))
     parser.delete_first_token()
 

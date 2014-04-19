@@ -32,7 +32,7 @@ try:                 # pragma: nocover
     basestring
 except NameError:    # pragma: nocover
     # Python 3.x
-    basestring = str
+    basestring = str #(ignore re-defining built-in) pylint: disable=W0622
 
 
 class AutoSlugField(SlugField):
@@ -194,7 +194,7 @@ class AutoSlugField(SlugField):
         self.manager = kwargs.pop('manager', None)
 
         self.always_update = kwargs.pop('always_update', False)
-        super(SlugField, self).__init__(*args, **kwargs)
+        super(AutoSlugField, self).__init__(*args, **kwargs)
 
     def pre_save(self, instance, add):
 
