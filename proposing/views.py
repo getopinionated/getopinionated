@@ -120,7 +120,7 @@ class ProxyGraphData:
             proxies = proxies | (Proxy.objects.filter(isdefault=True).exclude(delegating__in = proxies.values('delegating')))
 
         for proxy in proxies:
-            if proxy.delegating.isActive():
+            if proxy.delegating.isActive() and proxy.delegate.isActive():
                 nodes.add(proxy.delegating.display_name)
                 for delegate in proxy.delegates.all():
                     nodes.add(delegate.display_name)
