@@ -379,6 +379,7 @@ COMMENTREPLY_MAX_LENGTH = 500
 
 ## update settings
 UNDER_MAINTENANCE = False
+DAYS_TO_INACTIVE = 60
 
 #####################################################################################
 # Import local settings
@@ -417,4 +418,3 @@ if DEBUG:
 #        level = logging.INFO,
 #        format = '%(asctime)s %(levelname)s %(message)s',
 #    )
-DAYS_TO_INACTIVE = 10
