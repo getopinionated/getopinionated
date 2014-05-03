@@ -1,4 +1,5 @@
 import random
+from collections import OrderedDict
 from smtplib import SMTPRecipientsRefused
 from django.core.management.base import BaseCommand, CommandError, NoArgsCommand, LabelCommand
 from django.db.models import Q
@@ -10,81 +11,93 @@ from django.conf import settings
 from django.core.mail import send_mail
 from accounts.models import CustomUser, UnsubscribeCode
 from proposing.models import Proposal, ProxyProposalVote, Proxy, Tag
+from event.models import PersonalEventEmailQueue, GlobalEventEmailQueue, ProposalLifeCycleEvent
 
 class Command(LabelCommand):
-    help = '''Send a mail to the users regarding the updated proposals:
+    help = '''Send a mail to the users regarding new events.
+
               Arguments:
-                  daily when used for the daily digests
-                  weekly when used for the weekly digests  '''
-    
+                  - label: possible values:
+                        - "IMMEDIATELY": for users that chose to receive a mail immediately.
+                        - "DAILY": for users that chose to receive a mail daily.
+                        - "WEEKLY": for users that chose to receive a mail weekly.
+
+    '''
     def handle_label(self, label, **options):
+        # argument checks
+        assert label in ['IMMEDIATELY', 'DAILY', 'WEEKLY']
+
         mail_cnt = 0
-        
-        for user in CustomUser.objects.all():
-            
-            mail_address = user.email
-            if not mail_address:
+        for user in CustomUser.objects.filter(mail_frequency=label).all():
+
+            # check if valid email
+            if not user.email or '@' not in user.email:
                 continue
+
+            ### get all relevant events from queue ###
+            events = []
+
+            # pop personal events
+            if user.mail_when_related_event:
+                for item in PersonalEventEmailQueue.objects.filter(event_listener__user=user):
+                    event_listener = item.event_listener
+                    if not event_listener.seen_by_user:
+                        events.append(event_listener.event.cast())
+                    item.delete()
             
-            relevant_proposals = Proposal.objects.all()
-            dt = None
-            if user.daily_digest and label == 'daily':
-                dt = 1
-            if user.weekly_digest and label == 'weekly':
-                dt = 7
-            if dt is None:
-                continue
-            relevant_proposals = relevant_proposals.filter(voting_date__gte=timezone.now()-timedelta(days=dt),
-                                                           voting_date__lte=timezone.now()) | \
-                                 relevant_proposals.filter(expire_date__gte=timezone.now()-timedelta(days=dt),
-                                                           expire_date__lte=timezone.now()) | \
-                                 relevant_proposals.filter(create_date__gte=timezone.now()-timedelta(days=dt),
-                                                           create_date__lte=timezone.now())
-            
-            if user.send_new:
-                new_proposals = relevant_proposals.filter(voting_stage='DISCUSSION')
-            else:
-                new_proposals = None
-                
-            if user.send_voting:
-                voting_proposals = relevant_proposals.filter(voting_stage='VOTING')
-            else:
-                voting_proposals = None
-            
-            if user.send_finished:
-                finished_proposals = relevant_proposals.filter(voting_stage__in=['APPROVED','REJECTED'])
-            else:
-                finished_proposals = None
-            
-            if user.send_favorites_and_voted:
-                new_proposals = None
-                voting_proposals = voting_proposals.filter(favorited_by=user)
-                finished_proposals = finished_proposals.filter(favorited_by=user) | finished_proposals.filter(proposal_votes__user=user) 
-            
-            if not new_proposals and not voting_proposals and not finished_proposals:
-                continue #no need to send a mail if there's nothing in it
-            
-            unsubscribecode = UnsubscribeCode(user=user, code=random.SystemRandom().getrandbits(64))
-            unsubscribecode.save()
-            text = render_to_string('mails/digestmail.html', dictionary={
-				'DOMAIN_NAME':settings.DOMAIN_NAME,
-                                'new_proposals':new_proposals,
-                                'voting_proposals':voting_proposals,
-                                'finished_proposals':finished_proposals,
-                                'unsubscribecode':unsubscribecode,
-                                'label':label,
-                                'user':user                    
-                                })
-            print "mail sent to:", mail_address
-            
+            # get global events
+            for item in GlobalEventEmailQueue.objects.all():
+                if user not in item.already_mailed_users.all():
+                    event = item.event.cast()
+                    eligible_event = False
+
+                    if isinstance(event, ProposalLifeCycleEvent):
+                        if user.mail_when_voting_stage_change == 'ALWAYS':
+                            eligible_event = True
+                        elif user.mail_when_voting_stage_change == 'I_REACTED':
+                            eligible_event = user in event.get_listening_users()
+                        elif user.mail_when_voting_stage_change == 'I_STARRED':
+                            eligible_event = user in event.proposal.favorited_by.all()
+                        elif user.mail_when_voting_stage_change == 'NEVER':
+                            eligible_event = False
+
+                    else:
+                        raise NotImplementedError("Global events of type {} are not supported by the mailer yet.".format(type(event)))
+
+                    if eligible_event:
+                        events.append(event)
+                        item.already_mailed_users.add(user)
+
+            events = list(OrderedDict.fromkeys(events)) # filter duplicate events while keeping order
+
+
+            ################# BARRIER BETWEEN OLD AND NEW CODE #################
+            # TODO:  fix template
+            mail_text = "TODO"
+    #         unsubscribecode = UnsubscribeCode(user=user, code=random.SystemRandom().getrandbits(64))
+    #         unsubscribecode.save()
+    #         mail_text = render_to_string('mails/digestmail.html', dictionary={
+				# 'DOMAIN_NAME':settings.DOMAIN_NAME,
+    #                             'new_proposals':new_proposals,
+    #                             'voting_proposals':voting_proposals,
+    #                             'finished_proposals':finished_proposals,
+    #                             'unsubscribecode':unsubscribecode,
+    #                             'label':label,
+    #                             'user':user
+    #                             })
+            ################# BARRIER BETWEEN OLD AND NEW CODE #################
+
+            ### send mail ###
             try:
-                #pass
-                send_mail('GetOpinionated', text, settings.DEFAULT_FROM_EMAIL, [mail_address], fail_silently=False)
-            except SMTPRecipientsRefused:
-                print "refused"
-                continue
-            mail_cnt += 1
-                
+                send_mail('GetOpinionated', mail_text, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
+                self.stdout.write("mail sent to {}".format(user.email))
+                mail_cnt += 1
+
+            except SMTPRecipientsRefused as e:
+                self.stderr.write("mail refused to {}: {}".format(user.email, e))
+
+
+        # wrap up
         self.stdout.write('Successfully sent the mails:\n')
         self.stdout.write('{} mails sent\n'.format(mail_cnt))
-        
+
