@@ -39,7 +39,7 @@ class CustomUser(User):
 
     mail_frequency = models.CharField(max_length=20, choices=MAIL_FREQUENCIES, default='DAILY')
     mail_when_voting_stage_change = models.CharField(max_length=20, choices=MAIL_WHEN_VOTING_STAGE_CHANGE, default='ALWAYS')
-    mail_when_related_event = models.BooleanField("Content of mails: inform me when anything happens related to me (e.g.: "
+    mail_when_related_event = models.BooleanField("Mail content: inform me when anything happens related to me (e.g.: "
             + "someone reacts to my proposal, added me as proxy or upvoted my comment)", default=True)
 
 

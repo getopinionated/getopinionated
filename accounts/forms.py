@@ -81,7 +81,7 @@ class ProfileUpdateForm(forms.ModelForm):
     )'''
 
     mail_frequency = forms.ChoiceField(label="Mail me", choices=CustomUser.MAIL_FREQUENCIES, widget=forms.RadioSelect())
-    mail_when_voting_stage_change = forms.ChoiceField(label="Content of mails: inform me about new/voting/finished proposals when",
+    mail_when_voting_stage_change = forms.ChoiceField(label="Mail content: inform me about new/voting/finished proposals",
             choices=CustomUser.MAIL_WHEN_VOTING_STAGE_CHANGE, widget=forms.RadioSelect())
     
     def __init__(self, *args, **kwargs):
