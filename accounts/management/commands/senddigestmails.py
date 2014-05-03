@@ -17,18 +17,25 @@ class Command(LabelCommand):
     help = '''Send a mail to the users regarding new events.
 
               Arguments:
-                  - label: possible values:
+                  - mail_frequency: possible values:
                         - "IMMEDIATELY": for users that chose to receive a mail immediately.
                         - "DAILY": for users that chose to receive a mail daily.
                         - "WEEKLY": for users that chose to receive a mail weekly.
 
     '''
-    def handle_label(self, label, **options):
+
+    _HUMAN_READABLE_MAIL_FREQUENCY = {
+        'IMMEDIATELY': '',
+        'DAILY': 'daily ',
+        'WEEKLY': 'weekly ',
+    }
+
+    def handle_label(self, mail_frequency, **options):
         # argument checks
-        assert label in ['IMMEDIATELY', 'DAILY', 'WEEKLY']
+        assert mail_frequency in ['IMMEDIATELY', 'DAILY', 'WEEKLY']
 
         mail_cnt = 0
-        for user in CustomUser.objects.filter(mail_frequency=label).all():
+        for user in CustomUser.objects.filter(mail_frequency=mail_frequency).all():
 
             # check if valid email
             if not user.email or '@' not in user.email:
@@ -70,22 +77,15 @@ class Command(LabelCommand):
 
             events = list(OrderedDict.fromkeys(events)) # filter duplicate events while keeping order
 
-
-            ################# BARRIER BETWEEN OLD AND NEW CODE #################
-            # TODO:  fix template
-            mail_text = "TODO"
-    #         unsubscribecode = UnsubscribeCode(user=user, code=random.SystemRandom().getrandbits(64))
-    #         unsubscribecode.save()
-    #         mail_text = render_to_string('mails/digestmail.html', dictionary={
-				# 'DOMAIN_NAME':settings.DOMAIN_NAME,
-    #                             'new_proposals':new_proposals,
-    #                             'voting_proposals':voting_proposals,
-    #                             'finished_proposals':finished_proposals,
-    #                             'unsubscribecode':unsubscribecode,
-    #                             'label':label,
-    #                             'user':user
-    #                             })
-            ################# BARRIER BETWEEN OLD AND NEW CODE #################
+            unsubscribecode = UnsubscribeCode(user=user, code=random.SystemRandom().getrandbits(64))
+            unsubscribecode.save()
+            mail_text = render_to_string('mails/digestmail.html', dictionary={
+				'DOMAIN_NAME': settings.DOMAIN_NAME,
+                'unsubscribecode': unsubscribecode,
+                'mail_frequency': self._HUMAN_READABLE_MAIL_FREQUENCY[mail_frequency],
+                'events': events,
+                'user': user,
+            })
 
             ### send mail ###
             try:
