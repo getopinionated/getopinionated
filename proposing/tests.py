@@ -174,17 +174,18 @@ class ProposalTestCase(TestCase):
         ## get last objects
         last_amendment = AmendmentProposal.all_objects.all().order_by('-create_date')[0]
         last_history = VotablePostHistory.objects.all().order_by('-date')[0]
+        new_proposal2 = AmendmentProposal.objects.get(pk=self.proposal2.pk)
 
         ## test last_amendment, should be hisotical_record copy of proposal2
         self.assertEqual(last_amendment.is_historical_record, True)
         self.assertEqual(last_amendment.enabled, False)
         self.assertEqual(last_amendment.title, "TESTTITLE")
-        self.assertEqual(last_amendment.diff.pk, self.proposal2.diff.pk)
+        self.assertEqual(last_amendment.diff.pk, new_proposal2.diff.pk)
 
         ## test last_history, shoud be history for proposal2
         self.assertEqual(last_history.editing_user, None)
         self.assertEqual(last_history.editing_amendment.pk, self.proposal1.pk)
-        self.assertEqual(last_history.post.pk, self.proposal2.pk)
+        self.assertEqual(last_history.post.pk, new_proposal2.pk)
         self.assertEqual(last_history.post_at_date.pk, last_amendment.pk)
 
         ## test new state of proposal1

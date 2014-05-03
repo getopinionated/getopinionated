@@ -131,7 +131,7 @@ class VotablePost(DisableableModel):
 
         # create VotablePostHistory
         vp_history = VotablePostHistory(
-            editing_user=editing_user if editing_user.is_authenticated() else None,
+            editing_user=editing_user if (editing_user and editing_user.is_authenticated()) else None,
             editing_amendment=editing_amendment,
             post=selfcast,
             post_at_date=historical_record,
@@ -448,7 +448,7 @@ class Proposal(VotablePost):
             Keeps into account possibility of already existing object.
         """
         # if self.pk == None:
-        #     return Proposal.objects.filter(title__iexact=title).exclude(pk=self.pk).count() == 0 \
+        #     return Proposal.objects.filter(title__iexact=title).exclude(pk=self.pk).count() == 0 \history
         #         and Proposal.all_objects.filter(slug=slugify(title).exclude(pk=self.pk).count() == 0)
         # else:
         return Proposal.objects.filter(title__iexact=title).exclude(pk=self.pk).count() == 0
@@ -630,6 +630,7 @@ class AmendmentProposal(Proposal):
                 ~Q(voting_stage='REJECTED'),
                 ~Q(voting_stage='EXPIRED'),
                 ~Q(pk=self.pk),
+                 Q(enabled=True),
             ):
             try:
                 if hasattr(proposal,'diff'):

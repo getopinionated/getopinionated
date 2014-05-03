@@ -112,9 +112,9 @@ class Command(NoArgsCommand):
         validproxies = proxies.filter(tags__in = proposal.tags.all()).filter(isdefault=False)
         #select default edges from delegating people not in the previous set
         validproxies = validproxies | (proxies.filter(isdefault=True).exclude(delegating__in = validproxies.values('delegating')))
-        logged_in_users = CustomUser.objects.all().exclude()
-        # TODO@Jonas: this seems to be an error: delegating__in doesn't exist
-        validproxies = validproxies.exclude(delegating__in)
+        #logged_in_users = CustomUser.objects.all().exclude()
+        # TODO@Jonas: Work in progress on filtering old users
+        #validproxies = validproxies.exclude(delegating__in)
         validproxies = list(validproxies)
         votes = list(proposal.proposal_votes.all())
         voters = list(CustomUser.objects.filter(id__in=voters).all())
