@@ -431,7 +431,10 @@ class ProposalLifeCycleEvent(Event):
         for u in proposal.favorited_by.all():
             listening_users.add(u)
 
-        return listening_users
+        if self.new_voting_stage == 'DISCUSSION':
+            return _everyone_except(listening_users, proposal.creator)
+        else:
+            return listening_users
 
     @staticmethod
     @overrides(Event)
