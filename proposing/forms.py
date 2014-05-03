@@ -1,22 +1,24 @@
+import itertools
+
 from django import forms
-from common.forms import FocussingModelForm
-from common.beautifulsoup import BeautifulSoup
-from common import sanitizehtml
-from document.models import FullDocument, Diff
-from proposing.widgets import TagSelectorWidget, RichTextEditorWidget,\
-    VeryRichTextEditorWidget, NumberSliderWidget, EmptyTagSelectorWidget
-from proposing.fields import TagChoiceField, UserChoiceField
 from django.contrib.auth.models import User
-from accounts.models import CustomUser
 from django.forms.widgets import SelectMultiple
 from django.forms.fields import MultipleChoiceField
 from django.forms.models import ModelMultipleChoiceField
-from models import VotablePost, Proposal, AmendmentProposal, PositionProposal, Comment, CommentReply, Tag, VotablePostHistory, Proxy
-import itertools
-
-from common.socialnetwork import posttotwitter
 from django.core.urlresolvers import reverse
 from django.conf import settings
+
+from common.forms import FocussingModelForm
+from common.beautifulsoup import BeautifulSoup
+from common.socialnetwork import posttotwitter
+from common import sanitizehtml
+from accounts.models import CustomUser
+from document.models import FullDocument, Diff
+from event.models import VotablePostReactionEvent
+from widgets import TagSelectorWidget, RichTextEditorWidget,\
+    VeryRichTextEditorWidget, NumberSliderWidget, EmptyTagSelectorWidget
+from fields import TagChoiceField, UserChoiceField
+from models import VotablePost, Proposal, AmendmentProposal, PositionProposal, Comment, CommentReply, Tag, VotablePostHistory, Proxy
 
 class ProposalForm(forms.ModelForm):
     """ abstract superclass for AmendmentProposalForm and PositionProposalForm """
@@ -155,6 +157,12 @@ class CommentForm(forms.ModelForm):
 
         ## build history
         new_comment.build_history(editing_user=user) # creates a historical record clone and a VotablePostHistory
+
+        ## add event
+        VotablePostReactionEvent.new_event_and_create_listeners_and_email_queue_entries(
+            origin_post=proposal,
+            reaction_post=new_comment,
+        )
         return new_comment
 
 class CommentReplyForm(forms.ModelForm):
@@ -173,6 +181,12 @@ class CommentReplyForm(forms.ModelForm):
 
         ## build history
         new_comment_reply.build_history(editing_user=user) # creates a historical record clone and a VotablePostHistory
+
+        ## add event
+        VotablePostReactionEvent.new_event_and_create_listeners_and_email_queue_entries(
+            origin_post=comment,
+            reaction_post=new_comment_reply,
+        )
         return new_comment_reply
 
 class VotablePostEditForm(forms.ModelForm):

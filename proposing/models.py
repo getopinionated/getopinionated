@@ -313,7 +313,7 @@ class Proposal(VotablePost):
     discussion_time = models.IntegerField(default=7)
     tags = models.ManyToManyField(Tag, related_name="proposals_including_disabled")
     avgProposalvoteScore = models.FloatField("score", default=0.0)
-    favorited_by = models.ManyToManyField(User, related_name="favorites_including_disabled", null=True, blank=True)
+    favorited_by = models.ManyToManyField(CustomUser, related_name="favorites_including_disabled", null=True, blank=True)
     # the 'p+' inhibits the creation of a proposal_set in User and Group (would not make sense because disabled objects are also in this list)
     allowed_groups = models.ManyToManyField(Group, null=True, blank=True, related_name="p+") # if null, all users can vote for this proposal
     viewed_by =  models.ManyToManyField(CustomUser, null=True, blank=True, related_name="p+")

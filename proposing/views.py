@@ -1,4 +1,5 @@
 import time, json, logging, datetime
+
 from django.utils import timezone
 from django.db.models import Q, Count
 from django.http import HttpResponse, Http404, HttpResponseRedirect
@@ -10,12 +11,14 @@ from django.views.decorators.http import require_POST
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
+from django.utils.html import escapejs
+
 from proposing.models import Tag, ProxyProposalVote, Proxy, VotablePost, FinalProposalVote
 from accounts.decorators import logged_in_or
 from document.models import FullDocument
+from event.models import UpDownVoteEvent
 from models import VotablePost, UpDownVote, Proposal, Comment, CommentReply, ProposalVote, AmendmentProposal, PositionProposal
 from forms import CommentForm, CommentReplyForm, CommentEditForm, CommentReplyEditForm, ProxyForm, AmendmentProposalForm, PositionProposalForm
-from django.utils.html import escapejs
 
 class TimelineData:
     # settings
@@ -379,22 +382,28 @@ def ajaxfavorite(request, proposal_slug):
 def ajaxendorse(request, proposal_slug):
     proposal = get_object_or_404(Proposal.objects, slug=proposal_slug)
     user = request.user
+
+    ## disable if UpDownVote already exists
     if proposal.userHasUpdownvoted(user) != None:
         vote = proposal.updownvoteFromUser(user)
         vote.disable()
         return HttpResponse(content=proposal.upvote_score, mimetype='text/plain')
-    # check if upvote is allowed
+    
+    ## check if upvote is allowed
     if not proposal.userCanUpdownvote(user):
         return HttpResponse(content=proposal.upvote_score, mimetype='text/plain')
-    # create updownvote
+    
+    ## create updownvote
     vote = UpDownVote(
         user = user,
         post = proposal,
         value = 1,
     )
     vote.save()
-    return HttpResponse(content=proposal.upvote_score, mimetype='text/plain')
+    # add event
+    UpDownVoteEvent.new_event_and_create_listeners_and_email_queue_entries(updownvote=vote)
 
+    return HttpResponse(content=proposal.upvote_score, mimetype='text/plain')
 
 @login_required
 @require_POST # CSRF is only checked on HTTP post
@@ -402,13 +411,16 @@ def ajaxupdownvote(request, post_id, updown):
     post = get_object_or_404(VotablePost.objects, pk=post_id)
     user = request.user
     previous_vote = post.userHasUpdownvoted(user)
+
     ## user has already voted: remove it
     if previous_vote != None:
         vote = post.updownvoteFromUser(user)
         vote.disable()
+    
     ## requested updownvote on previous_vote ==> cancels vote
     if previous_vote == updown:
         pass
+    
     ## cast new vote
     else:
         # check if upvote is allowed
@@ -421,6 +433,9 @@ def ajaxupdownvote(request, post_id, updown):
             value = (-1 if updown=="down" else 1),
         )
         vote.save()
+        # add event
+        UpDownVoteEvent.new_event_and_create_listeners_and_email_queue_entries(updownvote=vote)
+
     return HttpResponse(content=post.upvote_score, mimetype='text/plain')
 
 @login_required

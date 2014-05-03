@@ -87,6 +87,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
     # 'django.middleware.cache.UpdateCacheMiddleware',
     # "django.middleware.cache.FetchFromCacheMiddleware",
+    'accounts.middleware.UpdateLastActivityMiddleware',
 ]
 
 ROOT_URLCONF = 'getopinionated.urls'
@@ -131,7 +132,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'accounts',
     'social_auth',
-    # 'event', # temporarily disabled because not yet used
+    'event',
     # libs
     'libs.sorl.thumbnail',
     'libs.debug_toolbar',

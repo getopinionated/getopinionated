@@ -12,25 +12,28 @@ class BundledEvent:
     """ Contains all information to generate a bundled representation of a set of events """
     events = None
     unseen_events = False
-    user = None
+    reading_user = None
+    human_readable_text = ""
+    link_url = ""
 
-    def __init__(self, events, unseen_events, user):
+    def __init__(self, events, unseen_events, reading_user):
         """ Constructor.
 
         Arguments:
         events -- List of mutually combinable events that are bundled. Their ordering does not matter as they will
                   be sorted.
         unseen_events -- List of unseen events. May contain events that are irrelevant.
-        user -- the user that will be looking at the event.
+        reading_user -- the user that will be looking at the event.
 
         """
         self.events = sorted(events, key=lambda e: e.date_created)
         self.unseen_events = unseen_events
-        self.user = user
+        self.reading_user = reading_user
+        self.human_readable_text, self.link_url = Event.generate_human_readable_format(self.events, self.reading_user)
 
     def html_string(self):
         try:
-            return mark_safe(Event.generate_html_string_for(self.events, self.user))
+            return mark_safe(Event.generate_html_string_for(self.events, self.reading_user))
         except:
             import traceback
             logger.warning(traceback.format_exc())
@@ -56,8 +59,14 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
 
     """
     def _get_events(seen_by_user):
+        # get events with seen_by_user == seen_by_user
         event_listeners = personal_event_listeners.filter(seen_by_user=seen_by_user).order_by('-event__date_created')
-        return [listener.event.cast() for listener in event_listeners]
+        events = [listener.event.cast() for listener in event_listeners]
+
+        # filter deprecated events
+        events = [event for event in events if not event.is_deprecated(user)]
+        return events
+
 
     def _combine_events_where_possible(events):
         """ Combine events where possible, keeping the original ordering (the first occurence of combined events remain ordered).
@@ -70,7 +79,8 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
         while combine_candidates:
             event = combine_candidates[0]
             # get combineable events
-            combinable_events = [event_cand for event_cand in combine_candidates if event.can_be_combined_with(event_cand, user)]
+            combinable_events = [event_cand for event_cand in combine_candidates if \
+                type(event) == type(event_cand) and event.can_be_combined_with(event_cand, user)]
             assert event in combinable_events, "reflexivity is violated"
             result.append(combinable_events)
             # update candidates
@@ -79,7 +89,7 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
 
     def _add_event_to_combined_events(combined_events, event):
         for bundle in combined_events:
-            if bundle[0].can_be_combined_with(event, user):
+            if type(bundle[0]) == type(event) and bundle[0].can_be_combined_with(event, user):
                 bundle.append(event)
                 break
         else:
@@ -88,7 +98,7 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
 
     ## get user
     if not personal_event_listeners or personal_event_listeners.count() == 0:
-        return
+        return []
     user = personal_event_listeners.latest('pk').user
 
     ## Step 1: combine unseen_events
@@ -104,11 +114,32 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
             combined_events = _add_event_to_combined_events(combined_events, event)
 
     ## Step 3: generate BundledEvent from combined_events
+    result = []
     for combination in combined_events:
-        yield BundledEvent(
+        result.append(BundledEvent(
             events=combination,
             unseen_events=unseen_events,
-            user=user,
-        )
+            reading_user=user,
+        ))
+    return result
 
-    # return [mark_safe("<b>{}</b><br>".format(unicode(l))) for l in personal_event_listeners.all()]
+@register.filter(name='cached_events')
+def cached_events(user):
+    """Calls the more versatile filter listeners_to_bundled_events to generate max 10 bundles and caches
+    the result.
+
+    """
+    if hasattr(user, '_cached_events'):
+        return user._cached_events
+
+    result = listeners_to_bundled_events(
+        personal_event_listeners=user.personal_event_listeners,
+        max_num_of_bundles=10,
+    )
+    user._cached_events = result
+    return result
+
+@register.filter(name='count_unseen_bundledevents')
+def count_unseen_bundledevents(bundledevents):
+    """Return the number of BundledEvents in bundledevents that respond True to contains_unseen_events()."""
+    return len([b for b in bundledevents if b.contains_unseen_events()])

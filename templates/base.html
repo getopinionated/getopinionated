@@ -1,6 +1,6 @@
 {% load i18n %}
 {% load call_with_args %}
-
+{% load event_filters %}
 
 <!DOCTYPE html>
 <html>
@@ -22,99 +22,144 @@
     <meta charset="utf-8" />
     {% block extrahead %} {% endblock %}
 </head>
-<body id="body"
-	{% if not user.is_authenticated %}
-    style="padding-top: 60px;padding-bottom: 40px;"
-    {% endif %}
-    >
-	{% if not user.is_authenticated %}
-	<div class="navbar navbar-inverse navbar-fixed-top">
+<body id="body" {% if not user.is_authenticated %}style="padding-top: 60px;padding-bottom: 40px;"{% endif %}>
+
+  {% if not user.is_authenticated %}
+    <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
           <div class="nav-collapse collapse">
-    		<ul class="nav">
+            <ul class="nav">
               <li><a href="{% url user-register %}?next={{ request.get_full_path }}">Register</a></li>
               <li><a href="{% url socialauth_begin "facebook" %}?next={{ request.get_full_path }}"><img src="{{STATIC_URL}}images/facebook-24.png" alt="facebook" /></a></li>
               <li><a href="{% url socialauth_begin "twitter" %}?next={{ request.get_full_path }}"><img src="{{STATIC_URL}}images/twitter-24.png" alt="twitter" /></a></li>
               <li><a href="{% url socialauth_begin "google-oauth2" %}?next={{ request.get_full_path }}"><img src="{{STATIC_URL}}images/google-24.png" alt="google" /></a></li>
               <li><a href="{% url socialauth_begin "linkedin" %}?next={{ request.get_full_path }}"><img src="{{STATIC_URL}}images/linkedin-24.png" alt="linkedin" /></a></li>
               <li><a href="{% url socialauth_begin "eID" %}?next={{ request.get_full_path }}"><img src="{{STATIC_URL}}images/eid-24.png" alt="e-ID" /></a></li>
-          	</ul>
+            </ul>
             <form class="navbar-form pull-right" action="{% url user-login %}" method="POST">
-            	{% csrf_js_token %}
-	            <input class="span2" name="username" type="text" placeholder="Email">
-	            <input class="span2" name="password" type="password" placeholder="Password">
-	            <input type="hidden" name="next" value="{{ request.path }}" />
-	            <button type="submit" value="Login" class="btn">Sign in</button>
+              {% csrf_js_token %}
+                <input class="span2" name="username" type="text" placeholder="Email">
+                <input class="span2" name="password" type="password" placeholder="Password">
+                <input type="hidden" name="next" value="{{ request.path }}" />
+                <button type="submit" value="Login" class="btn">Sign in</button>
             </form>
           </div><!--/.nav-collapse -->
         </div>
       </div>
     </div>
-    {% endif %}
+  {% endif %}
 
-	
-	<div  class="container">
-	    <section id="content">
-	
-	        <header>
-	            <div id="header-logo"><a href="{% url home-index %}"><img src="{{STATIC_URL}}images/logo.png" alt="" /></a></div>
-	            <div id="header-title"><a href="{% url home-index %}"><span class="title-get">get</span><span class="title-opinionated">Opinionated</span></a></div>
-	            {% if settings.SHOW_FOLLOW_US_ON_FB_AND_TWITTER_BANNER %}
-                    <div id="header-modifier">Follow us<br \><a href="https://www.facebook.com/getopinionated">on facebook</a><br \><a href="https://twitter.com/get_opinionated">or twitter</a></div>
-                {% endif %}
-	        </header>
-	        
-			<div class="navbar">
-	          <div class="navbar-inner">
-	            <div class="container">
-	              <ul class="nav">
-	                <li><a href="{% url about %}"><i class="icon-home"></i>&nbsp;About</a></li>
-                    {% if settings.AMENDMENTS_ALLOWED %}
-    	                <li><a href="{% url latest-default-document-detail %}">Document</a></li>
-                    {% endif %}
-	                <li><a href="{% url proposals-index %}">Proposals</a></li>
-                    {% if settings.PROXIES_ALLOWED %}
-    	                <li><a href="{% url proxy-index %}">Proxy</a></li>
-                    {% endif %}
-	                {% if user.is_authenticated %}
-		                <li><a href="{% url user-profile user.slug %}">Profile</a></li>
-		                <li><a href="{% url profile-update %}">Account</a></li>
-		                <li><a href="{% url user-logout %}?next={{request.path|urlencode}}">Logout</a></li>
-			        {% endif %}
-			        {% block menu %} {% endblock %}        
-	              </ul>
-	            </div>
-	          </div>
-	        </div><!-- /.navbar -->
-	
-	        {% block beforecontent %}{% endblock %}
-	        
-	
-	        <section id="main">
-	           <div class="inset">
-	               {% if messages %}
-					    {% for message in messages %}
-					      <div class="alert alert-info">
-					          <button type="button" class="close" data-dismiss="alert">&times;</button>
-					          <div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
-					      </div>
-					    {% endfor %}	
-		           {% endif %}
-	               {% block content %}{% endblock %}
-	           </div>
-	        </section>
-	
-	    </section>
-	    <footer>
-	        <p>Created by the getopinionated team. Developed under the GPL license.</p>
-	    </footer>
-    
+
+  <div  class="container">
+    <section id="content">
+      <header>
+        <div id="header-logo"><a href="{% url home-index %}"><img src="{{STATIC_URL}}images/logo.png" alt="" /></a></div>
+        <div id="header-title"><a href="{% url home-index %}">
+          <span class="title-get">get</span><span class="title-opinionated">Opinionated</span></a>
+        </div>
+        {% if settings.SHOW_FOLLOW_US_ON_FB_AND_TWITTER_BANNER %}
+          <div id="header-modifier">Follow us<br \>
+            <a href="https://www.facebook.com/getopinionated">on facebook</a><br \>
+            <a href="https://twitter.com/get_opinionated">or twitter</a>
+          </div>
+        {% endif %}
+      </header>
+
+      <div class="navbar">
+        <div class="navbar-inner">
+          <div class="container">
+            <ul class="nav">
+              <li>
+                <a href="{% url about %}"><i class="icon-home"></i>&nbsp;About</a>
+              </li>
+              {% if settings.AMENDMENTS_ALLOWED %}
+                <li><a href="{% url latest-default-document-detail %}">Document</a></li>
+              {% endif %}
+              <li><a href="{% url proposals-index %}">Proposals</a></li>
+              {% if settings.PROXIES_ALLOWED %}
+                <li><a href="{% url proxy-index %}">Proxy</a></li>
+              {% endif %}
+              {% if user.is_authenticated %}
+                <li><a href="{% url user-profile user.slug %}">Profile</a></li>
+                <li><a href="{% url profile-update %}">Account</a></li>
+                <li><a href="{% url user-logout %}?next={{request.path|urlencode}}">Logout {{user}}</a></li>
+              {% endif %}
+              {% block menu %} {% endblock %}
+            </ul>
+
+            <!-- notification bar -->
+            {% if user.is_authenticated %}
+              <ul class="nav pull-right">
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="notification-dropdown">
+                    <i class="icon-comment"></i>
+                    <b id="notification-num-events">{{ user|cached_events|count_unseen_bundledevents }}</b>
+                  </a>
+                  <ul class="dropdown-menu">
+                    {% for bundledevent in user|cached_events %}
+                      <li {% if bundledevent.contains_unseen_events %}class="active"{% endif %}>
+                        <a href="{{ bundledevent.link_url }}">{{ bundledevent.human_readable_text }}</a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </li>
+              </ul>
+            {% endif %}
+
+          </div>
+        </div>
+      </div><!-- /.navbar -->
+
+      {% block beforecontent %}{% endblock %}
+
+      <section id="main">
+        <div class="inset">
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-info">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
+              </div>
+            {% endfor %}
+          {% endif %}
+          {% block content %}{% endblock %}
+        </div>
+      </section>
+
+    </section><!-- /#content -->
+
+    <footer>
+      <p>Created by the getopinionated team. Developed under the GPL license.</p>
+    </footer>
+
 	</div>
-	
+
 	<!--scripts at the end!-->
-    <script type="text/javascript" src="{{STATIC_URL}}js/initajax.js"></script>
-    <script type="text/javascript" src="{{STATIC_URL}}js/proposal.js"></script>
-    {% block extrascripts %} {% endblock %}
+  <script type="text/javascript" src="{{STATIC_URL}}js/initajax.js"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/proposal.js"></script>
+  <script type="text/javascript">
+    var notificationDropdownClickCount = 0;
+    $("#notification-dropdown").click(function() {
+      if(notificationDropdownClickCount == 0) {
+        // notify server that user viewed its events
+        $.ajax({
+          type: "POST",
+          url: "/event/ajax/notificationbarclicked/",
+        })
+      } else {
+        // set notification-num-events to 0 if clicked twice
+        $("#notification-num-events").html("0");
+      }
+      notificationDropdownClickCount++;
+
+      // set notification-num-events to 0 after some time
+      setTimeout( function() {
+         $("#notification-num-events").html("0");
+      }, 1000);
+
+    });
+  </script>
+  {% block extrascripts %} {% endblock %}
 </body>
 </html>
