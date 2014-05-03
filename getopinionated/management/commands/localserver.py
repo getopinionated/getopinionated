@@ -35,4 +35,4 @@ class Command(BaseCommand):
     def help_user_call_localserver(self):
         self.stdout.write("*** Done ***\n")
         self.stdout.write("If the previous succeeded, you can start your own local server using:\n\n")
-        self.stdout.write("    python manage.py runserver 8000\n\n")
+        self.stdout.write("    python manage.py runserver\n\n")
