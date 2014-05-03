@@ -417,3 +417,4 @@ if DEBUG:
 #        level = logging.INFO,
 #        format = '%(asctime)s %(levelname)s %(message)s',
 #    )
+DAYS_TO_INACTIVE = 10

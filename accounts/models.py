@@ -5,6 +5,9 @@ from libs.sorl.thumbnail import ImageField
 from django import forms
 from getopinionated.settings import MEDIA_ROOT
 from django.utils.timezone import now
+from django.utils import timezone
+from django.utils.timezone import datetime, timedelta
+from django.conf import settings
 
 class CustomUserManager(UserManager):
     def create_user(self, username, *args, **kwargs):
@@ -54,6 +57,9 @@ class CustomUser(User):
             return self.id == profile.id
         except CustomUser.DoesNotExist:
             return True
+
+    def isActive(self):
+        return self.last_activity > timezone.now()-timedelta(days=settings.DAYS_TO_INACTIVE)
 
     @property
     def display_name(self):

@@ -8,6 +8,7 @@ from django.core.management.base import BaseCommand, CommandError, NoArgsCommand
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.timezone import datetime, timedelta
+from django.utils.timezone import now
 from django.core.urlresolvers import reverse
 from django.conf import settings
 ## project imports
@@ -31,7 +32,7 @@ def concurrent():
     import time
     import fcntl
     file_path = './lock'
-    file_handle = open(file_path, 'w') # --> empties this file apparently on MacOS
+    file_handle =open(file_path, 'w') # --> empties this file apparently on MacOS
     try:
         fcntl.lockf(file_handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
         return False    
@@ -40,7 +41,6 @@ def concurrent():
 
 class Command(NoArgsCommand):
     help = 'Check all proposals and move the proposals which fit the conditions to the next round'
-
     def handle_noargs(self, *args, **kwargs):
         # don't run a concurrent script twice
         if concurrent():
@@ -101,13 +101,17 @@ class Command(NoArgsCommand):
     @staticmethod
     def doVoteCount(proposal):
         
+        # these users have become inactive. Remove them from the voting results
+        inactive_users = CustomUser.objects.filter(last_activity__lt=timezone.now()-timedelta(days=settings.DAYS_TO_INACTIVE))
+        
         # delete all previous results (safety, this method may be called twice, even though it shouldn't)
         ProxyProposalVote.objects.filter(proposal=proposal).delete()
         FinalProposalVote.objects.filter(proposal=proposal).delete()
         # set up graph, doing as few queries as possible
         voters = proposal.proposal_votes.values('user')
         #exclude proxies from people who voted themselves
-        proxies = Proxy.objects.exclude(delegating__in = voters).all()      
+        proxies = Proxy.objects.exclude(delegating__in = voters).all()
+        proxies = proxies.exclude(delegating__in = inactive_users)
         #select edges with the correct tag
         validproxies = proxies.filter(tags__in = proposal.tags.all()).filter(isdefault=False)
         #select default edges from delegating people not in the previous set
@@ -118,6 +122,8 @@ class Command(NoArgsCommand):
         validproxies = list(validproxies)
         votes = list(proposal.proposal_votes.all())
         voters = list(CustomUser.objects.filter(id__in=voters).all())
+        
+        
         
         if len(votes)==0:
             #no votes have been cast, no counting to do
