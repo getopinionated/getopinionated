@@ -630,6 +630,7 @@ class AmendmentProposal(Proposal):
                 ~Q(voting_stage='REJECTED'),
                 ~Q(voting_stage='EXPIRED'),
                 ~Q(pk=self.pk),
+                 Q(enabled=True),
             ):
             try:
                 if hasattr(proposal,'diff'):
