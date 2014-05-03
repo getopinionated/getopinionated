@@ -48,6 +48,11 @@
 							<td>last login</td>
 							<td>{{member.last_login|timesince}}</td>
 						</tr>
+                        <tr>
+                            <th></th>
+                            <td>last activity</td>
+                            <td>{{member.last_activity|timesince}}</td>
+                        </tr>
 						{% if not member.isActive %}
 						     <tr>
 	                            <th></th>
