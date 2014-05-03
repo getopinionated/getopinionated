@@ -76,7 +76,6 @@ class Command(LabelCommand):
                                 'label':label,
                                 'user':user                    
                                 })
-            print text
             print "mail sent to:",mail_address
             
             try:
