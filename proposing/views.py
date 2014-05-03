@@ -120,24 +120,24 @@ class ProxyGraphData:
             proxies = proxies | (Proxy.objects.filter(isdefault=True).exclude(delegating__in = proxies.values('delegating')))
 
         for proxy in proxies:
-            if proxy.delegating.isActive() and proxy.delegate.isActive():
+            if proxy.delegating.isActive():
                 nodes.add(proxy.delegating.display_name)
                 for delegate in proxy.delegates.all():
-                    nodes.add(delegate.display_name)
-                    if proxy.tags.count():
-                        self.dataEdges.append(r"['{}', '{}', {{color: '{}', label: '{}'}}]".format(
-                            proxy.delegating.display_name,
-                            delegate.display_name,
-                            '#0C3',
-                            ', '.join([escapejs(tag.name) for tag in proxy.tags.all()]),
-                        ))
-                    else:
-                        self.dataEdges.append(r"['{}', '{}', {{color: '{}'}}]".format(
-                            proxy.delegating.display_name,
-                            delegate.display_name,
-                            '#000'
-                        ))
-
+                    if delegate.isActive():
+                        nodes.add(delegate.display_name)
+                        if proxy.tags.count():
+                            self.dataEdges.append(r"['{}', '{}', {{color: '{}', label: '{}'}}]".format(
+                                proxy.delegating.display_name,
+                                delegate.display_name,
+                                '#0C3',
+                                ', '.join([escapejs(tag.name) for tag in proxy.tags.all()]),
+                            ))
+                        else:
+                            self.dataEdges.append(r"['{}', '{}', {{color: '{}'}}]".format(
+                                proxy.delegating.display_name,
+                                delegate.display_name,
+                                '#000'
+                            ))
         ## fill in nodes
         self.dataNodes = list(nodes)
 
