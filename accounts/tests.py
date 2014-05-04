@@ -86,21 +86,20 @@ class SendEmailTestCase(TestCase):
         """ checks whether the number of bundledevents that are shown in the given mail are equal to num_bundled_events """
         self.assertEquals(mail_object.body.count('- '), num_bundled_events)
 
+    def _print_email_body(self, mail_object):
+        print "============================ EMAIL ============================="
+        print mail.outbox[0].body
+        print "========================= END OF EMAIL ========================="
+        print
+
     def test_send_mail_immediately(self):
-        mail.outbox = []
+        mail.outbox = [] # Empty the test outbox
         call_command('senddigestmails', 'IMMEDIATELY')
         self.assertEquals(len(mail.outbox), 1)
         self._assert_num_bundled_events_in_mail(mail.outbox[0], 5 + 1) # global + personal
-        print
-        print
-        print
-        print mail.outbox[0].body
-        print
-        print
-        print
-
-        # Empty the test outbox
-        mail.outbox = []
+        #self._print_email_body(mail.outbox[0])
+        
+        mail.outbox = [] # Empty the test outbox
         call_command('senddigestmails', 'IMMEDIATELY')
         self.assertEquals(len(mail.outbox), 0)
 
