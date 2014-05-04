@@ -128,5 +128,12 @@ class SendEmailTestCase(TestCase):
         self.assertEquals(len(mail.outbox), 0)
 
     def test_send_mail_weekly(self):
-        pass
+        mail.outbox = [] # empty the test outbox
+        call_command('senddigestmails', 'WEEKLY', stdout=open(os.devnull, 'w'))
+        self.assertEquals(len(mail.outbox), 1)
+        self._assert_num_bundled_events_in_mail(mail.outbox[0], 5 + 0) # global + personal
+        
+        mail.outbox = [] # empty the test outbox
+        call_command('senddigestmails', 'WEEKLY', stdout=open(os.devnull, 'w'))
+        self.assertEquals(len(mail.outbox), 0)
 
