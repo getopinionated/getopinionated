@@ -90,6 +90,10 @@ class Command(LabelCommand):
             # add global events
             bundledevents += [BundledEvent(events=[event], unseen_events=[], reading_user=user) for event in global_events]
 
+            ### check if there are events to email about ###
+            if not bundledevents:
+                continue
+
             ### get email text ###
             unsubscribecode = UnsubscribeCode(user=user, code=random.SystemRandom().getrandbits(64))
             unsubscribecode.save()
