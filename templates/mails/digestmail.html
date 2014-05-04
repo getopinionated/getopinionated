@@ -1,8 +1,10 @@
 Hello {{user.username}},
 
 This is your {{mail_frequency}}event mail of what is going on at GetOpinionated.
-{% for event in events %}{{proposal.title}}, by {{proposal.creator}} ({{DOMAIN_NAME}}{% url proposals-detail proposal.slug %})
-{% endfor %}{% endif %}{% if voting_proposals %}
+{% for bundledevent in bundledevents %}
+- {{ bundledevent.human_readable_text }}
+  more info: {{DOMAIN_NAME}}{{ bundledevent.link_url }}{% endfor %}
+
 Yours sincerely,
 
 The GetOpinionated team
