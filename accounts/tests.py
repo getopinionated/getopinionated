@@ -1,3 +1,4 @@
+import os
 from collections import OrderedDict
 
 from django.test import TestCase
@@ -49,10 +50,10 @@ class SendEmailTestCase(TestCase):
         ### set up users ###
         self.users = OrderedDict()
         make_user('user0', mail_frequency='IMMEDIATELY', mail_when_voting_stage_change='ALWAYS', mail_when_related_event=True)
-        make_user('user1', mail_frequency='DAILY', mail_when_voting_stage_change='ALWAYS', mail_when_related_event=False)
-        make_user('user2', mail_frequency='DAILY', mail_when_voting_stage_change='ALWAYS', mail_when_related_event=True)
-        make_user('user3', mail_frequency='DAILY', mail_when_voting_stage_change='I_REACTED', mail_when_related_event=True)
-        make_user('user4', mail_frequency='DAILY', mail_when_voting_stage_change='I_STARRED', mail_when_related_event=True)
+        make_user('user1', mail_frequency='DAILY', mail_when_voting_stage_change='ALWAYS', mail_when_related_event=True)
+        make_user('user2', mail_frequency='DAILY', mail_when_voting_stage_change='ALWAYS', mail_when_related_event=False)
+        make_user('user3', mail_frequency='DAILY', mail_when_voting_stage_change='I_REACTED', mail_when_related_event=False)
+        make_user('user4', mail_frequency='DAILY', mail_when_voting_stage_change='I_STARRED', mail_when_related_event=False)
         make_user('user5', mail_frequency='DAILY', mail_when_voting_stage_change='NEVER', mail_when_related_event=True)
         make_user('user6', mail_frequency='DAILY', mail_when_voting_stage_change='NEVER', mail_when_related_event=False)
         make_user('user7', mail_frequency='WEEKLY', mail_when_voting_stage_change='ALWAYS', mail_when_related_event=True)
@@ -84,7 +85,9 @@ class SendEmailTestCase(TestCase):
 
     def _assert_num_bundled_events_in_mail(self, mail_object, num_bundled_events):
         """ checks whether the number of bundledevents that are shown in the given mail are equal to num_bundled_events """
-        self.assertEquals(mail_object.body.count('- '), num_bundled_events)
+        num_bundled_events_in_mail = mail_object.body.count('- ')
+        self.assertEquals(num_bundled_events_in_mail, num_bundled_events, "Got {} bundledevents, but expected {} in:\n{}\n\n".format(
+            num_bundled_events_in_mail, num_bundled_events, mail_object.body))
 
     def _print_email_body(self, mail_object):
         print "============================ EMAIL ============================="
@@ -92,14 +95,38 @@ class SendEmailTestCase(TestCase):
         print "========================= END OF EMAIL ========================="
         print
 
+    def test_all(self):
+        """ all individual tests should still work if they are performed in one test """
+        self.test_send_mail_immediately()
+        self.test_send_mail_daily()
+        self.test_send_mail_weekly()
+
     def test_send_mail_immediately(self):
-        mail.outbox = [] # Empty the test outbox
-        call_command('senddigestmails', 'IMMEDIATELY')
+        mail.outbox = [] # empty the test outbox
+        call_command('senddigestmails', 'IMMEDIATELY', stdout=open(os.devnull, 'w'))
         self.assertEquals(len(mail.outbox), 1)
         self._assert_num_bundled_events_in_mail(mail.outbox[0], 5 + 1) # global + personal
         #self._print_email_body(mail.outbox[0])
         
-        mail.outbox = [] # Empty the test outbox
-        call_command('senddigestmails', 'IMMEDIATELY')
+        mail.outbox = [] # empty the test outbox
+        call_command('senddigestmails', 'IMMEDIATELY', stdout=open(os.devnull, 'w'))
         self.assertEquals(len(mail.outbox), 0)
+
+    def test_send_mail_daily(self):
+        mail.outbox = [] # empty the test outbox
+        call_command('senddigestmails', 'DAILY', stdout=open(os.devnull, 'w'))
+        self.assertEquals(len(mail.outbox), 5)
+        self._assert_num_bundled_events_in_mail(mail.outbox[0], 5 + 1) # global + personal (user1)
+        self._assert_num_bundled_events_in_mail(mail.outbox[1], 5 + 0) # global + personal (user2)
+        self._assert_num_bundled_events_in_mail(mail.outbox[2], 2 + 0) # global + personal (user3)
+        self._assert_num_bundled_events_in_mail(mail.outbox[3], 1 + 0) # global + personal (user4)
+        self._assert_num_bundled_events_in_mail(mail.outbox[4], 0 + 3) # global + personal (user5)
+        #self._print_email_body(mail.outbox[0])
+        
+        mail.outbox = [] # empty the test outbox
+        call_command('senddigestmails', 'DAILY', stdout=open(os.devnull, 'w'))
+        self.assertEquals(len(mail.outbox), 0)
+
+    def test_send_mail_weekly(self):
+        pass
 

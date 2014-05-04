@@ -66,9 +66,9 @@ class Command(LabelCommand):
                         if user.mail_when_voting_stage_change == 'ALWAYS':
                             eligible_event = True
                         elif user.mail_when_voting_stage_change == 'I_REACTED':
-                            eligible_event = user in event.get_listening_users()
+                            eligible_event = user in event.get_listening_users() and event.new_voting_stage != 'DISCUSSION'
                         elif user.mail_when_voting_stage_change == 'I_STARRED':
-                            eligible_event = user in event.proposal.favorited_by.all()
+                            eligible_event = user in event.proposal.favorited_by.all() and event.new_voting_stage != 'DISCUSSION'
                         elif user.mail_when_voting_stage_change == 'NEVER':
                             eligible_event = False
 
