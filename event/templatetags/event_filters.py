@@ -3,6 +3,7 @@ import logging
 from collections import OrderedDict
 from django import template
 from django.utils.safestring import mark_safe
+from common.utils import deprecated
 from event.models import Event
 
 logger = logging.getLogger('event')
@@ -11,7 +12,7 @@ register = template.Library()
 class BundledEvent:
     """ Contains all information to generate a bundled representation of a set of events """
     events = None
-    unseen_events = False
+    unseen_events = None
     reading_user = None
     human_readable_text = ""
     link_url = ""
@@ -31,6 +32,7 @@ class BundledEvent:
         self.reading_user = reading_user
         self.human_readable_text, self.link_url = Event.generate_human_readable_format(self.events, self.reading_user)
 
+    @deprecated
     def html_string(self):
         try:
             return mark_safe(Event.generate_html_string_for(self.events, self.reading_user))
