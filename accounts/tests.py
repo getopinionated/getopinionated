@@ -3,10 +3,12 @@ from collections import OrderedDict
 
 from django.test import TestCase
 from django.core.management import call_command
+from django.utils import timezone
+from django.utils.timezone import datetime, timedelta
 from django.core import mail
 
 from proposing.models import PositionProposal, Comment
-from event.models import ProposalLifeCycleEvent, UpDownVoteEvent, VotablePostReactionEvent
+from event.models import Event, ProposalLifeCycleEvent, UpDownVoteEvent, VotablePostReactionEvent, GlobalEventEmailQueue
 from accounts.models import CustomUser
 
 class SendEmailTestCase(TestCase):
@@ -137,3 +139,22 @@ class SendEmailTestCase(TestCase):
         call_command('sendeventmails', 'WEEKLY', stdout=open(os.devnull, 'w'))
         self.assertEquals(len(mail.outbox), 0)
 
+    def test_cleanup_globaleventemailqueue(self):
+        original_num_globals = GlobalEventEmailQueue.objects.count()
+
+        ## call sendeventmails with no expired global events
+        queueitem0 = GlobalEventEmailQueue.objects.all()[:1].get()
+        event0 = queueitem0.event
+        event0.date_created = timezone.now() - timedelta(days=6.75)
+        event0.save()
+        call_command('sendeventmails', 'IMMEDIATELY', stdout=open(os.devnull, 'w'))
+        self.assertEquals(GlobalEventEmailQueue.objects.count(), original_num_globals)
+
+        ## call sendeventmails with one expired global event
+        queueitem1 = GlobalEventEmailQueue.objects.all()[1:2].get()
+        event1 = queueitem1.event
+        event1.date_created = timezone.now() - timedelta(days=7.75)
+        event1.save()
+        call_command('sendeventmails', 'IMMEDIATELY', stdout=open(os.devnull, 'w'))
+        self.assertEquals(GlobalEventEmailQueue.objects.count(), original_num_globals - 1)
+        self.assertEquals(GlobalEventEmailQueue.objects.filter(pk=queueitem1.pk).count(), 0)

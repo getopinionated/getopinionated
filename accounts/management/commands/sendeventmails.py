@@ -124,6 +124,9 @@ class Command(LabelCommand):
                 self.stderr.write("mail refused to {}: {}\n".format(user.email, e))
 
 
+        # clean up old entries of GlobalEventEmailQueue
+        GlobalEventEmailQueue.objects.filter(event__date_created__lte=timezone.now()-timedelta(days=7.5)).delete()
+
         # wrap up
         self.stdout.write('Successfully sent the mails:\n')
         self.stdout.write('{} mails sent\n'.format(mail_cnt))
