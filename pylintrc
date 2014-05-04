@@ -39,6 +39,7 @@ disable=
     invalid-name,
     no-member,
     unused-variable,
+    arguments-differ,
 
     unused-import,
     unused-wildcard-import,
