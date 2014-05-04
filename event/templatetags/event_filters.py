@@ -55,7 +55,7 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
     """ Bundles PersonalEventListeners into a list of combined events for use in a notification bar or emails.
 
     Arguments:
-    personal_event_listeners -- should be a models.Manager.
+    personal_event_listeners -- should be a models.Manager or a list.
     max_num_of_bundles -- The maximum number of BundledEvents to return in case seen events are also returned. If
                           not specified, only unseen BundledEvent are returned.
 
@@ -65,7 +65,7 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
     """
     def _get_events(seen_by_user):
         # get events with seen_by_user == seen_by_user
-        event_listeners = personal_event_listeners.filter(seen_by_user=seen_by_user).order_by('-event__date_created')
+        event_listeners = sorted([p for p in personal_event_listeners if p.seen_by_user == seen_by_user], lambda p: -p.event.date_created)
         events = [listener.event.cast() for listener in event_listeners]
 
         # filter deprecated events
@@ -101,10 +101,13 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
             combined_events.append([event])
         return combined_events
 
-    ## get user
-    if not personal_event_listeners or personal_event_listeners.count() == 0:
+    # convert personal_event_listeners to a list
+    personal_event_listeners = [p for p in personal_event_listeners] if personal_event_listeners else []
+    if not personal_event_listeners:
         return []
-    user = personal_event_listeners.latest('pk').user
+
+    ## get user
+    user = personal_event_listeners[0].user
 
     ## Step 1: combine unseen_events
     unseen_events = _get_events(seen_by_user=False)
