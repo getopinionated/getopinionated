@@ -103,18 +103,18 @@ class SendEmailTestCase(TestCase):
 
     def test_send_mail_immediately(self):
         mail.outbox = [] # empty the test outbox
-        call_command('senddigestmails', 'IMMEDIATELY', stdout=open(os.devnull, 'w'))
+        call_command('sendeventmails', 'IMMEDIATELY', stdout=open(os.devnull, 'w'))
         self.assertEquals(len(mail.outbox), 1)
         self._assert_num_bundled_events_in_mail(mail.outbox[0], 5 + 1) # global + personal
         #self._print_email_body(mail.outbox[0])
         
         mail.outbox = [] # empty the test outbox
-        call_command('senddigestmails', 'IMMEDIATELY', stdout=open(os.devnull, 'w'))
+        call_command('sendeventmails', 'IMMEDIATELY', stdout=open(os.devnull, 'w'))
         self.assertEquals(len(mail.outbox), 0)
 
     def test_send_mail_daily(self):
         mail.outbox = [] # empty the test outbox
-        call_command('senddigestmails', 'DAILY', stdout=open(os.devnull, 'w'))
+        call_command('sendeventmails', 'DAILY', stdout=open(os.devnull, 'w'))
         self.assertEquals(len(mail.outbox), 5)
         self._assert_num_bundled_events_in_mail(mail.outbox[0], 5 + 1) # global + personal (user1)
         self._assert_num_bundled_events_in_mail(mail.outbox[1], 5 + 0) # global + personal (user2)
@@ -124,16 +124,16 @@ class SendEmailTestCase(TestCase):
         #self._print_email_body(mail.outbox[0])
         
         mail.outbox = [] # empty the test outbox
-        call_command('senddigestmails', 'DAILY', stdout=open(os.devnull, 'w'))
+        call_command('sendeventmails', 'DAILY', stdout=open(os.devnull, 'w'))
         self.assertEquals(len(mail.outbox), 0)
 
     def test_send_mail_weekly(self):
         mail.outbox = [] # empty the test outbox
-        call_command('senddigestmails', 'WEEKLY', stdout=open(os.devnull, 'w'))
+        call_command('sendeventmails', 'WEEKLY', stdout=open(os.devnull, 'w'))
         self.assertEquals(len(mail.outbox), 1)
         self._assert_num_bundled_events_in_mail(mail.outbox[0], 5 + 0) # global + personal
         
         mail.outbox = [] # empty the test outbox
-        call_command('senddigestmails', 'WEEKLY', stdout=open(os.devnull, 'w'))
+        call_command('sendeventmails', 'WEEKLY', stdout=open(os.devnull, 'w'))
         self.assertEquals(len(mail.outbox), 0)
 
