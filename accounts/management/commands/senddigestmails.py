@@ -80,7 +80,7 @@ class Command(LabelCommand):
                         item.already_mailed_users.add(user)
 
             # filter duplicate events between personal events and global events
-            personal_event_listeners = [p for p in personal_event_listeners if p.event in global_events]
+            personal_event_listeners = [p for p in personal_event_listeners if p.event not in global_events]
 
             ### convert events to bundledevents ###
             bundledevents = []

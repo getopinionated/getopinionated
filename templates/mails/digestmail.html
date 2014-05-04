@@ -2,7 +2,7 @@ Hello {{user.username}},
 
 This is your {{mail_frequency}}event mail of what is going on at GetOpinionated.
 {% for bundledevent in bundledevents %}
-- {{ bundledevent.human_readable_text }}
+- {{ bundledevent.human_readable_text|safe}}
   more info: {{DOMAIN_NAME}}{{ bundledevent.link_url }}{% endfor %}
 
 Yours sincerely,
