@@ -17,7 +17,7 @@ from event.models import PersonalEventEmailQueue, GlobalEventEmailQueue, Proposa
 from event.templatetags.event_filters import BundledEvent, listeners_to_bundled_events
 
 class Command(LabelCommand):
-    help = '''Send a mail to the users regarding new events.
+    help = '''Send a mail to the users regarding new events. This command should be called in a cronjob on the relevant times.
 
               Arguments:
                   - mail_frequency: possible values:
@@ -81,6 +81,15 @@ class Command(LabelCommand):
 
             # filter duplicate events between personal events and global events
             personal_event_listeners = [p for p in personal_event_listeners if p.event not in global_events]
+
+            # filter very old events
+            def check_and_warn_old_event(event):
+                if event.date_created < timezone.now()-timedelta(days=8):
+                    self.stderr.write("Warning: found old event: {}\n".format(event))
+                    return True
+                return False
+            personal_event_listeners = [p for p in personal_event_listeners if not check_and_warn_old_event(p.event)]
+            global_events = [event for event in global_events if not check_and_warn_old_event(event)]
 
             ### convert events to bundledevents ###
             bundledevents = []
