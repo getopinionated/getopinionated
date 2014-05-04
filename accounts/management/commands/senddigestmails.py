@@ -16,7 +16,7 @@ from proposing.models import Proposal, ProxyProposalVote, Proxy, Tag
 from event.models import PersonalEventEmailQueue, GlobalEventEmailQueue, ProposalLifeCycleEvent
 from event.templatetags.event_filters import BundledEvent, listeners_to_bundled_events
 
-class SendMailCommand(LabelCommand):
+class Command(LabelCommand):
     help = '''Send a mail to the users regarding new events.
 
               Arguments:
@@ -104,11 +104,11 @@ class SendMailCommand(LabelCommand):
             ### send mail ###
             try:
                 send_mail('GetOpinionated', mail_text, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
-                self.stdout.write("mail sent to {}".format(user.email))
+                self.stdout.write("mail sent to {}\n".format(user.email))
                 mail_cnt += 1
 
             except SMTPRecipientsRefused as e:
-                self.stderr.write("mail refused to {}: {}".format(user.email, e))
+                self.stderr.write("mail refused to {}: {}\n".format(user.email, e))
 
 
         # wrap up

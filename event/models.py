@@ -412,7 +412,7 @@ class ProposalLifeCycleEvent(Event):
 
     @overrides(Event)
     def can_be_combined_with(self, event, reading_user):
-        return False
+        return self == event
 
     @overrides(Event)
     def get_listening_users(self):
@@ -474,7 +474,7 @@ class ProposalLifeCycleEvent(Event):
     def generate_human_readable_format(events, reading_user):
         # get vars
         assert len(events) == 1, "combining ProposalLifeCycleEvents not (yet) supported"
-        proposal = events[0].proposal
+        proposal = events[0].proposal.cast()
         new_voting_stage = events[0].new_voting_stage
 
         # prepare strings

@@ -65,7 +65,7 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
     """
     def _get_events(seen_by_user):
         # get events with seen_by_user == seen_by_user
-        event_listeners = sorted([p for p in personal_event_listeners if p.seen_by_user == seen_by_user], lambda p: -p.event.date_created)
+        event_listeners = sorted([p for p in personal_event_listeners if p.seen_by_user == seen_by_user], key=lambda p: p.event.date_created, reverse=True)
         events = [listener.event.cast() for listener in event_listeners]
 
         # filter deprecated events
@@ -86,7 +86,7 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
             # get combineable events
             combinable_events = [event_cand for event_cand in combine_candidates if \
                 type(event) == type(event_cand) and event.can_be_combined_with(event_cand, user)]
-            assert event in combinable_events, "reflexivity is violated"
+            assert event in combinable_events, "reflexivity is violated (event={}, combinable_events={})".format(event, combinable_events)
             result.append(combinable_events)
             # update candidates
             combine_candidates = [e for e in combine_candidates if e not in combinable_events]
