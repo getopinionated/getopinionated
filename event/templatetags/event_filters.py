@@ -32,15 +32,6 @@ class BundledEvent:
         self.reading_user = reading_user
         self.human_readable_text, self.link_url = Event.generate_human_readable_format(self.events, self.reading_user)
 
-    @deprecated
-    def html_string(self):
-        try:
-            return mark_safe(Event.generate_html_string_for(self.events, self.reading_user))
-        except:
-            import traceback
-            logger.warning(traceback.format_exc())
-            return "<<ERROR>>"
-
     def contains_unseen_events(self):
         return any(e in self.unseen_events for e in self.events)
 
