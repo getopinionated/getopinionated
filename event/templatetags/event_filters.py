@@ -141,7 +141,7 @@ def cached_events(user):
         return user._cached_events
 
     result = listeners_to_bundled_events(
-        personal_event_listeners=user.personal_event_listeners,
+        personal_event_listeners=user.personal_event_listeners.all(),
         max_num_of_bundles=10,
     )
     user._cached_events = result
