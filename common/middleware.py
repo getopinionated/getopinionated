@@ -38,7 +38,7 @@ class SSLRedirect:
             host = getattr(settings, 'SSL_HOST', request.get_host())
         else:
             host = getattr(settings, 'HTTP_HOST', request.get_host())
-        newurl = "%s://%s%s" % (protocol,host,request.get_full_path())
+        newurl = "%s://%s%s" % (protocol, host, request.get_full_path())
         if settings.DEBUG and request.method == 'POST':
             raise RuntimeError, \
         """Django can't perform an SSL redirect while maintaining POST data.

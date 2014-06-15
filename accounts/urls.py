@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import django.contrib.auth.views
-from django.conf.urls.defaults import *
+from django.conf.urls import *
 from views import userlogin, userregister, profileupdate, userlogout, userprofile, passwordreset
-from accounts.views import userproposals, usercomments, uservotes, userproxies,\
+from accounts.views import userproposals, usercomments, uservotes, userproxies, \
     usertags, userproxyvotes, mailunsubscribe, logincode
 
 urlpatterns = patterns('accounts.views',

@@ -1,7 +1,9 @@
 # encoding: utf-8
 from django.contrib import admin
+from common.utils import overrides
 
 class ImmutableModelAdmin(admin.ModelAdmin):
+    @overrides(admin.ModelAdmin)
     def get_readonly_fields(self, request, obj=None):
         # Override super class method, in order to achieve readonly fields, at
         # signed-off entities forms
@@ -17,6 +19,7 @@ class ImmutableModelAdmin(admin.ModelAdmin):
         else:
             return self.readonly_fields
 
+    @overrides(admin.ModelAdmin)
     def has_delete_permission(self, request, obj=None):
         if obj == None: # bugfix by Jens Nyman
             return False
@@ -40,6 +43,7 @@ class ComplexImmutableModelAdmin(ImmutableModelAdmin):
 
             obj.save()
 
+    @overrides(admin.ModelAdmin)
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
         if not obj is None and obj.is_immutable():
             context['adminform'].form.fields['immutable_lock'].widget.attrs['disabled'] = True
@@ -53,7 +57,8 @@ class ComplexImmutableModelAdmin(ImmutableModelAdmin):
             obj,
         )
 
-    def change_view(self, request, object_id, extra_context=None):
+    @overrides(admin.ModelAdmin)
+    def change_view(self, request, object_id, form_url='', extra_context=None):
         if extra_context is None:
             extra_context = {}
 
@@ -98,18 +103,20 @@ class ComplexImmutableModelAdmin(ImmutableModelAdmin):
         return super(ComplexImmutableModelAdmin, self).change_view(
             request,
             object_id,
-            extra_context,
+            form_url=form_url,
+            extra_context=extra_context,
         )
 
-
+    @overrides(admin.ModelAdmin)
     def response_change(self, request, obj):
-        response = super(ComplexImmutableModelAdmin, self).response_change(request,obj)
+        response = super(ComplexImmutableModelAdmin, self).response_change(request, obj)
         self._validate_and_check_immutable_immutable_lock_request(request, obj)
 
         return response
 
-    def response_add(self, request, obj):
-        response = super(ComplexImmutableModelAdmin, self).response_add(request,obj)
+    @overrides(admin.ModelAdmin)
+    def response_add(self, request, obj, post_url_continue=None):
+        response = super(ComplexImmutableModelAdmin, self).response_add(request, obj, post_url_continue)
         self._validate_and_check_immutable_immutable_lock_request(request, obj)
 
         return response

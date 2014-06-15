@@ -3,6 +3,7 @@ import logging
 from collections import OrderedDict
 from django import template
 from django.utils.safestring import mark_safe
+from common.utils import deprecated
 from event.models import Event
 
 logger = logging.getLogger('event')
@@ -11,7 +12,7 @@ register = template.Library()
 class BundledEvent:
     """ Contains all information to generate a bundled representation of a set of events """
     events = None
-    unseen_events = False
+    unseen_events = None
     reading_user = None
     human_readable_text = ""
     link_url = ""
@@ -31,6 +32,7 @@ class BundledEvent:
         self.reading_user = reading_user
         self.human_readable_text, self.link_url = Event.generate_human_readable_format(self.events, self.reading_user)
 
+    @deprecated
     def html_string(self):
         try:
             return mark_safe(Event.generate_html_string_for(self.events, self.reading_user))
@@ -42,6 +44,9 @@ class BundledEvent:
     def contains_unseen_events(self):
         return any(e in self.unseen_events for e in self.events)
 
+    def __repr__(self):
+        return "BundledEvent for {}".format(self.events)
+    
     def __unicode__(self):
         return u"BundledEvent for {}".format(self.events)
 
@@ -50,7 +55,7 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
     """ Bundles PersonalEventListeners into a list of combined events for use in a notification bar or emails.
 
     Arguments:
-    personal_event_listeners -- should be a models.Manager.
+    personal_event_listeners -- should be a models.Manager or a list.
     max_num_of_bundles -- The maximum number of BundledEvents to return in case seen events are also returned. If
                           not specified, only unseen BundledEvent are returned.
 
@@ -60,7 +65,7 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
     """
     def _get_events(seen_by_user):
         # get events with seen_by_user == seen_by_user
-        event_listeners = personal_event_listeners.filter(seen_by_user=seen_by_user).order_by('-event__date_created')
+        event_listeners = sorted([p for p in personal_event_listeners if p.seen_by_user == seen_by_user], key=lambda p: p.event.date_created, reverse=True)
         events = [listener.event.cast() for listener in event_listeners]
 
         # filter deprecated events
@@ -81,7 +86,7 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
             # get combineable events
             combinable_events = [event_cand for event_cand in combine_candidates if \
                 type(event) == type(event_cand) and event.can_be_combined_with(event_cand, user)]
-            assert event in combinable_events, "reflexivity is violated"
+            assert event in combinable_events, "reflexivity is violated (event={}, combinable_events={})".format(event, combinable_events)
             result.append(combinable_events)
             # update candidates
             combine_candidates = [e for e in combine_candidates if e not in combinable_events]
@@ -96,10 +101,13 @@ def listeners_to_bundled_events(personal_event_listeners, max_num_of_bundles=Non
             combined_events.append([event])
         return combined_events
 
-    ## get user
-    if not personal_event_listeners or personal_event_listeners.count() == 0:
+    # convert personal_event_listeners to a list
+    personal_event_listeners = [p for p in personal_event_listeners] if personal_event_listeners else []
+    if not personal_event_listeners:
         return []
-    user = personal_event_listeners.latest('pk').user
+
+    ## get user
+    user = personal_event_listeners[0].user
 
     ## Step 1: combine unseen_events
     unseen_events = _get_events(seen_by_user=False)
@@ -133,7 +141,7 @@ def cached_events(user):
         return user._cached_events
 
     result = listeners_to_bundled_events(
-        personal_event_listeners=user.personal_event_listeners,
+        personal_event_listeners=user.personal_event_listeners.all(),
         max_num_of_bundles=10,
     )
     user._cached_events = result

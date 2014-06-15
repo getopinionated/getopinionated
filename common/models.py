@@ -51,7 +51,7 @@ class DisableableModel(ImmutableModel):
                 return False
             return True
 
-        new_kwargs = dict([(fld.name, getattr(self, fld.name)) for fld in self._meta.fields if copy_this_field(fld.name)]);
+        new_kwargs = dict([(fld.name, getattr(self, fld.name)) for fld in self._meta.fields if copy_this_field(fld.name)])
         copy_obj = self.__class__(**new_kwargs)
 
         # will be copied on save (see https://docs.djangoproject.com/en/1.4/topics/db/queries/#copying-model-instances)

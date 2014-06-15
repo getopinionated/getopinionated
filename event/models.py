@@ -106,11 +106,11 @@ class Event(models.Model):
         eventclass = type(first)
         if eventclass == Event:
             warning_msg = u"Event.generate_html_string_for() should be overridden by every Event child. If you get this error, it is " + \
-                u"possible that you have a database row with an Event (id={}) without a corresponding subclass. ".format(self.pk)  +  \
+                u"possible that you have a database row with an Event (id={}) without a corresponding subclass. ".format(first.pk)  +  \
                 u"You can verify this by going to the Event admin."
             logger.warning(warning_msg)
             return u"<<ILLEGAL Events with pks={}>>".format([e.pk for e in events])
-            
+
         # check if generate_html_string_for() has been implemented in the subclass
         elif eventclass.generate_html_string_for == Event.generate_html_string_for:
             raise NotImplementedError("Every Event implementation should override this method.")
@@ -146,17 +146,19 @@ class Event(models.Model):
         eventclass = type(first)
         if eventclass == Event:
             warning_msg = u"Event.generate_human_readable_format() should be overridden by every Event child. If you get this error, it is " + \
-                u"possible that you have a database row with an Event (id={}) without a corresponding subclass. ".format(self.pk)  +  \
+                u"possible that you have a database row with an Event (id={}) without a corresponding subclass. ".format(first.pk)  +  \
                 u"You can verify this by going to the Event admin."
             logger.warning(warning_msg)
             return u"<<ILLEGAL Events with pks={}>>".format([e.pk for e in events])
-            
+
         # check if generate_human_readable_format() has been implemented in the subclass
         elif eventclass.generate_human_readable_format == Event.generate_human_readable_format:
             raise NotImplementedError("Every Event implementation should override this method.")
 
         else:
-            return eventclass.generate_human_readable_format(events, reading_user)
+            retval = eventclass.generate_human_readable_format(events, reading_user)
+            assert retval != None and len(retval) == 2
+            return retval
 
     def __unicode__(self):
         """ Make sure to override this in every child. """
@@ -302,7 +304,7 @@ class VotablePostReactionEvent(Event):
     @overrides(Event)
     def __unicode__(self):
         return u"VotablePostReactionEvent to {}".format(self.origin_post)
-    
+
     @overrides(Event)
     def can_be_combined_with(self, event, reading_user):
         return self.origin_post == event.origin_post
@@ -346,7 +348,7 @@ class VotablePostReactionEvent(Event):
         # get link
         target_post = events[0].reaction_post.cast() if len(events) == 1 else origin_post
         link = link_and_add_owner(displayed_post=origin_post, reading_user=reading_user, target_post=target_post)
-        
+
         # return full combination
         return u"{} reacted to {}".format(users, link)
 
@@ -357,10 +359,10 @@ class VotablePostReactionEvent(Event):
         origin_post = events[0].origin_post.cast()
         users = userjoin(e.reaction_post.creator for e in events)
         origin_post_str = add_owner(origin_post, reading_user)
+        link_target_post = events[0].reaction_post.cast() if len(events) == 1 else origin_post
 
-    @overrides(Event)
-    def __unicode__(self):
-        return u"ProposalForkEvent: forked {}".format(self.origin_proposal)
+        # return description + url
+        return u"{} reacted to {}".format(users, origin_post_str), url_to(link_target_post)
 
 
 class ProxyChangeEvent(Event):
@@ -389,6 +391,10 @@ class ProxyChangeEvent(Event):
     def __unicode__(self):
         return u"ProxyChangeEvent: {} {}".format(self.get_change_type_display(), self.new_proxy)
 
+    @overrides(Event)
+    def can_be_combined_with(self, event, reading_user):
+        raise NotImplementedError("TODO")
+
 
 class ProposalLifeCycleEvent(Event):
     """ A proposal was created or the voting stage of a Proposal has changed. """
@@ -406,7 +412,7 @@ class ProposalLifeCycleEvent(Event):
 
     @overrides(Event)
     def can_be_combined_with(self, event, reading_user):
-        return False
+        return self == event
 
     @overrides(Event)
     def get_listening_users(self):
@@ -425,7 +431,10 @@ class ProposalLifeCycleEvent(Event):
         for u in proposal.favorited_by.all():
             listening_users.add(u)
 
-        return listening_users
+        if self.new_voting_stage == 'DISCUSSION':
+            return _everyone_except(listening_users, proposal.creator)
+        else:
+            return listening_users
 
     @staticmethod
     @overrides(Event)
@@ -439,7 +448,7 @@ class ProposalLifeCycleEvent(Event):
         # prepare strings
         link_with_owner = link_and_add_owner(proposal, reading_user)
         creator_str = unicode(proposal.creator) if proposal.creator != None else u'Someone'
-        
+
         # return full combination
         if new_voting_stage == 'DISCUSSION':
             a_new_proposal_link = wrap_html_link_to(proposal, u"a new proposal: {}".format(proposal.title))
@@ -447,7 +456,7 @@ class ProposalLifeCycleEvent(Event):
 
         elif new_voting_stage == 'VOTING':
             return u"Voting started for {}".format(link_with_owner)
-        
+
         elif new_voting_stage == 'APPROVED':
             return u"{} was approved".format(link_with_owner)
 
@@ -465,21 +474,21 @@ class ProposalLifeCycleEvent(Event):
     def generate_human_readable_format(events, reading_user):
         # get vars
         assert len(events) == 1, "combining ProposalLifeCycleEvents not (yet) supported"
-        proposal = events[0].proposal
+        proposal = events[0].proposal.cast()
         new_voting_stage = events[0].new_voting_stage
 
         # prepare strings
         proposal_str = add_owner(proposal, reading_user)
         url = url_to(proposal)
         creator_str = unicode(proposal.creator) if proposal.creator != None else u'Someone'
-        
+
         # return full combination
         if new_voting_stage == 'DISCUSSION':
             return u"{} made a new proposal: {}".format(creator_str, proposal.title), url
 
         elif new_voting_stage == 'VOTING':
             return u"Voting started for {}".format(proposal_str), url
-        
+
         elif new_voting_stage == 'APPROVED':
             return u"{} was approved".format(proposal_str), url
 
@@ -534,7 +543,7 @@ class UpDownVoteEvent(Event):
 
         # get net increase / decrease in score
         score_diff = sum(e.updownvote.value for e in events)
-        
+
         # return full combination
         if isinstance(post, Proposal):
             return u"{} got {} endorsement{} by {}".format(link_with_owner, score_diff, pluralize(score_diff), users)
@@ -555,7 +564,7 @@ class UpDownVoteEvent(Event):
 
         # get net increase / decrease in score
         score_diff = sum(e.updownvote.value for e in events)
-        
+
         # return full combination
         if isinstance(post, Proposal):
             return u"{} got {} endorsement{} by {}".format(post_str, score_diff, pluralize(score_diff), users), url

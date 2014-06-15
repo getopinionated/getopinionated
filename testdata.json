@@ -490,16 +490,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 2,
-            "weekly_digest": true,
             "member_since": "2013-05-11T08:38:04.629Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": false,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "",
             "groups": [],
             "user_permissions": [],
-            "send_new": false,
-            "send_favorites_and_voted": true,
+            "mail_when_related_event": true,
             "slug": "jnyman",
             "karma": 30
         }
@@ -509,16 +506,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 12,
-            "weekly_digest": true,
             "member_since": "2013-05-11T08:38:04.629Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": true,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "",
             "groups": [],
             "user_permissions": [],
-            "send_new": true,
-            "send_favorites_and_voted": false,
+            "mail_when_related_event": true,
             "slug": "317070",
             "karma": 5000000
         }
@@ -528,16 +522,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 7,
-            "weekly_digest": true,
             "member_since": "2013-05-11T08:38:04.629Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": false,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "",
             "groups": [],
             "user_permissions": [],
-            "send_new": false,
-            "send_favorites_and_voted": true,
+            "mail_when_related_event": true,
             "slug": "sandbender",
             "karma": 9970
         }
@@ -547,16 +538,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 0,
-            "weekly_digest": true,
             "member_since": "2013-05-11T08:38:04.629Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": false,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "",
             "groups": [],
             "user_permissions": [],
-            "send_new": false,
-            "send_favorites_and_voted": true,
+            "mail_when_related_event": true,
             "slug": "u1",
             "karma": 9910
         }
@@ -566,16 +554,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 0,
-            "weekly_digest": true,
             "member_since": "2013-05-11T08:38:04.629Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": false,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "",
             "groups": [],
             "user_permissions": [],
-            "send_new": false,
-            "send_favorites_and_voted": true,
+            "mail_when_related_event": true,
             "slug": "u2",
             "karma": 9910
         }
@@ -585,16 +570,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 0,
-            "weekly_digest": true,
             "member_since": "2013-05-11T08:38:04.629Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": false,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "",
             "groups": [],
             "user_permissions": [],
-            "send_new": false,
-            "send_favorites_and_voted": true,
+            "mail_when_related_event": true,
             "slug": "u3",
             "karma": 9910
         }
@@ -604,16 +586,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 0,
-            "weekly_digest": true,
             "member_since": "2013-05-11T08:38:04.629Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": false,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "",
             "groups": [],
             "user_permissions": [],
-            "send_new": false,
-            "send_favorites_and_voted": true,
+            "mail_when_related_event": true,
             "slug": "u4",
             "karma": 9910
         }
@@ -623,16 +602,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 0,
-            "weekly_digest": true,
             "member_since": "2013-05-11T08:38:04.629Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": false,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "",
             "groups": [],
             "user_permissions": [],
-            "send_new": false,
-            "send_favorites_and_voted": true,
+            "mail_when_related_event": true,
             "slug": "u5",
             "karma": 9910
         }
@@ -642,16 +618,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 0,
-            "weekly_digest": true,
             "member_since": "2013-05-11T08:38:04.629Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": false,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "",
             "groups": [],
             "user_permissions": [],
-            "send_new": false,
-            "send_favorites_and_voted": true,
+            "mail_when_related_event": true,
             "slug": "u6",
             "karma": 9910
         }
@@ -661,16 +634,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 0,
-            "weekly_digest": true,
             "member_since": "2013-05-11T08:38:04.629Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": false,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "",
             "groups": [],
             "user_permissions": [],
-            "send_new": false,
-            "send_favorites_and_voted": true,
+            "mail_when_related_event": true,
             "slug": "u7",
             "karma": 9910
         }
@@ -680,16 +650,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 0,
-            "weekly_digest": true,
             "member_since": "2013-05-11T08:38:04.629Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": false,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "",
             "groups": [],
             "user_permissions": [],
-            "send_new": false,
-            "send_favorites_and_voted": true,
+            "mail_when_related_event": true,
             "slug": "u8",
             "karma": 9910
         }
@@ -699,16 +666,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 0,
-            "weekly_digest": true,
             "member_since": "2013-05-11T08:38:04.629Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": false,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "",
             "groups": [],
             "user_permissions": [],
-            "send_new": false,
-            "send_favorites_and_voted": true,
+            "mail_when_related_event": true,
             "slug": "u9",
             "karma": 9910
         }
@@ -718,16 +682,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 0,
-            "weekly_digest": true,
             "member_since": "2013-05-11T08:38:04.629Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": false,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "",
             "groups": [],
             "user_permissions": [],
-            "send_new": false,
-            "send_favorites_and_voted": true,
+            "mail_when_related_event": true,
             "slug": "u10",
             "karma": 9910
         }
@@ -737,16 +698,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 12,
-            "weekly_digest": true,
             "member_since": "2013-05-11T02:24:07.037Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": false,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "avatars/jonasdebraeve.jpeg",
             "groups": [],
             "user_permissions": [],
-            "send_new": false,
-            "send_favorites_and_voted": true,
+            "mail_when_related_event": true,
             "slug": "jonasdebraeve",
             "karma": 0
         }
@@ -756,16 +714,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 16,
-            "weekly_digest": true,
             "member_since": "2013-05-11T04:18:16.452Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": false,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "avatars/nymanjens.jpeg",
             "groups": [],
             "user_permissions": [],
-            "send_new": false,
-            "send_favorites_and_voted": true,
+            "mail_when_related_event": true,
             "slug": "nymanjens",
             "karma": 0
         }
@@ -775,16 +730,13 @@
         "model": "accounts.customuser",
         "fields": {
             "profile_views": 0,
-            "weekly_digest": true,
             "member_since": "2013-05-15T23:37:04.853Z",
-            "send_finished": true,
-            "send_voting": true,
-            "daily_digest": false,
+            "mail_frequency": "IMMEDIATELY",
+            "mail_when_voting_stage_change": "ALWAYS",
             "avatar": "",
             "groups": [],
             "user_permissions": [],
-            "send_new": false,
-            "send_favorites_and_voted": true,
+            "mail_when_related_event": true,
             "slug": "99ee50fece2f4a1ebc9ac5658e1395",
             "karma": 0
         }

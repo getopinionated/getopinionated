@@ -20,7 +20,8 @@ class CsrfJsTokenNode(template.Node):
             from django.conf import settings
             if settings.DEBUG:
                 import warnings
-                warnings.warn("A {% csrf_js_token %} was used in a template, but the context did not provide the value.  This is usually caused by not using RequestContext.")
+                warnings.warn("A {% csrf_js_token %} was used in a template, but the context did not provide the value.  "\
+                    + "This is usually caused by not using RequestContext.")
             return u''
 
     def generateJavascriptCode(self, csrf_token):

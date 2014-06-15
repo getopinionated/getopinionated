@@ -1,9 +1,4 @@
-'''
-Created on Feb 4, 2013
-
-@author: jonas
-'''
-from django.conf.urls.defaults import *
+from django.conf.urls import *
 from django.views.generic import DetailView, ListView
 from models import FullDocument
 from views import documentView

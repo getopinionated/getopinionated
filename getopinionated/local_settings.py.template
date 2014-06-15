@@ -71,3 +71,9 @@ DEFAULT_DOCUMENT_SLUG = 'default-document' # url-friendly name of default docume
 DEFAULT_DOCUMENT_DESCRIPTION = 'Party Programme'
 DEFAULT_DOCUMENT_DESCRIPTION_LONG = 'Party Programme of our organisation'
 NEW_POSITION_LABEL = 'Propose a new position' # label of the button for proposing a new position
+
+#####################################################################################
+# Voting Settings
+#####################################################################################
+
+DAYS_TO_INACTIVE = 100 #Days of inactivity before a user can't vote anymore

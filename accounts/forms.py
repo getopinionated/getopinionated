@@ -63,7 +63,7 @@ class CustomUserCreationForm(FocussingModelForm, UserCreationForm):
                 # the username/userslug does already exist
                 index = 2
                 while True:
-                    username="{} {}".format(username, int_to_roman(index))
+                    username = "{} {}".format(username, int_to_roman(index))
                     if user.isValidUserName(username):
                         break
                     index += 1
@@ -79,6 +79,10 @@ class ProfileUpdateForm(forms.ModelForm):
         label='Select a file',
         help_text='max. 42 megabytes'
     )'''
+
+    mail_frequency = forms.ChoiceField(label="Mail me", choices=CustomUser.MAIL_FREQUENCIES, widget=forms.RadioSelect())
+    mail_when_voting_stage_change = forms.ChoiceField(label="Mail content: inform me about new/voting/finished proposals",
+            choices=CustomUser.MAIL_WHEN_VOTING_STAGE_CHANGE, widget=forms.RadioSelect())
     
     def __init__(self, *args, **kwargs):
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
@@ -89,7 +93,7 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ("username", "first_name", "last_name", "email", "avatar"
-                  ,"daily_digest","weekly_digest","send_new","send_voting","send_finished","send_favorites_and_voted")
+                  ,"mail_frequency", "mail_when_voting_stage_change", "mail_when_related_event")
 
 
     def clean_username(self):
@@ -111,7 +115,7 @@ class SingleProxyForm(forms.Form):
     
     def __init__(self, delegating, delegate, *args, **kwargs):
         self.user = delegating
-        self.delegate=delegate
+        self.delegate = delegate
         super(SingleProxyForm, self).__init__(*args, **kwargs)        
         proxies = Proxy.objects.all().filter(delegating__pk__exact=delegating.pk, delegates=delegate, isdefault=False)
         tagset = Tag.objects.all()

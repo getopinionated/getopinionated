@@ -120,23 +120,24 @@ class ProxyGraphData:
             proxies = proxies | (Proxy.objects.filter(isdefault=True).exclude(delegating__in = proxies.values('delegating')))
 
         for proxy in proxies:
-            nodes.add(proxy.delegating.display_name)
-            for delegate in proxy.delegates.all():
-                nodes.add(delegate.display_name)
-                if proxy.tags.count():
-                    self.dataEdges.append(r"['{}', '{}', {{color: '{}', label: '{}'}}]".format(
-                        proxy.delegating.display_name,
-                        delegate.display_name,
-                        '#0C3',
-                        ', '.join([escapejs(tag.name) for tag in proxy.tags.all()]),
-                    ))
-                else:
-                    self.dataEdges.append(r"['{}', '{}', {{color: '{}'}}]".format(
-                        proxy.delegating.display_name,
-                        delegate.display_name,
-                        '#000'
-                    ))
-
+            if proxy.delegating.isActive():
+                nodes.add(proxy.delegating.display_name)
+                for delegate in proxy.delegates.all():
+                    if delegate.isActive():
+                        nodes.add(delegate.display_name)
+                        if proxy.tags.count():
+                            self.dataEdges.append(r"['{}', '{}', {{color: '{}', label: '{}'}}]".format(
+                                proxy.delegating.display_name,
+                                delegate.display_name,
+                                '#0C3',
+                                ', '.join([escapejs(tag.name) for tag in proxy.tags.all()]),
+                            ))
+                        else:
+                            self.dataEdges.append(r"['{}', '{}', {{color: '{}'}}]".format(
+                                proxy.delegating.display_name,
+                                delegate.display_name,
+                                '#000'
+                            ))
         ## fill in nodes
         self.dataNodes = list(nodes)
 
@@ -332,7 +333,7 @@ def positionproposalform(request, edit_proposal_slug=None):
         'proposalform': proposalform,
     })
 
-def proxy(request, tag_slug=None):
+def show_proxies(request, tag_slug=None):
     ## get vars
     tag = get_object_or_404(Tag, slug=tag_slug) if tag_slug else None
     proxyform = None

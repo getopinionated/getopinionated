@@ -1,19 +1,10 @@
 Hello {{user.username}},
 
-This is your {{label}} digest mail of what is going on on GetOpinionated.
-{% if new_proposals %}
-New Proposals
-=============
-{% for proposal in new_proposals %}{{proposal.title}}, by {{proposal.creator}} ({{DOMAIN_NAME}}{% url proposals-detail proposal.slug %})
-{% endfor %}{% endif %}{% if voting_proposals %}
-Proposals to vote
-=================
-{% for proposal in voting_proposals %}{{proposal.title}}, by {{proposal.creator}} ({{DOMAIN_NAME}}{% url proposals-detail proposal.slug %})
-{% endfor %}{% endif %}{% if finished_proposals %}
-Finished proposals
-==================
-{% for proposal in finished_proposals %}{{proposal.voting_stage}}: {{proposal.title}}, by {{proposal.creator}} ({{DOMAIN_NAME}}{% url proposals-detail proposal.slug %})
-{% endfor %}{% endif %}
+This is your {{mail_frequency}}event mail of what is going on at GetOpinionated.
+{% for bundledevent in bundledevents %}
+- {{ bundledevent.human_readable_text|safe}}
+  more info: {{DOMAIN_NAME}}{{ bundledevent.link_url }}{% endfor %}
+
 Yours sincerely,
 
 The GetOpinionated team

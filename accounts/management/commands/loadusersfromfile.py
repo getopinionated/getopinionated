@@ -68,7 +68,7 @@ class Command(BaseCommand):
                 user.email = email
                 user.first_name = first_name
                 user.last_name = last_name
-                
+
                 #mail user
                 logincode = LoginCode(user=user, code=random.SystemRandom().getrandbits(128))
                 logincode.save()
@@ -84,13 +84,13 @@ class Command(BaseCommand):
                     send_mail('GetOpinionated: vote online for the {}'.format(settings.DEFAULT_DOCUMENT_DESCRIPTION_LONG),
                             text, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)
                     user.save()
-	            print "mail sent to:",email
-                
+                    print "mail sent to:" , email
+
                 except SMTPRecipientsRefused:
                     print "refused"
                     continue
-                
-            
+
+
             else:
                 self.stdout.write("Account already exists for {}\n".format(email))
 
@@ -101,6 +101,6 @@ class Command(BaseCommand):
                 user = User.objects.get(email=email)
                 group.user_set.add(user)
             self.stdout.write("Done\n\n".format(groupname))
-            
+
         self.stdout.write("Done\n\n".format(groupname))
-        
+

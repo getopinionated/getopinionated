@@ -39,22 +39,22 @@ def getuserproxies(member):
     return Proxy.objects.filter(delegating=member).values('delegates').distinct()
 
 def getpositiveuservotes(member):
-    return FinalProposalVote.objects.filter(user=member,voted_self=True).filter(value__gt=1)
+    return FinalProposalVote.objects.filter(user=member, voted_self=True).filter(value__gt=1)
 
 def getneutraluservotes(member):
-    return FinalProposalVote.objects.filter(user=member,voted_self=True).exclude(value__gt=1).exclude(value__lt=-1)
+    return FinalProposalVote.objects.filter(user=member, voted_self=True).exclude(value__gt=1).exclude(value__lt=-1)
 
 def getnegativeuservotes(member):
-    return FinalProposalVote.objects.filter(user=member,voted_self=True).filter(value__lt=-1)
+    return FinalProposalVote.objects.filter(user=member, voted_self=True).filter(value__lt=-1)
 
 def getpositiveuserproxyvotes(member):
-    return FinalProposalVote.objects.filter(user=member,voted_self=False).filter(value__gt=1)
+    return FinalProposalVote.objects.filter(user=member, voted_self=False).filter(value__gt=1)
 
 def getneutraluserproxyvotes(member):
-    return FinalProposalVote.objects.filter(user=member,voted_self=False).exclude(value__gt=1).exclude(value__lt=-1)
+    return FinalProposalVote.objects.filter(user=member, voted_self=False).exclude(value__gt=1).exclude(value__lt=-1)
 
 def getnegativeuserproxyvotes(member):
-    return FinalProposalVote.objects.filter(user=member,voted_self=False).filter(value__lt=-1)
+    return FinalProposalVote.objects.filter(user=member, voted_self=False).filter(value__lt=-1)
 
 def getparticipatedproposals(member):
     return (Proposal.objects.filter(creator=member) |
@@ -250,8 +250,8 @@ def mailunsubscribe(request, code):
 
 @not_logged_in
 def logincode(request, code):
-    logincode = LoginCode.objects.get(code=code)
-    user = logincode.user
+    _logincode = LoginCode.objects.get(code=code)
+    user = _logincode.user
     if not hasattr(user, 'backend'):
         for backend in settings.AUTHENTICATION_BACKENDS:
             if user == load_backend(backend).get_user(user.pk):
