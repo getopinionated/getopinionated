@@ -83,42 +83,6 @@ class Event(models.Model):
         raise NotImplementedError("Every Event implementation should override this method.")
 
     @staticmethod
-    @deprecated
-    def generate_html_string_for(events, reading_user):
-        """ Return a html-string that combines events for use in a notification bar.
-
-        Arguments:
-        events -- should be mutually combinable (see can_be_combined_with()).
-        reading_user -- the user that will be looking at the string.
-
-        Make sure to override this in every child.
-
-        """
-        ## sanity checks
-        # check that all events are of the same class
-        first = events[0]
-        assert all(type(first) == type(e) for e in events), 'all events must be of the same class'
-        # check that all events are combineable
-        assert all(first.can_be_combined_with(e, reading_user) for e in events), 'all events must be mutually combineable'
-
-        ## delegate generation to subclass
-        # check if event is not instance of Event
-        eventclass = type(first)
-        if eventclass == Event:
-            warning_msg = u"Event.generate_html_string_for() should be overridden by every Event child. If you get this error, it is " + \
-                u"possible that you have a database row with an Event (id={}) without a corresponding subclass. ".format(first.pk)  +  \
-                u"You can verify this by going to the Event admin."
-            logger.warning(warning_msg)
-            return u"<<ILLEGAL Events with pks={}>>".format([e.pk for e in events])
-
-        # check if generate_html_string_for() has been implemented in the subclass
-        elif eventclass.generate_html_string_for == Event.generate_html_string_for:
-            raise NotImplementedError("Every Event implementation should override this method.")
-
-        else:
-            return eventclass.generate_html_string_for(events, reading_user)
-
-    @staticmethod
     def generate_human_readable_format(events, reading_user):
         """ Return two strings (human_readable_text, link_url) that are a human readable representation of the given events
         combines events.
@@ -339,21 +303,6 @@ class VotablePostReactionEvent(Event):
 
     @staticmethod
     @overrides(Event)
-    @deprecated
-    def generate_html_string_for(events, reading_user):
-        # get vars
-        origin_post = events[0].origin_post.cast()
-        users = userjoin(e.reaction_post.creator for e in events)
-
-        # get link
-        target_post = events[0].reaction_post.cast() if len(events) == 1 else origin_post
-        link = link_and_add_owner(displayed_post=origin_post, reading_user=reading_user, target_post=target_post)
-
-        # return full combination
-        return u"{} reacted to {}".format(users, link)
-
-    @staticmethod
-    @overrides(Event)
     def generate_human_readable_format(events, reading_user):
         # get vars
         origin_post = events[0].origin_post.cast()
@@ -412,7 +361,7 @@ class ProposalLifeCycleEvent(Event):
 
     @overrides(Event)
     def can_be_combined_with(self, event, reading_user):
-        return False
+        return self == event
 
     @overrides(Event)
     def get_listening_users(self):
@@ -431,47 +380,17 @@ class ProposalLifeCycleEvent(Event):
         for u in proposal.favorited_by.all():
             listening_users.add(u)
 
-        return listening_users
-
-    @staticmethod
-    @overrides(Event)
-    @deprecated
-    def generate_html_string_for(events, reading_user):
-        # get vars
-        assert len(events) == 1, "combining ProposalLifeCycleEvents not (yet) supported"
-        proposal = events[0].proposal
-        new_voting_stage = events[0].new_voting_stage
-
-        # prepare strings
-        link_with_owner = link_and_add_owner(proposal, reading_user)
-        creator_str = unicode(proposal.creator) if proposal.creator != None else u'Someone'
-
-        # return full combination
-        if new_voting_stage == 'DISCUSSION':
-            a_new_proposal_link = wrap_html_link_to(proposal, u"a new proposal: {}".format(proposal.title))
-            return u"{} made {}".format(creator_str, a_new_proposal_link)
-
-        elif new_voting_stage == 'VOTING':
-            return u"Voting started for {}".format(link_with_owner)
-
-        elif new_voting_stage == 'APPROVED':
-            return u"{} was approved".format(link_with_owner)
-
-        elif new_voting_stage == 'REJECTED':
-            return u"{} was rejected".format(link_with_owner)
-
-        elif new_voting_stage == 'EXPIRED':
-            return u"{} expired".format(link_with_owner)
-
+        if self.new_voting_stage == 'DISCUSSION':
+            return _everyone_except(listening_users, proposal.creator)
         else:
-            raise NotImplementedError("Unknown voting stage " + new_voting_stage)
+            return listening_users
 
     @staticmethod
     @overrides(Event)
     def generate_human_readable_format(events, reading_user):
         # get vars
         assert len(events) == 1, "combining ProposalLifeCycleEvents not (yet) supported"
-        proposal = events[0].proposal
+        proposal = events[0].proposal.cast()
         new_voting_stage = events[0].new_voting_stage
 
         # prepare strings
@@ -528,27 +447,6 @@ class UpDownVoteEvent(Event):
     def get_listening_users(self):
         ## only the creator of updownvote.post is a listening_user
         return set([self.updownvote.post.creator])
-
-    @staticmethod
-    @overrides(Event)
-    @deprecated
-    def generate_html_string_for(events, reading_user):
-        # get vars
-        post = events[0].updownvote.post.cast()
-        link_with_owner = link_and_add_owner(post, reading_user)
-        users = userjoin(e.updownvote.user for e in events)
-
-        # get net increase / decrease in score
-        score_diff = sum(e.updownvote.value for e in events)
-
-        # return full combination
-        if isinstance(post, Proposal):
-            return u"{} got {} endorsement{} by {}".format(link_with_owner, score_diff, pluralize(score_diff), users)
-        elif score_diff >= 0:
-            return u"{} got {} upvote{}".format(link_with_owner, score_diff, pluralize(score_diff))
-        else:
-            score_diff = abs(score_diff)
-            return u"{} got {} downvote{}".format(link_with_owner, score_diff, pluralize(score_diff))
 
     @staticmethod
     @overrides(Event)

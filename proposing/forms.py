@@ -14,7 +14,7 @@ from common.socialnetwork import posttotwitter
 from common import sanitizehtml
 from accounts.models import CustomUser
 from document.models import FullDocument, Diff
-from event.models import VotablePostReactionEvent
+from event.models import VotablePostReactionEvent, ProposalLifeCycleEvent
 from widgets import TagSelectorWidget, RichTextEditorWidget, \
     VeryRichTextEditorWidget, NumberSliderWidget, EmptyTagSelectorWidget
 from fields import TagChoiceField, UserChoiceField
@@ -75,6 +75,12 @@ class ProposalForm(forms.ModelForm):
 
         ## build history
         proposal.build_history(editing_user=user) # creates a historical record clone and a VotablePostHistory
+
+        ## add event
+        ProposalLifeCycleEvent.new_event_and_create_listeners_and_email_queue_entries(
+            proposal=proposal,
+            new_voting_stage=proposal.voting_stage,
+        )
 
         ## broadcast on social media
         if not self.is_edit:

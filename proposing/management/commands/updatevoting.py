@@ -15,6 +15,7 @@ from django.conf import settings
 from common.socialnetwork import posttotwitter
 from accounts.models import CustomUser
 from proposing.models import Proposal, ProxyProposalVote, Proxy, Tag, FinalProposalVote, AmendmentProposal, PositionProposal
+from event.models import ProposalLifeCycleEvent
 
 logger = logging.getLogger(__name__)
 
@@ -65,11 +66,19 @@ class Command(NoArgsCommand):
                 posttotwitter("VOTING BOOTS ARE OPEN: " + proposal.title + " " + settings.DOMAIN_NAME +
                     reverse('proposals-detail', kwargs={'proposal_slug':proposal.slug}))
                 proposal.save()
+
+                ## add event
+                ProposalLifeCycleEvent.new_event_and_create_listeners_and_email_queue_entries(
+                    proposal=proposal,
+                    new_voting_stage=proposal.voting_stage,
+                )
+
             elif proposal.voting_stage == 'DISCUSSION' and proposal.minimalContraintsAreMet() and not proposal.voting_date:
                 proposal.voting_date = proposal.estimatedVotingDate
                 constraints_cnt += 1
                 proposal.mail_sent = False
                 proposal.save()
+
             elif proposal.shouldBeFinished():
                 Command.doVoteCount(proposal)
                 if proposal.isApproved():
@@ -85,12 +94,25 @@ class Command(NoArgsCommand):
                         + reverse('proposals-detail',kwargs={'proposal_slug':proposal.slug}))
                 proposal.mail_sent = False
                 proposal.save()
+
+                ## add event
+                ProposalLifeCycleEvent.new_event_and_create_listeners_and_email_queue_entries(
+                    proposal=proposal,
+                    new_voting_stage=proposal.voting_stage,
+                )
+
             elif proposal.shouldExpire():
                 proposal.expire_date = timezone.now()
                 proposal.voting_stage = 'EXPIRED'
                 expired_cnt += 1
                 proposal.mail_sent = False
                 proposal.save()
+                
+                ## add event
+                ProposalLifeCycleEvent.new_event_and_create_listeners_and_email_queue_entries(
+                    proposal=proposal,
+                    new_voting_stage=proposal.voting_stage,
+                )
         
         self.stdout.write('Successfully updated:\n')
         self.stdout.write('{} proposals to the voting phase\n'.format(voting_cnt))
