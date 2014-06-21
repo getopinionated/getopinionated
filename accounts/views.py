@@ -241,8 +241,7 @@ def userlogout(request):
 def mailunsubscribe(request, code):
     unsubscribecode = UnsubscribeCode.objects.get(code=code)
     user = unsubscribecode.user
-    user.weekly_digest = False
-    user.daily_digest = False
+    user.mail_frequency = 'NEVER'
     user.save()
     return render(request, 'accounts/mailunsubscribe.html', {
         'user': user

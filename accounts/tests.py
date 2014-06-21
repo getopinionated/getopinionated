@@ -1,4 +1,5 @@
 import os
+import re
 from collections import OrderedDict
 
 from django.test import TestCase
@@ -6,6 +7,7 @@ from django.core.management import call_command
 from django.utils import timezone
 from django.utils.timezone import datetime, timedelta
 from django.core import mail
+from django.test import Client
 
 from proposing.models import PositionProposal, Comment
 from event.models import Event, ProposalLifeCycleEvent, UpDownVoteEvent, VotablePostReactionEvent, GlobalEventEmailQueue
@@ -158,3 +160,23 @@ class SendEmailTestCase(TestCase):
         call_command('sendeventmails', 'IMMEDIATELY', stdout=open(os.devnull, 'w'))
         self.assertEquals(GlobalEventEmailQueue.objects.count(), original_num_globals - 1)
         self.assertEquals(GlobalEventEmailQueue.objects.filter(pk=queueitem1.pk).count(), 0)
+
+    def test_unscribe(self):
+        mail.outbox = [] # empty the test outbox
+        call_command('sendeventmails', 'DAILY', stdout=open(os.devnull, 'w'))
+        self.assertEquals(len(mail.outbox), 5)
+        self._assert_num_bundled_events_in_mail(mail.outbox[0], 5 + 1) # global + personal (user1)
+        mailcontent_user1 = mail.outbox[0].body # mail for user1
+        assert 'user1' in mailcontent_user1
+
+        # get unscribe link (e.g.: "/accounts/unsubscribe/mail/10232297444037157797/")
+        unscribe_link = re.search(r'/accounts/unsubscribe/mail/\d+/', mailcontent_user1).group(0)
+
+        # call unscribe link
+        response = Client().get(unscribe_link)
+        assert response.status_code == 200
+        
+        # check if user is unscribed
+        user1 = CustomUser.objects.get(username='user1')
+        assert user1.mail_frequency == 'NEVER', "The mail frequency of unscribed user is {}".format(user1.mail_frequency)
+
