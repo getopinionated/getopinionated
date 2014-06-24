@@ -16,7 +16,7 @@ class FullDocument(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField()
     content = models.TextField() 
-    create_date = models.DateTimeField('Date entered', default=timezone.now())
+    create_date = models.DateTimeField('Date entered', auto_now_add=True)
     version = models.IntegerField(default=1)
     
     class Meta:
