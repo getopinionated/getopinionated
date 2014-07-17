@@ -68,6 +68,7 @@ disable=
     attribute-defined-outside-init,
     bare-except,
     broad-except,
+    too-many-instance-attributes,
 
 [REPORTS]
 
