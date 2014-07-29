@@ -179,7 +179,7 @@ def passwordreset(request):
     if request.method == 'POST':
         form = PasswordResetForm(request.POST)
         if form.is_valid():
-            form.save(domain_override=settings.DOMAIN_NAME,email_template_name='accounts/password_reset_email.txt')
+            form.save(domain_override=settings.DOMAIN_NAME_SHORT,email_template_name='accounts/password_reset_email.txt')
             messages.success(request, 'An email has been sent to the provided email address.')
             return HttpResponseRedirect(reverse('password-reset'))
     else:

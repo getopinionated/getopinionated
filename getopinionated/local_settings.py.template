@@ -65,6 +65,7 @@ FEED_TWITTER_ACCESS_SECRET = ""
 
 ## project-specific content settings
 DOMAIN_NAME = "http://www.foo.bar"
+DOMAIN_NAME_SHORT = "www.foo.bar"
 ORGANISATION_NAME = 'The Voting Organisation'
 ABOUT_PAGE_FILENAME = 'about_page_default.html' # make sure this file exists in templates/about/
 DEFAULT_DOCUMENT_SLUG = 'default-document' # url-friendly name of default document
