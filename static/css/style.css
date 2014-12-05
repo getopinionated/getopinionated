@@ -198,6 +198,10 @@ nav#menu ul a:hover {
 
 /* messages */
 
+.events-needs-attention {
+	color: red!important;
+}
+
 ul.messages {
     margin: 0 auto;
 	list-style-type: none;
