@@ -4,6 +4,8 @@ from django.conf import settings
 import proposing.views
 
 def home(request):
+    return render(request, "index.html")
+    
     if request.user.is_authenticated():
         return proposing.views.proplist(request)
     else:
