@@ -31,6 +31,7 @@ And Install the required dependencies as follows:
 
 And for scipy and python-imaging:
 
+    sudo apt-get install python-dev
     sudo pip install cython
     sudo pip install git+http://github.com/numpy/numpy/
     sudo apt-get install gfortran libopenblas-dev liblapack-dev
